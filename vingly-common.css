@@ -1,0 +1,60 @@
+/* Vingly 공통 스타일 — 다크모드 + 트랜지션 */
+
+/* 페이지 전환 애니메이션 */
+body { animation: pageIn .3s ease; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 버튼 클릭 피드백 */
+button:active, a.btn:active { transform: scale(.97); }
+
+/* 링크 전환 부드럽게 */
+a { transition: color .15s, opacity .15s; }
+
+/* 카드 호버 */
+.card:hover, .pc:hover { transition: transform .2s ease, box-shadow .2s ease; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141414;
+    --sf: #1E1E1E;
+    --t: #F0F0F0;
+    --ts: #AAAAAA;
+    --tm: #666666;
+    --br: #2E2E2E;
+  }
+  body { background: var(--bg); color: var(--t); }
+  .sidebar, .sb, nav, .topbar, .mob-topbar { background: var(--sf) !important; border-color: var(--br) !important; }
+  .card, .stat-card, .sc2, .form-section, .how-card, .feat, .trust-card, .pc { background: var(--sf) !important; border-color: var(--br) !important; }
+  .form-input, .finp, .search-inp, .sort-sel, .filter-sel, .linp { background: #252525 !important; border-color: var(--br) !important; color: var(--t) !important; }
+  .upload-area { background: #1a1a1a !important; }
+  input, select, textarea { color-scheme: dark; }
+  .nav-links a, .ni { color: var(--ts) !important; }
+  .stats-ticker { background: var(--sf) !important; border-color: var(--br) !important; }
+  .compare-table, .cmp-wrap { background: var(--sf) !important; border-color: var(--br) !important; }
+  .cmp-head, .ct-header { background: #252525 !important; }
+  thead th { background: #252525 !important; }
+  tbody tr:hover td { background: rgba(255,255,255,.03) !important; }
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #999; }
+
+/* 포커스 스타일 */
+:focus-visible { outline: 2px solid #0B4F7A; outline-offset: 2px; border-radius: 4px; }
+
+/* 토스트 알림 */
+.toast-msg {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  background: #0D0D0D; color: #fff;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s ease; pointer-events: none;
+  font-family: 'Pretendard', sans-serif;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+.toast-msg.show { transform: translateY(0); opacity: 1; }

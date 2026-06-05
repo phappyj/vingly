@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 제품 탐색</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --b:#0B4F7A;--bl:#1472B0;--bg-b:#E8F3FB;
+  --g:#085C3A;--gl:#0F9060;--bg-g:#E0F5EC;
+  --a:#C47A10;--bg-a:#FDF0DC;
+  --bg:#F4F3EF;--sf:#FFFFFF;
+  --t:#0D0D0D;--ts:#4A4A4A;--tm:#9A9A9A;
+  --br:#E2E0DA;--r:12px;--sw:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--t);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.sb{width:var(--sw);background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--br)}
+.sb-logo-inner{display:flex;align-items:center;gap:8px}
+.lm{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--g),#053D25);display:flex;align-items:center;justify-content:center}
+.lm svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.ln{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--g)}
+.lb{font-size:11px;font-weight:700;color:var(--g);background:var(--bg-g);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;font-size:13px;font-weight:500;color:var(--ts);cursor:pointer;transition:all .15s;text-decoration:none;border:none;background:transparent;width:100%;font-family:inherit}
+.ni:hover{background:var(--bg);color:var(--t)}
+.ni.act{background:var(--bg-g);color:var(--g);font-weight:600}
+.ni .ic{font-size:15px;width:18px;text-align:center}
+.divr{height:1px;background:var(--br);margin:6px 0}
+.sb-foot{padding:14px;border-top:1px solid var(--br)}
+.ua{display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--bg-g);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--g);flex-shrink:0}
+.un{font-size:13px;font-weight:600}
+.ur{font-size:11px;color:var(--tm)}
+.eb{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FFF3CD;color:var(--a);margin-top:2px}
+
+.mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);padding:0 26px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.tb-l{display:flex;align-items:center;gap:10px}
+.back{width:32px;height:32px;border-radius:7px;background:var(--bg);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--t);font-size:14px;transition:all .2s}
+.back:hover{border-color:var(--g);color:var(--g)}
+.tb-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px}
+.notif{width:34px;height:34px;border-radius:8px;background:var(--bg);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;cursor:pointer}
+.ndot{width:8px;height:8px;background:#E24B4A;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--sf)}
+
+.content{padding:24px 26px;flex:1}
+
+/* SEARCH BAR */
+.search-area{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:18px 20px;margin-bottom:20px}
+.search-top{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.search-inp{flex:1;min-width:200px;padding:11px 16px;border-radius:9px;border:1.5px solid var(--br);background:var(--bg);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.search-inp:focus{border-color:var(--g);background:var(--sf)}
+.sort-sel{padding:11px 14px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-family:inherit;outline:none;cursor:pointer;min-height:44px}
+.cat-scroll{display:flex;gap:8px;overflow-x:auto;pb:4px}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-btn{padding:7px 16px;border-radius:100px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
+.cat-btn:hover{border-color:var(--g);color:var(--g)}
+.cat-btn.on{border-color:var(--g);background:var(--bg-g);color:var(--g);font-weight:700}
+
+/* PRODUCT GRID */
+.prod-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.prod-count{font-size:14px;font-weight:600}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.pc{background:var(--sf);border:1px solid var(--br);border-radius:14px;overflow:hidden;transition:all .22s;cursor:pointer}
+.pc:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.09);border-color:rgba(8,92,58,.2)}
+.pc-thumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.pc-thumb.c1{background:linear-gradient(135deg,#E8F3FB,#D4E8F7)}
+.pc-thumb.c2{background:linear-gradient(135deg,#E0F5EC,#C8EDDB)}
+.pc-thumb.c3{background:linear-gradient(135deg,#FDF0DC,#F8E1B8)}
+.pc-thumb.c4{background:linear-gradient(135deg,#EEEDFE,#DDD9FD)}
+.pc-thumb.c5{background:linear-gradient(135deg,#FCEBEB,#F8D5D5)}
+.pc-new{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--g);color:#fff}
+.pc-hot{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--a);color:#fff}
+.pc-body{padding:14px}
+.pc-brand{font-size:11px;color:var(--tm);margin-bottom:4px}
+.pc-name{font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.35}
+.pc-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pc-price{font-size:15px;font-weight:700}
+.pc-comm{font-size:12px;font-weight:700;color:var(--g);background:var(--bg-g);padding:3px 8px;border-radius:4px}
+.pc-meta{display:flex;gap:10px;font-size:12px;color:var(--tm);margin-bottom:12px}
+.pc-btn{width:100%;padding:10px;border-radius:8px;background:var(--g);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:40px;transition:all .2s}
+.pc-btn:hover{background:var(--gl)}
+.pc-btn:active{transform:scale(.98)}
+.pc-btn.linked{background:var(--bg-g);color:var(--g)}
+
+/* MODAL */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.ov.on{display:flex}
+.modal{background:var(--sf);border-radius:18px;width:100%;max-width:500px;padding:32px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);animation:mi .25s ease;max-height:90vh;overflow-y:auto}
+@keyframes mi{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.mc{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:14px;color:var(--tm);display:flex;align-items:center;justify-content:center}
+.m-thumb{height:140px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:16px}
+.m-brand{font-size:12px;color:var(--tm);margin-bottom:4px}
+.m-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:12px}
+.m-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.m-badge{font-size:13px;font-weight:700;padding:6px 14px;border-radius:8px}
+.m-comm{background:var(--bg-g);color:var(--g)}
+.m-price{background:var(--bg);color:var(--t)}
+.m-earn{background:var(--bg-b);color:var(--b)}
+.m-desc{font-size:14px;color:var(--ts);line-height:1.7;margin-bottom:16px;padding:14px;background:var(--bg);border-radius:10px}
+.m-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.mi2{background:var(--bg);border-radius:8px;padding:10px 12px}
+.mi-l{font-size:11px;color:var(--tm);margin-bottom:2px}
+.mi-v{font-size:13px;font-weight:600}
+.link-result{background:var(--bg-g);border-radius:10px;padding:14px;margin-bottom:12px;display:none}
+.link-result.on{display:block}
+.lr-url{font-size:13px;font-weight:700;color:var(--g);word-break:break-all;margin-bottom:10px}
+.copy-btn{width:100%;padding:10px;border-radius:8px;background:var(--g);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:42px}
+.gen-btn{width:100%;padding:13px;border-radius:10px;background:var(--g);color:#fff;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;min-height:50px;transition:all .2s}
+.gen-btn:hover{background:var(--gl)}
+.gen-btn:active{transform:scale(.98)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px}
+.empty-ico{font-size:48px;margin-bottom:16px}
+.empty-t{font-size:18px;font-weight:700;margin-bottom:8px}
+.empty-d{font-size:14px;color:var(--ts)}
+
+/* MOBILE */
+.mob-topbar{display:none;background:var(--sf);border-bottom:1px solid var(--br);padding:0 16px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
+.hb span{display:block;width:20px;height:2px;background:var(--t);border-radius:2px}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+  .mn{margin-left:0}
+  .topbar{display:none}
+  .mob-topbar{display:flex}
+  .content{padding:14px 16px}
+  .prod-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .pc-thumb{height:120px;font-size:36px}
+  .ov{align-items:flex-end;padding:0}
+  .modal{border-radius:18px 18px 0 0;max-width:100%;padding:24px 18px 36px;animation:su .3s ease;max-height:90vh}
+  @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+}
+</style>
+</head>
+<body>
+
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-inner">
+      <div class="lm"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="ln">Vingly</span>
+    </div>
+    <div class="lb">인플루언서</div>
+  </div>
+  <nav class="sb-nav">
+    <a class="ni" href="influencer-dashboard.html"><span class="ic">📊</span>대시보드</a>
+    <a class="ni" href="influencer-dashboard.html" onclick="openLinkModal()"><span class="ic">🔗</span>링크 생성</a>
+    <a class="ni act" href="#"><span class="ic">🛍️</span>제품 탐색</a>
+    <a class="ni" href="#"><span class="ic">💸</span>수익 현황</a>
+    <a class="ni" href="#"><span class="ic">📈</span>성과 분석</a>
+    <div class="divr"></div>
+    <a class="ni" href="#"><span class="ic">⚙️</span>설정</a>
+    <a class="ni" href="index.html"><span class="ic">🏠</span>메인으로</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="ua">
+      <div class="av">뷰</div>
+      <div>
+        <div class="un">뷰티제인</div>
+        <div class="ur">인스타 · 12.4K</div>
+        <div class="eb">⭐ 얼리버드</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="mob-topbar">
+  <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--g)">제품 탐색</div>
+  <div style="width:40px"></div>
+</div>
+
+<main class="mn">
+  <div class="topbar">
+    <div class="tb-l">
+      <a class="back" href="influencer-dashboard.html">←</a>
+      <div class="tb-title">제품 탐색</div>
+    </div>
+    <div class="notif">🔔<div class="ndot"></div></div>
+  </div>
+
+  <div class="content">
+    <!-- 검색 -->
+    <div class="search-area">
+      <div class="search-top">
+        <input class="search-inp" type="text" placeholder="🔍  제품명, 브랜드 검색..." oninput="filterProducts()">
+        <select class="sort-sel" onchange="filterProducts()">
+          <option>수수료 높은 순</option>
+          <option>최신 등록순</option>
+          <option>판매 많은 순</option>
+          <option>가격 낮은 순</option>
+        </select>
+      </div>
+      <div class="cat-scroll" id="catRow">
+        <button class="cat-btn on" onclick="selectCat(this,'전체')">전체</button>
+        <button class="cat-btn" onclick="selectCat(this,'헬스·운동')">💪 헬스·운동</button>
+        <button class="cat-btn" onclick="selectCat(this,'식품·건강')">🥗 식품·건강</button>
+        <button class="cat-btn" onclick="selectCat(this,'뷰티·스킨케어')">💄 뷰티·스킨케어</button>
+        <button class="cat-btn" onclick="selectCat(this,'패션·의류')">👗 패션·의류</button>
+        <button class="cat-btn" onclick="selectCat(this,'생활·홈')">🏠 생활·홈</button>
+        <button class="cat-btn" onclick="selectCat(this,'디지털·전자')">📱 디지털·전자</button>
+      </div>
+    </div>
+
+    <div class="prod-header">
+      <div class="prod-count">전체 제품 <span id="prodCount" style="color:var(--g)">48개</span></div>
+      <div style="font-size:13px;color:var(--tm)">내가 링크 생성한 제품 3개</div>
+    </div>
+
+    <div class="prod-grid" id="prodGrid">
+      <!-- JS로 렌더링 -->
+    </div>
+  </div>
+</main>
+
+<!-- 제품 상세 / 링크 생성 모달 -->
+<div class="ov" id="ov" onclick="closeOuter(event)">
+  <div class="modal">
+    <button class="mc" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const products = [
+  {id:1,name:"단백질 쉐이크 바닐라 1kg",brand:"헬시팜",cat:"헬스·운동",price:42000,comm:15,emoji:"💊",color:"c1",tag:"hot",sales:152,linked:true,desc:"운동 후 빠른 단백질 보충을 위한 프리미엄 쉐이크. 유청단백질 25g, 설탕 0g. 바닐라 맛으로 부담없이 즐길 수 있습니다.",ship:"무료",days:"1~2일"},
+  {id:2,name:"그린 슈퍼푸드 파우더 300g",brand:"헬시팜",cat:"식품·건강",price:38000,comm:12,emoji:"🥗",color:"c2",tag:"",sales:98,linked:true,desc:"케일, 시금치, 브로콜리 등 10가지 채소를 동결건조한 슈퍼푸드 파우더. 하루 한 스푼으로 채소 섭취량 충족.",ship:"무료",days:"1~2일"},
+  {id:3,name:"BCAA 레몬맛 500g",brand:"헬시팜",cat:"헬스·운동",price:29000,comm:10,emoji:"💪",color:"c3",tag:"",sales:48,linked:true,desc:"운동 중 근육 손실 방지와 빠른 회복을 위한 BCAA. 레몬 맛으로 상큼하게 즐길 수 있습니다.",ship:"무료",days:"1~2일"},
+  {id:4,name:"마그네슘 수면 젤리",brand:"헬시팜",cat:"식품·건강",price:24000,comm:18,emoji:"🧴",color:"c2",tag:"new",sales:0,linked:false,desc:"수면 질 개선을 위한 마그네슘 젤리. 취침 30분 전 2개 섭취. 멜라토닌 무첨가, 어린이도 안전.",ship:"무료",days:"2~3일"},
+  {id:5,name:"유기농 스피루리나 정 180정",brand:"그린팜",cat:"식품·건강",price:35000,comm:20,emoji:"🌿",color:"c2",tag:"new",sales:0,linked:false,desc:"인증된 유기농 스피루리나. 단백질, 철분, 비타민 B12 풍부. 채식주의자에게 특히 추천.",ship:"3,000원",days:"2~3일"},
+  {id:6,name:"쿠션 러닝화 블랙 270mm",brand:"스포런",cat:"헬스·운동",price:89000,comm:12,emoji:"🏃",color:"c1",tag:"",sales:12,linked:false,desc:"초경량 쿠션 러닝화. 400g의 가벼운 무게로 장거리 달리기에 최적화. 미끄럼 방지 아웃솔.",ship:"무료",days:"1~2일"},
+  {id:7,name:"비타민D 고함량 2000IU",brand:"뉴트리진",cat:"식품·건강",price:28000,comm:15,emoji:"☀️",color:"c3",tag:"hot",sales:67,linked:false,desc:"햇볕 부족한 현대인을 위한 고함량 비타민D. 면역력 강화, 뼈 건강 지원. 1일 1정.",ship:"무료",days:"1~2일"},
+  {id:8,name:"쉐이커 보틀 700ml",brand:"헬시팜",cat:"헬스·운동",price:15000,comm:8,emoji:"🥤",color:"c1",tag:"",sales:34,linked:false,desc:"BPA Free 소재. 눈금 표시 있어 정확한 용량 계량 가능. 스테인리스 볼 포함.",ship:"3,000원",days:"1~2일"},
+  {id:9,name:"콜라겐 드링크 10병 세트",brand:"뷰티인",cat:"뷰티·스킨케어",price:45000,comm:22,emoji:"✨",color:"c4",tag:"new",sales:0,linked:false,desc:"저분자 콜라겐 5,000mg + 비타민C 함유. 피부 탄력과 수분 개선. 복숭아 맛.",ship:"무료",days:"1~2일"},
+  {id:10,name:"무선 폼롤러 진동 4단계",brand:"스포런",cat:"헬스·운동",price:68000,comm:14,emoji:"🔵",color:"c1",tag:"hot",sales:29,linked:false,desc:"4단계 진동 강도 조절. 1회 충전으로 3시간 사용. 근막 이완과 피로 회복에 효과적.",ship:"무료",days:"2~3일"},
+  {id:11,name:"요가 매트 TPE 6mm",brand:"그린팜",cat:"헬스·운동",price:32000,comm:11,emoji:"🧘",color:"c2",tag:"",sales:19,linked:false,desc:"친환경 TPE 소재. 미끄럼 방지 양면 패턴. 접이식으로 보관 용이. 1830×610mm.",ship:"무료",days:"2~3일"},
+  {id:12,name:"아보카도 오일 스킨 세럼",brand:"뷰티인",cat:"뷰티·스킨케어",price:38000,comm:18,emoji:"🌱",color:"c4",tag:"new",sales:0,linked:false,desc:"냉압착 아보카도 오일 추출 세럼. 건성·민감성 피부 수분 공급. 비건 인증.",ship:"무료",days:"1~2일"},
+];
+
+let currentCat = '전체';
+let currentProduct = null;
+
+function render() {
+  const grid = document.getElementById('prodGrid');
+  const search = document.querySelector('.search-inp').value.toLowerCase();
+  const filtered = products.filter(p => {
+    const catMatch = currentCat === '전체' || p.cat === currentCat;
+    const searchMatch = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
+    return catMatch && searchMatch;
+  });
+  document.getElementById('prodCount').textContent = filtered.length + '개';
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><div class="empty-t">검색 결과가 없어요</div><div class="empty-d">다른 키워드나 카테고리로 검색해보세요</div></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(p => `
+    <div class="pc" onclick="openProduct(${p.id})">
+      <div class="pc-thumb ${p.color}">
+        ${p.emoji}
+        ${p.tag === 'new' ? '<div class="pc-new">NEW</div>' : p.tag === 'hot' ? '<div class="pc-hot">🔥 인기</div>' : ''}
+      </div>
+      <div class="pc-body">
+        <div class="pc-brand">${p.brand}</div>
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-row">
+          <div class="pc-price">₩${p.price.toLocaleString()}</div>
+          <div class="pc-comm">수수료 ${p.comm}%</div>
+        </div>
+        <div class="pc-meta">
+          <span>📦 ${p.ship}</span>
+          <span>🚀 ${p.days}</span>
+          ${p.sales > 0 ? `<span>🛒 ${p.sales}건</span>` : ''}
+        </div>
+        <button class="pc-btn ${p.linked ? 'linked' : ''}" onclick="event.stopPropagation();openProduct(${p.id})">
+          ${p.linked ? '✓ 링크 생성됨' : '🔗 링크 생성하기'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProduct(id) {
+  currentProduct = products.find(p => p.id === id);
+  const p = currentProduct;
+  const earn = Math.round(p.price * p.comm / 100);
+  document.getElementById('modalContent').innerHTML = `
+    <div class="m-thumb ${p.color}">${p.emoji}</div>
+    <div class="m-brand">${p.brand} · ${p.cat}</div>
+    <div class="m-name">${p.name}</div>
+    <div class="m-row">
+      <div class="m-badge m-comm">수수료 ${p.comm}%</div>
+      <div class="m-badge m-price">₩${p.price.toLocaleString()}</div>
+      <div class="m-badge m-earn">건당 수익 ₩${earn.toLocaleString()}</div>
+    </div>
+    <div class="m-desc">${p.desc}</div>
+    <div class="m-info">
+      <div class="mi2"><div class="mi-l">배송비</div><div class="mi-v">${p.ship}</div></div>
+      <div class="mi2"><div class="mi-l">배송기간</div><div class="mi-v">${p.days}</div></div>
+      <div class="mi2"><div class="mi-l">누적 판매</div><div class="mi-v">${p.sales > 0 ? p.sales + '건' : '신규 제품'}</div></div>
+      <div class="mi2"><div class="mi-l">쿠키 기간</div><div class="mi-v">30일</div></div>
+    </div>
+    <div class="link-result ${p.linked ? 'on' : ''}" id="linkResult">
+      <div class="lr-url" id="linkUrl">vingly.kr/j/jane-${p.name.split(' ')[0].toLowerCase()}</div>
+      <button class="copy-btn" onclick="copyLink()">📋 링크 복사하기</button>
+    </div>
+    <button class="gen-btn" id="genBtn" onclick="generateLink(${id})">${p.linked ? '✓ 이미 링크 생성됨 — 다시 생성' : '🔗 내 전용 링크 생성하기'}</button>
+  `;
+  document.getElementById('ov').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function generateLink(id) {
+  const btn = document.getElementById('genBtn');
+  btn.textContent = '생성 중...';
+  btn.style.opacity = '.7';
+  setTimeout(() => {
+    const p = products.find(x => x.id === id);
+    p.linked = true;
+    document.getElementById('linkResult').classList.add('on');
+    document.getElementById('linkUrl').textContent = `vingly.kr/j/jane-${p.name.split(' ')[0].toLowerCase()}`;
+    btn.textContent = '✓ 링크 생성 완료!';
+    btn.style.background = 'var(--bg-g)';
+    btn.style.color = 'var(--g)';
+    btn.style.opacity = '1';
+    render();
+  }, 800);
+}
+
+function copyLink() {
+  const url = document.getElementById('linkUrl').textContent;
+  navigator.clipboard.writeText('https://' + url).catch(() => {});
+  document.querySelector('.copy-btn').textContent = '✅ 복사됐어요!';
+  setTimeout(() => { document.querySelector('.copy-btn') && (document.querySelector('.copy-btn').textContent = '📋 링크 복사하기'); }, 2000);
+}
+
+function closeModal() {
+  document.getElementById('ov').classList.remove('on');
+  document.body.style.overflow = '';
+}
+function closeOuter(e) { if (e.target === document.getElementById('ov')) closeModal(); }
+
+function selectCat(btn, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  currentCat = cat;
+  render();
+}
+
+function filterProducts() { render(); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+render();
+</script>
+</body>
+</html>

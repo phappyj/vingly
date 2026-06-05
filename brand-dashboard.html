@@ -155,8 +155,17 @@
     .grid-2,.grid-3{grid-template-columns:1fr}
     .content{padding:16px}
     .stat-value{font-size:20px}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    table{min-width:600px}
+    .rank-item{flex-wrap:wrap}
+    .chart-bars{height:90px}
+  }
+  @media(max-width:380px){
+    .stats-grid{grid-template-columns:1fr}
+    .stat-card{padding:12px 14px}
   }
 </style>
+<link rel="stylesheet" href="vingly-common.css">
 </head>
 <body>
 
@@ -168,10 +177,10 @@
   </div>
   <nav class="sidebar-nav">
     <a class="nav-item active" href="#"><span class="nav-icon">📊</span>대시보드</a>
-    <a class="nav-item" href="#" onclick="openModal()"><span class="nav-icon">📦</span>제품 등록</a>
+    <a class="nav-item" href="product-register.html"><span class="nav-icon">📦</span>제품 등록</a>
     <a class="nav-item" href="#"><span class="nav-icon">🛒</span>제품 관리</a>
     <a class="nav-item" href="#"><span class="nav-icon">📱</span>인플루언서</a>
-    <a class="nav-item" href="#"><span class="nav-icon">💸</span>정산 관리</a>
+    <a class="nav-item" href="payment-setup.html"><span class="nav-icon">💸</span>정산 관리</a>
     <div class="nav-divider"></div>
     <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
     <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
@@ -402,5 +411,6 @@
   function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn()})
 </script>
+<script src="vingly-common.js"></script>
 </body>
 </html>
