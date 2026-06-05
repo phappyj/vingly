@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --b:#0B4F7A;--bl:#1472B0;--bg-b:#E8F3FB;
+  --g:#085C3A;--gl:#0F9060;--bg-g:#E0F5EC;
+  --a:#C47A10;--bg-a:#FDF0DC;
+  --r2:#A32D2D;--bg-r:#FCEBEB;
+  --p:#534AB7;--bg-p:#EEEDFE;
+  --bg:#F4F3EF;--sf:#FFFFFF;
+  --t:#0D0D0D;--ts:#4A4A4A;--tm:#9A9A9A;
+  --br:#E2E0DA;--rad:12px;--sw:230px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--t);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--sf);border:1px solid var(--br);border-radius:18px;padding:40px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,.08)}
+.login-logo{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.lmark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--b),#063550);display:flex;align-items:center;justify-content:center}
+.lmark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.lname{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--b)}
+.ladmin{font-size:11px;font-weight:700;color:var(--r2);background:var(--bg-r);padding:2px 8px;border-radius:4px;margin-left:4px}
+.login-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--ts);margin-bottom:22px}
+.linp{width:100%;padding:12px 14px;border-radius:9px;border:1.5px solid var(--br);background:var(--bg);font-size:14px;font-family:inherit;outline:none;margin-bottom:12px;min-height:48px;transition:border-color .2s}
+.linp:focus{border-color:var(--b);background:var(--sf)}
+.lbtn{width:100%;padding:13px;border-radius:9px;background:var(--b);color:#fff;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;min-height:50px;transition:all .2s}
+.lbtn:hover{background:var(--bl)}
+.lerr{font-size:13px;color:var(--r2);margin-top:8px;display:none;text-align:center}
+.lerr.show{display:block}
+
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--br)}
+.sb-logo-inner{display:flex;align-items:center;gap:8px}
+.sb-lmark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--b),#063550);display:flex;align-items:center;justify-content:center}
+.sb-lmark svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.sb-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--b)}
+.sb-badge{font-size:10px;font-weight:700;color:var(--r2);background:var(--bg-r);padding:2px 7px;border-radius:4px;margin-top:2px;display:inline-block}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;font-size:13px;font-weight:500;color:var(--ts);cursor:pointer;transition:all .15s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit}
+.ni:hover{background:var(--bg);color:var(--t)}
+.ni.act{background:var(--bg-b);color:var(--b);font-weight:600}
+.ni .ic{font-size:15px;width:18px;text-align:center}
+.divr{height:1px;background:var(--br);margin:6px 0}
+.sb-foot{padding:14px;border-top:1px solid var(--br)}
+.admin-info{display:flex;align-items:center;gap:10px}
+.admin-av{width:34px;height:34px;border-radius:50%;background:var(--bg-r);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--r2);flex-shrink:0}
+.admin-name{font-size:13px;font-weight:600}
+.admin-role{font-size:11px;color:var(--tm)}
+
+/* MAIN */
+.mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);padding:0 26px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.tb-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.notif{width:34px;height:34px;border-radius:8px;background:var(--bg);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative}
+.ndot{width:8px;height:8px;background:#E24B4A;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--sf)}
+.btn-sm{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;min-height:36px;transition:all .2s}
+.btn-r{background:var(--r2);color:#fff}
+.btn-r:hover{background:#8a2020}
+
+/* PAGES */
+.page{display:none;padding:24px 26px;flex:1}
+.page.act{display:block}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sc2{background:var(--sf);border:1px solid var(--br);border-radius:var(--rad);padding:16px 18px}
+.sc-l{font-size:11px;color:var(--tm);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.sc-v{font-size:24px;font-weight:700;margin-bottom:5px;line-height:1}
+.sc-ch{font-size:12px;font-weight:500}
+.up{color:var(--g)} .dn{color:var(--r2)} .nt{color:var(--tm)}
+
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rad);padding:18px;margin-bottom:14px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-t{font-size:14px;font-weight:700}
+.card-a{font-size:12px;color:var(--b);cursor:pointer;font-weight:600}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:11px;font-weight:700;color:var(--tm);text-align:left;padding:8px 10px;border-bottom:1px solid var(--br);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+tbody td{font-size:13px;padding:11px 10px;border-bottom:1px solid var(--br);color:var(--t)}
+tbody tr:last-child td{border:none}
+tbody tr:hover td{background:rgba(0,0,0,.015)}
+.td-b{font-weight:600}
+.td-m{color:var(--tm)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.bg2{background:var(--bg-g);color:var(--g)}
+.bb2{background:var(--bg-b);color:var(--b)}
+.ba2{background:var(--bg-a);color:var(--a)}
+.br2{background:var(--bg-r);color:var(--r2)}
+.bp2{background:var(--bg-p);color:var(--p)}
+
+/* ACTION BTNS */
+.act-btn{padding:5px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid var(--br);background:transparent;transition:all .15s;margin-right:4px}
+.act-btn:hover{border-color:var(--b);color:var(--b)}
+.act-btn.red:hover{border-color:var(--r2);color:var(--r2)}
+.act-btn.green:hover{border-color:var(--g);color:var(--g)}
+
+/* SEARCH / FILTER */
+.filter-row{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.search-inp{padding:9px 13px;border-radius:8px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-family:inherit;outline:none;min-width:200px;transition:border-color .2s}
+.search-inp:focus{border-color:var(--b)}
+.filter-sel{padding:8px 12px;border-radius:8px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-family:inherit;outline:none;cursor:pointer}
+
+/* PROGRESS */
+.pr-wrap{margin-bottom:10px}
+.pr-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.pr-bar{height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
+.pr-fill{height:100%;border-radius:3px;background:var(--b)}
+
+/* ALERT */
+.alert-item{background:var(--sf);border:1px solid var(--br);border-radius:9px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.alert-item.warn{border-color:rgba(196,122,16,.3);background:var(--bg-a)}
+.alert-item.danger{border-color:rgba(163,45,45,.3);background:var(--bg-r)}
+.ai-ico{font-size:16px;flex-shrink:0;margin-top:1px}
+.ai-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.ai-desc{font-size:12px;color:var(--ts);line-height:1.5}
+.ai-time{font-size:11px;color:var(--tm);margin-top:4px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--t);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%);transition:transform .3s}
+  .sb.open{transform:translateX(0)}
+  .mn{margin-left:0}
+  .sg{grid-template-columns:1fr 1fr;gap:8px}
+  .g2{grid-template-columns:1fr}
+  .page{padding:14px 16px}
+  .topbar{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="lmark"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="lname">Vingly</span>
+      <span class="ladmin">ADMIN</span>
+    </div>
+    <div class="login-title">관리자 로그인</div>
+    <div class="login-sub">Vingly 운영팀 전용 관리 시스템</div>
+    <input class="linp" type="text" id="lid" placeholder="관리자 아이디" onkeydown="if(event.key==='Enter')doLogin()">
+    <input class="linp" type="password" id="lpw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">로그인</button>
+    <div class="lerr" id="lerr">아이디 또는 비밀번호가 올바르지 않습니다</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-inner">
+      <div class="sb-lmark"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="sb-name">Vingly</span>
+    </div>
+    <div class="sb-badge">ADMIN</div>
+  </div>
+  <nav class="sb-nav">
+    <button class="ni act" onclick="showPage('dashboard',this)"><span class="ic">📊</span>대시보드</button>
+    <button class="ni" onclick="showPage('members',this)"><span class="ic">👥</span>회원 관리</button>
+    <button class="ni" onclick="showPage('products',this)"><span class="ic">📦</span>제품 승인</button>
+    <button class="ni" onclick="showPage('settle',this)"><span class="ic">💸</span>정산 관리</button>
+    <button class="ni" onclick="showPage('alerts',this)"><span class="ic">🚨</span>알림 · 신고 <span style="margin-left:auto;background:var(--r2);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px">3</span></button>
+    <div class="divr"></div>
+    <button class="ni" onclick="showPage('settings',this)"><span class="ic">⚙️</span>시스템 설정</button>
+    <a class="ni" href="index.html" style="text-decoration:none"><span class="ic">🌐</span>메인 사이트</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="admin-info">
+      <div class="admin-av">관</div>
+      <div><div class="admin-name">관리자</div><div class="admin-role">Vingly 운영팀</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="mn">
+  <div class="topbar">
+    <div class="tb-title" id="pageTitle">대시보드</div>
+    <div class="tb-right">
+      <div class="notif">🔔<div class="ndot"></div></div>
+      <button class="btn-sm btn-r" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page act" id="pg-dashboard">
+    <div class="sg">
+      <div class="sc2"><div class="sc-l">👥 총 회원수</div><div class="sc-v">231명</div><div class="sc-ch up">↑ 이번 주 +18명</div></div>
+      <div class="sc2"><div class="sc-l">📦 등록 제품</div><div class="sc-v">48개</div><div class="sc-ch up">↑ 승인 대기 3개</div></div>
+      <div class="sc2"><div class="sc-l">💰 이번 달 거래액</div><div class="sc-v">₩4,280만</div><div class="sc-ch up">↑ 23% 지난달 대비</div></div>
+      <div class="sc2"><div class="sc-l">🚨 처리 대기</div><div class="sc-v" style="color:var(--r2)">3건</div><div class="sc-ch dn">신고 2 · 환불 1</div></div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">📈 얼리버드 현황</div><div class="card-a">상세 보기</div></div>
+        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">브랜드/셀러</span><span>14개사</span></div><div class="pr-bar"><div class="pr-fill" style="width:14%"></div></div></div>
+        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">인플루언서</span><span>217명</span></div><div class="pr-bar"><div class="pr-fill" style="width:21.7%;background:var(--g)"></div></div></div>
+        <div style="margin-top:14px;font-size:13px;color:var(--ts)">목표 1,000명까지 <strong style="color:var(--b)">769명</strong> 남음</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">⚡ 오늘 실시간</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>신규 가입</span><span style="font-weight:600;color:var(--g)">+4명</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>링크 생성</span><span style="font-weight:600">12건</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>판매 발생</span><span style="font-weight:600;color:var(--b)">23건</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0"><span>오늘 거래액</span><span style="font-weight:600">₩890,000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">🚨 처리 필요 알림</div></div>
+      <div class="alert-item danger">
+        <div class="ai-ico">⛔</div>
+        <div><div class="ai-title">신고 접수 — "스포런" 브랜드</div><div class="ai-desc">인플루언서 핏라이프김 신고: 제품 설명과 실제 상품이 다름. 환불 요청 1건 포함.</div><div class="ai-time">10분 전</div></div>
+        <div style="margin-left:auto;flex-shrink:0"><button class="act-btn green" onclick="showPage('alerts',document.querySelector('.ni:nth-child(5))'))">처리</button></div>
+      </div>
+      <div class="alert-item warn">
+        <div class="ai-ico">⚠️</div>
+        <div><div class="ai-title">제품 승인 대기 3개</div><div class="ai-desc">신규 등록된 제품 3개가 승인 대기 중입니다.</div><div class="ai-time">2시간 전</div></div>
+        <div style="margin-left:auto;flex-shrink:0"><button class="act-btn" onclick="showPage('products',null)">확인</button></div>
+      </div>
+      <div class="alert-item">
+        <div class="ai-ico">💸</div>
+        <div><div class="ai-title">6월 정산 D-25</div><div class="ai-desc">6월 30일 자동 정산 예정액: ₩428,000 (인플루언서 14명)</div><div class="ai-time">오늘</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBERS -->
+  <div class="page" id="pg-members">
+    <div class="filter-row">
+      <input class="search-inp" type="text" placeholder="이름, 이메일, 연락처 검색...">
+      <select class="filter-sel"><option>전체</option><option>브랜드/셀러</option><option>인플루언서</option></select>
+      <select class="filter-sel"><option>전체 상태</option><option>정상</option><option>경고</option><option>정지</option></select>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-h"><div class="card-t">전체 회원 231명</div><div style="font-size:12px;color:var(--tm)">이번 주 신규 +18명</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>연락처</th><th>가입일</th><th>거래액</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody>
+            <tr><td class="td-b">헬시팜</td><td><span class="badge bb2">브랜드</span></td><td class="td-m">healthy@farm.com</td><td class="td-m">010-1234-5678</td><td class="td-m">06.01</td><td class="td-b">₩4,280,000</td><td><span class="badge bg2">정상</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+            <tr><td class="td-b">뷰티제인</td><td><span class="badge bg2">인플루언서</span></td><td class="td-m">jane@beauty.com</td><td class="td-m">010-2345-6789</td><td class="td-m">06.01</td><td class="td-b">₩890,000</td><td><span class="badge bg2">정상</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+            <tr><td class="td-b">핏라이프김</td><td><span class="badge bg2">인플루언서</span></td><td class="td-m">fit@life.com</td><td class="td-m">010-3456-7890</td><td class="td-m">06.02</td><td class="td-b">₩642,000</td><td><span class="badge bg2">정상</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+            <tr><td class="td-b">스포런</td><td><span class="badge bb2">브랜드</span></td><td class="td-m">run@sport.com</td><td class="td-m">010-4567-8901</td><td class="td-m">06.03</td><td class="td-b">₩320,000</td><td><span class="badge ba2">경고</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+            <tr><td class="td-b">건강한식탁</td><td><span class="badge bg2">인플루언서</span></td><td class="td-m">table@health.com</td><td class="td-m">010-5678-9012</td><td class="td-m">06.03</td><td class="td-b">₩480,000</td><td><span class="badge bg2">정상</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+            <tr><td class="td-b">그린팜</td><td><span class="badge bb2">브랜드</span></td><td class="td-m">green@farm.kr</td><td class="td-m">010-6789-0123</td><td class="td-m">06.04</td><td class="td-b">₩180,000</td><td><span class="badge bg2">정상</span></td><td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="page" id="pg-products">
+    <div class="filter-row">
+      <input class="search-inp" type="text" placeholder="제품명, 브랜드 검색...">
+      <select class="filter-sel"><option>전체 상태</option><option>승인 대기</option><option>승인</option><option>반려</option></select>
+      <select class="filter-sel"><option>전체 카테고리</option><option>헬스·운동</option><option>식품·건강</option><option>뷰티</option></select>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-h"><div class="card-t">전체 제품 48개 <span style="font-size:12px;color:var(--r2);margin-left:8px">승인 대기 3개</span></div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>제품명</th><th>브랜드</th><th>카테고리</th><th>가격</th><th>수수료</th><th>판매건수</th><th>상태</th><th>등록일</th><th>관리</th></tr></thead>
+          <tbody>
+            <tr><td class="td-b">🧴 마그네슘 수면 젤리 <span style="font-size:10px;font-weight:700;color:var(--a);background:var(--bg-a);padding:1px 5px;border-radius:3px;margin-left:4px">대기</span></td><td>헬시팜</td><td class="td-m">헬스·운동</td><td>₩24,000</td><td>18%</td><td>-</td><td><span class="badge ba2">승인 대기</span></td><td class="td-m">06.05</td><td><button class="act-btn green" onclick="approveProduct(this)">승인</button><button class="act-btn red">반려</button></td></tr>
+            <tr><td class="td-b">🏃 쿠션 러닝화 블랙 <span style="font-size:10px;font-weight:700;color:var(--a);background:var(--bg-a);padding:1px 5px;border-radius:3px;margin-left:4px">대기</span></td><td>스포런</td><td class="td-m">헬스·운동</td><td>₩89,000</td><td>12%</td><td>-</td><td><span class="badge ba2">승인 대기</span></td><td class="td-m">06.05</td><td><button class="act-btn green" onclick="approveProduct(this)">승인</button><button class="act-btn red">반려</button></td></tr>
+            <tr><td class="td-b">🌿 유기농 스피루리나 <span style="font-size:10px;font-weight:700;color:var(--a);background:var(--bg-a);padding:1px 5px;border-radius:3px;margin-left:4px">대기</span></td><td>그린팜</td><td class="td-m">식품·건강</td><td>₩35,000</td><td>20%</td><td>-</td><td><span class="badge ba2">승인 대기</span></td><td class="td-m">06.04</td><td><button class="act-btn green" onclick="approveProduct(this)">승인</button><button class="act-btn red">반려</button></td></tr>
+            <tr><td class="td-b">💊 단백질 쉐이크 바닐라</td><td>헬시팜</td><td class="td-m">헬스·운동</td><td>₩42,000</td><td>15%</td><td>152건</td><td><span class="badge bg2">판매중</span></td><td class="td-m">06.01</td><td><button class="act-btn">상세</button><button class="act-btn red">중단</button></td></tr>
+            <tr><td class="td-b">🥗 그린 슈퍼푸드 파우더</td><td>헬시팜</td><td class="td-m">식품·건강</td><td>₩38,000</td><td>12%</td><td>98건</td><td><span class="badge bg2">판매중</span></td><td class="td-m">06.01</td><td><button class="act-btn">상세</button><button class="act-btn red">중단</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTLE -->
+  <div class="page" id="pg-settle">
+    <div class="sg" style="grid-template-columns:repeat(3,1fr)">
+      <div class="sc2"><div class="sc-l">💸 이번 달 정산 예정</div><div class="sc-v">₩428,000</div><div class="sc-ch nt">6월 30일 자동 지급</div></div>
+      <div class="sc2"><div class="sc-l">✅ 누적 지급 완료</div><div class="sc-v">₩1,668,000</div><div class="sc-ch up">정상 처리</div></div>
+      <div class="sc2"><div class="sc-l">🏦 연동 계좌</div><div class="sc-v" style="font-size:16px">토스페이먼츠</div><div class="sc-ch nt">연동 대기</div></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">정산 내역</div><div class="card-a">엑셀 다운로드</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>정산일</th><th>인플루언서</th><th>판매건수</th><th>수수료</th><th>계좌</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody>
+            <tr><td class="td-m">2026.06.30</td><td class="td-b">뷰티제인</td><td>73건</td><td class="td-b">₩428,000</td><td class="td-m">카카오뱅크 ***5678</td><td><span class="badge ba2">예정</span></td><td><button class="act-btn green">즉시 지급</button></td></tr>
+            <tr><td class="td-m">2026.05.31</td><td class="td-b">뷰티제인</td><td>38건</td><td class="td-b">₩245,000</td><td class="td-m">카카오뱅크 ***5678</td><td><span class="badge bg2">완료</span></td><td><button class="act-btn">영수증</button></td></tr>
+            <tr><td class="td-m">2026.05.31</td><td class="td-b">핏라이프김</td><td>29건</td><td class="td-b">₩186,000</td><td class="td-m">국민은행 ***7890</td><td><span class="badge bg2">완료</span></td><td><button class="act-btn">영수증</button></td></tr>
+            <tr><td class="td-m">2026.05.31</td><td class="td-b">건강한식탁</td><td>21건</td><td class="td-b">₩134,000</td><td class="td-m">신한은행 ***9012</td><td><span class="badge bg2">완료</span></td><td><button class="act-btn">영수증</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="page" id="pg-alerts">
+    <div class="card">
+      <div class="card-h"><div class="card-t">🚨 신고 · 분쟁 처리</div><div style="font-size:12px;font-weight:700;color:var(--r2)">미처리 3건</div></div>
+      <div class="alert-item danger" style="margin-bottom:10px">
+        <div class="ai-ico">⛔</div>
+        <div style="flex:1">
+          <div class="ai-title">제품 품질 신고 — 스포런 "쿠션 러닝화"</div>
+          <div class="ai-desc">신고자: 핏라이프김 (인플루언서)<br>내용: 제품 설명과 실제 품질 상이. 구매자 3명 환불 요청.<br>보증금 처리 여부 결정 필요.</div>
+          <div class="ai-time">10분 전 접수</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="act-btn green" onclick="resolveAlert(this,'보증금에서 환불 처리 완료')">환불 처리</button>
+            <button class="act-btn" onclick="resolveAlert(this,'경고 발송 완료')">경고 발송</button>
+            <button class="act-btn red" onclick="resolveAlert(this,'계정 정지 완료')">계정 정지</button>
+          </div>
+        </div>
+      </div>
+      <div class="alert-item warn" style="margin-bottom:10px">
+        <div class="ai-ico">⚠️</div>
+        <div style="flex:1">
+          <div class="ai-title">환불 요청 — 단백질 쉐이크 바닐라</div>
+          <div class="ai-desc">구매자: 일반 고객<br>사유: 개봉 후 이물질 발견. 사진 첨부됨.<br>에스크로 보관 중 (₩42,000)</div>
+          <div class="ai-time">2시간 전 접수</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="act-btn green" onclick="resolveAlert(this,'환불 승인 완료')">환불 승인</button>
+            <button class="act-btn red" onclick="resolveAlert(this,'환불 거부 처리')">거부</button>
+          </div>
+        </div>
+      </div>
+      <div class="alert-item warn">
+        <div class="ai-ico">📋</div>
+        <div style="flex:1">
+          <div class="ai-title">불량 링크 신고 — 뷰티제인</div>
+          <div class="ai-desc">구매자: 일반 고객<br>내용: 링크 클릭 시 오류 페이지 표시됨. 기술 점검 필요.</div>
+          <div class="ai-time">5시간 전 접수</div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="act-btn" onclick="resolveAlert(this,'기술팀 전달 완료')">기술팀 전달</button>
+            <button class="act-btn green" onclick="resolveAlert(this,'처리 완료')">처리 완료</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="pg-settings">
+    <div class="g2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">⚙️ 플랫폼 설정</div></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
+            <div><div style="font-size:13px;font-weight:600">파일럿 모드</div><div style="font-size:12px;color:var(--tm)">수수료 0%, 이용료 무료</div></div>
+            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
+            <div><div style="font-size:13px;font-weight:600">신규 가입 허용</div><div style="font-size:12px;color:var(--tm)">가입 신청 받기</div></div>
+            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
+            <div><div style="font-size:13px;font-weight:600">자동 정산</div><div style="font-size:12px;color:var(--tm)">매월 말일 자동 실행</div></div>
+            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+            <div><div style="font-size:13px;font-weight:600">AI 자동 매칭</div><div style="font-size:12px;color:var(--tm)">제품-인플루언서 자동 연결</div></div>
+            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">💰 수수료 정책</div></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">파일럿 수수료 (현재)</div><div style="font-size:18px;font-weight:700;color:var(--g)">0% (무료)</div></div>
+          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">전환 후 일반 수수료</div><div style="font-size:18px;font-weight:700;color:var(--b)">3%</div></div>
+          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">얼리버드 영구 수수료</div><div style="font-size:18px;font-weight:700;color:var(--b)">1.5%</div></div>
+          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">수수료 전환 트리거</div><div style="font-size:14px;font-weight:600">판매자 1,000명 달성 시</div></div>
+          <div style="background:var(--bg);border-radius:8px;padding:10px;font-size:12px;color:var(--ts)">현재 231명 / 수동 전환도 가능</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// 로그인
+function doLogin() {
+  const id = document.getElementById('lid').value.trim();
+  const pw = document.getElementById('lpw').value.trim();
+  if (id === 'admin' && pw === 'vingly2026') {
+    document.getElementById('loginScreen').style.display = 'none';
+    showToast('관리자로 로그인했습니다 ✓');
+  } else {
+    document.getElementById('lerr').classList.add('show');
+    document.getElementById('lpw').value = '';
+  }
+}
+
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('lid').value = '';
+  document.getElementById('lpw').value = '';
+  document.getElementById('lerr').classList.remove('show');
+}
+
+// 페이지 전환
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
+  document.getElementById('pg-' + id).classList.add('act');
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
+  if (btn) btn.classList.add('act');
+  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 승인', settle:'정산 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
+  document.getElementById('pageTitle').textContent = titles[id] || '';
+}
+
+// 제품 승인
+function approveProduct(btn) {
+  const row = btn.closest('tr');
+  row.querySelector('td:nth-child(7)').innerHTML = '<span class="badge bg2">판매중</span>';
+  row.querySelector('td:nth-child(1) .badge') && row.querySelector('td:nth-child(1) span')?.remove();
+  btn.parentElement.innerHTML = '<button class="act-btn">상세</button><button class="act-btn red">중단</button>';
+  showToast('제품이 승인됐습니다 ✓');
+}
+
+// 신고 처리
+function resolveAlert(btn, msg) {
+  const item = btn.closest('.alert-item');
+  item.style.opacity = '.4';
+  item.style.pointerEvents = 'none';
+  showToast(msg + ' ✓');
+}
+
+// 토글 스위치
+function toggleSwitch(el) {
+  const on = el.style.background === 'rgb(8, 92, 58)' || el.style.background === 'var(--g)';
+  el.style.background = on ? 'var(--br)' : 'var(--g)';
+  el.firstElementChild.style.marginLeft = on ? '0' : 'auto';
+}
+
+// 토스트
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>
