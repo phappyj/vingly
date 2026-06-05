@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 인플루언서 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#0D5C8F;--brand-light:#1A7DC4;--brand-bg:#E8F2FA;
+    --green:#0A6644;--green-light:#12A06A;--green-bg:#E1F5EE;
+    --orange:#BA7517;--orange-bg:#FAEEDA;
+    --red:#A32D2D;--red-bg:#FCEBEB;
+    --purple:#534AB7;--purple-bg:#EEEDFE;
+    --bg:#F4F3EF;--surface:#FFFFFF;
+    --text:#111111;--text-sub:#555555;--text-muted:#999999;
+    --border:#E0DED8;--radius:12px;--sidebar:240px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+  .sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+  .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--green)}
+  .logo-badge{font-size:11px;font-weight:600;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
+  .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .15s;text-decoration:none}
+  .nav-item:hover{background:var(--bg);color:var(--text)}
+  .nav-item.active{background:var(--green-bg);color:var(--green)}
+  .nav-icon{font-size:16px;width:20px;text-align:center}
+  .nav-divider{height:1px;background:var(--border);margin:8px 0}
+  .sidebar-bottom{padding:16px;border-top:1px solid var(--border)}
+  .user-info{display:flex;align-items:center;gap:10px}
+  .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
+  .user-name{font-size:13px;font-weight:600}
+  .user-role{font-size:11px;color:var(--text-muted)}
+  .earlybird-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FFF3CD;color:#BA7517;margin-top:2px}
+
+  .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+  .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .btn-sm{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .2s;min-height:36px}
+  .btn-green{background:var(--green);color:#fff}
+  .btn-green:hover{background:var(--green-light)}
+  .btn-ghost-sm{background:transparent;border:1px solid var(--border);color:var(--text-sub)}
+  .btn-ghost-sm:hover{border-color:var(--green);color:var(--green)}
+  .notif{width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative}
+  .notif-dot{width:8px;height:8px;background:#E24B4A;border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--surface)}
+
+  .content{padding:28px;flex:1}
+
+  /* EARLYBIRD BANNER */
+  .earlybird-banner{background:linear-gradient(135deg,var(--green),#064D32);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;color:#fff;flex-wrap:wrap;gap:10px}
+  .eb-left{display:flex;align-items:center;gap:12px}
+  .eb-icon{font-size:24px}
+  .eb-title{font-size:14px;font-weight:600;margin-bottom:2px}
+  .eb-desc{font-size:12px;opacity:.8}
+  .eb-badge{font-size:12px;font-weight:700;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:6px;white-space:nowrap}
+
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+  .stat-label{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1;margin-bottom:6px}
+  .stat-change{font-size:12px;font-weight:500}
+  .stat-change.up{color:var(--green)}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .card-title{font-size:14px;font-weight:600;color:var(--text)}
+  .card-action{font-size:12px;color:var(--green);cursor:pointer;font-weight:500}
+
+  /* LINK CARD */
+  .link-card{background:var(--green-bg);border:1px solid rgba(10,102,68,.15);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+  .link-product{font-size:13px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .link-url{font-size:12px;color:var(--text-muted);background:var(--surface);border-radius:5px;padding:5px 10px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+  .link-url span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .copy-btn{font-size:11px;font-weight:600;color:var(--green);cursor:pointer;white-space:nowrap;flex-shrink:0;background:none;border:none;font-family:inherit}
+  .link-stats{display:flex;gap:14px}
+  .ls{text-align:center}
+  .ls-val{font-size:14px;font-weight:600;color:var(--text)}
+  .ls-label{font-size:10px;color:var(--text-muted)}
+
+  /* PRODUCT CATALOG */
+  .catalog-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+  .catalog-item:last-child{border:none}
+  .catalog-item:hover{margin:0 -20px;padding:12px 20px}
+  .cat-thumb{width:44px;height:44px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .cat-name{font-size:13px;font-weight:500;margin-bottom:3px}
+  .cat-brand{font-size:12px;color:var(--text-muted)}
+  .cat-right{margin-left:auto;text-align:right;flex-shrink:0}
+  .cat-commission{font-size:13px;font-weight:700;color:var(--green)}
+  .cat-price{font-size:11px;color:var(--text-muted)}
+  .cat-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;background:var(--green);color:#fff;border:none;cursor:pointer;font-family:inherit;margin-top:4px}
+
+  /* CHART */
+  .chart-bars{display:flex;align-items:flex-end;gap:6px;height:110px;padding-top:8px}
+  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .bar{width:100%;border-radius:4px 4px 0 0;background:var(--green-bg);transition:all .3s;cursor:pointer}
+  .bar:hover{background:var(--green)}
+  .bar.today{background:var(--green)}
+  .bar-label{font-size:10px;color:var(--text-muted)}
+
+  /* SETTLEMENT */
+  .settle-card{background:linear-gradient(135deg,var(--brand),#0A4A7A);border-radius:var(--radius);padding:20px;color:#fff;margin-bottom:16px}
+  .settle-label{font-size:12px;opacity:.7;margin-bottom:6px}
+  .settle-amount{font-size:32px;font-weight:700;margin-bottom:4px}
+  .settle-sub{font-size:13px;opacity:.8;margin-bottom:16px}
+  .settle-detail{display:flex;gap:16px}
+  .sd{flex:1}
+  .sd-label{font-size:11px;opacity:.7;margin-bottom:3px}
+  .sd-val{font-size:15px;font-weight:600}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px}
+  .badge-green{background:var(--green-bg);color:var(--green)}
+  .badge-orange{background:var(--orange-bg);color:var(--orange)}
+  .badge-brand{background:var(--brand-bg);color:var(--brand)}
+  .badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.active{display:flex}
+  .modal{background:var(--surface);border-radius:16px;width:100%;max-width:480px;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:mIn .25s ease;max-height:90vh;overflow-y:auto}
+  @keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:14px;color:var(--text-sub);display:flex;align-items:center;justify-content:center}
+  .modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:6px}
+  .modal-sub{font-size:13px;color:var(--text-sub);margin-bottom:18px}
+  .link-result{background:var(--green-bg);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+  .link-result-url{font-size:13px;font-weight:600;color:var(--green);word-break:break-all;margin-bottom:8px}
+  .link-result-copy{width:100%;padding:10px;border-radius:7px;background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px}
+  .link-share-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .share-btn{padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;transition:all .2s}
+  .share-btn:hover{border-color:var(--green);color:var(--green)}
+
+  .mob-topbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+  .hamburger{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
+  .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%);transition:transform .3s}
+    .sidebar.open{transform:translateX(0)}
+    .main{margin-left:0}
+    .topbar{display:none}
+    .mob-topbar{display:flex}
+    .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .grid-2,.grid-3{grid-template-columns:1fr}
+    .content{padding:16px}
+    .stat-value{font-size:20px}
+    .earlybird-banner{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Vingly</div>
+    <div class="logo-badge">인플루언서</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" href="#"><span class="nav-icon">📊</span>대시보드</a>
+    <a class="nav-item" href="#" onclick="openLinkModal()"><span class="nav-icon">🔗</span>링크 생성</a>
+    <a class="nav-item" href="#"><span class="nav-icon">🛍️</span>제품 탐색</a>
+    <a class="nav-item" href="#"><span class="nav-icon">💸</span>수익 현황</a>
+    <a class="nav-item" href="#"><span class="nav-icon">📈</span>성과 분석</a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
+    <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-info">
+      <div class="user-avatar">뷰</div>
+      <div>
+        <div class="user-name">뷰티제인</div>
+        <div class="user-role">인스타 · 12.4K 팔로워</div>
+        <div class="earlybird-badge">⭐ 얼리버드</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="mob-topbar">
+  <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--green)">Vingly</div>
+  <button class="btn-sm btn-green" onclick="openLinkModal()">🔗 링크 생성</button>
+</div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">내 대시보드</div>
+    <div class="topbar-right">
+      <button class="btn-sm btn-ghost-sm" href="#">제품 탐색</button>
+      <button class="btn-sm btn-green" onclick="openLinkModal()">🔗 링크 생성하기</button>
+      <div class="notif">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 얼리버드 배너 -->
+    <div class="earlybird-banner">
+      <div class="eb-left">
+        <div class="eb-icon">⭐</div>
+        <div>
+          <div class="eb-title">얼리버드 등급 활성화됨</div>
+          <div class="eb-desc">현재 수수료 100% 수령 중 · 1,000명 달성 후 우대 수수료 영구 적용</div>
+        </div>
+      </div>
+      <div class="eb-badge">현재 231명 / 1,000명</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">💰 이번 달 수익</div>
+        <div class="stat-value">₩890,000</div>
+        <div class="stat-change up">↑ 34% 지난달 대비</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🛒 판매 건수</div>
+        <div class="stat-value">73건</div>
+        <div class="stat-change up">↑ 12건 지난달 대비</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">👆 링크 클릭수</div>
+        <div class="stat-value">2,841</div>
+        <div class="stat-change up">↑ 전환율 2.57%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">📦 판매 중 제품</div>
+        <div class="stat-value">3개</div>
+        <div class="stat-change" style="color:var(--text-muted)">+ 제품 추가 가능</div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <!-- 내 링크 현황 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">내 판매 링크</div>
+          <div class="card-action" onclick="openLinkModal()">+ 새 링크 생성</div>
+        </div>
+
+        <div class="link-card">
+          <div class="link-product">💊 단백질 쉐이크 바닐라 <span class="badge badge-green">판매중</span></div>
+          <div class="link-url">
+            <span>vingly.kr/j/jane-protein</span>
+            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-protein')">복사</button>
+          </div>
+          <div class="link-stats">
+            <div class="ls"><div class="ls-val">1,240</div><div class="ls-label">클릭</div></div>
+            <div class="ls"><div class="ls-val">38건</div><div class="ls-label">판매</div></div>
+            <div class="ls"><div class="ls-val">₩490,000</div><div class="ls-label">수익</div></div>
+            <div class="ls"><div class="ls-val">3.07%</div><div class="ls-label">전환율</div></div>
+          </div>
+        </div>
+
+        <div class="link-card">
+          <div class="link-product">🥗 그린 슈퍼푸드 파우더 <span class="badge badge-green">판매중</span></div>
+          <div class="link-url">
+            <span>vingly.kr/j/jane-greens</span>
+            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-greens')">복사</button>
+          </div>
+          <div class="link-stats">
+            <div class="ls"><div class="ls-val">890</div><div class="ls-label">클릭</div></div>
+            <div class="ls"><div class="ls-val">24건</div><div class="ls-label">판매</div></div>
+            <div class="ls"><div class="ls-val">₩280,000</div><div class="ls-label">수익</div></div>
+            <div class="ls"><div class="ls-val">2.70%</div><div class="ls-label">전환율</div></div>
+          </div>
+        </div>
+
+        <div class="link-card">
+          <div class="link-product">💪 BCAA 레몬맛 <span class="badge badge-brand">신규</span></div>
+          <div class="link-url">
+            <span>vingly.kr/j/jane-bcaa</span>
+            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-bcaa')">복사</button>
+          </div>
+          <div class="link-stats">
+            <div class="ls"><div class="ls-val">711</div><div class="ls-label">클릭</div></div>
+            <div class="ls"><div class="ls-val">11건</div><div class="ls-label">판매</div></div>
+            <div class="ls"><div class="ls-val">₩120,000</div><div class="ls-label">수익</div></div>
+            <div class="ls"><div class="ls-val">1.55%</div><div class="ls-label">전환율</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 정산 + 차트 -->
+      <div>
+        <div class="settle-card">
+          <div class="settle-label">다음 정산 예정액</div>
+          <div class="settle-amount">₩890,000</div>
+          <div class="settle-sub">6월 30일 자동 입금 예정</div>
+          <div class="settle-detail">
+            <div class="sd"><div class="sd-label">누적 총 수익</div><div class="sd-val">₩2,140,000</div></div>
+            <div class="sd"><div class="sd-label">이번 달 판매</div><div class="sd-val">73건</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">일별 수익</div></div>
+          <div class="chart-bars">
+            <div class="bar-wrap"><div class="bar" style="height:35%"></div><div class="bar-label">월</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:60%"></div><div class="bar-label">화</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:45%"></div><div class="bar-label">수</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:85%"></div><div class="bar-label">목</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:100%"></div><div class="bar-label">금</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:65%"></div><div class="bar-label">토</div></div>
+            <div class="bar-wrap"><div class="bar today" style="height:50%"></div><div class="bar-label" style="color:var(--green);font-weight:600">오늘</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추천 제품 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">지금 판매하기 좋은 제품 — AI 추천</div>
+        <div class="card-action">전체 제품 보기</div>
+      </div>
+      <div class="grid-2" style="margin:0">
+        <div>
+          <div class="catalog-item">
+            <div class="cat-thumb">🧴</div>
+            <div><div class="cat-name">마그네슘 수면 젤리</div><div class="cat-brand">헬시팜 · 헬스·운동</div></div>
+            <div class="cat-right"><div class="cat-commission">수수료 18%</div><div class="cat-price">판매가 ₩24,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          </div>
+          <div class="catalog-item">
+            <div class="cat-thumb">🌿</div>
+            <div><div class="cat-name">유기농 스피루리나</div><div class="cat-brand">그린팜 · 식품·건강</div></div>
+            <div class="cat-right"><div class="cat-commission">수수료 20%</div><div class="cat-price">판매가 ₩35,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="catalog-item">
+            <div class="cat-thumb">🏃</div>
+            <div><div class="cat-name">쿠션 러닝화 블랙</div><div class="cat-brand">스포런 · 헬스·운동</div></div>
+            <div class="cat-right"><div class="cat-commission">수수료 12%</div><div class="cat-price">판매가 ₩89,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          </div>
+          <div class="catalog-item">
+            <div class="cat-thumb">💆</div>
+            <div><div class="cat-name">비타민D 고함량</div><div class="cat-brand">뉴트리진 · 식품·건강</div></div>
+            <div class="cat-right"><div class="cat-commission">수수료 15%</div><div class="cat-price">판매가 ₩28,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- 링크 생성 모달 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="step1">
+      <div class="modal-title">🔗 판매 링크 생성</div>
+      <div class="modal-sub">제품을 선택하면 30초 안에 나만의 전용 링크가 만들어집니다.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">💊</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">단백질 쉐이크 바닐라</div><div style="font-size:12px;color:var(--text-muted)">헬시팜 · 판매가 ₩42,000</div></div>
+          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 15%</div>
+        </div>
+        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🧴</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">마그네슘 수면 젤리</div><div style="font-size:12px;color:var(--text-muted)">헬시팜 · 판매가 ₩24,000</div></div>
+          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 18%</div>
+        </div>
+        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🌿</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">유기농 스피루리나</div><div style="font-size:12px;color:var(--text-muted)">그린팜 · 판매가 ₩35,000</div></div>
+          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 20%</div>
+        </div>
+      </div>
+      <button class="submit-btn" style="background:var(--green)" onclick="generateLink()">내 전용 링크 생성하기 →</button>
+    </div>
+    <div id="step2" style="display:none;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">🎉</div>
+      <div class="modal-title">링크가 생성됐어요!</div>
+      <div class="modal-sub">아래 링크를 인스타·유튜브·카카오톡에 공유하세요.</div>
+      <div class="link-result">
+        <div class="link-result-url" id="generatedUrl">vingly.kr/j/jane-protein?ref=jane</div>
+        <button class="link-result-copy" onclick="copyGeneratedLink()">📋 링크 복사하기</button>
+      </div>
+      <div class="link-share-btns">
+        <button class="share-btn">📸 인스타그램 공유</button>
+        <button class="share-btn">▶️ 유튜브 설명란</button>
+        <button class="share-btn">💬 카카오톡 공유</button>
+        <button class="share-btn">📝 블로그 삽입</button>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">판매가 발생하면 실시간으로 알림을 보내드려요</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openLinkModal(){
+    document.getElementById('step1').style.display='block';
+    document.getElementById('step2').style.display='none';
+    document.getElementById('modalOverlay').classList.add('active');
+    document.body.style.overflow='hidden';
+  }
+  function closeModalBtn(){document.getElementById('modalOverlay').classList.remove('active');document.body.style.overflow=''}
+  function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalBtn()}
+  function selectProduct(el){
+    document.querySelectorAll('[onclick="selectProduct(this)"]').forEach(e=>e.style.borderColor='var(--border)');
+    el.style.borderColor='var(--green)';
+    el.style.background='var(--green-bg)';
+  }
+  function generateLink(){
+    document.getElementById('step1').style.display='none';
+    document.getElementById('step2').style.display='block';
+  }
+  function copyLink(btn, url){
+    navigator.clipboard.writeText('https://'+url).then(()=>{
+      btn.textContent='복사됨!';
+      btn.style.color='var(--green)';
+      setTimeout(()=>{btn.textContent='복사';btn.style.color=''},1500);
+    }).catch(()=>{btn.textContent='복사됨!'});
+  }
+  function copyGeneratedLink(){
+    const url=document.getElementById('generatedUrl').textContent;
+    navigator.clipboard.writeText('https://'+url).then(()=>{
+      document.querySelector('.link-result-copy').textContent='✅ 복사됐어요!';
+      setTimeout(()=>{document.querySelector('.link-result-copy').textContent='📋 링크 복사하기'},2000);
+    });
+  }
+  function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn()})
+</script>
+</body>
+</html>

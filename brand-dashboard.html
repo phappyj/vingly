@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 브랜드/셀러 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:#0D5C8F;--brand-light:#1A7DC4;--brand-bg:#E8F2FA;
+    --green:#0A6644;--green-bg:#E1F5EE;
+    --orange:#BA7517;--orange-bg:#FAEEDA;
+    --red:#A32D2D;--red-bg:#FCEBEB;
+    --bg:#F4F3EF;--surface:#FFFFFF;
+    --text:#111111;--text-sub:#555555;--text-muted:#999999;
+    --border:#E0DED8;--radius:12px;--sidebar:240px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+  .sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+  .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--brand)}
+  .logo-badge{font-size:11px;font-weight:600;color:var(--brand);background:var(--brand-bg);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
+  .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .15s;text-decoration:none}
+  .nav-item:hover{background:var(--bg);color:var(--text)}
+  .nav-item.active{background:var(--brand-bg);color:var(--brand)}
+  .nav-icon{font-size:16px;width:20px;text-align:center}
+  .nav-divider{height:1px;background:var(--border);margin:8px 0}
+  .sidebar-bottom{padding:16px;border-top:1px solid var(--border)}
+  .user-info{display:flex;align-items:center;gap:10px}
+  .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--brand-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--brand);flex-shrink:0}
+  .user-name{font-size:13px;font-weight:600}
+  .user-role{font-size:11px;color:var(--text-muted)}
+
+  /* MAIN */
+  .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+  .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .btn-sm{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .2s;min-height:36px}
+  .btn-brand{background:var(--brand);color:#fff}
+  .btn-brand:hover{background:var(--brand-light)}
+  .btn-ghost-sm{background:transparent;border:1px solid var(--border);color:var(--text-sub)}
+  .btn-ghost-sm:hover{border-color:var(--brand);color:var(--brand)}
+  .notif{width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative}
+  .notif-dot{width:8px;height:8px;background:#E24B4A;border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--surface)}
+
+  .content{padding:28px;flex:1}
+
+  /* STAT CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+  .stat-label{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1;margin-bottom:6px}
+  .stat-change{font-size:12px;font-weight:500}
+  .stat-change.up{color:var(--green)}
+  .stat-change.down{color:var(--red)}
+  .stat-icon{font-size:14px}
+
+  /* GRID 2COL */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .card-title{font-size:14px;font-weight:600;color:var(--text)}
+  .card-action{font-size:12px;color:var(--brand);cursor:pointer;font-weight:500}
+
+  /* CHART BAR */
+  .chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:10px}
+  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .bar{width:100%;border-radius:4px 4px 0 0;background:var(--brand-bg);transition:all .3s;cursor:pointer;position:relative}
+  .bar:hover{background:var(--brand)}
+  .bar.today{background:var(--brand)}
+  .bar-label{font-size:10px;color:var(--text-muted)}
+  .bar-val{font-size:10px;font-weight:600;color:var(--text-sub)}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:12px;font-weight:600;color:var(--text-muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody td{font-size:13px;color:var(--text);padding:11px 12px;border-bottom:1px solid var(--border)}
+  tbody tr:last-child td{border:none}
+  tbody tr:hover td{background:var(--bg)}
+  .td-name{font-weight:500}
+  .td-muted{color:var(--text-muted)}
+
+  /* BADGE */
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px}
+  .badge-green{background:var(--green-bg);color:var(--green)}
+  .badge-orange{background:var(--orange-bg);color:var(--orange)}
+  .badge-brand{background:var(--brand-bg);color:var(--brand)}
+  .badge-red{background:var(--red-bg);color:var(--red)}
+
+  /* PRODUCT LIST */
+  .product-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .product-item:last-child{border:none}
+  .product-thumb{width:40px;height:40px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .product-name{font-size:13px;font-weight:500;margin-bottom:2px}
+  .product-meta{font-size:12px;color:var(--text-muted)}
+  .product-right{margin-left:auto;text-align:right}
+  .product-revenue{font-size:13px;font-weight:600;color:var(--text)}
+  .product-unit{font-size:11px;color:var(--text-muted)}
+
+  /* INFLUENCER RANK */
+  .rank-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+  .rank-item:last-child{border:none}
+  .rank-num{font-size:12px;font-weight:700;color:var(--text-muted);width:18px;flex-shrink:0}
+  .rank-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .rank-name{font-size:13px;font-weight:500;flex:1}
+  .rank-channel{font-size:11px;color:var(--text-muted)}
+  .rank-sales{text-align:right}
+  .rank-amount{font-size:13px;font-weight:600}
+  .rank-count{font-size:11px;color:var(--text-muted)}
+
+  /* PROGRESS */
+  .progress-wrap{margin-bottom:12px}
+  .progress-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .progress-bar{height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;background:var(--brand)}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.active{display:flex}
+  .modal{background:var(--surface);border-radius:16px;width:100%;max-width:520px;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:mIn .25s ease;max-height:90vh;overflow-y:auto}
+  @keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:14px;color:var(--text-sub);display:flex;align-items:center;justify-content:center}
+  .modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:18px}
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
+  .form-input{width:100%;padding:11px 13px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;min-height:44px}
+  .form-input:focus{border-color:var(--brand)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-hint{font-size:12px;color:var(--text-muted);margin-top:4px}
+  .submit-btn{width:100%;padding:13px;border-radius:8px;background:var(--brand);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;min-height:48px;margin-top:6px;transition:all .2s}
+  .submit-btn:hover{background:var(--brand-light)}
+
+  /* MOBILE SIDEBAR */
+  .mob-topbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+  .hamburger{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
+  .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%);transition:transform .3s}
+    .sidebar.open{transform:translateX(0)}
+    .main{margin-left:0}
+    .topbar{display:none}
+    .mob-topbar{display:flex}
+    .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .grid-2,.grid-3{grid-template-columns:1fr}
+    .content{padding:16px}
+    .stat-value{font-size:20px}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Vingly</div>
+    <div class="logo-badge">브랜드/셀러</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" href="#"><span class="nav-icon">📊</span>대시보드</a>
+    <a class="nav-item" href="#" onclick="openModal()"><span class="nav-icon">📦</span>제품 등록</a>
+    <a class="nav-item" href="#"><span class="nav-icon">🛒</span>제품 관리</a>
+    <a class="nav-item" href="#"><span class="nav-icon">📱</span>인플루언서</a>
+    <a class="nav-item" href="#"><span class="nav-icon">💸</span>정산 관리</a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
+    <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-info">
+      <div class="user-avatar">헬</div>
+      <div><div class="user-name">헬시팜</div><div class="user-role">브랜드/셀러 · 파일럿</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MOBILE TOPBAR -->
+<div class="mob-topbar">
+  <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--brand)">Vingly</div>
+  <button class="btn-sm btn-brand" onclick="openModal()">+ 제품 등록</button>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">대시보드</div>
+    <div class="topbar-right">
+      <button class="btn-sm btn-ghost-sm" onclick="openModal()">+ 제품 등록</button>
+      <button class="btn-sm btn-brand" onclick="openModal()">인플루언서 초대</button>
+      <div class="notif">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-icon">💰</span>이번 달 판매액</div>
+        <div class="stat-value">₩4,280,000</div>
+        <div class="stat-change up">↑ 23.4% 지난달 대비</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-icon">📦</span>총 판매 건수</div>
+        <div class="stat-value">312건</div>
+        <div class="stat-change up">↑ 18건 지난달 대비</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-icon">📱</span>활동 인플루언서</div>
+        <div class="stat-value">14명</div>
+        <div class="stat-change up">↑ 3명 이번 주 신규</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-icon">💸</span>지급 예정 수수료</div>
+        <div class="stat-value">₩428,000</div>
+        <div class="stat-change" style="color:var(--text-muted)">6월 30일 자동 지급</div>
+      </div>
+    </div>
+
+    <!-- CHART + PRODUCT -->
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">일별 판매 현황</div>
+          <div style="display:flex;gap:8px">
+            <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--brand);color:#fff;cursor:pointer">주간</span>
+            <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--bg);color:var(--text-sub);cursor:pointer">월간</span>
+          </div>
+        </div>
+        <div class="chart-bars">
+          <div class="bar-wrap"><div class="bar" style="height:40%" title="월요일"></div><div class="bar-label">월</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:65%"></div><div class="bar-label">화</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:50%"></div><div class="bar-label">수</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:80%"></div><div class="bar-label">목</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:95%"></div><div class="bar-label">금</div></div>
+          <div class="bar-wrap"><div class="bar" style="height:70%"></div><div class="bar-label">토</div></div>
+          <div class="bar-wrap"><div class="bar today" style="height:55%"></div><div class="bar-label" style="color:var(--brand);font-weight:600">오늘</div></div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:20px">
+          <div><div style="font-size:11px;color:var(--text-muted)">평균 일 판매액</div><div style="font-size:14px;font-weight:600">₩611,000</div></div>
+          <div><div style="font-size:11px;color:var(--text-muted)">최고 판매일</div><div style="font-size:14px;font-weight:600">금요일</div></div>
+          <div><div style="font-size:11px;color:var(--text-muted)">전환율</div><div style="font-size:14px;font-weight:600">3.2%</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">카테고리별 비중</div></div>
+        <div class="progress-wrap">
+          <div class="progress-top"><span>헬스 · 운동</span><span style="font-weight:600">42%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--brand)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-top"><span>식품 · 건강</span><span style="font-weight:600">31%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:31%;background:var(--green)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-top"><span>뷰티 · 스킨케어</span><span style="font-weight:600">18%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:18%;background:var(--orange)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-top"><span>기타</span><span style="font-weight:600">9%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:9%;background:var(--text-muted)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFLUENCER TABLE + PRODUCTS -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">인플루언서 판매 순위</div>
+          <div class="card-action">전체 보기</div>
+        </div>
+        <div>
+          <div class="rank-item">
+            <div class="rank-num">1</div>
+            <div class="rank-avatar" style="background:#FFF3CD;color:#BA7517">뷰</div>
+            <div><div class="rank-name">뷰티제인</div><div class="rank-channel">인스타 · 팔로워 12.4K</div></div>
+            <div class="rank-sales"><div class="rank-amount">₩890,000</div><div class="rank-count">73건</div></div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-num">2</div>
+            <div class="rank-avatar" style="background:#E1F5EE;color:#0A6644">핏</div>
+            <div><div class="rank-name">핏라이프김</div><div class="rank-channel">유튜브 · 구독 8.2K</div></div>
+            <div class="rank-sales"><div class="rank-amount">₩642,000</div><div class="rank-count">54건</div></div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-num">3</div>
+            <div class="rank-avatar" style="background:#E8F2FA;color:#0D5C8F">건</div>
+            <div><div class="rank-name">건강한식탁</div><div class="rank-channel">블로그 · 월 방문 3.1K</div></div>
+            <div class="rank-sales"><div class="rank-amount">₩480,000</div><div class="rank-count">41건</div></div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-num">4</div>
+            <div class="rank-avatar" style="background:#FAEEDA;color:#BA7517">러</div>
+            <div><div class="rank-name">러닝메이트박</div><div class="rank-channel">인스타 · 팔로워 5.8K</div></div>
+            <div class="rank-sales"><div class="rank-amount">₩312,000</div><div class="rank-count">26건</div></div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-num">5</div>
+            <div class="rank-avatar" style="background:#FCEBEB;color:#A32D2D">홈</div>
+            <div><div class="rank-name">홈트레이너이</div><div class="rank-channel">틱톡 · 팔로워 2.3K</div></div>
+            <div class="rank-sales"><div class="rank-amount">₩198,000</div><div class="rank-count">17건</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">제품별 판매 현황</div>
+          <div class="card-action" onclick="openModal()">+ 제품 추가</div>
+        </div>
+        <div>
+          <div class="product-item">
+            <div class="product-thumb">💊</div>
+            <div><div class="product-name">단백질 쉐이크 바닐라</div><div class="product-meta">수수료 15% · 인플루언서 8명</div></div>
+            <div class="product-right"><div class="product-revenue">₩1,840,000</div><div class="product-unit">152건</div></div>
+          </div>
+          <div class="product-item">
+            <div class="product-thumb">🥗</div>
+            <div><div class="product-name">그린 슈퍼푸드 파우더</div><div class="product-meta">수수료 12% · 인플루언서 5명</div></div>
+            <div class="product-right"><div class="product-revenue">₩1,260,000</div><div class="product-unit">98건</div></div>
+          </div>
+          <div class="product-item">
+            <div class="product-thumb">💪</div>
+            <div><div class="product-name">BCAA 레몬맛</div><div class="product-meta">수수료 10% · 인플루언서 3명</div></div>
+            <div class="product-right"><div class="product-revenue">₩720,000</div><div class="product-unit">48건</div></div>
+          </div>
+          <div class="product-item">
+            <div class="product-thumb">🧴</div>
+            <div><div class="product-name">마그네슘 수면 젤리</div><div class="product-meta">수수료 18% · 인플루언서 2명</div></div>
+            <div class="product-right"><div class="product-revenue">₩460,000</div><div class="product-unit">14건</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">최근 주문 내역</div>
+        <div class="card-action">전체 보기</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>주문번호</th><th>제품명</th><th>인플루언서</th><th>금액</th><th>수수료</th><th>상태</th><th>날짜</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="td-muted">#VG-0312</td><td class="td-name">단백질 쉐이크 바닐라</td><td>뷰티제인</td><td style="font-weight:600">₩42,000</td><td style="color:var(--orange)">₩6,300</td><td><span class="badge badge-green">배송완료</span></td><td class="td-muted">06.05</td></tr>
+            <tr><td class="td-muted">#VG-0311</td><td class="td-name">그린 슈퍼푸드 파우더</td><td>핏라이프김</td><td style="font-weight:600">₩38,000</td><td style="color:var(--orange)">₩4,560</td><td><span class="badge badge-brand">배송중</span></td><td class="td-muted">06.05</td></tr>
+            <tr><td class="td-muted">#VG-0310</td><td class="td-name">BCAA 레몬맛</td><td>건강한식탁</td><td style="font-weight:600">₩29,000</td><td style="color:var(--orange)">₩2,900</td><td><span class="badge badge-green">배송완료</span></td><td class="td-muted">06.04</td></tr>
+            <tr><td class="td-muted">#VG-0309</td><td class="td-name">단백질 쉐이크 바닐라</td><td>러닝메이트박</td><td style="font-weight:600">₩42,000</td><td style="color:var(--orange)">₩6,300</td><td><span class="badge badge-orange">결제확인중</span></td><td class="td-muted">06.04</td></tr>
+            <tr><td class="td-muted">#VG-0308</td><td class="td-name">마그네슘 수면 젤리</td><td>홈트레이너이</td><td style="font-weight:600">₩24,000</td><td style="color:var(--orange)">₩4,320</td><td><span class="badge badge-green">배송완료</span></td><td class="td-muted">06.03</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- 제품 등록 모달 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-title">새 제품 등록</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">제품명</label><input class="form-input" type="text" placeholder="예: 단백질 쉐이크 바닐라"></div>
+      <div class="form-group"><label class="form-label">카테고리</label><select class="form-input"><option>헬스 · 운동</option><option>식품 · 건강</option><option>뷰티 · 스킨케어</option><option>생활 · 홈</option><option>기타</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">판매가 (원)</label><input class="form-input" type="number" placeholder="42000"></div>
+      <div class="form-group"><label class="form-label">인플루언서 수수료율 (%)</label><input class="form-input" type="number" placeholder="15" min="1" max="50"><div class="form-hint">권장: 10~20% · 높을수록 더 많은 인플루언서가 선택</div></div>
+    </div>
+    <div class="form-group"><label class="form-label">제품 설명</label><textarea class="form-input" rows="3" placeholder="제품의 특징과 장점을 간단히 설명해주세요" style="resize:vertical"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">재고 수량</label><input class="form-input" type="number" placeholder="100"></div>
+      <div class="form-group"><label class="form-label">배송 소요일</label><select class="form-input"><option>1~2일</option><option>2~3일</option><option>3~5일</option></select></div>
+    </div>
+    <button class="submit-btn" onclick="closeModalBtn()">제품 등록하기 →</button>
+  </div>
+</div>
+
+<script>
+  function openModal(){document.getElementById('modalOverlay').classList.add('active');document.body.style.overflow='hidden'}
+  function closeModalBtn(){document.getElementById('modalOverlay').classList.remove('active');document.body.style.overflow=''}
+  function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalBtn()}
+  function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn()})
+</script>
+</body>
+</html>
