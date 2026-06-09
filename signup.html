@@ -524,7 +524,7 @@ function doSignup() {
 }
 
 async function saveToSheets(data) {
-  const SHEETS_URL = ''; // ← Apps Script URL 여기에 입력
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec';
   if(!SHEETS_URL) {
     console.log('[Vingly] Sheets URL 미설정 — 로컬 저장만 진행:', data);
     await new Promise(r=>setTimeout(r,800)); // 로딩 시뮬레이션

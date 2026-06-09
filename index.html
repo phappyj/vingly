@@ -1183,6 +1183,16 @@ function showErr(id, msg) {
 const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const validPhone = v => /^\d{3}-\d{3,4}-\d{4}$/.test(v);
 
+async function saveToSheets(data) {
+  try {
+    await fetch('https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec', {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.error('[Vingly] Sheets:', e); }
+}
+
 function doSubmit(r) {
   let ok = true;
   if (r === 'brand') {
@@ -1205,6 +1215,20 @@ function doSubmit(r) {
       { document.getElementById('i_ch').classList.add('err'); showErr('i_ch','채널을 선택해주세요'); ok=false; }
   }
   if (!ok) return;
+
+  // Google Sheets 저장
+  const _role = r;
+  const _data = {
+    role: r,
+    name:  r==='brand' ? document.getElementById('b_name').value.trim()  : document.getElementById('i_name').value.trim(),
+    phone: r==='brand' ? document.getElementById('b_phone').value.trim() : document.getElementById('i_phone').value.trim(),
+    email: r==='brand' ? document.getElementById('b_email').value.trim() : document.getElementById('i_email').value.trim(),
+    brandOrName:        r==='brand' ? document.getElementById('b_brand').value.trim() : document.getElementById('i_name').value.trim(),
+    categoryOrChannel:  r==='brand' ? document.getElementById('b_cat').value : document.getElementById('i_ch').value,
+    joinedAt: new Date().toISOString()
+  };
+  fetch('https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec', { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(_data) })
+    .catch(e => console.error('[Vingly] Sheets 저장 실패:', e));
 
   document.getElementById('formArea').style.display = 'none';
   document.getElementById('successArea').classList.add('on');
