@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 회원가입</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C0E12; --ink-60:rgba(12,14,18,.6); --ink-35:rgba(12,14,18,.35);
+  --ink-14:rgba(12,14,18,.14); --ink-06:rgba(12,14,18,.06);
+  --canvas:#F5F4F0; --white:#fff;
+  --blue:#1A56DB; --blue-bg:#EFF6FF; --blue-mid:rgba(26,86,219,.12);
+  --green:#047857; --green-bg:#ECFDF5; --green-mid:rgba(4,120,87,.12);
+  --red:#DC2626;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;-webkit-font-smoothing:antialiased}
+
+.container{width:100%;max-width:960px;display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start}
+
+/* LEFT NAV */
+.left-nav{position:sticky;top:40px}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:32px}
+.logo-gem{width:32px;height:32px;border-radius:9px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.logo-gem svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo-name{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.4px}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ink-06)}
+.step:last-child{border:none}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;transition:all .3s}
+.sn-idle{background:var(--ink-06);color:var(--ink-35);border:1.5px solid var(--ink-14)}
+.sn-active{background:var(--ink);color:#fff;border:1.5px solid var(--ink)}
+.sn-done{background:var(--green-bg);color:var(--green);border:1.5px solid rgba(4,120,87,.3)}
+.step-info{flex:1}
+.step-title{font-size:13px;font-weight:700;color:var(--ink-35);transition:color .3s}
+.step-title.active{color:var(--ink)}
+.step-title.done{color:var(--green)}
+.step-desc{font-size:12px;color:var(--ink-35);margin-top:2px;line-height:1.4;font-weight:400}
+.login-link{margin-top:24px;font-size:13px;color:var(--ink-60)}
+.login-link a{color:var(--blue);text-decoration:none;font-weight:600}
+
+/* FORM AREA */
+.form-area{background:var(--white);border:1px solid var(--ink-14);border-radius:20px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.step-header{margin-bottom:28px}
+.step-eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-35);margin-bottom:6px}
+.step-h{font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--ink);margin-bottom:5px}
+.step-sub{font-size:14px;color:var(--ink-60);font-weight:400}
+
+/* ROLE CARDS */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.rc{padding:20px 16px;border-radius:14px;border:2px solid var(--ink-14);background:transparent;cursor:pointer;text-align:left;font-family:inherit;transition:all .2s;width:100%}
+.rc:hover{border-color:var(--ink-35)}
+.rc.sel-b{border-color:var(--blue);background:var(--blue-bg)}
+.rc.sel-g{border-color:var(--green);background:var(--green-bg)}
+.rc:active{transform:scale(.97)}
+.rc-ico{font-size:24px;margin-bottom:10px}
+.rc-name{font-size:15px;font-weight:700;color:var(--ink);display:block;margin-bottom:3px}
+.rc-desc{font-size:12px;color:var(--ink-60);line-height:1.45;display:block;margin-bottom:8px;font-weight:400}
+.rc-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px}
+.rct-b{background:var(--blue-mid);color:var(--blue)}
+.rct-g{background:var(--green-mid);color:var(--green)}
+
+/* FORM */
+.fg{margin-bottom:14px}
+.fl{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
+.req{color:var(--red);margin-left:2px}
+.fi{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--ink-14);background:var(--ink-06);font:400 14px/1 'Pretendard',sans-serif;outline:none;transition:all .18s;min-height:46px;color:var(--ink)}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:var(--white)}
+.fi.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.08)}
+.ferr{font-size:12px;color:var(--red);margin-top:4px;display:none}
+.ferr.on{display:block}
+.fhint{font-size:12px;color:var(--ink-35);margin-top:4px;font-weight:400}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pw-wrap{position:relative}
+.pw-wrap .fi{padding-right:46px}
+.pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink-35);font-size:14px;padding:4px}
+.pw-strength{margin-top:6px;display:flex;gap:4px;align-items:center}
+.pw-bar{flex:1;height:4px;border-radius:2px;background:var(--ink-06);overflow:hidden}
+.pw-fill{height:100%;border-radius:2px;width:0;transition:all .3s}
+.pw-label{font-size:11px;font-weight:600;min-width:32px;text-align:right}
+.nbox{border-radius:10px;padding:10px 14px;font:600 13px/1.5 'Pretendard',sans-serif;margin-bottom:14px}
+.nb-b{background:var(--blue-bg);color:var(--blue)}
+.nb-g{background:var(--green-bg);color:var(--green)}
+
+/* AGREE */
+.agree-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.agree-item{display:flex;align-items:flex-start;gap:9px;cursor:pointer}
+.agree-item input{width:16px;height:16px;border-radius:4px;accent-color:var(--blue);flex-shrink:0;margin-top:2px}
+.agree-text{font-size:13px;color:var(--ink-60);line-height:1.5;font-weight:400}
+.agree-text a{color:var(--blue);text-decoration:none;font-weight:600}
+.agree-text.bold{color:var(--ink);font-weight:600}
+
+/* BTNS */
+.btn-row{display:flex;gap:10px;margin-top:4px}
+.btn-back{flex:1;padding:13px;border-radius:10px;background:transparent;border:1.5px solid var(--ink-14);font:700 14px/1 'Pretendard',sans-serif;color:var(--ink-60);cursor:pointer;min-height:48px;transition:all .2s}
+.btn-back:hover{border-color:var(--ink-35);color:var(--ink)}
+.btn-next{flex:2;padding:13px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-next:hover{background:#1a1d24;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.btn-next:active{transform:scale(.97)}
+.btn-next.loading{opacity:.7;pointer-events:none}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.btn-next.loading .spinner{display:inline-block}
+.btn-next.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS */
+.success-screen{text-align:center;padding:20px 0;display:none}
+.success-screen.on{display:block}
+.s-ico{font-size:52px;margin-bottom:16px;animation:bounce .6s ease}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.s-title{font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.s-desc{font-size:14px;color:var(--ink-60);margin-bottom:22px;line-height:1.65;font-weight:400}
+.s-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:100px;margin-bottom:20px;font:700 13px/1 'Pretendard',sans-serif}
+.sb-b{background:var(--blue-bg);color:var(--blue)}
+.sb-g{background:var(--green-bg);color:var(--green)}
+.next-steps{background:var(--ink-06);border-radius:12px;padding:16px 18px;text-align:left;margin-bottom:20px;border:1px solid var(--ink-14)}
+.ns-title{font-size:13px;font-weight:700;margin-bottom:10px}
+.ns-item{display:flex;gap:9px;font-size:13px;color:var(--ink-60);margin-bottom:7px;line-height:1.5;font-weight:400}
+.go-btn{width:100%;padding:14px;border-radius:11px;background:var(--ink);color:#fff;border:none;font:800 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:50px;transition:all .22s}
+.go-btn:hover{background:#1a1d24;transform:translateY(-1px)}
+
+/* FSEC */
+.fsec{display:none}.fsec.on{display:block}
+
+@media(max-width:768px){
+  body{align-items:flex-start;padding:20px 16px}
+  .container{grid-template-columns:1fr;gap:20px}
+  .left-nav{position:static;display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .steps{display:none}
+  .login-link{margin-top:0}
+  .form-area{padding:24px 18px}
+  .role-grid,.frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LEFT NAV -->
+  <div class="left-nav">
+    <a class="nav-logo" href="index.html">
+      <div class="logo-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="logo-name">Vingly</span>
+    </a>
+    <div class="steps">
+      <div class="step" id="nav-s1">
+        <div class="step-num sn-active" id="sn1">1</div>
+        <div class="step-info">
+          <div class="step-title active" id="st1">역할 선택</div>
+          <div class="step-desc">브랜드 또는 크리에이터</div>
+        </div>
+      </div>
+      <div class="step" id="nav-s2">
+        <div class="step-num sn-idle" id="sn2">2</div>
+        <div class="step-info">
+          <div class="step-title" id="st2">기본 정보</div>
+          <div class="step-desc">이름, 이메일, 연락처</div>
+        </div>
+      </div>
+      <div class="step" id="nav-s3">
+        <div class="step-num sn-idle" id="sn3">3</div>
+        <div class="step-info">
+          <div class="step-title" id="st3">상세 정보</div>
+          <div class="step-desc">브랜드명 또는 채널 정보</div>
+        </div>
+      </div>
+      <div class="step" id="nav-s4">
+        <div class="step-num sn-idle" id="sn4">4</div>
+        <div class="step-info">
+          <div class="step-title" id="st4">약관 동의</div>
+          <div class="step-desc">이용약관 및 개인정보 처리</div>
+        </div>
+      </div>
+    </div>
+    <div class="login-link">이미 계정이 있으신가요? <a href="login.html">로그인</a></div>
+  </div>
+
+  <!-- FORM AREA -->
+  <div class="form-area">
+
+    <!-- STEP 1: 역할 선택 -->
+    <div class="fsec on" id="s1">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 1 / 4</div>
+        <h2 class="step-h">어떻게 참여하시겠어요?</h2>
+        <p class="step-sub">역할에 따라 맞춤 화면을 제공합니다.</p>
+      </div>
+      <div class="role-grid">
+        <button class="rc" id="rc-brand" onclick="selectRole('brand')">
+          <div class="rc-ico">🏷️</div>
+          <span class="rc-name">브랜드 / 셀러</span>
+          <span class="rc-desc">판매할 제품이 있고 크리에이터 채널을 통해 홍보·판매하고 싶은 분</span>
+          <span class="rc-tag rct-b">제품 등록 5분</span>
+        </button>
+        <button class="rc" id="rc-creator" onclick="selectRole('creator')">
+          <div class="rc-ico">📱</div>
+          <span class="rc-name">크리에이터</span>
+          <span class="rc-desc">SNS·유튜브·블로그 채널이 있고 제품 판매로 수익을 만들고 싶은 분</span>
+          <span class="rc-tag rct-g">팔로워 100명+</span>
+        </button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-next" id="next1" onclick="goStep(2)" style="flex:1">
+          <span class="btn-text">다음 단계 →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: 기본 정보 -->
+    <div class="fsec" id="s2">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 2 / 4</div>
+        <h2 class="step-h">기본 정보를 입력해주세요</h2>
+        <p class="step-sub">로그인 및 연락에 사용됩니다.</p>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">이름 <span class="req">*</span></label>
+          <input class="fi" id="s2_name" type="text" placeholder="홍길동" oninput="clearErr(this)">
+          <div class="ferr" id="s2_name_err">이름을 입력해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">연락처 <span class="req">*</span></label>
+          <input class="fi" id="s2_phone" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this);clearErr(this)">
+          <div class="ferr" id="s2_phone_err">올바른 연락처를 입력해주세요</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">이메일 <span class="req">*</span></label>
+        <input class="fi" id="s2_email" type="email" placeholder="hello@vingly.kr" oninput="clearErr(this)">
+        <div class="ferr" id="s2_email_err">올바른 이메일을 입력해주세요</div>
+      </div>
+      <div class="fg">
+        <label class="fl">비밀번호 <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="s2_pw" type="password" placeholder="8자 이상" oninput="checkPwStrength(this.value);clearErr(this)">
+          <button class="pw-toggle" onclick="togglePw2()">👁</button>
+        </div>
+        <div class="pw-strength">
+          <div class="pw-bar"><div class="pw-fill" id="pwFill"></div></div>
+          <span class="pw-label" id="pwLabel" style="color:var(--ink-35)">—</span>
+        </div>
+        <div class="ferr" id="s2_pw_err">8자 이상 입력해주세요</div>
+      </div>
+      <div class="fg">
+        <label class="fl">비밀번호 확인 <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="s2_pw2" type="password" placeholder="비밀번호 재입력" oninput="clearErr(this)">
+          <button class="pw-toggle" onclick="togglePw3()">👁</button>
+        </div>
+        <div class="ferr" id="s2_pw2_err">비밀번호가 일치하지 않습니다</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← 이전</button>
+        <button class="btn-next" onclick="goStep(3)"><span class="btn-text">다음 →</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 3: 상세 정보 -->
+    <div class="fsec" id="s3">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 3 / 4</div>
+        <h2 class="step-h" id="s3_title">브랜드 정보</h2>
+        <p class="step-sub" id="s3_sub">서비스 이용에 필요한 정보입니다.</p>
+      </div>
+
+      <!-- 브랜드 폼 -->
+      <div class="fsec on" id="s3_brand">
+        <div class="fg">
+          <label class="fl">브랜드명 / 상호명 <span class="req">*</span></label>
+          <input class="fi" id="b_brand" type="text" placeholder="예: 헬시팜" oninput="clearErr(this)">
+          <div class="ferr" id="b_brand_err">브랜드명을 입력해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">주요 제품 카테고리 <span class="req">*</span></label>
+          <select class="fi" id="b_cat">
+            <option value="">카테고리 선택</option>
+            <option>뷰티 · 스킨케어</option><option>패션 · 의류</option>
+            <option>식품 · 건강</option><option>헬스 · 운동</option>
+            <option>생활 · 홈</option><option>디지털 · 전자</option><option>기타</option>
+          </select>
+          <div class="ferr" id="b_cat_err">카테고리를 선택해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">사업자등록번호</label>
+          <input class="fi" id="b_biz" type="text" placeholder="000-00-00000 (선택)">
+          <div class="fhint">파일럿 기간에는 사업자 없이도 참여 가능합니다.</div>
+        </div>
+        <div class="nbox nb-b">✅ 파일럿 기간 이용료 완전 무료 · 심사 없음</div>
+      </div>
+
+      <!-- 크리에이터 폼 -->
+      <div class="fsec" id="s3_creator">
+        <div class="fg">
+          <label class="fl">활동명 / 채널명 <span class="req">*</span></label>
+          <input class="fi" id="c_handle" type="text" placeholder="예: 뷰티제인" oninput="clearErr(this)">
+          <div class="ferr" id="c_handle_err">활동명을 입력해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">주요 활동 채널 <span class="req">*</span></label>
+          <select class="fi" id="c_ch">
+            <option value="">채널 선택</option>
+            <option>인스타그램</option><option>유튜브</option><option>틱톡</option>
+            <option>블로그 (네이버/티스토리)</option><option>카카오채널</option><option>기타</option>
+          </select>
+          <div class="ferr" id="c_ch_err">채널을 선택해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">주요 콘텐츠 분야</label>
+          <select class="fi" id="c_field">
+            <option value="">분야 선택 (선택사항)</option>
+            <option>뷰티 · 스킨케어</option><option>패션 · 의류</option>
+            <option>식품 · 건강</option><option>헬스 · 운동</option>
+            <option>생활 · 홈</option><option>기타</option>
+          </select>
+        </div>
+        <div class="nbox nb-g">⭐ 얼리버드 — 수수료 100% 본인 수령 + 영구 우대 수수료</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(2)">← 이전</button>
+        <button class="btn-next" onclick="goStep(4)"><span class="btn-text">다음 →</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 4: 약관 동의 -->
+    <div class="fsec" id="s4">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 4 / 4</div>
+        <h2 class="step-h">약관에 동의해주세요</h2>
+        <p class="step-sub">서비스 이용을 위해 동의가 필요합니다.</p>
+      </div>
+      <div class="agree-list">
+        <label class="agree-item" id="agreeAll-wrap">
+          <input type="checkbox" id="agreeAll" onchange="toggleAll(this)">
+          <span class="agree-text bold">전체 동의</span>
+        </label>
+        <label class="agree-item">
+          <input type="checkbox" id="agree1" onchange="checkAll()">
+          <span class="agree-text">[필수] <a href="#">이용약관</a>에 동의합니다</span>
+        </label>
+        <label class="agree-item">
+          <input type="checkbox" id="agree2" onchange="checkAll()">
+          <span class="agree-text">[필수] <a href="#">개인정보 처리방침</a>에 동의합니다</span>
+        </label>
+        <label class="agree-item">
+          <input type="checkbox" id="agree3" onchange="checkAll()">
+          <span class="agree-text">[선택] 마케팅 정보 수신에 동의합니다 (이벤트·얼리버드 혜택 안내)</span>
+        </label>
+      </div>
+      <div class="ferr on" id="agree_err" style="display:none">필수 약관에 동의해주세요</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(3)">← 이전</button>
+        <button class="btn-next" id="submitBtn" onclick="doSignup()">
+          <div class="spinner"></div>
+          <span class="btn-text">가입 완료 →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="s-ico">🎉</div>
+      <div class="s-title">가입이 완료됐습니다!</div>
+      <div class="s-desc" id="s_desc">Vingly에 오신 걸 환영합니다.</div>
+      <div id="s_badge" class="s-badge sb-b">등록 완료</div>
+      <div class="next-steps">
+        <div class="ns-title">다음 단계 안내</div>
+        <div id="s_steps"></div>
+      </div>
+      <button class="go-btn" id="goBtn" onclick="goDashboard()">대시보드로 이동 →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let role = null;
+let currentStep = 1;
+
+/* ── ROLE SELECT ── */
+function selectRole(r) {
+  role = r;
+  document.getElementById('rc-brand').className   = 'rc' + (r==='brand'   ? ' sel-b' : '');
+  document.getElementById('rc-creator').className = 'rc' + (r==='creator' ? ' sel-g' : '');
+}
+
+/* ── STEP NAV ── */
+function goStep(n) {
+  if(n > currentStep && !validate(currentStep)) return;
+  // 스텝 3 상세 폼 전환
+  if(n === 3) {
+    document.getElementById('s3_title').textContent = role==='brand' ? '브랜드 정보' : '채널 정보';
+    document.getElementById('s3_sub').textContent   = role==='brand' ? '제품 등록에 필요한 정보입니다.' : '링크 생성에 필요한 정보입니다.';
+    document.getElementById('s3_brand').className   = 'fsec' + (role==='brand'   ? ' on' : '');
+    document.getElementById('s3_creator').className = 'fsec' + (role==='creator' ? ' on' : '');
+  }
+  // 현재 숨기고 새 스텝 보여주기
+  document.getElementById('s'+currentStep).classList.remove('on');
+  document.getElementById('s'+n)?.classList.add('on');
+  // 스텝 인디케이터 업데이트
+  updateNav(currentStep, 'done');
+  updateNav(n, 'active');
+  currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateNav(n, state) {
+  const num = document.getElementById('sn'+n);
+  const title = document.getElementById('st'+n);
+  if(!num) return;
+  num.className = 'step-num ' + (state==='active' ? 'sn-active' : state==='done' ? 'sn-done' : 'sn-idle');
+  num.textContent = state==='done' ? '✓' : n;
+  if(title) {
+    title.className = 'step-title ' + (state==='active' ? 'active' : state==='done' ? 'done' : '');
+  }
+}
+
+/* ── VALIDATE ── */
+function validate(step) {
+  if(step===1) {
+    if(!role) { alert('역할을 선택해주세요'); return false; }
+    return true;
+  }
+  if(step===2) {
+    let ok=true;
+    if(!v('s2_name')) ok=false;
+    if(!chkPhone(g('s2_phone').value)) { showErr('s2_phone','올바른 연락처를 입력해주세요 (010-0000-0000)'); ok=false; }
+    if(!chkEmail(g('s2_email').value)) { showErr('s2_email','올바른 이메일을 입력해주세요'); ok=false; }
+    if(g('s2_pw').value.length < 8) { showErr('s2_pw','비밀번호는 8자 이상이어야 합니다'); ok=false; }
+    if(g('s2_pw').value !== g('s2_pw2').value) { showErr('s2_pw2','비밀번호가 일치하지 않습니다'); ok=false; }
+    return ok;
+  }
+  if(step===3) {
+    let ok=true;
+    if(role==='brand') {
+      if(!v('b_brand')) ok=false;
+      if(!g('b_cat').value) { showErr('b_cat','카테고리를 선택해주세요'); g('b_cat').classList.add('err'); ok=false; }
+    } else {
+      if(!v('c_handle')) ok=false;
+      if(!g('c_ch').value)  { showErr('c_ch','채널을 선택해주세요'); g('c_ch').classList.add('err'); ok=false; }
+    }
+    return ok;
+  }
+  return true;
+}
+
+const g = id => document.getElementById(id);
+const v = id => { const el=g(id); if(!el.value.trim()){showErr(id,'필수 입력 항목입니다');return false;} return true; };
+const chkEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const chkPhone = p => /^\d{3}-\d{3,4}-\d{4}$/.test(p);
+
+function showErr(id, msg) {
+  const el=g(id); el.classList.add('err');
+  const e=g(id+'_err'); if(e){e.textContent=msg;e.classList.add('on');}
+}
+function clearErr(el) {
+  el.classList.remove('err');
+  const e=g(el.id+'_err'); if(e) e.classList.remove('on');
+}
+function fmtPhone(el) {
+  let v=el.value.replace(/\D/g,'');
+  if(v.length<=3) el.value=v;
+  else if(v.length<=7) el.value=v.slice(0,3)+'-'+v.slice(3);
+  else el.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+}
+function togglePw2(){const f=g('s2_pw');f.type=f.type==='password'?'text':'password';}
+function togglePw3(){const f=g('s2_pw2');f.type=f.type==='password'?'text':'password';}
+
+function checkPwStrength(pw) {
+  let score=0;
+  if(pw.length>=8)  score++;
+  if(pw.length>=12) score++;
+  if(/[A-Z]/.test(pw)||/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors=['','#EF4444','#F59E0B','#3B82F6','#10B981'];
+  const labels=['','약함','보통','강함','매우 강함'];
+  const fill=g('pwFill'), label=g('pwLabel');
+  fill.style.width=(score/4*100)+'%';
+  fill.style.background=colors[score]||'';
+  label.textContent=labels[score]||'—';
+  label.style.color=colors[score]||'var(--ink-35)';
+}
+
+/* ── AGREE ── */
+function toggleAll(el) {
+  ['agree1','agree2','agree3'].forEach(id=>g(id).checked=el.checked);
+}
+function checkAll() {
+  const all=['agree1','agree2','agree3'].every(id=>g(id).checked);
+  g('agreeAll').checked=all;
+}
+
+/* ── SIGNUP ── */
+function doSignup() {
+  if(!g('agree1').checked || !g('agree2').checked) {
+    g('agree_err').style.display='block';
+    return;
+  }
+  g('agree_err').style.display='none';
+
+  const btn=g('submitBtn'); btn.classList.add('loading');
+
+  // 데이터 수집
+  const data = {
+    role,
+    name:    g('s2_name').value.trim(),
+    phone:   g('s2_phone').value.trim(),
+    email:   g('s2_email').value.trim(),
+    brandOrName: role==='brand' ? g('b_brand').value.trim() : g('c_handle').value.trim(),
+    categoryOrChannel: role==='brand' ? g('b_cat').value : g('c_ch').value,
+    marketing: g('agree3').checked,
+    joinedAt: new Date().toISOString(),
+  };
+
+  // Google Sheets 저장 (URL 연동 후 활성화)
+  saveToSheets(data).then(() => {
+    btn.classList.remove('loading');
+    // 세션 저장
+    sessionStorage.setItem('vingly_user', JSON.stringify({ email:data.email, role:data.role, name:data.name }));
+    showSuccess(data);
+  });
+}
+
+async function saveToSheets(data) {
+  const SHEETS_URL = ''; // ← Apps Script URL 여기에 입력
+  if(!SHEETS_URL) {
+    console.log('[Vingly] Sheets URL 미설정 — 로컬 저장만 진행:', data);
+    await new Promise(r=>setTimeout(r,800)); // 로딩 시뮬레이션
+    return;
+  }
+  try {
+    await fetch(SHEETS_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data),
+    });
+  } catch(e) { console.error('Sheets 저장 실패:', e); }
+}
+
+function showSuccess(data) {
+  // 모든 스텝 숨기기
+  ['s1','s2','s3','s4'].forEach(id=>g(id).classList.remove('on'));
+  g('successScreen').classList.add('on');
+  // 네비 완료
+  [1,2,3,4].forEach(n=>updateNav(n,'done'));
+
+  if(data.role==='brand') {
+    g('s_badge').className='s-badge sb-b';
+    g('s_badge').textContent='🏷️ 브랜드 등록 완료';
+    g('s_desc').innerHTML=`${data.name}님, Vingly 브랜드로 등록됐습니다.<br>담당자가 24시간 내 연락드립니다.`;
+    g('s_steps').innerHTML=
+      '<div class="ns-item"><span>1.</span><span>입력하신 이메일로 안내 메일이 발송됩니다.</span></div>'+
+      '<div class="ns-item"><span>2.</span><span>제품 등록 후 크리에이터 자동 매칭이 시작됩니다.</span></div>'+
+      '<div class="ns-item"><span>3.</span><span>대시보드에서 판매 현황을 실시간으로 확인하세요.</span></div>';
+    g('goBtn').textContent='브랜드 대시보드로 →';
+  } else {
+    g('s_badge').className='s-badge sb-g';
+    g('s_badge').textContent='⭐ 얼리버드 크리에이터 등록 완료';
+    g('s_desc').innerHTML=`${data.name}님, 얼리버드로 등록됐습니다.<br>수수료 100% 혜택이 적용됩니다.`;
+    g('s_steps').innerHTML=
+      '<div class="ns-item"><span>1.</span><span>얼리버드 확인 메일이 발송됩니다.</span></div>'+
+      '<div class="ns-item"><span>2.</span><span>제품 탐색에서 원하는 제품을 골라 링크를 생성하세요.</span></div>'+
+      '<div class="ns-item"><span>3.</span><span>링크를 내 채널에 공유하면 바로 판매 시작입니다.</span></div>';
+    g('goBtn').textContent='크리에이터 대시보드로 →';
+  }
+}
+
+function goDashboard() {
+  const u = JSON.parse(sessionStorage.getItem('vingly_user')||'{}');
+  if(u.role==='brand')       location.href='brand-dashboard.html';
+  else if(u.role==='creator') location.href='influencer-dashboard.html';
+  else location.href='index.html';
+}
+</script>
+</body>
+</html>
