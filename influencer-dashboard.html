@@ -153,6 +153,18 @@
   }
 </style>
 <link rel="stylesheet" href="vingly-common.css">
+<script>
+(function(){
+  const u = sessionStorage.getItem('vingly_user');
+  if(!u) { location.href='login.html'; return; }
+  const user = JSON.parse(u);
+  if(user.role !== 'influencer' && user.role !== 'creator') { location.href='login.html'; return; }
+  document.addEventListener('DOMContentLoaded', function(){
+    const nameEls = document.querySelectorAll('.user-name, .welcome-name');
+    nameEls.forEach(el => el.textContent = user.name || user.email);
+  });
+})();
+</script>
 </head>
 <body>
 
@@ -170,7 +182,7 @@
     <div class="nav-divider"></div>
     <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
     <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
-  </nav>
+  <button style="padding:7px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" onclick="sessionStorage.removeItem('vingly_user');location.href='login.html'">로그아웃</button></nav>
   <div class="sidebar-bottom">
     <div class="user-info">
       <div class="user-avatar">뷰</div>

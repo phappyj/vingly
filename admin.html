@@ -471,5 +471,69 @@ function showToast(msg) {
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 </script>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec';
+
+// Sheets에서 가입자 불러오기 (GET 요청)
+async function loadMembersFromSheets() {
+  const tbody = document.querySelector('#pg-members table tbody');
+  if(!tbody) return;
+  
+  // 로딩 표시
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">📊 가입자 데이터 불러오는 중...</td></tr>';
+  
+  try {
+    const res = await fetch(SHEETS_URL + '?action=getMembers');
+    const data = await res.json();
+    
+    if(data && data.members && data.members.length > 0) {
+      tbody.innerHTML = data.members.map((m, i) => `
+        <tr>
+          <td class="td-b">${m.name || '-'}</td>
+          <td><span class="badge ${m.role==='brand'?'bb2':'bg2'}">${m.role==='brand'?'브랜드':'인플루언서'}</span></td>
+          <td class="td-m">${m.email || '-'}</td>
+          <td class="td-m">${m.phone || '-'}</td>
+          <td class="td-m">${m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('ko-KR') : '-'}</td>
+          <td class="td-b">-</td>
+          <td><span class="badge bg2">정상</span></td>
+          <td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td>
+        </tr>
+      `).join('');
+      
+      // 통계 업데이트
+      const total = data.members.length;
+      const brands = data.members.filter(m=>m.role==='brand').length;
+      const creators = total - brands;
+      
+      // 대시보드 숫자 업데이트
+      updateStat('총 회원수', total + '명');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">아직 가입자가 없습니다.</td></tr>';
+    }
+  } catch(e) {
+    // CORS 등 오류 시 기존 더미 데이터 유지
+    console.log('Sheets 연결:', e.message);
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">⚠️ 데이터 로드 실패 — Sheets 직접 확인하세요</td></tr>';
+  }
+}
+
+function updateStat(label, value) {
+  document.querySelectorAll('.sc-l').forEach(el => {
+    if(el.textContent.includes(label)) {
+      const valEl = el.nextElementSibling;
+      if(valEl) valEl.textContent = value;
+    }
+  });
+}
+
+// 회원 관리 탭 열릴 때 자동 로드
+const origShowPage = window.showPage;
+window.showPage = function(id, btn) {
+  origShowPage && origShowPage(id, btn);
+  if(id === 'members') loadMembersFromSheets();
+};
+</script>
+
 </body>
 </html>

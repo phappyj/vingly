@@ -166,6 +166,26 @@
   }
 </style>
 <link rel="stylesheet" href="vingly-common.css">
+<script>
+// 로그인 보호
+(function(){
+  const u = sessionStorage.getItem('vingly_user');
+  if(!u) { location.href='login.html'; return; }
+  const user = JSON.parse(u);
+  if(user.role !== 'brand') { location.href='login.html'; return; }
+  document.addEventListener('DOMContentLoaded', function(){
+    // 사용자명 표시
+    const nameEls = document.querySelectorAll('.user-name, .welcome-name');
+    nameEls.forEach(el => el.textContent = user.name || user.email);
+    // 로그아웃 버튼 연결
+    const logoutBtns = document.querySelectorAll('.logout-btn, [onclick*="logout"]');
+    logoutBtns.forEach(btn => btn.addEventListener('click', function(){
+      sessionStorage.removeItem('vingly_user');
+      location.href='login.html';
+    }));
+  });
+})();
+</script>
 </head>
 <body>
 
