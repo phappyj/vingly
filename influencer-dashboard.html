@@ -3,447 +3,537 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vingly — 인플루언서 대시보드</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Vingly — 크리에이터 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --brand:#0D5C8F;--brand-light:#1A7DC4;--brand-bg:#E8F2FA;
-    --green:#0A6644;--green-light:#12A06A;--green-bg:#E1F5EE;
-    --orange:#BA7517;--orange-bg:#FAEEDA;
-    --red:#A32D2D;--red-bg:#FCEBEB;
-    --purple:#534AB7;--purple-bg:#EEEDFE;
-    --bg:#F4F3EF;--surface:#FFFFFF;
-    --text:#111111;--text-sub:#555555;--text-muted:#999999;
-    --border:#E0DED8;--radius:12px;--sidebar:240px;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+:root{
+  --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
+  --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
+  --canvas:#F4F3EF;--white:#fff;
+  --blue:#1849D6;--blue-bg:#EEF3FD;
+  --green:#046C4E;--green-bg:#EDFAF4;--green-dim:rgba(4,108,78,.12);
+  --amber:#92400E;--amber-bg:#FFFBEB;
+  --red:#991B1B;--red-bg:#FEF2F2;
+  --sw:240px;--r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
 
-  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
-  .sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
-  .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--green)}
-  .logo-badge{font-size:11px;font-weight:600;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
-  .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .15s;text-decoration:none}
-  .nav-item:hover{background:var(--bg);color:var(--text)}
-  .nav-item.active{background:var(--green-bg);color:var(--green)}
-  .nav-icon{font-size:16px;width:20px;text-align:center}
-  .nav-divider{height:1px;background:var(--border);margin:8px 0}
-  .sidebar-bottom{padding:16px;border-top:1px solid var(--border)}
-  .user-info{display:flex;align-items:center;gap:10px}
-  .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
-  .user-name{font-size:13px;font-weight:600}
-  .user-role{font-size:11px;color:var(--text-muted)}
-  .earlybird-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FFF3CD;color:#BA7517;margin-top:2px}
+.sb{width:var(--sw);background:var(--white);border-right:1px solid var(--ink-14);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s}
+.sb-top{padding:18px 16px 14px;border-bottom:1px solid var(--ink-14)}
+.sb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:12px}
+.sb-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.sb-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sb-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.sb-role{font:700 10px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:3px}
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70);cursor:pointer;transition:all .15s;text-decoration:none;border:none;background:transparent;width:100%;font-family:inherit}
+.ni:hover{background:var(--ink-07);color:var(--ink)}
+.ni.act{background:var(--green-bg);color:var(--green);font-weight:600}
+.ni-ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.divr{height:1px;background:var(--ink-14);margin:6px 0}
+.sb-foot{padding:12px 14px;border-top:1px solid var(--ink-14)}
+.ua{display:flex;align-items:center;gap:10px}
+.ua-av{width:32px;height:32px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;color:var(--green);flex-shrink:0}
+.ua-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink)}
+.ua-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
+.eb-badge{display:inline-flex;align-items:center;gap:4px;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;background:var(--amber-bg);color:var(--amber);margin-top:4px}
 
-  .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
-  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
-  .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
-  .topbar-right{display:flex;align-items:center;gap:12px}
-  .btn-sm{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .2s;min-height:36px}
-  .btn-green{background:var(--green);color:#fff}
-  .btn-green:hover{background:var(--green-light)}
-  .btn-ghost-sm{background:transparent;border:1px solid var(--border);color:var(--text-sub)}
-  .btn-ghost-sm:hover{border-color:var(--green);color:var(--green)}
-  .notif{width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative}
-  .notif-dot{width:8px;height:8px;background:#E24B4A;border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--surface)}
+.mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.tb-title{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.tb-r{display:flex;align-items:center;gap:10px}
+.icon-btn{width:34px;height:34px;border-radius:9px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative}
+.ndot{width:7px;height:7px;background:#EF4444;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--white)}
+.logout-btn{padding:7px 14px;border-radius:8px;background:var(--red-bg);color:var(--red);border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer}
 
-  .content{padding:28px;flex:1}
+.content{padding:24px 28px;flex:1}
+.page{display:none}
+.page.act{display:block}
 
-  /* EARLYBIRD BANNER */
-  .earlybird-banner{background:linear-gradient(135deg,var(--green),#064D32);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;color:#fff;flex-wrap:wrap;gap:10px}
-  .eb-left{display:flex;align-items:center;gap:12px}
-  .eb-icon{font-size:24px}
-  .eb-title{font-size:14px;font-weight:600;margin-bottom:2px}
-  .eb-desc{font-size:12px;opacity:.8}
-  .eb-badge{font-size:12px;font-weight:700;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:6px;white-space:nowrap}
+/* ONBOARD */
+.onboard{background:linear-gradient(135deg,var(--green) 0%,#034732 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
+.ob-glow{position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.ob-content{position:relative;z-index:1}
+.ob-tag{font:700 10px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.ob-title{font:800 20px/1.2 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px;margin-bottom:6px}
+.ob-desc{font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.6)}
+.ob-btn{padding:12px 22px;border-radius:10px;background:#fff;color:var(--green);font:700 14px/1 'Pretendard',sans-serif;border:none;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;position:relative;z-index:1}
+.ob-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
 
-  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
-  .stat-label{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1;margin-bottom:6px}
-  .stat-change{font-size:12px;font-weight:500}
-  .stat-change.up{color:var(--green)}
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sc{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:16px 18px}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sc-label{font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+.sc-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.sc-val{font:800 26px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:5px}
+.sc-ch{font:600 12px/1 'Pretendard',sans-serif}
+.up{color:var(--green)}.nt{color:var(--ink-40)}
 
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-  .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .card-title{font-size:14px;font-weight:600;color:var(--text)}
-  .card-action{font-size:12px;color:var(--green);cursor:pointer;font-weight:500}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.card:last-child{margin-bottom:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-t{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
+.card-a{font:600 12px/1 'Pretendard',sans-serif;color:var(--green);cursor:pointer}
 
-  /* LINK CARD */
-  .link-card{background:var(--green-bg);border:1px solid rgba(10,102,68,.15);border-radius:10px;padding:14px 16px;margin-bottom:10px}
-  .link-product{font-size:13px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-  .link-url{font-size:12px;color:var(--text-muted);background:var(--surface);border-radius:5px;padding:5px 10px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
-  .link-url span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-  .copy-btn{font-size:11px;font-weight:600;color:var(--green);cursor:pointer;white-space:nowrap;flex-shrink:0;background:none;border:none;font-family:inherit}
-  .link-stats{display:flex;gap:14px}
-  .ls{text-align:center}
-  .ls-val{font-size:14px;font-weight:600;color:var(--text)}
-  .ls-label{font-size:10px;color:var(--text-muted)}
+/* 수익 계산기 */
+.calc-card{background:var(--ink);border-radius:var(--r);padding:22px}
+.calc-title{font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
+.calc-row{margin-bottom:14px}
+.calc-lbl{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:5px}
+.calc-input{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;outline:none}
+.calc-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.calc-val{font:700 12px/1 'Pretendard',sans-serif;color:#fff;margin-top:4px}
+.calc-result{background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:10px;padding:14px;margin-top:16px}
+.cr-lbl{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:5px}
+.cr-num{font:900 32px/1 'Pretendard',sans-serif;color:#6EE7B7;letter-spacing:-1px}
+.cr-sub{font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:5px}
 
-  /* PRODUCT CATALOG */
-  .catalog-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
-  .catalog-item:last-child{border:none}
-  .catalog-item:hover{margin:0 -20px;padding:12px 20px}
-  .cat-thumb{width:44px;height:44px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-  .cat-name{font-size:13px;font-weight:500;margin-bottom:3px}
-  .cat-brand{font-size:12px;color:var(--text-muted)}
-  .cat-right{margin-left:auto;text-align:right;flex-shrink:0}
-  .cat-commission{font-size:13px;font-weight:700;color:var(--green)}
-  .cat-price{font-size:11px;color:var(--text-muted)}
-  .cat-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;background:var(--green);color:#fff;border:none;cursor:pointer;font-family:inherit;margin-top:4px}
+/* 인기 제품 */
+.prod-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.prod-item{background:var(--ink-07);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;border:1px solid var(--ink-14)}
+.prod-item:hover{background:var(--green-bg);border-color:rgba(4,108,78,.2)}
+.prod-ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--white)}
+.prod-info{flex:1;min-width:0}
+.prod-name{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-meta{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+.prod-earn{text-align:right;flex-shrink:0}
+.prod-rate{font:800 15px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:3px}
+.prod-per{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+.gen-btn{padding:6px 12px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s}
+.gen-btn:hover{background:#034732}
 
-  /* CHART */
-  .chart-bars{display:flex;align-items:flex-end;gap:6px;height:110px;padding-top:8px}
-  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-  .bar{width:100%;border-radius:4px 4px 0 0;background:var(--green-bg);transition:all .3s;cursor:pointer}
-  .bar:hover{background:var(--green)}
-  .bar.today{background:var(--green)}
-  .bar-label{font-size:10px;color:var(--text-muted)}
+/* 링크 현황 */
+.link-item{padding:12px 0;border-bottom:1px solid var(--ink-07);display:flex;align-items:center;gap:12px}
+.link-item:last-child{border:none}
+.link-ico{font-size:20px;flex-shrink:0}
+.link-info{flex:1;min-width:0}
+.link-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:3px}
+.link-url{font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link-stats{text-align:right;flex-shrink:0}
+.link-earn{font:800 14px/1 'Pretendard',sans-serif;color:var(--green)}
+.link-meta{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
 
-  /* SETTLEMENT */
-  .settle-card{background:linear-gradient(135deg,var(--brand),#0A4A7A);border-radius:var(--radius);padding:20px;color:#fff;margin-bottom:16px}
-  .settle-label{font-size:12px;opacity:.7;margin-bottom:6px}
-  .settle-amount{font-size:32px;font-weight:700;margin-bottom:4px}
-  .settle-sub{font-size:13px;opacity:.8;margin-bottom:16px}
-  .settle-detail{display:flex;gap:16px}
-  .sd{flex:1}
-  .sd-label{font-size:11px;opacity:.7;margin-bottom:3px}
-  .sd-val{font-size:15px;font-weight:600}
+/* 등급 */
+.grade-card{border-radius:12px;padding:16px 20px;position:relative;overflow:hidden}
+.grade-current{background:var(--ink);color:#fff}
+.grade-next{background:var(--ink-07);border:1px solid var(--ink-14)}
+.gc-badge{font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:100px;margin-bottom:8px;display:inline-block}
+.gc-b-curr{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.gc-b-next{background:var(--blue-bg);color:var(--blue)}
+.gc-name{font:800 22px/1 'Pretendard',sans-serif;letter-spacing:-.5px;margin-bottom:5px}
+.grade-current .gc-name{color:#fff}
+.grade-next .gc-name{color:var(--ink)}
+.gc-cond{font:500 12px/1 'Pretendard',sans-serif;margin-bottom:12px}
+.grade-current .gc-cond{color:rgba(255,255,255,.5)}
+.grade-next .gc-cond{color:var(--ink-40)}
+.prog-wrap{margin-bottom:4px}
+.prog-top{display:flex;justify-content:space-between;font:600 12px/1 'Pretendard',sans-serif;margin-bottom:6px}
+.prog-bar{height:5px;border-radius:3px;overflow:hidden}
+.grade-current .prog-bar{background:rgba(255,255,255,.1)}
+.grade-next .prog-bar{background:var(--ink-07)}
+.prog-fill{height:100%;border-radius:3px}
+.grade-current .prog-fill{background:#6EE7B7}
+.grade-next .prog-fill{background:var(--blue)}
+.prog-label{font:400 11px/1 'Pretendard',sans-serif}
+.grade-current .prog-label{color:rgba(255,255,255,.4)}
+.grade-next .prog-label{color:var(--ink-40)}
 
-  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px}
-  .badge-green{background:var(--green-bg);color:var(--green)}
-  .badge-orange{background:var(--orange-bg);color:var(--orange)}
-  .badge-brand{background:var(--brand-bg);color:var(--brand)}
-  .badge-purple{background:var(--purple-bg);color:var(--purple)}
+/* 수익 명세 */
+.earn-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
+.earn-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
+.er-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
+.er-l small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
+.er-r{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
+.er-r.g{color:var(--green)}
 
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px}
-  .modal-overlay.active{display:flex}
-  .modal{background:var(--surface);border-radius:16px;width:100%;max-width:480px;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:mIn .25s ease;max-height:90vh;overflow-y:auto}
-  @keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-  .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:14px;color:var(--text-sub);display:flex;align-items:center;justify-content:center}
-  .modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:6px}
-  .modal-sub{font-size:13px;color:var(--text-sub);margin-bottom:18px}
-  .link-result{background:var(--green-bg);border-radius:8px;padding:14px 16px;margin-bottom:14px}
-  .link-result-url{font-size:13px;font-weight:600;color:var(--green);word-break:break-all;margin-bottom:8px}
-  .link-result-copy{width:100%;padding:10px;border-radius:7px;background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px}
-  .link-share-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-  .share-btn{padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;transition:all .2s}
-  .share-btn:hover{border-color:var(--green);color:var(--green)}
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);text-align:left;padding:8px 12px;border-bottom:1px solid var(--ink-14);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+tbody td{font:400 13px/1 'Pretendard',sans-serif;padding:12px;border-bottom:1px solid var(--ink-07);color:var(--ink)}
+tbody tr:last-child td{border:none}
+tbody tr:hover td{background:rgba(0,0,0,.015)}
+.td-b{font-weight:700}.td-m{color:var(--ink-40)}
+.badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
+.bg{background:var(--green-bg);color:var(--green)}
+.bb{background:var(--blue-bg);color:var(--blue)}
+.ba{background:var(--amber-bg);color:var(--amber)}
 
-  .mob-topbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-  .hamburger{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
-  .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+.btn-primary{padding:10px 20px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
+.btn-primary:hover{background:#034732}
 
-  @media(max-width:768px){
-    .sidebar{transform:translateX(-100%);transition:transform .3s}
-    .sidebar.open{transform:translateX(0)}
-    .main{margin-left:0}
-    .topbar{display:none}
-    .mob-topbar{display:flex}
-    .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
-    .grid-2,.grid-3{grid-template-columns:1fr}
-    .content{padding:16px}
-    .stat-value{font-size:20px}
-    .earlybird-banner{flex-direction:column;align-items:flex-start}
-  }
+.mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
+.hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+  .mn{margin-left:0}
+  .topbar{display:none}
+  .mob-top{display:flex}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .g2,.g3{grid-template-columns:1fr}
+  .content{padding:14px 16px}
+  .onboard{flex-direction:column;align-items:flex-start}
+}
 </style>
-<link rel="stylesheet" href="vingly-common.css">
-<script>
-(function(){
-  const u = sessionStorage.getItem('vingly_user');
-  if(!u) { location.href='login.html'; return; }
-  const user = JSON.parse(u);
-  if(user.role !== 'influencer' && user.role !== 'creator') { location.href='login.html'; return; }
-  document.addEventListener('DOMContentLoaded', function(){
-    const nameEls = document.querySelectorAll('.user-name, .welcome-name');
-    nameEls.forEach(el => el.textContent = user.name || user.email);
-  });
-})();
-</script>
 </head>
 <body>
 
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text">Vingly</div>
-    <div class="logo-badge">인플루언서</div>
+<aside class="sb" id="sb">
+  <div class="sb-top">
+    <a class="sb-brand" href="index.html">
+      <div class="sb-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="sb-wm">Vingly</span>
+    </a>
+    <div class="sb-role">크리에이터</div>
   </div>
-  <nav class="sidebar-nav">
-    <a class="nav-item active" href="#"><span class="nav-icon">📊</span>대시보드</a>
-    <a class="nav-item" href="#" onclick="openLinkModal()"><span class="nav-icon">🔗</span>링크 생성</a>
-    <a class="nav-item" href="product-explore.html"><span class="nav-icon">🛍️</span>제품 탐색</a>
-    <a class="nav-item" href="#"><span class="nav-icon">💸</span>수익 현황</a>
-    <a class="nav-item" href="#"><span class="nav-icon">📈</span>성과 분석</a>
-    <div class="nav-divider"></div>
-    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
-    <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
-  <button style="padding:7px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" onclick="sessionStorage.removeItem('vingly_user');location.href='login.html'">로그아웃</button></nav>
-  <div class="sidebar-bottom">
-    <div class="user-info">
-      <div class="user-avatar">뷰</div>
+  <nav class="sb-nav">
+    <button class="ni act" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
+    <button class="ni" onclick="showPage('products',this)"><span class="ni-ic">🛍️</span>제품 탐색</button>
+    <button class="ni" onclick="showPage('links',this)"><span class="ni-ic">🔗</span>내 링크 관리</button>
+    <button class="ni" onclick="showPage('earn',this)"><span class="ni-ic">💸</span>수익 현황</button>
+    <button class="ni" onclick="showPage('grade',this)"><span class="ni-ic">⭐</span>내 등급</button>
+    <div class="divr"></div>
+    <a class="ni" href="product-explore.html"><span class="ni-ic">🔍</span>제품 탐색하기</a>
+    <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="ua">
+      <div class="ua-av" id="sb-av">뷰</div>
       <div>
-        <div class="user-name">뷰티제인</div>
-        <div class="user-role">인스타 · 12.4K 팔로워</div>
-        <div class="earlybird-badge">⭐ 얼리버드</div>
+        <div class="ua-name" id="sb-name">뷰티제인</div>
+        <div class="ua-role">Active · 인스타그램</div>
+        <div class="eb-badge">⭐ 얼리버드</div>
       </div>
     </div>
   </div>
 </aside>
 
-<div class="mob-topbar">
-  <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
-  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--green)">Vingly</div>
-  <button class="btn-sm btn-green" onclick="openLinkModal()">🔗 링크 생성</button>
+<div class="mob-top">
+  <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+  <div style="font:800 17px/1 'Pretendard',sans-serif" id="mob-title">대시보드</div>
+  <div style="width:30px"></div>
 </div>
 
-<main class="main">
+<main class="mn">
   <div class="topbar">
-    <div class="topbar-title">내 대시보드</div>
-    <div class="topbar-right">
-      <button class="btn-sm btn-ghost-sm" href="#">제품 탐색</button>
-      <button class="btn-sm btn-green" onclick="openLinkModal()">🔗 링크 생성하기</button>
-      <div class="notif">🔔<div class="notif-dot"></div></div>
+    <div class="tb-title" id="page-title">대시보드</div>
+    <div class="tb-r">
+      <div class="icon-btn">🔔<div class="ndot"></div></div>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 
-  <div class="content">
+  <!-- 대시보드 -->
+  <div class="page act content" id="pg-dashboard">
 
-    <!-- 얼리버드 배너 -->
-    <div class="earlybird-banner">
-      <div class="eb-left">
-        <div class="eb-icon">⭐</div>
-        <div>
-          <div class="eb-title">얼리버드 등급 활성화됨</div>
-          <div class="eb-desc">현재 수수료 100% 수령 중 · 1,000명 달성 후 우대 수수료 영구 적용</div>
-        </div>
+    <!-- 온보딩 배너 -->
+    <div class="onboard">
+      <div class="ob-glow"></div>
+      <div class="ob-content">
+        <div class="ob-tag">지금 바로 시작</div>
+        <div class="ob-title">마음에 드는 제품을 골라 링크를 만들어보세요</div>
+        <div class="ob-desc">30초면 내 전용 링크 완성 · 공유하면 바로 수익 시작</div>
       </div>
-      <div class="eb-badge">현재 231명 / 1,000명</div>
+      <button class="ob-btn" onclick="location.href='product-explore.html'">제품 탐색하기 →</button>
     </div>
 
-    <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">💰 이번 달 수익</div>
-        <div class="stat-value">₩890,000</div>
-        <div class="stat-change up">↑ 34% 지난달 대비</div>
+    <!-- 통계 -->
+    <div class="stat-grid">
+      <div class="sc">
+        <div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div>
+        <div class="sc-val" style="color:var(--green)">₩89만</div>
+        <div class="sc-ch up">↑ 34% 지난달 대비</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">🛒 판매 건수</div>
-        <div class="stat-value">73건</div>
-        <div class="stat-change up">↑ 12건 지난달 대비</div>
+      <div class="sc">
+        <div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div>
+        <div class="sc-val">73건</div>
+        <div class="sc-ch up">↑ 이번 달 +12건</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">👆 링크 클릭수</div>
-        <div class="stat-value">2,841</div>
-        <div class="stat-change up">↑ 전환율 2.57%</div>
+      <div class="sc">
+        <div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div>
+        <div class="sc-val">2,841</div>
+        <div class="sc-ch nt">전환율 2.57%</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">📦 판매 중 제품</div>
-        <div class="stat-value">3개</div>
-        <div class="stat-change" style="color:var(--text-muted)">+ 제품 추가 가능</div>
+      <div class="sc">
+        <div class="sc-top"><div class="sc-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div>
+        <div class="sc-val" style="color:var(--green)">₩89만</div>
+        <div class="sc-ch nt">자동 입금 예정</div>
       </div>
     </div>
 
-    <div class="grid-3">
-      <!-- 내 링크 현황 -->
+    <div class="g3">
+      <!-- 인기 제품 + 링크 생성 -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-title">내 판매 링크</div>
-          <div class="card-action" onclick="openLinkModal()">+ 새 링크 생성</div>
+        <div class="card-h">
+          <div class="card-t">🔥 지금 인기 제품 Top 5</div>
+          <a class="card-a" onclick="showPage('products',null)">전체 보기</a>
         </div>
-
-        <div class="link-card">
-          <div class="link-product">💊 단백질 쉐이크 바닐라 <span class="badge badge-green">판매중</span></div>
-          <div class="link-url">
-            <span>vingly.kr/j/jane-protein</span>
-            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-protein')">복사</button>
+        <div class="prod-grid">
+          <div class="prod-item">
+            <div class="prod-ico">💊</div>
+            <div class="prod-info">
+              <div class="prod-name">단백질 쉐이크 바닐라 1kg</div>
+              <div class="prod-meta">헬시팜 · ₩42,000 · 이번 주 152건</div>
+            </div>
+            <div class="prod-earn">
+              <div class="prod-rate">15%</div>
+              <div class="prod-per">건당 ₩6,300</div>
+            </div>
+            <button class="gen-btn" onclick="genLink('단백질 쉐이크')">링크 생성</button>
           </div>
-          <div class="link-stats">
-            <div class="ls"><div class="ls-val">1,240</div><div class="ls-label">클릭</div></div>
-            <div class="ls"><div class="ls-val">38건</div><div class="ls-label">판매</div></div>
-            <div class="ls"><div class="ls-val">₩490,000</div><div class="ls-label">수익</div></div>
-            <div class="ls"><div class="ls-val">3.07%</div><div class="ls-label">전환율</div></div>
+          <div class="prod-item">
+            <div class="prod-ico">🥗</div>
+            <div class="prod-info">
+              <div class="prod-name">그린 슈퍼푸드 파우더 300g</div>
+              <div class="prod-meta">헬시팜 · ₩38,000 · 이번 주 98건</div>
+            </div>
+            <div class="prod-earn">
+              <div class="prod-rate">12%</div>
+              <div class="prod-per">건당 ₩4,560</div>
+            </div>
+            <button class="gen-btn" onclick="genLink('슈퍼푸드')">링크 생성</button>
           </div>
-        </div>
-
-        <div class="link-card">
-          <div class="link-product">🥗 그린 슈퍼푸드 파우더 <span class="badge badge-green">판매중</span></div>
-          <div class="link-url">
-            <span>vingly.kr/j/jane-greens</span>
-            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-greens')">복사</button>
-          </div>
-          <div class="link-stats">
-            <div class="ls"><div class="ls-val">890</div><div class="ls-label">클릭</div></div>
-            <div class="ls"><div class="ls-val">24건</div><div class="ls-label">판매</div></div>
-            <div class="ls"><div class="ls-val">₩280,000</div><div class="ls-label">수익</div></div>
-            <div class="ls"><div class="ls-val">2.70%</div><div class="ls-label">전환율</div></div>
-          </div>
-        </div>
-
-        <div class="link-card">
-          <div class="link-product">💪 BCAA 레몬맛 <span class="badge badge-brand">신규</span></div>
-          <div class="link-url">
-            <span>vingly.kr/j/jane-bcaa</span>
-            <button class="copy-btn" onclick="copyLink(this,'vingly.kr/j/jane-bcaa')">복사</button>
-          </div>
-          <div class="link-stats">
-            <div class="ls"><div class="ls-val">711</div><div class="ls-label">클릭</div></div>
-            <div class="ls"><div class="ls-val">11건</div><div class="ls-label">판매</div></div>
-            <div class="ls"><div class="ls-val">₩120,000</div><div class="ls-label">수익</div></div>
-            <div class="ls"><div class="ls-val">1.55%</div><div class="ls-label">전환율</div></div>
+          <div class="prod-item">
+            <div class="prod-ico">🧴</div>
+            <div class="prod-info">
+              <div class="prod-name">마그네슘 수면 젤리 NEW</div>
+              <div class="prod-meta">헬시팜 · ₩24,000 · 수수료 18%</div>
+            </div>
+            <div class="prod-earn">
+              <div class="prod-rate">18%</div>
+              <div class="prod-per">건당 ₩4,320</div>
+            </div>
+            <button class="gen-btn" onclick="genLink('마그네슘')">링크 생성</button>
           </div>
         </div>
       </div>
 
-      <!-- 정산 + 차트 -->
-      <div>
-        <div class="settle-card">
-          <div class="settle-label">다음 정산 예정액</div>
-          <div class="settle-amount">₩890,000</div>
-          <div class="settle-sub">6월 30일 자동 입금 예정</div>
-          <div class="settle-detail">
-            <div class="sd"><div class="sd-label">누적 총 수익</div><div class="sd-val">₩2,140,000</div></div>
-            <div class="sd"><div class="sd-label">이번 달 판매</div><div class="sd-val">73건</div></div>
-          </div>
+      <!-- 예상 수익 계산기 -->
+      <div class="calc-card">
+        <div class="calc-title">내 예상 월 수익</div>
+        <div class="calc-row">
+          <div class="calc-lbl">팔로워 수</div>
+          <input class="calc-input" type="range" min="100" max="100000" step="100" value="12400" id="c-followers" oninput="calcInfl()">
+          <div class="calc-val" id="cv-followers">12,400명</div>
         </div>
-
-        <div class="card">
-          <div class="card-header"><div class="card-title">일별 수익</div></div>
-          <div class="chart-bars">
-            <div class="bar-wrap"><div class="bar" style="height:35%"></div><div class="bar-label">월</div></div>
-            <div class="bar-wrap"><div class="bar" style="height:60%"></div><div class="bar-label">화</div></div>
-            <div class="bar-wrap"><div class="bar" style="height:45%"></div><div class="bar-label">수</div></div>
-            <div class="bar-wrap"><div class="bar" style="height:85%"></div><div class="bar-label">목</div></div>
-            <div class="bar-wrap"><div class="bar" style="height:100%"></div><div class="bar-label">금</div></div>
-            <div class="bar-wrap"><div class="bar" style="height:65%"></div><div class="bar-label">토</div></div>
-            <div class="bar-wrap"><div class="bar today" style="height:50%"></div><div class="bar-label" style="color:var(--green);font-weight:600">오늘</div></div>
-          </div>
+        <div class="calc-row">
+          <div class="calc-lbl">월 포스팅 수</div>
+          <input class="calc-input" type="range" min="1" max="30" value="8" id="c-posts" oninput="calcInfl()">
+          <div class="calc-val" id="cv-posts">월 8회</div>
+        </div>
+        <div class="calc-row">
+          <div class="calc-lbl">평균 제품가</div>
+          <input class="calc-input" type="range" min="10000" max="100000" step="5000" value="35000" id="c-price" oninput="calcInfl()">
+          <div class="calc-val" id="cv-price">₩35,000</div>
+        </div>
+        <div class="calc-result">
+          <div class="cr-lbl">예상 월 수익</div>
+          <div class="cr-num" id="c-result">₩840,000</div>
+          <div class="cr-sub" id="c-sub">파일럿 기간 100% 수령 기준</div>
         </div>
       </div>
     </div>
 
-    <!-- 추천 제품 -->
+    <!-- 내 링크 현황 -->
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">지금 판매하기 좋은 제품 — AI 추천</div>
-        <div class="card-action">전체 제품 보기</div>
-      </div>
-      <div class="grid-2" style="margin:0">
-        <div>
-          <div class="catalog-item">
-            <div class="cat-thumb">🧴</div>
-            <div><div class="cat-name">마그네슘 수면 젤리</div><div class="cat-brand">헬시팜 · 헬스·운동</div></div>
-            <div class="cat-right"><div class="cat-commission">수수료 18%</div><div class="cat-price">판매가 ₩24,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+      <div class="card-h"><div class="card-t">내 활성 링크</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
+      <div>
+        <div class="link-item">
+          <div class="link-ico">💊</div>
+          <div class="link-info">
+            <div class="link-name">단백질 쉐이크 바닐라</div>
+            <div class="link-url">vingly.kr/j/jane-protein · 38건 판매</div>
           </div>
-          <div class="catalog-item">
-            <div class="cat-thumb">🌿</div>
-            <div><div class="cat-name">유기농 스피루리나</div><div class="cat-brand">그린팜 · 식품·건강</div></div>
-            <div class="cat-right"><div class="cat-commission">수수료 20%</div><div class="cat-price">판매가 ₩35,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          <div class="link-stats">
+            <div class="link-earn">₩239,400</div>
+            <div class="link-meta">클릭 1,241 · 전환 3.1%</div>
           </div>
         </div>
-        <div>
-          <div class="catalog-item">
-            <div class="cat-thumb">🏃</div>
-            <div><div class="cat-name">쿠션 러닝화 블랙</div><div class="cat-brand">스포런 · 헬스·운동</div></div>
-            <div class="cat-right"><div class="cat-commission">수수료 12%</div><div class="cat-price">판매가 ₩89,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+        <div class="link-item">
+          <div class="link-ico">🥗</div>
+          <div class="link-info">
+            <div class="link-name">그린 슈퍼푸드 파우더</div>
+            <div class="link-url">vingly.kr/j/jane-greens · 24건 판매</div>
           </div>
-          <div class="catalog-item">
-            <div class="cat-thumb">💆</div>
-            <div><div class="cat-name">비타민D 고함량</div><div class="cat-brand">뉴트리진 · 식품·건강</div></div>
-            <div class="cat-right"><div class="cat-commission">수수료 15%</div><div class="cat-price">판매가 ₩28,000</div><button class="cat-btn" onclick="openLinkModal()">링크 생성</button></div>
+          <div class="link-stats">
+            <div class="link-earn">₩109,440</div>
+            <div class="link-meta">클릭 982 · 전환 2.4%</div>
+          </div>
+        </div>
+        <div class="link-item">
+          <div class="link-ico">💪</div>
+          <div class="link-info">
+            <div class="link-name">BCAA 레몬맛 500g</div>
+            <div class="link-url">vingly.kr/j/jane-bcaa · 11건 판매</div>
+          </div>
+          <div class="link-stats">
+            <div class="link-earn">₩31,900</div>
+            <div class="link-meta">클릭 618 · 전환 1.8%</div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
+
+  <!-- 수익 현황 페이지 -->
+  <div class="page content" id="pg-earn">
+    <div class="stat-grid">
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩890,000</div><div class="sc-ch up">↑ 34%</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 운영 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩890,000</div><div class="sc-ch nt">월말 자동 입금</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩2,340,000</div><div class="sc-ch up">3개월 합계</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
+        <div class="earn-row"><div class="er-l">단백질 쉐이크 (38건)<small>₩42,000 × 15%</small></div><div class="er-r g">₩239,400</div></div>
+        <div class="earn-row"><div class="er-l">슈퍼푸드 파우더 (24건)<small>₩38,000 × 12%</small></div><div class="er-r g">₩109,440</div></div>
+        <div class="earn-row"><div class="er-l">BCAA (11건)<small>₩29,000 × 10%</small></div><div class="er-r g">₩31,900</div></div>
+        <div class="earn-row"><div class="er-l">Vingly 운영 수수료<small>파일럿 기간 무료</small></div><div class="er-r g">₩0</div></div>
+        <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩890,000</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">정산 예정 일정</div></div>
+        <div class="earn-row"><div class="er-l">6월 30일 정산<small>이번 달 수익</small></div><div class="er-r g">₩890,000</div></div>
+        <div class="earn-row"><div class="er-l">정산 방식</div><div class="er-r">자동 입금</div></div>
+        <div class="earn-row"><div class="er-l">파일럿 이후 수수료</div><div class="er-r">수익의 일부<small>얼리버드 50% 우대</small></div></div>
+        <div style="margin-top:14px;background:var(--green-bg);border-radius:9px;padding:12px;font:500 13px/1.55 'Pretendard',sans-serif;color:var(--green)">
+          ⭐ 얼리버드 혜택 적용 중 — 수수료 전환 이후에도 일반의 50% 수준 우대 수수료 영구 적용
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 등급 페이지 -->
+  <div class="page content" id="pg-grade">
+    <div class="g2">
+      <div class="grade-card grade-current">
+        <span class="gc-badge gc-b-curr">현재 등급</span>
+        <div class="gc-ico" style="font-size:28px;margin-bottom:8px">⚡</div>
+        <div class="gc-name">Active</div>
+        <div class="gc-cond">누적 73건 판매 완료</div>
+        <div class="prog-wrap">
+          <div class="prog-top">
+            <span style="color:rgba(255,255,255,.6)">Pro까지</span>
+            <span style="color:#fff">73 / 50건</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
+          <div class="prog-label" style="margin-top:5px">🎉 Pro 달성 조건 충족! 곧 승급 예정</div>
+        </div>
+      </div>
+      <div class="grade-card grade-next">
+        <span class="gc-badge gc-b-next">다음 등급</span>
+        <div style="font-size:28px;margin-bottom:8px">🔥</div>
+        <div class="gc-name">Pro</div>
+        <div class="gc-cond">누적 판매 50건 달성 시</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font:500 13px/1.4 'Pretendard',sans-serif;color:var(--ink-70)">
+          <li>→ 프리미엄 제품 전용 접근</li>
+          <li>→ 수수료 전환 후 -1%p 추가 할인</li>
+          <li>→ 전담 매니저 배정</li>
+          <li>→ 단독 할인코드 발급</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-h"><div class="card-t">전체 등급 로드맵</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="padding:14px;border-radius:10px;background:var(--ink-07);text-align:center"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
+        <div style="padding:14px;border-radius:10px;background:var(--ink);text-align:center"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#fff">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-top:3px">10건+</div></div>
+        <div style="padding:14px;border-radius:10px;background:var(--blue-bg);text-align:center"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:var(--blue)">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
+        <div style="padding:14px;border-radius:10px;background:var(--green-bg);text-align:center"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:var(--green)">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 제품 탐색 -->
+  <div class="page content" id="pg-products">
+    <div style="text-align:center;padding:48px 24px">
+      <div style="font-size:48px;margin-bottom:16px">🛍️</div>
+      <div style="font:800 22px/1 'Pretendard',sans-serif;margin-bottom:8px">제품 탐색</div>
+      <div style="font:400 14px/1.6 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:24px">전용 페이지에서 제품을 탐색하고 링크를 생성하세요</div>
+      <button class="btn-primary" onclick="location.href='product-explore.html'" style="margin:0 auto">제품 탐색하러 가기 →</button>
+    </div>
+  </div>
+
+  <!-- 링크 관리 -->
+  <div class="page content" id="pg-links">
+    <div class="card">
+      <div class="card-h"><div class="card-t">내 전체 링크 3개</div><button class="btn-primary" onclick="location.href='product-explore.html'">+ 링크 생성</button></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>판매</th><th>수익</th><th>전환율</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td class="td-b">💊 단백질 쉐이크</td><td class="td-m">jane-protein</td><td>1,241</td><td>38건</td><td class="td-b" style="color:var(--green)">₩239,400</td><td>3.1%</td><td><span class="badge bg">활성</span></td></tr>
+            <tr><td class="td-b">🥗 슈퍼푸드</td><td class="td-m">jane-greens</td><td>982</td><td>24건</td><td class="td-b" style="color:var(--green)">₩109,440</td><td>2.4%</td><td><span class="badge bg">활성</span></td></tr>
+            <tr><td class="td-b">💪 BCAA</td><td class="td-m">jane-bcaa</td><td>618</td><td>11건</td><td class="td-b" style="color:var(--green)">₩31,900</td><td>1.8%</td><td><span class="badge bg">활성</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
 
-<!-- 링크 생성 모달 -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModalBtn()">✕</button>
-    <div id="step1">
-      <div class="modal-title">🔗 판매 링크 생성</div>
-      <div class="modal-sub">제품을 선택하면 30초 안에 나만의 전용 링크가 만들어집니다.</div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">💊</span>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">단백질 쉐이크 바닐라</div><div style="font-size:12px;color:var(--text-muted)">헬시팜 · 판매가 ₩42,000</div></div>
-          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 15%</div>
-        </div>
-        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">🧴</span>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">마그네슘 수면 젤리</div><div style="font-size:12px;color:var(--text-muted)">헬시팜 · 판매가 ₩24,000</div></div>
-          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 18%</div>
-        </div>
-        <div onclick="selectProduct(this)" style="padding:12px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">🌿</span>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">유기농 스피루리나</div><div style="font-size:12px;color:var(--text-muted)">그린팜 · 판매가 ₩35,000</div></div>
-          <div style="font-size:13px;font-weight:700;color:var(--green)">수수료 20%</div>
-        </div>
-      </div>
-      <button class="submit-btn" style="background:var(--green)" onclick="generateLink()">내 전용 링크 생성하기 →</button>
-    </div>
-    <div id="step2" style="display:none;text-align:center">
-      <div style="font-size:40px;margin-bottom:12px">🎉</div>
-      <div class="modal-title">링크가 생성됐어요!</div>
-      <div class="modal-sub">아래 링크를 인스타·유튜브·카카오톡에 공유하세요.</div>
-      <div class="link-result">
-        <div class="link-result-url" id="generatedUrl">vingly.kr/j/jane-protein?ref=jane</div>
-        <button class="link-result-copy" onclick="copyGeneratedLink()">📋 링크 복사하기</button>
-      </div>
-      <div class="link-share-btns">
-        <button class="share-btn">📸 인스타그램 공유</button>
-        <button class="share-btn">▶️ 유튜브 설명란</button>
-        <button class="share-btn">💬 카카오톡 공유</button>
-        <button class="share-btn">📝 블로그 삽입</button>
-      </div>
-      <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">판매가 발생하면 실시간으로 알림을 보내드려요</div>
-    </div>
-  </div>
-</div>
+<!-- 링크 생성 토스트 -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)"></div>
 
 <script>
-  function openLinkModal(){
-    document.getElementById('step1').style.display='block';
-    document.getElementById('step2').style.display='none';
-    document.getElementById('modalOverlay').classList.add('active');
-    document.body.style.overflow='hidden';
-  }
-  function closeModalBtn(){document.getElementById('modalOverlay').classList.remove('active');document.body.style.overflow=''}
-  function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalBtn()}
-  function selectProduct(el){
-    document.querySelectorAll('[onclick="selectProduct(this)"]').forEach(e=>e.style.borderColor='var(--border)');
-    el.style.borderColor='var(--green)';
-    el.style.background='var(--green-bg)';
-  }
-  function generateLink(){
-    document.getElementById('step1').style.display='none';
-    document.getElementById('step2').style.display='block';
-  }
-  function copyLink(btn, url){
-    navigator.clipboard.writeText('https://'+url).then(()=>{
-      btn.textContent='복사됨!';
-      btn.style.color='var(--green)';
-      setTimeout(()=>{btn.textContent='복사';btn.style.color=''},1500);
-    }).catch(()=>{btn.textContent='복사됨!'});
-  }
-  function copyGeneratedLink(){
-    const url=document.getElementById('generatedUrl').textContent;
-    navigator.clipboard.writeText('https://'+url).then(()=>{
-      document.querySelector('.link-result-copy').textContent='✅ 복사됐어요!';
-      setTimeout(()=>{document.querySelector('.link-result-copy').textContent='📋 링크 복사하기'},2000);
-    });
-  }
-  function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn()})
+// 로그인 보호
+(function(){
+  const u = sessionStorage.getItem('vingly_user');
+  if(!u){ location.href='login.html'; return; }
+  const user = JSON.parse(u);
+  if(user.role !== 'influencer' && user.role !== 'creator'){ location.href='login.html'; return; }
+  document.addEventListener('DOMContentLoaded', () => {
+    const n = user.name || user.email || '크리에이터';
+    document.getElementById('sb-name').textContent = n;
+    document.getElementById('sb-av').textContent = n[0];
+  });
+})();
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
+  document.getElementById('pg-'+id).classList.add('act');
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+  const t = {dashboard:'대시보드',products:'제품 탐색',links:'내 링크 관리',earn:'수익 현황',grade:'내 등급'}[id]||'';
+  document.getElementById('page-title').textContent = t;
+  document.getElementById('mob-title').textContent = t;
+}
+
+function doLogout(){ sessionStorage.removeItem('vingly_user'); location.href='login.html'; }
+
+// 수익 계산기
+function calcInfl() {
+  const f = parseInt(document.getElementById('c-followers').value);
+  const p = parseInt(document.getElementById('c-posts').value);
+  const pr = parseInt(document.getElementById('c-price').value);
+  document.getElementById('cv-followers').textContent = f.toLocaleString()+'명';
+  document.getElementById('cv-posts').textContent = '월 '+p+'회';
+  document.getElementById('cv-price').textContent = '₩'+pr.toLocaleString();
+  const ctr = f < 10000 ? 0.005 : f < 50000 ? 0.003 : 0.0015;
+  const sales = Math.floor(f * ctr * p);
+  const earn = Math.floor(sales * pr * 0.14);
+  document.getElementById('c-result').textContent = '₩'+earn.toLocaleString();
+  document.getElementById('c-sub').textContent = `팔로워 ${f.toLocaleString()}명 · 전환율 ${(ctr*100).toFixed(1)}% · 평균 14% 수수료`;
+}
+calcInfl();
+
+// 링크 생성
+function genLink(name) {
+  const toast = document.getElementById('toast');
+  toast.textContent = `✅ ${name} 링크가 생성됐습니다! 복사되었어요`;
+  toast.style.transform = 'translateY(0)';
+  toast.style.opacity = '1';
+  setTimeout(()=>{ toast.style.transform='translateY(80px)'; toast.style.opacity='0'; }, 2500);
+}
 </script>
-<script src="vingly-common.js"></script>
 </body>
 </html>

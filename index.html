@@ -3,1253 +3,984 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vingly — 브랜드와 크리에이터를 연결하는 커머스 플랫폼</title>
+<title>Vingly — 팔로워가 수익이 되는 커머스 플랫폼</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ─────────────────────────────────────
-   DESIGN TOKENS
-───────────────────────────────────── */
-:root {
-  /* colors */
-  --c-ink:      #0C0E12;
-  --c-ink-70:   rgba(12,14,18,.70);
-  --c-ink-40:   rgba(12,14,18,.40);
-  --c-ink-14:   rgba(12,14,18,.14);
-  --c-ink-06:   rgba(12,14,18,.06);
-  --c-canvas:   #F5F4F0;
-  --c-white:    #FFFFFF;
-  --c-blue:     #1A56DB;
-  --c-blue-mid: #2563EB;
-  --c-blue-bg:  #EFF6FF;
-  --c-green:    #047857;
-  --c-green-bg: #ECFDF5;
-  --c-amber:    #92400E;
-  --c-amber-bg: #FFFBEB;
-  --c-glass:    rgba(255,255,255,.78);
+:root{
+  --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
+  --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
+  --canvas:#F4F3EF;--white:#FFFFFF;
+  --blue:#1849D6;--blue-bg:#EEF3FD;--blue-dim:rgba(24,73,214,.12);
+  --green:#046C4E;--green-bg:#EDFAF4;--green-dim:rgba(4,108,78,.12);
+  --amber:#92400E;--amber-bg:#FFFBEB;
+  --red:#991B1B;--red-bg:#FEF2F2;
+  --r-s:10px;--r-m:16px;--r-l:24px;--r-xl:32px;
+  --sh-s:0 2px 12px rgba(0,0,0,.06);
+  --sh-m:0 8px 32px rgba(0,0,0,.09);
+  --sh-l:0 24px 64px rgba(0,0,0,.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
 
-  /* type scale — Pretendard 단일 폰트 */
-  --t-display: 800 clamp(40px,5.8vw,70px)/1.05 'Pretendard',sans-serif;
-  --t-h2:      800 clamp(26px,3.2vw,40px)/1.10 'Pretendard',sans-serif;
-  --t-h3:      700 22px/1.20 'Pretendard',sans-serif;
-  --t-body:    400 16px/1.70 'Pretendard',sans-serif;
-  --t-small:   500 14px/1.60 'Pretendard',sans-serif;
-  --t-caption: 600 12px/1.40 'Pretendard',sans-serif;
-  --t-label:   700 11px/1.00 'Pretendard',sans-serif;
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(244,243,239,.92);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--ink-14);transition:all .3s}
+.nav-brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.nav-gem{width:30px;height:30px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.nav-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-wm{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.4px}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-act{display:flex;gap:9px;align-items:center}
+.nb{padding:8px 16px;border-radius:9px;border:1px solid var(--ink-14);background:transparent;font:600 13px/1 'Pretendard',sans-serif;color:var(--ink);cursor:pointer;transition:all .18s;min-height:38px}
+.nb:hover{border-color:var(--ink-40)}
+.nf{padding:8px 18px;border-radius:9px;border:none;background:var(--ink);font:700 13px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .18s;min-height:38px}
+.nf:hover{background:#1a1d24;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.nb:active,.nf:active{transform:scale(.97)}
+.hb{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hb span{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:all .25s}
+.hb.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hb.open span:nth-child(2){opacity:0}
+.hb.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.drawer{display:none;position:fixed;top:62px;left:0;right:0;z-index:199;background:rgba(244,243,239,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--ink-14);padding:20px 24px;flex-direction:column;box-shadow:var(--sh-m)}
+.drawer.open{display:flex}
+.drawer a{padding:14px 0;font:500 15px/1 'Pretendard',sans-serif;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-07)}
+.drawer a:last-of-type{border:none}
+.drawer-btns{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 
-  /* spacing */
-  --sp-xs: 8px; --sp-s: 16px; --sp-m: 24px; --sp-l: 40px; --sp-xl: 64px; --sp-2xl: 100px;
+/* ── HERO ── */
+.hero{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 48px 80px;text-align:center;position:relative;overflow:hidden}
+/* 배경 그라디언트 오브 */
+.h-orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+.h-orb-1{width:800px;height:800px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(24,73,214,.25) 0%,transparent 60%)}
+.h-orb-2{width:600px;height:600px;bottom:-150px;right:-100px;background:radial-gradient(circle,rgba(4,108,78,.2) 0%,transparent 60%)}
+.h-orb-3{width:400px;height:400px;top:40%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,255,255,.03) 0%,transparent 60%)}
 
-  /* radius */
-  --r-s: 10px; --r-m: 16px; --r-l: 24px; --r-xl: 32px;
+/* LIVE 배지 */
+.hero-live{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.7);margin-bottom:28px;z-index:1;animation:fadeUp .7s ease both}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#10B981;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* shadow */
-  --sh-s: 0 2px 10px rgba(0,0,0,.06);
-  --sh-m: 0 8px 30px rgba(0,0,0,.09);
-  --sh-l: 0 20px 56px rgba(0,0,0,.12);
-}
+/* 히어로 카운터 영역 */
+.hero-counter-wrap{z-index:1;margin-bottom:12px;animation:fadeUp .7s .06s ease both}
+.hc-label{font:500 14px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:8px;letter-spacing:.02em}
+.hc-num{font:900 clamp(64px,10vw,120px)/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-4px;display:flex;align-items:baseline;justify-content:center;gap:4px}
+.hc-num .won{font:800 clamp(32px,5vw,56px)/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-right:4px}
+.hc-num .unit{font:600 clamp(16px,2.5vw,28px)/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-left:4px}
+.hc-sub{font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:8px}
 
-/* ─────────────────────────────────────
-   RESET & BASE
-───────────────────────────────────── */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font: var(--t-body);
-  background: var(--c-canvas);
-  color: var(--c-ink);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-img { display:block; max-width:100%; }
+/* 히어로 타이틀 */
+.hero-h{font:800 clamp(28px,4.5vw,58px)/1.1 'Pretendard',sans-serif;color:#fff;letter-spacing:-1.5px;z-index:1;max-width:800px;animation:fadeUp .7s .14s ease both;margin-bottom:0}
+.hero-h .hl-b{color:#93C5FD}
+.hero-h .hl-g{color:#6EE7B7}
 
-/* ─────────────────────────────────────
-   NAV
-───────────────────────────────────── */
-.nav {
-  position: fixed; top:0; left:0; right:0; z-index:200;
-  height: 64px;
-  display: flex; align-items:center; justify-content:space-between;
-  padding: 0 48px;
-  background: rgba(245,244,240,.90);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border-bottom: 1px solid var(--c-ink-14);
-  transition: background .3s;
-}
-.nav-brand {
-  display:flex; align-items:center; gap:9px; text-decoration:none;
-}
-.nav-gem {
-  width:32px; height:32px; border-radius:9px;
-  background: var(--c-ink);
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0;
-}
-.nav-gem svg { width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
-.nav-logo-text { font: 800 18px/1 'Pretendard',sans-serif; color:var(--c-ink); letter-spacing:-.4px; }
-.nav-links { display:flex; gap:32px; }
-.nav-links a { font: var(--t-small); color:var(--c-ink-70); text-decoration:none; transition:color .2s; }
-.nav-links a:hover { color:var(--c-ink); }
-.nav-actions { display:flex; gap:10px; align-items:center; }
-.btn-ghost {
-  padding: 9px 18px; border-radius:var(--r-s);
-  border: 1px solid var(--c-ink-14); background:transparent;
-  font: var(--t-small); color:var(--c-ink);
-  cursor:pointer; transition:all .18s; min-height:40px;
-}
-.btn-ghost:hover { border-color:var(--c-ink-40); background:var(--c-ink-06); }
-.btn-solid {
-  padding: 9px 20px; border-radius:var(--r-s);
-  border:none; background:var(--c-ink);
-  font: 700 13px/1 'Pretendard',sans-serif; color:#fff;
-  cursor:pointer; transition:all .18s; min-height:40px;
-}
-.btn-solid:hover { background:#1a1d24; box-shadow:0 4px 14px rgba(0,0,0,.2); }
-.btn-ghost:active,.btn-solid:active { transform:scale(.97); }
-.hb { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; }
-.hb span { display:block; width:20px; height:2px; background:var(--c-ink); border-radius:2px; transition:all .25s; }
-.hb.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
-.hb.open span:nth-child(2){ opacity:0; }
-.hb.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
-.drawer {
-  display:none; position:fixed; top:64px; left:0; right:0; z-index:199;
-  background:var(--c-glass); backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--c-ink-14);
-  padding:20px 24px; flex-direction:column; box-shadow:var(--sh-m);
-}
-.drawer.open { display:flex; }
-.drawer a { padding:14px 0; font:var(--t-small); color:var(--c-ink); text-decoration:none; border-bottom:1px solid var(--c-ink-06); }
-.drawer a:last-of-type { border:none; }
-.drawer-btns { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.hero-sub{font:400 clamp(14px,1.6vw,17px)/1.8 'Pretendard',sans-serif;color:rgba(255,255,255,.5);max-width:480px;z-index:1;animation:fadeUp .7s .22s ease both;margin-top:18px}
 
-/* ─────────────────────────────────────
-   HERO
-───────────────────────────────────── */
-.hero {
-  min-height: 100vh;
-  padding: 130px 48px 80px;
-  display:flex; flex-direction:column; align-items:center;
-  text-align:center; position:relative; overflow:hidden;
-}
-.hero-bg-orb {
-  position:absolute; border-radius:50%; pointer-events:none; filter:blur(100px);
-}
-.orb-a { width:640px;height:640px;top:-160px;left:-100px; background:radial-gradient(circle,rgba(26,86,219,.10) 0%,transparent 65%); }
-.orb-b { width:540px;height:540px;bottom:-120px;right:-80px; background:radial-gradient(circle,rgba(4,120,87,.08) 0%,transparent 65%); }
+/* 역할 선택 CTA */
+.hero-roles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px;z-index:1;animation:fadeUp .7s .30s ease both;max-width:560px;width:100%}
+.role-btn{padding:18px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);cursor:pointer;text-align:left;font-family:inherit;transition:all .22s;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px)}
+.role-btn:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.role-btn:active{transform:scale(.97)}
+.rb-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rb-ico-b{background:rgba(147,197,253,.15)}
+.rb-ico-g{background:rgba(110,231,183,.15)}
+.rb-title{font:700 15px/1 'Pretendard',sans-serif;color:#fff;margin-bottom:4px}
+.rb-desc{font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.45)}
+.rb-tag{display:inline-block;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;margin-top:5px}
+.rb-tag-b{background:rgba(147,197,253,.2);color:#93C5FD}
+.rb-tag-g{background:rgba(110,231,183,.2);color:#6EE7B7}
 
-/* eyebrow */
-.hero-eyebrow {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:6px 14px; border-radius:100px;
-  background:var(--c-white); border:1px solid var(--c-ink-14);
-  font: var(--t-caption); color:var(--c-ink);
-  margin-bottom:28px; z-index:1; box-shadow:var(--sh-s);
-  animation: fadeUp .65s ease both;
-}
-.live-dot { width:7px;height:7px;border-radius:50%;background:#10B981;animation:pulse 2s infinite; flex-shrink:0; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+/* 신뢰 수치 */
+.hero-proof{display:flex;align-items:center;gap:24px;margin-top:36px;z-index:1;animation:fadeUp .7s .38s ease both;flex-wrap:wrap;justify-content:center}
+.hp-item{text-align:center}
+.hp-val{font:800 22px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px}
+.hp-lbl{font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:4px}
+.hp-div{width:1px;height:28px;background:rgba(255,255,255,.12)}
 
-/* headline */
-.hero-h1 {
-  font: var(--t-display);
-  letter-spacing: -2px;
-  color: var(--c-ink); z-index:1; max-width:860px;
-  animation: fadeUp .65s .08s ease both;
-}
-.hero-h1 .hl-blue  { color:var(--c-blue); }
-.hero-h1 .hl-green { color:var(--c-green); }
+/* 스크롤 힌트 */
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:1;animation:fadeUp .7s .5s ease both;opacity:.4}
+.scroll-hint span{font:500 11px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:.05em;text-transform:uppercase}
+.scroll-arr{width:1px;height:28px;background:linear-gradient(to bottom,#fff,transparent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:.8;transform:scaleY(1.2)}}
 
-/* sub */
-.hero-sub {
-  margin-top:20px;
-  font: var(--t-body); color:var(--c-ink-70);
-  max-width:460px; z-index:1;
-  animation: fadeUp .65s .16s ease both;
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* cta */
-.hero-cta {
-  display:flex; gap:12px; margin-top:36px;
-  z-index:1; animation:fadeUp .65s .24s ease both;
-  flex-wrap:wrap; justify-content:center;
-}
-.cta-p {
-  padding:15px 28px; border-radius:12px;
-  background:var(--c-ink); color:#fff; border:none;
-  font: 700 15px/1 'Pretendard',sans-serif;
-  min-height:52px; cursor:pointer; transition:all .22s;
-  box-shadow: 0 4px 16px rgba(0,0,0,.20);
-  display:flex; align-items:center; gap:7px;
-}
-.cta-p:hover { background:#1a1d24; transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,0,0,.25); }
-.cta-s {
-  padding:15px 28px; border-radius:12px;
-  background:var(--c-white); color:var(--c-ink);
-  border:1px solid var(--c-ink-14);
-  font: 700 15px/1 'Pretendard',sans-serif;
-  min-height:52px; cursor:pointer; transition:all .22s;
-  box-shadow:var(--sh-s);
-  display:flex; align-items:center; gap:7px;
-}
-.cta-s:hover { border-color:var(--c-ink-40); transform:translateY(-1px); box-shadow:var(--sh-m); }
-.cta-p:active,.cta-s:active { transform:scale(.97); }
+/* ── SOCIAL PROOF ── */
+.proof-band{background:var(--white);border-bottom:1px solid var(--ink-14);padding:20px 0;overflow:hidden}
+.proof-track{display:flex;gap:48px;animation:ticker 22s linear infinite;width:max-content}
+.pt-item{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.pt-val{font:800 20px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px}
+.pt-lbl{font:500 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+.pt-sep{color:var(--ink-14);font-size:16px}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* counter */
-.hero-ctr {
-  display:flex; align-items:center; gap:9px;
-  margin-top:22px; z-index:1;
-  animation:fadeUp .65s .32s ease both;
-  font: var(--t-caption); color:var(--c-ink-40);
-  flex-wrap:wrap; justify-content:center;
-}
-.ctr-track { width:108px;height:3px;border-radius:2px;background:var(--c-ink-14);overflow:hidden; }
-.ctr-prog  { height:100%;border-radius:2px;background:var(--c-ink);width:0;transition:width 1.5s ease; }
-.ctr-n { font-weight:700; color:var(--c-ink); }
+/* ── LAYOUT ── */
+.wrap{max-width:1120px;margin:0 auto;padding:0 48px}
+.section{padding-top:96px}
+.ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-40);margin-bottom:10px}
+.st{font:800 clamp(26px,3.2vw,44px)/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:var(--ink);margin-bottom:14px}
+.sb{font:400 16px/1.75 'Pretendard',sans-serif;color:var(--ink-70)}
 
-/* hero image */
-.hero-img-wrap {
-  margin-top:56px; z-index:1; width:100%; max-width:1060px;
-  animation:fadeUp .65s .40s ease both; position:relative;
-}
-.hero-img-main {
-  width:100%; height:440px; object-fit:cover;
-  border-radius:var(--r-xl); border:1px solid var(--c-ink-14);
-  box-shadow:var(--sh-l);
-}
-/* 플로팅 stat 카드 */
-.stat-card {
-  position:absolute;
-  background:var(--c-white); border:1px solid var(--c-ink-14);
-  border-radius:var(--r-m); padding:16px 20px;
-  box-shadow:var(--sh-m);
-  animation:float 5s ease-in-out infinite;
-}
-.sc-left  { left:-28px; bottom:44px; animation-delay:0s; }
-.sc-right { right:-28px; top:44px; animation-delay:-2.5s; }
-@keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
-.sc-label { font: var(--t-label); color:var(--c-ink-40); margin-bottom:4px; text-transform:uppercase; letter-spacing:.06em; }
-.sc-value { font: 800 22px/1 'Pretendard',sans-serif; color:var(--c-ink); letter-spacing:-.5px; margin-bottom:4px; }
-.sc-meta  { font: var(--t-caption); }
-.green-t  { color:var(--c-green); }
-.pill-tag {
-  display:inline-flex; align-items:center; gap:4px;
-  font: var(--t-label); padding:3px 9px; border-radius:100px; margin-top:5px;
-}
-.pill-green { background:var(--c-green-bg); color:var(--c-green); }
-.pill-blue  { background:var(--c-blue-bg);  color:var(--c-blue); }
-.pill-amber { background:var(--c-amber-bg); color:var(--c-amber); }
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+/* ── EARN SECTION (탭) ── */
+.earn-tabs{display:flex;gap:6px;margin-top:36px;background:var(--ink-07);border-radius:12px;padding:4px;max-width:320px}
+.etab{flex:1;padding:10px 16px;border-radius:9px;border:none;background:transparent;font:600 14px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s}
+.etab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh-s)}
+.earn-panels{margin-top:28px}
+.ep{display:none}
+.ep.on{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 
-/* ─────────────────────────────────────
-   TICKER
-───────────────────────────────────── */
-.ticker { background:var(--c-ink); padding:18px 0; overflow:hidden; }
-.ticker-inner { display:flex; gap:56px; animation:ticker 24s linear infinite; width:max-content; }
-.ti { display:flex; align-items:center; gap:12px; flex-shrink:0; }
-.ti-val { font: 800 22px/1 'Pretendard',sans-serif; color:#fff; letter-spacing:-.5px; }
-.ti-lbl { font: var(--t-small); color:rgba(255,255,255,.40); }
-.ti-sep { color:rgba(255,255,255,.15); font-size:18px; }
-@keyframes ticker { from{transform:translateX(0)}to{transform:translateX(-50%)} }
+/* 수익 계산 카드 */
+.earn-calc{background:var(--ink);border-radius:var(--r-l);padding:32px;color:#fff}
+.ec-label{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px}
+.ec-row{margin-bottom:16px}
+.ec-row-label{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px}
+.ec-slider{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.15);outline:none;cursor:pointer}
+.ec-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ec-val{font:700 13px/1 'Pretendard',sans-serif;color:#fff;margin-top:5px}
+.ec-result{margin-top:24px;padding:16px;background:rgba(255,255,255,.06);border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+.ec-result-label{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:6px}
+.ec-result-num{font:900 36px/1 'Pretendard',sans-serif;color:#6EE7B7;letter-spacing:-1px}
+.ec-result-sub{font:400 12px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:6px}
 
-/* ─────────────────────────────────────
-   LAYOUT UTILITIES
-───────────────────────────────────── */
-.wrap { max-width:1140px; margin:0 auto; padding:0 48px; }
-.section { padding-top:var(--sp-2xl); }
-.eyebrow {
-  font: var(--t-label); letter-spacing:.1em; text-transform:uppercase;
-  color:var(--c-ink-40); margin-bottom:10px;
-}
-.section-title { font: var(--t-h2); letter-spacing:-1.2px; color:var(--c-ink); margin-bottom:14px; }
-.section-body  { font: var(--t-body); color:var(--c-ink-70); max-width:440px; }
+/* 수익 흐름 카드 */
+.earn-flow{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:28px}
+.ef-title{font:700 15px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:20px}
+.ef-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--ink-07)}
+.ef-step:last-child{border:none}
+.ef-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;flex-shrink:0;margin-top:1px}
+.ef-t{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:3px}
+.ef-d{font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-70)}
+.ef-badge{display:inline-block;font:700 11px/1 'Pretendard',sans-serif;padding:2px 8px;border-radius:4px;margin-top:4px}
 
-/* ─────────────────────────────────────
-   WHO SECTION
-───────────────────────────────────── */
-.who-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px; }
+/* ── 수익 구조 투명 섹션 ── */
+.fee-wrap{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fee-card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);overflow:hidden}
+.fee-head{padding:18px 22px;border-bottom:1px solid var(--ink-14)}
+.fee-head-b{background:var(--blue-bg)}
+.fee-head-g{background:var(--green-bg)}
+.fee-title{font:800 15px/1 'Pretendard',sans-serif;letter-spacing:-.3px}
+.fee-sub{font:400 12px/1 'Pretendard',sans-serif;color:var(--ink-70);margin-top:3px}
+.fee-body{padding:6px 0}
+.fee-row{display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid var(--ink-07)}
+.fee-row:last-child{border:none}
+.fee-lbl{font:500 13px/1.4 'Pretendard',sans-serif;color:var(--ink-70)}
+.fee-lbl small{display:block;font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
+.fee-amt{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink);white-space:nowrap;text-align:right}
+.fee-amt small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
+.fee-amt.green{color:var(--green)}
+.fee-amt.red{color:var(--red)}
+.fee-total{padding:12px 22px;background:var(--ink-07);display:flex;justify-content:space-between;align-items:center}
+.fee-total-l{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink)}
+.fee-total-r{font:800 18px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px}
+/* 예시 계산기 */
+.calc-demo{background:var(--ink);border-radius:var(--r-l);padding:24px 28px;margin-top:14px;grid-column:1/-1}
+.cd-title{font:700 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase}
+.cd-formula{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cd-box{padding:10px 14px;border-radius:9px;text-align:center}
+.cd-box-w{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.cd-box-b{background:rgba(147,197,253,.12);border:1px solid rgba(147,197,253,.2)}
+.cd-box-g{background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.2)}
+.cd-box-y{background:rgba(252,211,77,.12);border:1px solid rgba(252,211,77,.2)}
+.cd-v{font:800 18px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px}
+.cd-l{font:500 10px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:3px}
+.cd-op{font:700 18px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.25)}
 
-.wc-dark {
-  border-radius:var(--r-xl); overflow:hidden; background:var(--c-ink);
-  transition:transform .25s;
-}
-.wc-dark:hover { transform:translateY(-4px); }
-.wc-d-img { width:100%; height:230px; object-fit:cover; filter:brightness(.55); }
-.wc-d-body { padding:28px 30px 32px; }
-.wc-d-tag {
-  display:inline-block; font: var(--t-label); letter-spacing:.08em; text-transform:uppercase;
-  padding:4px 10px; border-radius:4px;
-  background:rgba(255,255,255,.10); color:rgba(255,255,255,.55);
-  margin-bottom:14px;
-}
-.wc-d-body h3 { font: var(--t-h3); color:#fff; margin-bottom:8px; }
-.wc-d-body p  { font: var(--t-small); color:rgba(255,255,255,.55); line-height:1.65; margin-bottom:18px; }
-.wc-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
-.wc-list li {
-  font: var(--t-small); display:flex; align-items:flex-start; gap:9px; line-height:1.5;
-}
-.wc-dark .wc-list li  { color:rgba(255,255,255,.70); }
-.wc-light .wc-list li { color:var(--c-ink-70); }
-.ic-dark  { color:#60A5FA; font-size:10px; margin-top:3px; flex-shrink:0; font-weight:800; }
-.ic-light { color:var(--c-green); font-size:10px; margin-top:3px; flex-shrink:0; font-weight:800; }
-.wc-btn-w {
-  padding:12px 22px; border-radius:10px; background:#fff; color:var(--c-ink);
-  font: 700 14px/1 'Pretendard',sans-serif; border:none; cursor:pointer;
-  transition:all .2s; min-height:46px; display:inline-flex; align-items:center; gap:6px;
-}
-.wc-btn-w:hover { background:rgba(255,255,255,.88); transform:translateY(-1px); }
+/* ── 입점 기준 ── */
+.std-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+.std{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:26px;transition:all .22s}
+.std:hover{transform:translateY(-3px);box-shadow:var(--sh-m)}
+.std-n{font:900 42px/1 'Pretendard',sans-serif;color:var(--ink-07);letter-spacing:-2px;margin-bottom:12px}
+.std-t{font:700 16px/1.3 'Pretendard',sans-serif;color:var(--ink);margin-bottom:8px;letter-spacing:-.3px}
+.std-d{font:400 13px/1.65 'Pretendard',sans-serif;color:var(--ink-70)}
+.std-tag{display:inline-block;font:700 11px/1 'Pretendard',sans-serif;padding:3px 9px;border-radius:4px;margin-top:10px}
 
-.wc-light {
-  border-radius:var(--r-xl); overflow:hidden;
-  background:var(--c-white); border:1px solid var(--c-ink-14);
-  box-shadow:var(--sh-s); transition:transform .25s;
-}
-.wc-light:hover { transform:translateY(-4px); box-shadow:var(--sh-m); }
-.wc-l-img { width:100%; height:230px; object-fit:cover; }
-.wc-l-body { padding:28px 30px 32px; }
-.wc-l-tag {
-  display:inline-block; font: var(--t-label); letter-spacing:.08em; text-transform:uppercase;
-  padding:4px 10px; border-radius:4px;
-  background:var(--c-green-bg); color:var(--c-green);
-  margin-bottom:14px;
-}
-.wc-l-body h3 { font: var(--t-h3); color:var(--c-ink); margin-bottom:8px; }
-.wc-l-body p  { font: var(--t-small); color:var(--c-ink-70); line-height:1.65; margin-bottom:18px; }
-.wc-btn-d {
-  padding:12px 22px; border-radius:10px; background:var(--c-ink); color:#fff;
-  font: 700 14px/1 'Pretendard',sans-serif; border:none; cursor:pointer;
-  transition:all .2s; min-height:46px; display:inline-flex; align-items:center; gap:6px;
-}
-.wc-btn-d:hover { background:#1a1d24; transform:translateY(-1px); }
-.wc-btn-w:active,.wc-btn-d:active { transform:scale(.97); }
+/* ── 등급 시스템 ── */
+.grade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:44px}
+.gc{border-radius:var(--r-l);padding:22px 18px;transition:all .22s;position:relative;overflow:hidden}
+.gc:hover{transform:translateY(-4px)}
+.gc-new{background:var(--white);border:1px solid var(--ink-14);box-shadow:var(--sh-s)}
+.gc-active{background:var(--blue-bg);border:1px solid rgba(24,73,214,.18)}
+.gc-pro{background:var(--ink);color:#fff}
+.gc-elite{background:linear-gradient(135deg,#1849D6 0%,#7C3AED 100%);color:#fff}
+.gc-badge{display:inline-block;font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:100px;margin-bottom:10px}
+.gc-new .gc-badge{background:var(--ink-07);color:var(--ink-40)}
+.gc-active .gc-badge{background:var(--blue-dim);color:var(--blue)}
+.gc-pro .gc-badge{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
+.gc-elite .gc-badge{background:rgba(255,255,255,.18);color:#fff}
+.gc-ico{font-size:28px;margin-bottom:10px}
+.gc-name{font:800 20px/1 'Pretendard',sans-serif;letter-spacing:-.5px;margin-bottom:5px}
+.gc-new .gc-name,.gc-active .gc-name{color:var(--ink)}
+.gc-cond{font:500 12px/1.4 'Pretendard',sans-serif;margin-bottom:14px}
+.gc-new .gc-cond,.gc-active .gc-cond{color:var(--ink-40)}
+.gc-pro .gc-cond,.gc-elite .gc-cond{color:rgba(255,255,255,.5)}
+.gc-perks{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gc-perks li{font:500 12px/1.4 'Pretendard',sans-serif;display:flex;gap:6px;align-items:flex-start}
+.gc-new .gc-perks li,.gc-active .gc-perks li{color:var(--ink-70)}
+.gc-pro .gc-perks li,.gc-elite .gc-perks li{color:rgba(255,255,255,.7)}
+.gc-perks li::before{content:'›';font-weight:800;flex-shrink:0;opacity:.5}
 
-/* ─────────────────────────────────────
-   NUMBERS DARK BAND
-───────────────────────────────────── */
-.numbers-band { background:var(--c-ink); margin-top:var(--sp-2xl); padding:60px 0; }
-.numbers-grid {
-  max-width:1140px; margin:0 auto; padding:0 48px;
-  display:grid; grid-template-columns:repeat(4,1fr);
-}
-.nb-item { padding:0 32px; border-right:1px solid rgba(255,255,255,.10); }
-.nb-item:first-child { padding-left:0; }
-.nb-item:last-child  { border:none; }
-.nb-val { font: 800 38px/1 'Pretendard',sans-serif; color:#fff; letter-spacing:-1.2px; margin-bottom:5px; }
-.nb-lbl { font: var(--t-small); color:rgba(255,255,255,.40); }
+/* ── 안전장치 ── */
+.safe-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:44px}
+.safe{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:26px;transition:all .22s}
+.safe:hover{transform:translateY(-3px);box-shadow:var(--sh-m)}
+.safe-ico{font-size:28px;margin-bottom:14px}
+.safe-t{font:700 17px/1.3 'Pretendard',sans-serif;color:var(--ink);margin-bottom:8px;letter-spacing:-.3px}
+.safe-d{font:400 14px/1.65 'Pretendard',sans-serif;color:var(--ink-70)}
+.safe-flow{margin-top:12px;background:var(--ink-07);border-radius:9px;padding:10px 14px;font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-70)}
 
-/* ─────────────────────────────────────
-   SPLIT SECTIONS
-───────────────────────────────────── */
-.split {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:60px; align-items:center; margin-top:44px;
-}
-.split-img {
-  width:100%; height:380px; object-fit:cover;
-  border-radius:var(--r-l); box-shadow:var(--sh-m); display:block;
-}
-.split-tag {
-  display:inline-block; font: var(--t-label); letter-spacing:.08em; text-transform:uppercase;
-  padding:4px 10px; border-radius:4px; margin-bottom:14px;
-}
-.tag-blue  { background:var(--c-blue-bg);  color:var(--c-blue);  }
-.tag-green { background:var(--c-green-bg); color:var(--c-green); }
-.split h2 { font: var(--t-h2); letter-spacing:-1.2px; color:var(--c-ink); margin-bottom:12px; }
-.split p  { font: var(--t-body); color:var(--c-ink-70); margin-bottom:22px; }
-.check-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:26px; }
-.check-list li {
-  font: var(--t-small); color:var(--c-ink-70);
-  display:flex; align-items:flex-start; gap:10px; line-height:1.5;
-}
-.ck {
-  width:18px;height:18px;border-radius:5px;
-  background:var(--c-green-bg);color:var(--c-green);
-  display:flex;align-items:center;justify-content:center;
-  font:700 10px/1 'Pretendard',sans-serif;flex-shrink:0;margin-top:1px;
-}
+/* ── 후기 ── */
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+.rev{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:26px;transition:all .22s}
+.rev:hover{transform:translateY(-3px);box-shadow:var(--sh-m)}
+.rev-stars{color:#F59E0B;font-size:12px;letter-spacing:2px;margin-bottom:12px}
+.rev-earn{display:inline-flex;align-items:baseline;gap:4px;margin-bottom:12px;padding:6px 12px;background:var(--green-bg);border-radius:8px}
+.rev-earn-num{font:800 20px/1 'Pretendard',sans-serif;color:var(--green);letter-spacing:-.5px}
+.rev-earn-unit{font:600 12px/1 'Pretendard',sans-serif;color:var(--green)}
+.rev-text{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:16px}
+.rev-author{display:flex;align-items:center;gap:10px}
+.rev-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;flex-shrink:0}
+.rev-name{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:3px}
+.rev-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 
-/* ─────────────────────────────────────
-   TRUST
-───────────────────────────────────── */
-.trust-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
-.tc {
-  background:var(--c-white); border:1px solid var(--c-ink-14);
-  border-radius:var(--r-l); padding:28px; box-shadow:var(--sh-s);
-  transition:all .22s;
-}
-.tc:hover { transform:translateY(-3px); box-shadow:var(--sh-m); }
-.tc-stars { color:#F59E0B; font-size:13px; letter-spacing:2px; margin-bottom:14px; }
-.tc-text  { font: var(--t-small); color:var(--c-ink-70); line-height:1.75; margin-bottom:18px; }
-.tc-author{ display:flex; align-items:center; gap:10px; }
-.tc-av {
-  width:38px;height:38px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font:700 14px/1 'Pretendard',sans-serif;flex-shrink:0;
-}
-.tc-name { font: 700 14px/1 'Pretendard',sans-serif; color:var(--c-ink); margin-bottom:3px; }
-.tc-role { font: var(--t-caption); color:var(--c-ink-40); }
+/* ── FAQ ── */
+.faq-inner{max-width:680px;margin:36px auto 0}
+.faq-item{border-bottom:1px solid var(--ink-14)}
+.faq-q{padding:19px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:16px}
+.fq-t{font:700 15px/1.4 'Pretendard',sans-serif;color:var(--ink)}
+.fq-ic{width:26px;height:26px;border-radius:7px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;font:600 13px/1 'Pretendard',sans-serif;color:var(--ink-40);flex-shrink:0;transition:all .25s}
+.faq-item.open .fq-ic{background:var(--blue-bg);color:var(--blue);border-color:rgba(24,73,214,.2);transform:rotate(45deg)}
+.faq-a{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0}
+.faq-item.open .faq-a{max-height:220px;padding:0 0 18px}
 
-/* ─────────────────────────────────────
-   FAQ
-───────────────────────────────────── */
-.faq-inner { max-width:700px; margin:40px auto 0; }
-.faq-item  { border-bottom:1px solid var(--c-ink-14); }
-.faq-q {
-  padding:20px 0; display:flex; align-items:center;
-  justify-content:space-between; cursor:pointer; gap:16px;
-}
-.fq-t  { font: 700 15px/1.4 'Pretendard',sans-serif; color:var(--c-ink); }
-.fq-ic {
-  width:27px;height:27px;border-radius:8px;
-  background:var(--c-ink-06);border:1px solid var(--c-ink-14);
-  display:flex;align-items:center;justify-content:center;
-  font:600 14px/1 'Pretendard',sans-serif;color:var(--c-ink-40);
-  flex-shrink:0;transition:all .25s;
-}
-.faq-item.open .fq-ic { background:var(--c-blue-bg);color:var(--c-blue);border-color:rgba(26,86,219,.2);transform:rotate(45deg); }
-.faq-a {
-  font: var(--t-small); color:var(--c-ink-70); line-height:1.75;
-  max-height:0;overflow:hidden;
-  transition:max-height .35s ease,padding .35s ease;
-  padding:0;
-}
-.faq-item.open .faq-a { max-height:220px;padding:0 0 18px; }
+/* ── CTA FINAL ── */
+.cta-final{padding:96px 48px}
+.cta-inner{max-width:1120px;margin:0 auto;background:var(--ink);border-radius:var(--r-xl);padding:64px 56px;display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden;position:relative;box-shadow:var(--sh-l)}
+.cta-glow{position:absolute;top:-100px;left:-60px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(24,73,214,.3) 0%,transparent 65%);filter:blur(60px);pointer-events:none}
+.cta-content{position:relative;z-index:1}
+.cta-ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:12px}
+.cta-h{font:800 clamp(24px,3.5vw,44px)/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:#fff;margin-bottom:14px}
+.cta-h em{font-style:normal;color:#93C5FD}
+.cta-p{font:400 15px/1.75 'Pretendard',sans-serif;color:rgba(255,255,255,.45);max-width:400px;margin-bottom:28px}
+.cta-perks{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.cp{display:flex;align-items:center;gap:10px;font:500 14px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.7)}
+.cp-chk{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font:700 10px/1 'Pretendard',sans-serif;flex-shrink:0}
+.cta-counter{display:flex;align-items:center;gap:10px;font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-bottom:24px}
+.cta-bar{flex:1;max-width:130px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
+.cta-prog{height:100%;border-radius:2px;background:linear-gradient(90deg,#93C5FD,#6EE7B7);width:23.1%}
+.cta-btn{padding:16px 32px;border-radius:12px;background:#fff;color:var(--ink);font:800 15px/1 'Pretendard',sans-serif;border:none;cursor:pointer;min-height:52px;max-width:260px;width:100%;transition:all .22s;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.cta-btn:active{transform:scale(.97)}
+.cta-img-wrap{position:relative}
+.cta-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.6)}
+.cta-img-fade{position:absolute;inset:0;background:linear-gradient(to right,var(--ink) 0%,transparent 50%)}
 
-/* ─────────────────────────────────────
-   EARLYBIRD
-───────────────────────────────────── */
-.eb-wrap { padding:var(--sp-2xl) 48px; }
-.eb-card {
-  max-width:1140px; margin:0 auto;
-  background:var(--c-ink); border-radius:var(--r-xl);
-  display:grid; grid-template-columns:1fr 420px;
-  overflow:hidden; box-shadow:var(--sh-l);
-}
-.eb-left { padding:56px; position:relative; overflow:hidden; }
-.eb-glow {
-  position:absolute;top:-80px;left:-60px;
-  width:320px;height:320px;border-radius:50%;
-  background:radial-gradient(circle,rgba(26,86,219,.28) 0%,transparent 65%);
-  filter:blur(50px);pointer-events:none;
-}
-.eb-inner { position:relative;z-index:1; }
-.eb-ey   { font: var(--t-label); letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:10px; }
-.eb-h    { font: var(--t-h2); letter-spacing:-1.2px; color:#fff; margin-bottom:14px; }
-.eb-h em { font-style:normal; color:#93C5FD; }
-.eb-p    { font: var(--t-small); color:rgba(255,255,255,.50); line-height:1.75; max-width:400px; margin-bottom:28px; }
-.eb-perks{ display:flex;flex-direction:column;gap:8px;margin-bottom:24px; }
-.perk    { display:flex;align-items:center;gap:10px; font: var(--t-small); color:rgba(255,255,255,.75); }
-.pchk   {
-  width:18px;height:18px;border-radius:50%;
-  background:rgba(255,255,255,.12);
-  display:flex;align-items:center;justify-content:center;
-  font:700 10px/1 'Pretendard',sans-serif;flex-shrink:0;
-}
-.eb-ctr  {
-  display:flex;align-items:center;gap:10px;
-  font: var(--t-caption); color:rgba(255,255,255,.35);
-  margin-bottom:24px;flex-wrap:wrap;
-}
-.eb-bar  { flex:1;max-width:140px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden; }
-.eb-prog { height:100%;border-radius:2px;background:linear-gradient(90deg,#93C5FD,#6EE7B7);width:23.1%; }
-.eb-btn {
-  padding:15px 32px;border-radius:12px;
-  background:#fff;color:var(--c-ink);
-  font: 800 15px/1 'Pretendard',sans-serif;
-  border:none;cursor:pointer;transition:all .22s;
-  min-height:52px;max-width:280px;width:100%;
-  box-shadow:0 4px 20px rgba(0,0,0,.20);
-}
-.eb-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.30); }
-.eb-btn:active { transform:scale(.97); }
-.eb-right { position:relative; }
-.eb-right-img { width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.65); }
-.eb-right-fade {
-  position:absolute;inset:0;
-  background:linear-gradient(to right,var(--c-ink) 0%,transparent 55%);
-}
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--ink-14);padding:40px 48px}
+.foot-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.foot-links{display:flex;gap:22px}
+.foot-links a{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:var(--ink)}
+.foot-copy{font:500 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 
-/* ─────────────────────────────────────
-   FOOTER
-───────────────────────────────────── */
-footer { border-top:1px solid var(--c-ink-14); padding:40px 48px; }
-.footer-in {
-  max-width:1140px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
-}
-.footer-links { display:flex;gap:24px; }
-.footer-links a { font: var(--t-caption); color:var(--c-ink-40); text-decoration:none; transition:color .2s; }
-.footer-links a:hover { color:var(--c-ink); }
-.footer-copy { font: var(--t-caption); color:var(--c-ink-40); }
-
-/* ─────────────────────────────────────
-   MODAL
-───────────────────────────────────── */
-.ov {
-  position:fixed;inset:0;z-index:999;
-  background:rgba(12,14,18,.52);backdrop-filter:blur(8px);
-  display:none;align-items:center;justify-content:center;padding:20px;
-}
-.ov.on { display:flex; }
-.modal {
-  background:var(--c-white);border-radius:var(--r-xl);
-  width:100%;max-width:480px;padding:40px;
-  position:relative;box-shadow:var(--sh-l);
-  animation:mIn .26s ease;max-height:92vh;overflow-y:auto;
-  border:1px solid var(--c-ink-14);
-}
-@keyframes mIn { from{opacity:0;transform:scale(.94) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.mc {
-  position:absolute;top:16px;right:16px;
-  width:32px;height:32px;border-radius:50%;
-  background:var(--c-ink-06);border:1px solid var(--c-ink-14);
-  cursor:pointer;font:500 14px/1 'Pretendard',sans-serif;color:var(--c-ink-40);
-  display:flex;align-items:center;justify-content:center;transition:background .2s;
-}
-.mc:hover { background:var(--c-ink-14); }
-.m-brand { font:800 17px/1 'Pretendard',sans-serif;color:var(--c-ink);letter-spacing:-.3px;margin-bottom:4px; }
-.m-title { font: var(--t-h2); letter-spacing:-1px; color:var(--c-ink); margin-bottom:6px; }
-.m-sub   { font: var(--t-small); color:var(--c-ink-70); margin-bottom:24px; }
-
-/* role cards */
-.role-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px; }
-.rc {
-  padding:17px 14px;border-radius:12px;
-  border:1.5px solid var(--c-ink-14);background:transparent;
-  cursor:pointer;text-align:left;font-family:inherit;transition:all .18s;width:100%;
-}
-.rc:hover { border-color:var(--c-ink-40); }
-.rc.rb   { border-color:var(--c-blue);  background:var(--c-blue-bg);  }
-.rc.rg   { border-color:var(--c-green); background:var(--c-green-bg); }
-.rc:active { transform:scale(.97); }
-.rc-ico { font-size:20px;margin-bottom:8px; }
-.rc-name{ font:700 14px/1 'Pretendard',sans-serif;display:block;margin-bottom:3px;color:var(--c-ink); }
-.rc-who { font: var(--t-caption); color:var(--c-ink-40);display:block;margin-bottom:6px;line-height:1.4; }
-.rc-badge { display:inline-block;font: var(--t-label);padding:3px 8px;border-radius:4px; }
-.rbc-b { background:var(--c-blue-bg); color:var(--c-blue); }
-.rbc-g { background:var(--c-green-bg);color:var(--c-green); }
-
-/* form */
-.fsec { display:none; } .fsec.on { display:block; }
-.fg  { margin-bottom:13px; }
-.fl  { font:700 13px/1 'Pretendard',sans-serif;color:var(--c-ink);display:block;margin-bottom:6px; }
-.ferr{ font: var(--t-caption);color:#DC2626;margin-top:3px;display:none; }
-.ferr.show { display:block; }
-.fi  {
-  width:100%;padding:12px 14px;border-radius:10px;
-  border:1.5px solid var(--c-ink-14);background:var(--c-ink-06);
-  font: var(--t-small); font-family:'Pretendard',sans-serif;
-  outline:none;transition:border-color .18s,box-shadow .18s;min-height:46px;color:var(--c-ink);
-}
-.fi:focus { border-color:var(--c-blue);box-shadow:0 0 0 3px rgba(26,86,219,.10);background:var(--c-white); }
-.fi.err   { border-color:#DC2626;box-shadow:0 0 0 3px rgba(220,38,38,.08); }
-.frow { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
-.nbox { border-radius:10px;padding:10px 14px;font:600 13px/1.5 'Pretendard',sans-serif;margin-bottom:12px; }
-.nb-b { background:var(--c-blue-bg);color:var(--c-blue); }
-.nb-g { background:var(--c-green-bg);color:var(--c-green); }
-.sbtn {
-  width:100%;padding:14px;border-radius:11px;border:none;
-  font:800 15px/1 'Pretendard',sans-serif;
-  cursor:pointer;min-height:50px;margin-top:6px;transition:all .2s;
-}
-.sbtn-b { background:var(--c-blue-mid);color:#fff; }
-.sbtn-b:hover { background:var(--c-blue); }
-.sbtn-g { background:var(--c-green);color:#fff; }
-.sbtn-g:hover { background:#065F46; }
-.sbtn:active { transform:scale(.97); }
-.mfoot { text-align:center;margin-top:13px;font: var(--t-caption);color:var(--c-ink-40); }
-.mfoot a { color:var(--c-blue);text-decoration:none; }
-
-/* success */
-.success { text-align:center;padding:16px 0;display:none; }
-.success.on { display:block; }
-.s-ico   { font-size:48px;margin-bottom:14px;animation:bounce .6s ease; }
-@keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
-.s-title { font: var(--t-h2); letter-spacing:-1px; margin-bottom:7px; }
-.s-desc  { font: var(--t-small); color:var(--c-ink-70); margin-bottom:16px; }
-.s-badge { display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;margin-bottom:16px;font:700 13px/1 'Pretendard',sans-serif; }
-.sb-bl   { background:var(--c-blue-bg); color:var(--c-blue); }
-.sb-gr   { background:var(--c-green-bg);color:var(--c-green); }
-.ns-box  { background:var(--c-ink-06);border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:14px;border:1px solid var(--c-ink-14); }
-.ns-tit  { font:700 13px/1 'Pretendard',sans-serif;margin-bottom:8px; }
-.ns-li   { display:flex;gap:8px;font: var(--t-small);color:var(--c-ink-70);margin-bottom:5px;line-height:1.5; }
-.cls-btn { width:100%;padding:12px;border-radius:10px;background:var(--c-ink-06);border:1.5px solid var(--c-ink-14);font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;min-height:46px;transition:all .2s; }
-.cls-btn:hover { border-color:var(--c-blue);color:var(--c-blue); }
-
-/* ─────────────────────────────────────
-   SCROLL ANIMATIONS
-───────────────────────────────────── */
-.reveal {
-  opacity:0; transform:translateY(20px);
-  transition:opacity .55s ease, transform .55s ease;
-}
-.reveal.visible { opacity:1; transform:translateY(0); }
-
-/* ─────────────────────────────────────
-   RESPONSIVE
-───────────────────────────────────── */
+/* ── MOBILE ── */
 @media(max-width:768px){
-  .nav { padding:0 20px; }
-  .nav-links,.nav-actions { display:none; }
-  .hb { display:flex; }
-  .hero { padding:90px 20px 60px; }
-  .hero-img-main { height:240px; }
-  .stat-card { display:none; }
-  .wrap { padding:0 20px; }
-  .section { padding-top:64px; }
-  .who-grid,.split,.trust-grid { grid-template-columns:1fr; gap:14px; }
-  .split .split-img { order:0 !important; }
-  .split .split-text { order:1 !important; }
-  .numbers-grid { grid-template-columns:1fr 1fr; gap:24px 0; }
-  .nb-item { padding:0 0 0 24px; border-right:none; border-left:2px solid rgba(255,255,255,.08); }
-  .nb-item:nth-child(odd) { padding-left:0; border-left:none; }
-  .eb-wrap { padding:64px 20px; }
-  .eb-card { grid-template-columns:1fr; }
-  .eb-right { display:none; }
-  .eb-left { padding:36px 28px; }
-  .hero-cta { flex-direction:column;width:100%; }
-  .cta-p,.cta-s { width:100%;justify-content:center; }
-  footer { padding:32px 20px; }
-  .footer-in { flex-direction:column; gap:12px; }
-  .ov { align-items:flex-end; padding:0; }
-  .modal { border-radius:var(--r-xl) var(--r-xl) 0 0; max-width:100%; padding:28px 20px 36px; animation:sUp .26s ease; max-height:92vh; }
-  @keyframes sUp { from{transform:translateY(100%)}to{transform:translateY(0)} }
-  .frow,.role-grid { grid-template-columns:1fr; }
+  .nav{padding:0 20px}
+  .nav-links,.nav-act{display:none}
+  .hb{display:flex}
+  .hero{padding:90px 20px 60px}
+  .hero-roles{grid-template-columns:1fr;max-width:100%}
+  .hero-proof{gap:16px}
+  .hp-div{display:none}
+  .wrap{padding:0 20px}
+  .section{padding-top:64px}
+  .ep.on,.fee-wrap,.std-grid,.safe-grid,.rev-grid,.grade-grid{grid-template-columns:1fr!important;gap:12px}
+  .grade-grid{grid-template-columns:1fr 1fr!important}
+  .calc-demo{grid-column:1}
+  .cta-final{padding:64px 20px}
+  .cta-inner{grid-template-columns:1fr;padding:36px 24px}
+  .cta-img-wrap{display:none}
+  footer{padding:32px 20px}
+  .foot-in{flex-direction:column;gap:12px}
 }
 @media(max-width:380px){
-  .hero-h1  { letter-spacing:-1.2px; }
-  .section-title { letter-spacing:-.8px; }
+  .hero-h{letter-spacing:-.8px}
+  .hc-num{letter-spacing:-2px}
 }
 </style>
 </head>
 <body>
 
-<!-- ─── NAV ─── -->
+<!-- NAV -->
 <nav class="nav" id="nav">
   <a class="nav-brand" href="#">
-    <div class="nav-gem">
-      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </div>
-    <span class="nav-logo-text">Vingly</span>
+    <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <span class="nav-wm">Vingly</span>
   </a>
   <div class="nav-links">
-    <a href="#who">서비스 소개</a>
-    <a href="#how">이용 방법</a>
+    <a href="#earn">수익 구조</a>
+    <a href="#fees">비용 안내</a>
+    <a href="#grade">등급 시스템</a>
+    <a href="#safety">안전장치</a>
     <a href="#faq">FAQ</a>
-    <a href="#eb">얼리버드</a>
   </div>
-  <div class="nav-actions">
-    <a href="login.html" class="btn-ghost" style="text-decoration:none;display:inline-flex;align-items:center">로그인</a>
-    <button class="btn-solid" onclick="location.href='signup.html'">무료 시작하기</button>
+  <div class="nav-act">
+    <button class="nb" onclick="location.href='login.html'">로그인</button>
+    <button class="nf" onclick="location.href='signup.html'">무료 시작하기</button>
   </div>
-  <button class="hb" id="hb" onclick="toggleDrawer()">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="hb" id="hb" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
 </nav>
 
 <div class="drawer" id="drawer">
-  <a href="#who" onclick="closeDrawer()">서비스 소개</a>
-  <a href="#how" onclick="closeDrawer()">이용 방법</a>
+  <a href="#earn" onclick="closeDrawer()">수익 구조</a>
+  <a href="#fees" onclick="closeDrawer()">비용 안내</a>
+  <a href="#grade" onclick="closeDrawer()">등급 시스템</a>
+  <a href="#safety" onclick="closeDrawer()">안전장치</a>
   <a href="#faq" onclick="closeDrawer()">FAQ</a>
-  <a href="#eb" onclick="closeDrawer()">얼리버드</a>
   <div class="drawer-btns">
-    <button class="btn-ghost" style="width:100%;min-height:48px" onclick="closeDrawer();open_('influencer')">크리에이터로 시작</button>
-    <button class="btn-solid" style="width:100%;min-height:48px" onclick="closeDrawer();open_('brand')">브랜드로 시작</button>
+    <button class="nb" style="width:100%;min-height:48px" onclick="closeDrawer();location.href='login.html'">로그인</button>
+    <button class="nf" style="width:100%;min-height:48px" onclick="closeDrawer();location.href='signup.html'">무료 시작하기</button>
   </div>
 </div>
 
-<!-- ─── HERO ─── -->
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg-orb orb-a"></div>
-  <div class="hero-bg-orb orb-b"></div>
+  <div class="h-orb h-orb-1"></div>
+  <div class="h-orb h-orb-2"></div>
+  <div class="h-orb h-orb-3"></div>
 
-  <div class="hero-eyebrow">
-    <div class="live-dot"></div>
-    얼리버드 모집 중 &nbsp;·&nbsp; 현재 231명 참여
+  <div class="hero-live"><div class="live-dot"></div>얼리버드 231명 참여 중 · 파일럿 우대 수수료 적용</div>
+
+  <!-- 살아있는 수익 카운터 -->
+  <div class="hero-counter-wrap">
+    <div class="hc-label">지금 이 순간 Vingly에서 발생한 누적 수익</div>
+    <div class="hc-num">
+      <span class="won">₩</span>
+      <span id="liveCounter">0</span>
+      <span class="unit">원</span>
+    </div>
+    <div class="hc-sub" id="counterSub">실시간 업데이트 중</div>
   </div>
 
-  <h1 class="hero-h1">
-    인플루언서 섭외 없이<br>
-    <span class="hl-blue">제품이 팔리는</span><br>
-    <span class="hl-green">새로운 방법</span>
+  <h1 class="hero-h">
+    팔로워가 <span class="hl-g">수익</span>이 되고<br>
+    제품이 <span class="hl-b">판매 채널</span>이 됩니다
   </h1>
+  <p class="hero-sub">크리에이터는 링크 하나로 수익을 만들고<br>공급자는 광고비 없이 크리에이터가 대신 팝니다</p>
 
-  <p class="hero-sub">
-    브랜드는 제품을 등록하고, 크리에이터는 링크를 공유합니다.<br>
-    계약서, 미팅, 협찬 협의 없이 판매가 시작됩니다.
-  </p>
-
-  <div class="hero-cta">
-    <button class="cta-p" onclick="location.href='signup.html'">
-      브랜드로 무료 시작 <span>→</span>
+  <div class="hero-roles">
+    <button class="role-btn" onclick="location.href='signup.html?role=creator'">
+      <div class="rb-ico rb-ico-g">📱</div>
+      <div>
+        <div class="rb-title">크리에이터로 시작</div>
+        <div class="rb-desc">팔로워 100명부터 · 링크 생성 30초</div>
+        <span class="rb-tag rb-tag-g">파일럿 수수료 100% 수령</span>
+      </div>
     </button>
-    <button class="cta-s" onclick="location.href='signup.html'">
-      크리에이터로 수익 만들기
+    <button class="role-btn" onclick="location.href='signup.html?role=brand'">
+      <div class="rb-ico rb-ico-b">🏷️</div>
+      <div>
+        <div class="rb-title">공급자로 시작</div>
+        <div class="rb-desc">사업자 + 보증금 · 제품 등록 5분</div>
+        <span class="rb-tag rb-tag-b">초기 광고비 0원</span>
+      </div>
     </button>
   </div>
 
-  <div class="hero-ctr">
-    <span>현재 <span class="ctr-n">231명</span> 참여 중</span>
-    <div class="ctr-track"><div class="ctr-prog" id="ctrProg"></div></div>
-    <span>1,000명 달성 시 얼리버드 종료</span>
+  <div class="hero-proof">
+    <div class="hp-item"><div class="hp-val">₩4,280만</div><div class="hp-lbl">파일럿 누적 거래액</div></div>
+    <div class="hp-div"></div>
+    <div class="hp-item"><div class="hp-val">231명</div><div class="hp-lbl">얼리버드 참여</div></div>
+    <div class="hp-div"></div>
+    <div class="hp-item"><div class="hp-val">14개사</div><div class="hp-lbl">공급자 참여 중</div></div>
+    <div class="hp-div"></div>
+    <div class="hp-item"><div class="hp-val">팔로워 100명</div><div class="hp-lbl">최소 기준</div></div>
   </div>
 
-  <!-- 히어로 이미지 — 콜라보레이션 라이프스타일 -->
-  <div class="hero-img-wrap">
-    <img
-      class="hero-img-main"
-      src="https://images.unsplash.com/photo-1609405979808-08669e982546?w=1400&q=85&auto=format&fit=crop"
-      alt="브랜드와 크리에이터 협업"
-      loading="eager"
-    >
-    <div class="stat-card sc-left">
-      <div class="sc-label">이번 달 크리에이터 수익</div>
-      <div class="sc-value">₩890,000</div>
-      <div class="sc-meta green-t">↑ 34% 지난달 대비</div>
-      <div><span class="pill-tag pill-green">판매 73건</span></div>
-    </div>
-    <div class="stat-card sc-right">
-      <div class="sc-label">브랜드 누적 거래액</div>
-      <div class="sc-value">₩4,280만</div>
-      <div class="sc-meta" style="color:var(--c-ink-40)">활동 크리에이터 14명</div>
-      <div><span class="pill-tag pill-blue">광고비 0원</span></div>
-    </div>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <div class="scroll-arr"></div>
   </div>
 </section>
 
-<!-- ─── TICKER ─── -->
-<div class="ticker">
-  <div class="ticker-inner">
-    <div class="ti"><div class="ti-val">231명</div><div class="ti-lbl">파일럿 참여</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">48개</div><div class="ti-lbl">등록 제품</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">₩4,280만</div><div class="ti-lbl">누적 거래액</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">14개사</div><div class="ti-lbl">참여 브랜드</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">팔로워 100명</div><div class="ti-lbl">최소 기준</div></div>
-    <div class="ti-sep">·</div>
+<!-- PROOF BAND -->
+<div class="proof-band">
+  <div class="proof-track">
+    <div class="pt-item"><div class="pt-val">팔로워 3,200명</div><div class="pt-lbl">→ 첫 달 ₩89만 수익</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">소자본 셀러</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">링크 생성 30초</div><div class="pt-lbl">→ 공유 즉시 판매 시작</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">파일럿 기간</div><div class="pt-lbl">→ 플랫폼 수수료 없음</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">정산 유예 7일</div><div class="pt-lbl">→ 에스크로 안전 구조</div></div>
+    <div class="pt-sep">·</div>
     <!-- 복제 -->
-    <div class="ti"><div class="ti-val">231명</div><div class="ti-lbl">파일럿 참여</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">48개</div><div class="ti-lbl">등록 제품</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">₩4,280만</div><div class="ti-lbl">누적 거래액</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">14개사</div><div class="ti-lbl">참여 브랜드</div></div>
-    <div class="ti-sep">·</div>
-    <div class="ti"><div class="ti-val">팔로워 100명</div><div class="ti-lbl">최소 기준</div></div>
-    <div class="ti-sep">·</div>
+    <div class="pt-item"><div class="pt-val">팔로워 3,200명</div><div class="pt-lbl">→ 첫 달 ₩89만 수익</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">소자본 셀러</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">링크 생성 30초</div><div class="pt-lbl">→ 공유 즉시 판매 시작</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">파일럿 기간</div><div class="pt-lbl">→ 플랫폼 수수료 없음</div></div>
+    <div class="pt-sep">·</div>
+    <div class="pt-item"><div class="pt-val">정산 유예 7일</div><div class="pt-lbl">→ 에스크로 안전 구조</div></div>
+    <div class="pt-sep">·</div>
   </div>
 </div>
 
-<!-- ─── WHO ─── -->
-<section class="section" id="who">
+<!-- 수익 구조 -->
+<section class="section" id="earn">
   <div class="wrap">
-    <div class="eyebrow">서비스 소개</div>
-    <h2 class="section-title">제품이 있거나,<br>채널이 있거나</h2>
-    <div class="who-grid">
+    <div class="ey">수익 구조</div>
+    <h2 class="st">내가 어떻게<br>돈을 버는지 보여드립니다</h2>
+    <div class="earn-tabs">
+      <button class="etab on" onclick="switchTab('creator',this)">📱 크리에이터</button>
+      <button class="etab" onclick="switchTab('brand',this)">🏷️ 공급자</button>
+    </div>
+    <div class="earn-panels">
 
-      <!-- 브랜드 카드 -->
-      <div class="wc-dark reveal">
-        <img
-          class="wc-d-img"
-          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=85&auto=format&fit=crop"
-          alt="브랜드 팀 미팅"
-        >
-        <div class="wc-d-body">
-          <div class="wc-d-tag">브랜드 · 셀러</div>
-          <h3>인플루언서 섭외 없이도<br>판매 채널을 만들 수 있습니다</h3>
-          <p>제품 정보와 수수료율만 등록하면, AI가 적합한 크리에이터를 연결하고 수익 정산까지 자동으로 처리합니다.</p>
-          <ul class="wc-list">
-            <li><span class="ic-dark">↗</span>5분 등록 · 심사 없이 즉시 시작</li>
-            <li><span class="ic-dark">↗</span>실제 판매가 발생한 만큼만 수수료 지급</li>
-            <li><span class="ic-dark">↗</span>AI 자동 매칭으로 카테고리 맞는 크리에이터 연결</li>
-            <li><span class="ic-dark">↗</span>판매 현황 실시간 대시보드 · 월말 자동 정산</li>
-          </ul>
-          <button class="wc-btn-w" onclick="location.href='signup.html'">브랜드로 무료 시작 →</button>
+      <!-- 크리에이터 패널 -->
+      <div class="ep on" id="ep-creator">
+        <div class="earn-calc">
+          <div class="ec-label">예상 월 수익 계산기</div>
+          <div class="ec-row">
+            <div class="ec-row-label">팔로워 수</div>
+            <input class="ec-slider" type="range" min="100" max="100000" step="100" value="3000" id="sl-followers" oninput="calcEarn()">
+            <div class="ec-val" id="val-followers">3,000명</div>
+          </div>
+          <div class="ec-row">
+            <div class="ec-row-label">월 평균 포스팅 수</div>
+            <input class="ec-slider" type="range" min="1" max="30" value="8" id="sl-posts" oninput="calcEarn()">
+            <div class="ec-val" id="val-posts">월 8회</div>
+          </div>
+          <div class="ec-row">
+            <div class="ec-row-label">평균 제품 가격</div>
+            <input class="ec-slider" type="range" min="10000" max="200000" step="5000" value="30000" id="sl-price" oninput="calcEarn()">
+            <div class="ec-val" id="val-price">₩30,000</div>
+          </div>
+          <div class="ec-result">
+            <div class="ec-result-label">예상 월 수익 (파일럿 기간)</div>
+            <div class="ec-result-num" id="earn-result">₩216,000</div>
+            <div class="ec-result-sub" id="earn-sub">팔로워 3,000명 · 전환율 0.3% 기준</div>
+          </div>
+        </div>
+        <div class="earn-flow">
+          <div class="ef-title">크리에이터 수익 흐름</div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">1</div>
+            <div>
+              <div class="ef-t">내 분야 제품 선택</div>
+              <div class="ef-d">카테고리에서 채널에 맞는 제품 선택. 수수료율 미리 확인.</div>
+              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">팔로워 100명 이상</span>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">2</div>
+            <div>
+              <div class="ef-t">전용 링크 30초 생성</div>
+              <div class="ef-d">나만의 추적 링크 + 팔로워 전용 할인코드 자동 발급.</div>
+              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">브랜드 연락 불필요</span>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">3</div>
+            <div>
+              <div class="ef-t">SNS에 공유</div>
+              <div class="ef-d">인스타, 유튜브, 블로그, 카카오톡 어디든.</div>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">4</div>
+            <div>
+              <div class="ef-t">매월 말 계좌 자동 입금</div>
+              <div class="ef-d">정산 요청 없이 등록된 계좌로 직접 입금.</div>
+              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">파일럿 기간 100% 수령</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- 크리에이터 카드 -->
-      <div class="wc-light reveal">
-        <img
-          class="wc-l-img"
-          src="https://images.unsplash.com/photo-1609409603774-260f88c914d8?w=900&q=85&auto=format&fit=crop"
-          alt="크리에이터 콘텐츠 제작"
-        >
-        <div class="wc-l-body">
-          <div class="wc-l-tag">크리에이터 · 인플루언서</div>
-          <h3>브랜드에 먼저 연락하지 않아도<br>판매를 시작할 수 있습니다</h3>
-          <p>내 채널에 맞는 제품을 직접 고르고, 전용 링크를 공유하면 됩니다. 판매마다 수수료가 자동으로 적립됩니다.</p>
-          <ul class="wc-list">
-            <li><span class="ic-light">↗</span>팔로워 100명부터 시작 가능 · 심사 없음</li>
-            <li><span class="ic-light">↗</span>원하는 제품 선택 → 전용 링크 30초 생성</li>
-            <li><span class="ic-light">↗</span>인스타, 유튜브, 블로그 등 어디든 공유 가능</li>
-            <li><span class="ic-light">↗</span>판매마다 수수료 자동 적립 · 매월 계좌 입금</li>
-          </ul>
-          <button class="wc-btn-d" onclick="location.href='signup.html'">크리에이터로 시작 →</button>
+      <!-- 공급자 패널 -->
+      <div class="ep" id="ep-brand">
+        <div class="earn-calc">
+          <div class="ec-label">예상 월 판매 시뮬레이션</div>
+          <div class="ec-row">
+            <div class="ec-row-label">연결 크리에이터 수</div>
+            <input class="ec-slider" type="range" min="1" max="100" value="10" id="sl-creators" oninput="calcBrand()">
+            <div class="ec-val" id="val-creators">크리에이터 10명</div>
+          </div>
+          <div class="ec-row">
+            <div class="ec-row-label">크리에이터당 월 판매 건수</div>
+            <input class="ec-slider" type="range" min="1" max="50" value="8" id="sl-sales" oninput="calcBrand()">
+            <div class="ec-val" id="val-sales">월 8건</div>
+          </div>
+          <div class="ec-row">
+            <div class="ec-row-label">제품 판매가</div>
+            <input class="ec-slider" type="range" min="10000" max="200000" step="5000" value="30000" id="sl-bprice" oninput="calcBrand()">
+            <div class="ec-val" id="val-bprice">₩30,000</div>
+          </div>
+          <div class="ec-result">
+            <div class="ec-result-label">예상 월 매출 (광고비 0원)</div>
+            <div class="ec-result-num" id="brand-result">₩2,400,000</div>
+            <div class="ec-result-sub" id="brand-sub">크리에이터 10명 · 건당 ₩30,000 기준</div>
+          </div>
+        </div>
+        <div class="earn-flow">
+          <div class="ef-title">공급자 판매 흐름</div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">1</div>
+            <div>
+              <div class="ef-t">제품 등록 5분</div>
+              <div class="ef-d">사업자등록증 + 보증금 예치 후 즉시 등록. 별도 심사 없음.</div>
+              <span class="ef-badge" style="background:var(--blue-bg);color:var(--blue)">사업자 + 보증금 필수</span>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">2</div>
+            <div>
+              <div class="ef-t">AI 크리에이터 자동 매칭</div>
+              <div class="ef-d">카테고리 분석 후 적합한 크리에이터 자동 연결. DM 불필요.</div>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">3</div>
+            <div>
+              <div class="ef-t">실시간 판매 현황 확인</div>
+              <div class="ef-d">크리에이터별 클릭·전환·수익을 대시보드에서 실시간 확인.</div>
+            </div>
+          </div>
+          <div class="ef-step">
+            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">4</div>
+            <div>
+              <div class="ef-t">정산 자동화</div>
+              <div class="ef-d">배송 완료 후 7일 뒤 자동 정산. 크리에이터 수수료 자동 지급.</div>
+              <span class="ef-badge" style="background:var(--blue-bg);color:var(--blue)">정산 유예 7일 구조</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── NUMBERS ─── -->
-<div class="numbers-band">
-  <div class="numbers-grid">
-    <div class="nb-item">
-      <div class="nb-val">₩4,280만</div>
-      <div class="nb-lbl">파일럿 누적 거래액</div>
-    </div>
-    <div class="nb-item">
-      <div class="nb-val">231명</div>
-      <div class="nb-lbl">얼리버드 참여 중</div>
-    </div>
-    <div class="nb-item">
-      <div class="nb-val">0원</div>
-      <div class="nb-lbl">브랜드 초기 광고비</div>
-    </div>
-    <div class="nb-item">
-      <div class="nb-val">100명+</div>
-      <div class="nb-lbl">크리에이터 최소 팔로워</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── HOW — BRAND ─── -->
-<section class="section" id="how">
+<!-- 비용 구조 투명 공개 -->
+<section class="section" id="fees">
   <div class="wrap">
-    <div class="eyebrow">브랜드 이용 방법</div>
-    <div class="split">
-      <div class="split-text">
-        <div class="split-tag tag-blue">브랜드 · 셀러</div>
-        <h2>등록부터 정산까지<br>전 과정이 자동입니다</h2>
-        <p>인플루언서를 직접 찾고, 조건을 협의하고, 계약서를 주고받던 과정이 없어집니다. 제품 정보만 입력하면 Vingly가 나머지를 처리합니다.</p>
-        <ul class="check-list">
-          <li><span class="ck">✓</span>제품명, 판매가, 수수료율 입력 → 5분 내 등록 완료</li>
-          <li><span class="ck">✓</span>AI가 내 제품 카테고리에 맞는 크리에이터 자동 연결</li>
-          <li><span class="ck">✓</span>판매량, 수익, 크리에이터별 실적 실시간 확인</li>
-          <li><span class="ck">✓</span>매월 말 수수료 자동 정산 · 별도 처리 없음</li>
-        </ul>
-        <button class="cta-p" onclick="location.href='signup.html'">브랜드로 시작하기 →</button>
+    <div class="ey">비용 구조 투명 공개</div>
+    <h2 class="st">Vingly가 가져가는 것과<br>여러분이 받는 것</h2>
+    <p class="sb">숨겨진 비용 없습니다. 모든 수수료 구조를 공개합니다.</p>
+    <div class="fee-wrap">
+      <!-- 크리에이터 수익 -->
+      <div class="fee-card reveal">
+        <div class="fee-head fee-head-g">
+          <div class="fee-title">📱 크리에이터 수익 명세</div>
+          <div class="fee-sub">판매가 ₩30,000 · 수수료율 15% 기준</div>
+        </div>
+        <div class="fee-body">
+          <div class="fee-row">
+            <div class="fee-lbl">판매 발생<small>구매자 결제</small></div>
+            <div class="fee-amt">₩30,000</div>
+          </div>
+          <div class="fee-row">
+            <div class="fee-lbl">크리에이터 수수료<small>공급자 설정 15%</small></div>
+            <div class="fee-amt green">+₩4,500</div>
+          </div>
+          <div class="fee-row">
+            <div class="fee-lbl">Vingly 운영 수수료<small>파일럿 기간</small></div>
+            <div class="fee-amt green">₩0 (무료)<small>정식 전환 후 수수료의 20%</small></div>
+          </div>
+        </div>
+        <div class="fee-total">
+          <div class="fee-total-l">크리에이터 최종 수령액</div>
+          <div class="fee-total-r" style="color:var(--green)">₩4,500</div>
+        </div>
       </div>
-      <!-- 대시보드 / 분석 이미지 -->
-      <img
-        class="split-img split-img-r"
-        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=85&auto=format&fit=crop"
-        alt="판매 데이터 분석 대시보드"
-        loading="lazy"
-      >
+      <!-- 공급자 비용 -->
+      <div class="fee-card reveal">
+        <div class="fee-head fee-head-b">
+          <div class="fee-title">🏷️ 공급자 비용 명세</div>
+          <div class="fee-sub">판매가 ₩30,000 · 수수료율 15% 기준</div>
+        </div>
+        <div class="fee-body">
+          <div class="fee-row">
+            <div class="fee-lbl">판매 발생<small>구매자 결제</small></div>
+            <div class="fee-amt">₩30,000</div>
+          </div>
+          <div class="fee-row">
+            <div class="fee-lbl">크리에이터 수수료<small>공급자가 직접 설정</small></div>
+            <div class="fee-amt red">-₩4,500</div>
+          </div>
+          <div class="fee-row">
+            <div class="fee-lbl">PG 결제 수수료<small>토스페이먼츠 2.2%</small></div>
+            <div class="fee-amt red">-₩660</div>
+          </div>
+          <div class="fee-row">
+            <div class="fee-lbl">Vingly 플랫폼 수수료<small>파일럿 기간 무료 · 이후 월정액</small></div>
+            <div class="fee-amt green">₩0 (무료)</div>
+          </div>
+        </div>
+        <div class="fee-total">
+          <div class="fee-total-l">공급자 정산액 (원가 전)</div>
+          <div class="fee-total-r">₩24,840</div>
+        </div>
+      </div>
+      <!-- 수수료 전환 안내 -->
+      <div class="calc-demo reveal">
+        <div class="cd-title">파일럿 → 정식 전환 일정</div>
+        <div class="cd-formula">
+          <div class="cd-box cd-box-w">
+            <div class="cd-v">현재</div>
+            <div class="cd-l">파일럿 운영 중</div>
+          </div>
+          <div class="cd-op">→</div>
+          <div class="cd-box cd-box-y">
+            <div class="cd-v">1,000명</div>
+            <div class="cd-l">달성 시 30일 전 공지</div>
+          </div>
+          <div class="cd-op">→</div>
+          <div class="cd-box cd-box-b">
+            <div class="cd-v">정식 전환</div>
+            <div class="cd-l">플랫폼 수수료 발생</div>
+          </div>
+          <div class="cd-op">→</div>
+          <div class="cd-box cd-box-g">
+            <div class="cd-v">얼리버드</div>
+            <div class="cd-l">일반의 50% 영구 적용</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font:400 13px/1.6 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">
+          📌 지금 가입하면 수수료 전환 이후에도 일반의 절반 수준 수수료가 영구 적용됩니다. 수수료 전환은 30일 전 이메일로 사전 공지됩니다.
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ─── HOW — CREATOR ─── -->
+<!-- 공급자 입점 기준 -->
 <section class="section">
   <div class="wrap">
-    <div class="eyebrow">크리에이터 이용 방법</div>
-    <div class="split">
-      <!-- 크리에이터 촬영 이미지 -->
-      <img
-        class="split-img split-img-l"
-        src="https://images.unsplash.com/photo-1639789976408-3fd60d7896f4?w=900&q=85&auto=format&fit=crop"
-        alt="크리에이터 작업 환경"
-        loading="lazy"
-      >
-      <div class="split-text">
-        <div class="split-tag tag-green">크리에이터 · 인플루언서</div>
-        <h2>내 채널이 곧<br>판매 채널이 됩니다</h2>
-        <p>브랜드 협찬 문의, 계약 협의 없이 시작할 수 있습니다. 내 분야에 맞는 제품을 직접 골라 링크를 공유하면 판매가 발생할 때마다 수수료가 쌓입니다.</p>
-        <ul class="check-list">
-          <li><span class="ck">✓</span>카테고리별 제품 리스트에서 내 채널에 맞는 제품 선택</li>
-          <li><span class="ck">✓</span>전용 추적 링크 30초 생성 · 개인 할인코드 자동 발급</li>
-          <li><span class="ck">✓</span>인스타그램, 유튜브, 블로그, 카카오톡 어디든 공유 가능</li>
-          <li><span class="ck">✓</span>판매마다 수수료 자동 적립 · 매월 말 등록 계좌로 입금</li>
-        </ul>
-        <button class="cta-p" onclick="location.href='signup.html'">크리에이터로 시작하기 →</button>
+    <div class="ey">공급자 입점 기준</div>
+    <h2 class="st">크리에이터 채널을 지키는<br>3가지 원칙</h2>
+    <p class="sb">크리에이터가 추천한 제품이 실망을 줬을 때 피해는 크리에이터에게 돌아옵니다.</p>
+    <div class="std-grid">
+      <div class="std reveal">
+        <div class="std-n">01</div>
+        <div class="std-t">사업자등록증 + 보증금 예치</div>
+        <div class="std-d">모든 공급자는 사업자등록증 확인과 소액 보증금 예치가 필수입니다. 분쟁 발생 시 보증금에서 우선 환불이 처리되어 크리에이터와 구매자를 보호합니다.</div>
+        <span class="std-tag" style="background:var(--blue-bg);color:var(--blue)">분쟁 시 보증금 우선 환불</span>
+      </div>
+      <div class="std reveal">
+        <div class="std-n">02</div>
+        <div class="std-t">정산 유예 7일</div>
+        <div class="std-d">판매 대금을 즉시 지급하지 않고 배송 완료 후 7일 뒤 정산합니다. 이 기간 동안 분쟁·환불 처리가 가능하며, 공급자의 선불 부담이 없는 가장 합리적인 안전장치입니다.</div>
+        <span class="std-tag" style="background:var(--green-bg);color:var(--green)">배송 완료 후 7일 자동 정산</span>
+      </div>
+      <div class="std reveal">
+        <div class="std-n">03</div>
+        <div class="std-t">실적 기반 자동 퇴출</div>
+        <div class="std-d">별점 3점 이하 누적 또는 환불률 15% 초과 시 자동 경고 → 판매 중단 → 강제 퇴출. 나쁜 공급자는 자동으로 걸러집니다.</div>
+        <span class="std-tag" style="background:var(--red-bg);color:var(--red)">자동 경고 → 강제 퇴출</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── TRUST ─── -->
+<!-- 등급 시스템 -->
+<section class="section" id="grade">
+  <div class="wrap">
+    <div class="ey">크리에이터 등급 시스템</div>
+    <h2 class="st">판매할수록<br>더 유리해지는 구조</h2>
+    <p class="sb">실적이 쌓일수록 더 좋은 제품에 먼저 접근하고, 수수료도 낮아집니다.</p>
+    <div class="grade-grid">
+      <div class="gc gc-new reveal">
+        <span class="gc-badge">시작</span>
+        <div class="gc-ico">🌱</div>
+        <div class="gc-name">New</div>
+        <div class="gc-cond">가입 직후</div>
+        <ul class="gc-perks">
+          <li>전체 제품 탐색 가능</li>
+          <li>링크 생성 무제한</li>
+          <li>파일럿 수수료 100%</li>
+        </ul>
+      </div>
+      <div class="gc gc-active reveal">
+        <span class="gc-badge">성장</span>
+        <div class="gc-ico">⚡</div>
+        <div class="gc-name">Active</div>
+        <div class="gc-cond">누적 판매 10건+</div>
+        <ul class="gc-perks">
+          <li>신규 제품 우선 접근</li>
+          <li>전환 후 수수료 -0.5%p</li>
+          <li>월간 실적 리포트</li>
+        </ul>
+      </div>
+      <div class="gc gc-pro reveal">
+        <span class="gc-badge">전문가</span>
+        <div class="gc-ico">🔥</div>
+        <div class="gc-name">Pro</div>
+        <div class="gc-cond">누적 판매 50건+</div>
+        <ul class="gc-perks">
+          <li>프리미엄 제품 전용 접근</li>
+          <li>전환 후 수수료 -1%p</li>
+          <li>전담 매니저 배정</li>
+          <li>단독 할인코드 발급</li>
+        </ul>
+      </div>
+      <div class="gc gc-elite reveal">
+        <span class="gc-badge">파트너</span>
+        <div class="gc-ico">👑</div>
+        <div class="gc-name">Elite</div>
+        <div class="gc-cond">누적 판매 200건+</div>
+        <ul class="gc-perks">
+          <li>입점 전 독점 제품 협의</li>
+          <li>최저 수수료율 영구 고정</li>
+          <li>공식 파트너 인증</li>
+          <li>단독 캠페인 기회</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 안전장치 -->
+<section class="section" id="safety">
+  <div class="wrap">
+    <div class="ey">크리에이터 보호 시스템</div>
+    <h2 class="st">내 채널 신뢰도를<br>Vingly가 함께 지킵니다</h2>
+    <div class="safe-grid">
+      <div class="safe reveal">
+        <div class="safe-ico">🔒</div>
+        <div class="safe-t">에스크로 + 정산 유예</div>
+        <div class="safe-d">구매자 결제금을 Vingly가 보관하고, 배송 완료 후 7일 뒤 공급자에게 지급합니다. 이 기간 동안 환불·분쟁 처리가 가능해 크리에이터가 보호됩니다.</div>
+        <div class="safe-flow">구매 결제 → Vingly 보관 → 배송 확인 → 7일 유예 → 공급자 지급</div>
+      </div>
+      <div class="safe reveal">
+        <div class="safe-ico">💰</div>
+        <div class="safe-t">리저브 적립 시스템</div>
+        <div class="safe-d">신규 공급자의 첫 30일 정산금 일부(10%)를 리저브로 자동 유보합니다. 3개월 분쟁 없이 정상 운영 시 전액 반환. 선불 부담 없는 안전장치입니다.</div>
+        <div class="safe-flow">첫 30일 정산의 10% 자동 유보 → 3개월 정상 운영 → 전액 반환</div>
+      </div>
+      <div class="safe reveal">
+        <div class="safe-ico">⭐</div>
+        <div class="safe-t">별점 기반 자동 퇴출</div>
+        <div class="safe-d">별점 3점 이하, 환불률 15% 초과 시 자동 경고 2회 → 판매 즉시 중단 → 강제 퇴출. 나쁜 공급자는 크리에이터가 발견하기 전에 자동으로 제거됩니다.</div>
+        <div class="safe-flow">경고 1회 → 개선 요구 → 경고 2회 → 즉시 판매 중단</div>
+      </div>
+      <div class="safe reveal">
+        <div class="safe-ico">🤖</div>
+        <div class="safe-t">AI 실시간 품질 모니터링</div>
+        <div class="safe-d">리뷰 감성 분석, 반품률 이상 감지, 배송 지연 탐지를 AI가 24시간 모니터링합니다. 이상 징후 감지 즉시 해당 제품 판매가 자동 일시 중단됩니다.</div>
+        <div class="safe-flow">24시간 AI 탐지 → 이상 감지 → 자동 일시 중단 → 관리자 검토</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 후기 -->
 <section class="section">
   <div class="wrap">
-    <div class="eyebrow">파일럿 참여자 후기</div>
-    <h2 class="section-title">먼저 사용한<br>분들의 이야기</h2>
-    <div class="trust-grid">
-      <div class="tc reveal">
-        <div class="tc-stars">★★★★★</div>
-        <div class="tc-text">"DM 보내고, 답 기다리고, 조건 맞추는 데 일주일이 걸리던 게 이제는 없어요. 제품 올려두면 알아서 연결되고, 저는 재고랑 배송만 신경 씁니다."</div>
-        <div class="tc-author">
-          <div class="tc-av" style="background:var(--c-blue-bg);color:var(--c-blue)">헬</div>
-          <div>
-            <div class="tc-name">헬시팜 대표</div>
-            <div class="tc-role">건강식품 브랜드 · 파일럿 1기</div>
-          </div>
+    <div class="ey">실제 수익 후기</div>
+    <h2 class="st">숫자로 말하는<br>실제 결과</h2>
+    <div class="rev-grid">
+      <div class="rev reveal">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-earn"><span class="rev-earn-num">89만</span><span class="rev-earn-unit">원 / 첫 달</span></div>
+        <div class="rev-text">"팔로워 3천 명으로 협찬 받으려면 거절이 대부분이었어요. Vingly는 기준 없이 바로 시작했고 첫 달 38만원, 지금은 매월 100만원 넘깁니다."</div>
+        <div class="rev-author">
+          <div class="rev-av" style="background:var(--green-bg);color:var(--green)">뷰</div>
+          <div><div class="rev-name">뷰티제인</div><div class="rev-role">인스타그램 · 팔로워 3.2K</div></div>
         </div>
       </div>
-      <div class="tc reveal">
-        <div class="tc-stars">★★★★★</div>
-        <div class="tc-text">"팔로워 3천 명으로 협찬 받으려면 먼저 연락해도 대부분 거절이었어요. Vingly는 기준 없이 바로 시작했고 첫 달 38만원 입금됐습니다. 지금은 월 100만원 넘겼어요."</div>
-        <div class="tc-author">
-          <div class="tc-av" style="background:var(--c-green-bg);color:var(--c-green)">뷰</div>
-          <div>
-            <div class="tc-name">뷰티제인</div>
-            <div class="tc-role">인스타그램 크리에이터 · 팔로워 3.2K</div>
-          </div>
+      <div class="rev reveal">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-earn"><span class="rev-earn-num">4,280만</span><span class="rev-earn-unit">원 거래액</span></div>
+        <div class="rev-text">"DM 보내고 조건 맞추는 데 일주일이 걸리던 게 이제 없어요. 제품 올려두면 알아서 연결되고 저는 배송만 신경 씁니다."</div>
+        <div class="rev-author">
+          <div class="rev-av" style="background:var(--blue-bg);color:var(--blue)">헬</div>
+          <div><div class="rev-name">헬시팜 대표</div><div class="rev-role">건강식품 공급자 · 파일럿 1기</div></div>
         </div>
       </div>
-      <div class="tc reveal">
-        <div class="tc-stars">★★★★★</div>
-        <div class="tc-text">"처음엔 광고비 없이 시작한다는 말이 믿기지 않았어요. 실제로 써보니 팔린 만큼만 수수료가 나가더라고요. 지금 제품 5개 올려두고 운영 중입니다."</div>
-        <div class="tc-author">
-          <div class="tc-av" style="background:var(--c-amber-bg);color:var(--c-amber)">러</div>
-          <div>
-            <div class="tc-name">러닝하우스</div>
-            <div class="tc-role">운동용품 셀러 · 파일럿 1기</div>
-          </div>
+      <div class="rev reveal">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-earn"><span class="rev-earn-num">광고비 0원</span><span class="rev-earn-unit">으로 시작</span></div>
+        <div class="rev-text">"팔린 만큼만 수수료가 나가는 구조라 소자본 셀러한테 이보다 좋은 구조는 없어요. 지금 제품 5개 올려두고 운영 중입니다."</div>
+        <div class="rev-author">
+          <div class="rev-av" style="background:var(--amber-bg);color:var(--amber)">러</div>
+          <div><div class="rev-name">러닝하우스</div><div class="rev-role">운동용품 셀러 · 파일럿 1기</div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── FAQ ─── -->
+<!-- FAQ -->
 <section class="section" id="faq">
   <div class="wrap">
-    <div class="eyebrow">자주 묻는 질문</div>
-    <h2 class="section-title">궁금한 점을<br>확인하세요</h2>
+    <div class="ey">자주 묻는 질문</div>
+    <h2 class="st">궁금한 점을 확인하세요</h2>
     <div class="faq-inner">
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">심사 없이 누구나 가입할 수 있나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">브랜드/셀러는 신분 확인 1회와 소액 보증금 등록 후 즉시 시작할 수 있습니다. 크리에이터는 SNS 계정 하나만 있으면 팔로워 수와 관계없이 가입 가능합니다.</div>
+        <div class="faq-q"><span class="fq-t">파일럿 기간 우대 수수료는 어떻게 운영되나요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">파일럿 1,000명 달성 전까지 Vingly는 플랫폼 수수료를 받지 않습니다. 공급자가 설정한 수수료율 전액이 크리에이터에게 지급됩니다. 1,000명 달성 후 30일 전 이메일 공지 후 수수료 체계로 전환되며, 지금 가입한 얼리버드는 일반의 절반 수준 우대 수수료가 영구 적용됩니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">수수료는 언제, 어떻게 지급되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">크리에이터 수수료는 매월 말일 등록된 계좌로 자동 입금됩니다. 파일럿 기간에는 수수료 100%를 크리에이터가 수령합니다. 지금 가입한 얼리버드는 이후에도 영구 우대 수수료율이 적용됩니다.</div>
+        <div class="faq-q"><span class="fq-t">공급자로 등록하려면 무엇이 필요한가요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">사업자등록증 확인과 소액 보증금 예치가 필수입니다. 크리에이터와 구매자를 보호하기 위한 최소한의 안전장치입니다. 이 외에 별도 심사 없이 즉시 제품을 등록할 수 있습니다. 보증금은 퇴점 시 분쟁 없으면 전액 반환됩니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">제품이 팔리지 않으면 비용이 발생하나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">파일럿 기간에는 플랫폼 이용료가 무료입니다. 실제 판매가 발생할 때만 수수료가 청구되며, 판매가 없으면 어떤 비용도 발생하지 않습니다.</div>
+        <div class="faq-q"><span class="fq-t">내가 추천한 제품이 불량이면 어떻게 되나요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">구매자 환불은 공급자 보증금과 정산 유예 대금에서 우선 처리됩니다. 크리에이터에게 금전적 피해가 없습니다. 해당 공급자는 자동 경고를 받고, 반복 시 강제 퇴출됩니다. 크리에이터 채널 신뢰도를 지키는 것이 Vingly의 핵심 원칙입니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">불량 제품이나 분쟁은 어떻게 처리되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">브랜드는 신분 확인과 보증금 예치가 필수입니다. 별점 하락·환불률 초과 시 자동 경고 및 판매 중단 조치가 취해집니다. 분쟁 발생 시 보증금에서 먼저 환불이 처리되어 크리에이터와 구매자를 보호합니다.</div>
+        <div class="faq-q"><span class="fq-t">정산은 어떻게 되나요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">크리에이터 수수료는 매월 말일 자동 입금됩니다. 공급자 정산은 배송 완료 후 7일 뒤 자동으로 처리됩니다. 별도 정산 요청이 필요 없으며, 대시보드에서 실시간으로 적립 내역과 정산 예정액을 확인할 수 있습니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">팔로워가 적어도 실제로 수익을 낼 수 있나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">팔로워 수보다 팔로워와의 신뢰 관계가 중요합니다. 마이크로 크리에이터(1만 명 이하)의 구매 전환율이 대형 크리에이터보다 높은 경우가 많습니다. Vingly는 최소 팔로워 기준을 두지 않습니다.</div>
-      </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">1,000명 달성 후 수수료가 생기면 어떻게 되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">지금 가입한 얼리버드는 수수료 전환 이후에도 영구 우대 수수료율이 유지됩니다. 수수료 전환은 30일 사전 공지 후 진행되며, 갑작스러운 정책 변경은 없습니다.</div>
+        <div class="faq-q"><span class="fq-t">팔로워가 100명인데 실제로 수익이 가능한가요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">가능합니다. 팔로워 1,000명 이하 마이크로 크리에이터의 구매 전환율이 대형 인플루언서보다 평균 2~3배 높습니다. 팔로워와의 신뢰 관계가 규모보다 중요합니다. 위 수익 계산기에 본인 팔로워 수를 입력해보세요.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── EARLYBIRD ─── -->
-<div class="eb-wrap" id="eb">
-  <div class="eb-card">
-    <div class="eb-left">
-      <div class="eb-glow"></div>
-      <div class="eb-inner">
-        <div class="eb-ey">얼리버드 혜택</div>
-        <h2 class="eb-h">지금 가입하면<br><em>평생 우대 수수료</em>입니다</h2>
-        <p class="eb-p">파일럿 1,000명 이후 수수료가 전환됩니다. 지금 가입하면 이후에도 우대 수수료율이 영구 고정됩니다.</p>
-        <div class="eb-perks">
-          <div class="perk"><div class="pchk">✓</div>수수료 전환 이후에도 우대 수수료율 영구 적용</div>
-          <div class="perk"><div class="pchk">✓</div>창립 멤버 배지 영구 부여</div>
-          <div class="perk"><div class="pchk">✓</div>신규 제품 우선 접근권</div>
-          <div class="perk"><div class="pchk">✓</div>새 기능 베타 테스트 우선 초대</div>
-        </div>
-        <div class="eb-ctr">
-          <span>현재 <strong style="color:#fff">231명</strong> / 1,000명</span>
-          <div class="eb-bar"><div class="eb-prog"></div></div>
-          <span>769명 남음</span>
-        </div>
-        <button class="eb-btn" onclick="location.href='signup.html'">지금 무료로 가입하기 →</button>
+<!-- CTA FINAL -->
+<div class="cta-final">
+  <div class="cta-inner">
+    <div class="cta-glow"></div>
+    <div class="cta-content">
+      <div class="cta-ey">지금 가입해야 하는 이유</div>
+      <h2 class="cta-h"><em>769명</em>만 남았습니다.<br>얼리버드 혜택이 사라지기 전에</h2>
+      <p class="cta-p">1,000명 이후 수수료가 전환됩니다. 지금 가입하면 영구 우대 수수료 + 4가지 혜택이 평생 적용됩니다.</p>
+      <div class="cta-perks">
+        <div class="cp"><div class="cp-chk">✓</div>수수료 전환 이후 우대 수수료율 영구 적용</div>
+        <div class="cp"><div class="cp-chk">✓</div>창립 멤버 배지 영구 부여</div>
+        <div class="cp"><div class="cp-chk">✓</div>신규 제품 우선 접근권</div>
+        <div class="cp"><div class="cp-chk">✓</div>새 기능 베타 테스트 우선 초대</div>
       </div>
+      <div class="cta-counter">
+        <span>현재 <strong style="color:#fff">231명</strong> / 1,000명</span>
+        <div class="cta-bar"><div class="cta-prog"></div></div>
+        <span>769명 남음</span>
+      </div>
+      <button class="cta-btn" onclick="location.href='signup.html'">지금 무료로 가입하기 →</button>
     </div>
-    <div class="eb-right">
-      <img
-        class="eb-right-img"
-        src="https://images.unsplash.com/photo-1609409601885-e01c8ff48d06?w=700&q=85&auto=format&fit=crop"
-        alt="팀 협업"
-        loading="lazy"
-      >
-      <div class="eb-right-fade"></div>
+    <div class="cta-img-wrap">
+      <img class="cta-img" src="https://images.unsplash.com/photo-1609409601885-e01c8ff48d06?w=700&q=85&auto=format&fit=crop" alt="" loading="lazy">
+      <div class="cta-img-fade"></div>
     </div>
   </div>
 </div>
 
-<!-- ─── FOOTER ─── -->
+<!-- FOOTER -->
 <footer>
-  <div class="footer-in">
+  <div class="foot-in">
     <a class="nav-brand" href="#" style="text-decoration:none">
       <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      <span class="nav-logo-text">Vingly</span>
+      <span class="nav-wm">Vingly</span>
     </a>
-    <div class="footer-links">
-      <a href="#">이용약관</a>
-      <a href="#">개인정보처리방침</a>
-      <a href="#">고객지원</a>
-      <a href="admin.html">관리자</a>
+    <div class="foot-links">
+      <a href="#">이용약관</a><a href="#">개인정보처리방침</a>
+      <a href="#">고객지원</a><a href="login.html">로그인</a><a href="admin.html">관리자</a>
     </div>
-    <div class="footer-copy">© 2026 Vingly. All rights reserved.</div>
+    <div class="foot-copy">© 2026 Vingly. All rights reserved.</div>
   </div>
 </footer>
 
-<!-- ─── MODAL ─── -->
-<div class="ov" id="ov" onclick="closeOuter(event)">
-  <div class="modal">
-    <button class="mc" onclick="close_()">✕</button>
-    <div id="formArea">
-      <div class="m-brand">Vingly</div>
-      <h3 class="m-title">어떻게 시작하시겠어요?</h3>
-      <p class="m-sub">역할을 선택하시면 맞춤 안내를 드립니다.</p>
-      <div class="role-grid">
-        <button class="rc rb" id="rBrand" onclick="switchRole('brand')">
-          <div class="rc-ico">🏷️</div>
-          <span class="rc-name">브랜드 / 셀러</span>
-          <span class="rc-who">소상공인 · 온라인셀러 · 브랜드</span>
-          <span class="rc-badge rbc-b">제품 등록 5분</span>
-        </button>
-        <button class="rc" id="rInfl" onclick="switchRole('influencer')">
-          <div class="rc-ico">📱</div>
-          <span class="rc-name">크리에이터</span>
-          <span class="rc-who">인플루언서 · 블로거 · 유튜버</span>
-          <span class="rc-badge rbc-g">팔로워 100명 이상</span>
-        </button>
-      </div>
-
-      <!-- 브랜드 폼 -->
-      <div class="fsec on" id="bForm">
-        <div class="frow">
-          <div class="fg">
-            <label class="fl">이름 <span style="color:#DC2626">*</span></label>
-            <input class="fi" id="b_name" type="text" placeholder="홍길동" oninput="clearErr(this)">
-            <div class="ferr" id="b_name_err">이름을 입력해주세요</div>
-          </div>
-          <div class="fg">
-            <label class="fl">연락처 <span style="color:#DC2626">*</span></label>
-            <input class="fi" id="b_phone" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this);clearErr(this)">
-            <div class="ferr" id="b_phone_err">올바른 연락처를 입력해주세요</div>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">이메일 <span style="color:#DC2626">*</span></label>
-          <input class="fi" id="b_email" type="email" placeholder="hello@brand.com" oninput="clearErr(this)">
-          <div class="ferr" id="b_email_err">올바른 이메일을 입력해주세요</div>
-        </div>
-        <div class="fg">
-          <label class="fl">브랜드명 / 상호명 <span style="color:#DC2626">*</span></label>
-          <input class="fi" id="b_brand" type="text" placeholder="예: 헬시팜" oninput="clearErr(this)">
-          <div class="ferr" id="b_brand_err">브랜드명을 입력해주세요</div>
-        </div>
-        <div class="fg">
-          <label class="fl">주요 제품 카테고리</label>
-          <select class="fi" id="b_cat">
-            <option value="">카테고리 선택</option>
-            <option>뷰티 · 스킨케어</option><option>패션 · 의류</option>
-            <option>식품 · 건강</option><option>헬스 · 운동</option>
-            <option>생활 · 홈</option><option>디지털 · 전자</option><option>기타</option>
-          </select>
-        </div>
-        <div class="nbox nb-b">파일럿 기간에는 플랫폼 이용료가 무료입니다.</div>
-        <button class="sbtn sbtn-b" onclick="doSubmit('brand')">브랜드로 가입하기 →</button>
-      </div>
-
-      <!-- 크리에이터 폼 -->
-      <div class="fsec" id="iForm">
-        <div class="frow">
-          <div class="fg">
-            <label class="fl">이름 / 활동명 <span style="color:#DC2626">*</span></label>
-            <input class="fi" id="i_name" type="text" placeholder="활동명 또는 실명" oninput="clearErr(this)">
-            <div class="ferr" id="i_name_err">이름을 입력해주세요</div>
-          </div>
-          <div class="fg">
-            <label class="fl">연락처 <span style="color:#DC2626">*</span></label>
-            <input class="fi" id="i_phone" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this);clearErr(this)">
-            <div class="ferr" id="i_phone_err">올바른 연락처를 입력해주세요</div>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">이메일 <span style="color:#DC2626">*</span></label>
-          <input class="fi" id="i_email" type="email" placeholder="hello@creator.com" oninput="clearErr(this)">
-          <div class="ferr" id="i_email_err">올바른 이메일을 입력해주세요</div>
-        </div>
-        <div class="fg">
-          <label class="fl">주요 채널 <span style="color:#DC2626">*</span></label>
-          <select class="fi" id="i_ch">
-            <option value="">채널 선택</option>
-            <option>인스타그램</option><option>유튜브</option><option>틱톡</option>
-            <option>블로그 (네이버/티스토리)</option><option>카카오채널</option><option>기타</option>
-          </select>
-          <div class="ferr" id="i_ch_err">채널을 선택해주세요</div>
-        </div>
-        <div class="fg">
-          <label class="fl">주요 콘텐츠 분야</label>
-          <select class="fi">
-            <option value="">분야 선택 (선택사항)</option>
-            <option>뷰티 · 스킨케어</option><option>패션 · 의류</option>
-            <option>식품 · 건강</option><option>헬스 · 운동</option>
-            <option>생활 · 홈</option><option>기타</option>
-          </select>
-        </div>
-        <div class="nbox nb-g">파일럿 기간 수수료 100% 본인 수령 · 얼리버드 우대 수수료 영구 적용</div>
-        <button class="sbtn sbtn-g" onclick="doSubmit('influencer')">크리에이터로 가입하기 →</button>
-      </div>
-
-      <div class="mfoot">가입 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</div>
-    </div>
-
-    <!-- 가입 완료 -->
-    <div class="success" id="successArea">
-      <div class="s-ico">✅</div>
-      <div class="s-title">가입이 완료됐습니다</div>
-      <div class="s-desc" id="s_desc">담당자가 확인 후 연락드리겠습니다.</div>
-      <div id="s_badge" class="s-badge sb-bl">등록 완료</div>
-      <div class="ns-box">
-        <div class="ns-tit">다음 단계 안내</div>
-        <div id="s_steps"></div>
-      </div>
-      <button class="cls-btn" onclick="close_()">닫기</button>
-    </div>
-  </div>
-</div>
-
 <script>
-/* ── STATE ── */
-let role = 'brand';
+/* ── 라이브 카운터 애니메이션 ── */
+const BASE = 42800000;
+let current = BASE;
+let displayed = 0;
 
-/* ── INIT ── */
+function animateCounter(target, duration) {
+  const start = displayed;
+  const diff = target - start;
+  const startTime = performance.now();
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 4);
+    displayed = Math.floor(start + diff * ease);
+    document.getElementById('liveCounter').textContent = displayed.toLocaleString('ko-KR');
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// 페이지 로드 시 카운터 시작
 window.addEventListener('load', () => {
-  setTimeout(() => { document.getElementById('ctrProg').style.width = '23.1%'; }, 600);
+  setTimeout(() => {
+    animateCounter(BASE, 2000);
+    // 이후 랜덤하게 조금씩 증가
+    setInterval(() => {
+      const increase = Math.floor(Math.random() * 50000) + 10000;
+      current += increase;
+      animateCounter(current, 800);
+      // 서브텍스트 업데이트
+      const now = new Date();
+      document.getElementById('counterSub').textContent =
+        `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')} 기준 실시간 업데이트`;
+    }, 4000 + Math.random() * 3000);
+  }, 500);
   initReveal();
 });
 
-/* ── SCROLL REVEAL ── */
+/* ── 수익 계산기 — 크리에이터 ── */
+function calcEarn() {
+  const followers = parseInt(document.getElementById('sl-followers').value);
+  const posts = parseInt(document.getElementById('sl-posts').value);
+  const price = parseInt(document.getElementById('sl-price').value);
+  document.getElementById('val-followers').textContent = followers.toLocaleString() + '명';
+  document.getElementById('val-posts').textContent = '월 ' + posts + '회';
+  document.getElementById('val-price').textContent = '₩' + price.toLocaleString();
+  // 전환율: 마이크로 0.3~0.8%, 대형 0.1~0.3%
+  const ctr = followers < 10000 ? 0.005 : followers < 50000 ? 0.003 : 0.002;
+  const sales = Math.floor(followers * ctr * posts);
+  const commission = 0.15; // 평균 15%
+  const earn = Math.floor(sales * price * commission);
+  document.getElementById('earn-result').textContent = '₩' + earn.toLocaleString();
+  document.getElementById('earn-sub').textContent =
+    `팔로워 ${followers.toLocaleString()}명 · 월 ${posts}회 · 전환율 ${(ctr*100).toFixed(1)}% 기준`;
+}
+
+/* ── 수익 계산기 — 공급자 ── */
+function calcBrand() {
+  const creators = parseInt(document.getElementById('sl-creators').value);
+  const sales = parseInt(document.getElementById('sl-sales').value);
+  const price = parseInt(document.getElementById('sl-bprice').value);
+  document.getElementById('val-creators').textContent = '크리에이터 ' + creators + '명';
+  document.getElementById('val-sales').textContent = '월 ' + sales + '건';
+  document.getElementById('val-bprice').textContent = '₩' + price.toLocaleString();
+  const revenue = creators * sales * price;
+  const commission = price * 0.15 * creators * sales; // 15% 수수료
+  const pg = revenue * 0.022;
+  const net = revenue - commission - pg;
+  document.getElementById('brand-result').textContent = '₩' + revenue.toLocaleString();
+  document.getElementById('brand-sub').textContent =
+    `크리에이터 ${creators}명 · 건당 ₩${price.toLocaleString()} · 수수료 지급 후 순수익 ₩${Math.floor(net).toLocaleString()}`;
+}
+
+/* ── 탭 전환 ── */
+function switchTab(id, btn) {
+  document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.ep').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('ep-' + id).classList.add('on');
+}
+
+/* ── 스크롤 리빌 ── */
 function initReveal() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-}
-
-/* ── MODAL ── */
-function open_(r) {
-  role = r; switchRole(r);
-  document.getElementById('ov').classList.add('on');
-  document.getElementById('formArea').style.display = 'block';
-  document.getElementById('successArea').classList.remove('on');
-  document.body.style.overflow = 'hidden';
-}
-function close_() {
-  document.getElementById('ov').classList.remove('on');
-  document.body.style.overflow = '';
-}
-function closeOuter(e) { if (e.target === document.getElementById('ov')) close_(); }
-
-function switchRole(r) {
-  role = r;
-  document.getElementById('rBrand').className = 'rc' + (r === 'brand' ? ' rb' : '');
-  document.getElementById('rInfl').className  = 'rc' + (r === 'influencer' ? ' rg' : '');
-  document.getElementById('bForm').className  = 'fsec' + (r === 'brand' ? ' on' : '');
-  document.getElementById('iForm').className  = 'fsec' + (r === 'influencer' ? ' on' : '');
-}
-
-/* ── FORM ── */
-function fmtPhone(el) {
-  let v = el.value.replace(/\D/g, '');
-  if (v.length <= 3)       el.value = v;
-  else if (v.length <= 7)  el.value = v.slice(0,3)+'-'+v.slice(3);
-  else                     el.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
-}
-function clearErr(el) {
-  el.classList.remove('err');
-  const e = document.getElementById(el.id + '_err');
-  if (e) e.classList.remove('show');
-}
-function showErr(id, msg) {
-  const el = document.getElementById(id); el.classList.add('err');
-  const e  = document.getElementById(id + '_err');
-  if (e) { e.textContent = msg; e.classList.add('show'); }
-}
-const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const validPhone = v => /^\d{3}-\d{3,4}-\d{4}$/.test(v);
-
-async function saveToSheets(data) {
-  try {
-    await fetch('https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec', {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  } catch(e) { console.error('[Vingly] Sheets:', e); }
-}
-
-function doSubmit(r) {
-  let ok = true;
-  if (r === 'brand') {
-    if (!document.getElementById('b_name').value.trim())
-      { showErr('b_name','이름을 입력해주세요'); ok=false; }
-    if (!validPhone(document.getElementById('b_phone').value))
-      { showErr('b_phone','올바른 연락처 형식으로 입력해주세요 (예: 010-1234-5678)'); ok=false; }
-    if (!validEmail(document.getElementById('b_email').value))
-      { showErr('b_email','올바른 이메일 주소를 입력해주세요'); ok=false; }
-    if (!document.getElementById('b_brand').value.trim())
-      { showErr('b_brand','브랜드명을 입력해주세요'); ok=false; }
-  } else {
-    if (!document.getElementById('i_name').value.trim())
-      { showErr('i_name','이름을 입력해주세요'); ok=false; }
-    if (!validPhone(document.getElementById('i_phone').value))
-      { showErr('i_phone','올바른 연락처 형식으로 입력해주세요 (예: 010-1234-5678)'); ok=false; }
-    if (!validEmail(document.getElementById('i_email').value))
-      { showErr('i_email','올바른 이메일 주소를 입력해주세요'); ok=false; }
-    if (!document.getElementById('i_ch').value)
-      { document.getElementById('i_ch').classList.add('err'); showErr('i_ch','채널을 선택해주세요'); ok=false; }
-  }
-  if (!ok) return;
-
-  // Google Sheets 저장
-  const _role = r;
-  const _data = {
-    role: r,
-    name:  r==='brand' ? document.getElementById('b_name').value.trim()  : document.getElementById('i_name').value.trim(),
-    phone: r==='brand' ? document.getElementById('b_phone').value.trim() : document.getElementById('i_phone').value.trim(),
-    email: r==='brand' ? document.getElementById('b_email').value.trim() : document.getElementById('i_email').value.trim(),
-    brandOrName:        r==='brand' ? document.getElementById('b_brand').value.trim() : document.getElementById('i_name').value.trim(),
-    categoryOrChannel:  r==='brand' ? document.getElementById('b_cat').value : document.getElementById('i_ch').value,
-    joinedAt: new Date().toISOString()
-  };
-  fetch('https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec', { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(_data) })
-    .catch(e => console.error('[Vingly] Sheets 저장 실패:', e));
-
-  document.getElementById('formArea').style.display = 'none';
-  document.getElementById('successArea').classList.add('on');
-
-  if (r === 'brand') {
-    document.getElementById('s_badge').className = 's-badge sb-bl';
-    document.getElementById('s_badge').textContent = '🏷️ 브랜드 등록 완료';
-    document.getElementById('s_desc').innerHTML = '담당자가 24시간 내 연락드리겠습니다.';
-    document.getElementById('s_steps').innerHTML =
-      '<div class="ns-li"><span>1.</span><span>입력하신 이메일로 안내 메일이 발송됩니다.</span></div>' +
-      '<div class="ns-li"><span>2.</span><span>담당자 확인 후 제품 등록 링크를 안내드립니다.</span></div>' +
-      '<div class="ns-li"><span>3.</span><span>제품 등록 완료 후 크리에이터 매칭이 시작됩니다.</span></div>';
-  } else {
-    document.getElementById('s_badge').className = 's-badge sb-gr';
-    document.getElementById('s_badge').textContent = '⭐ 얼리버드 크리에이터 등록 완료';
-    document.getElementById('s_desc').innerHTML = '서비스 오픈 시 가장 먼저 안내드리겠습니다.';
-    document.getElementById('s_steps').innerHTML =
-      '<div class="ns-li"><span>1.</span><span>얼리버드 확인 메일이 발송됩니다.</span></div>' +
-      '<div class="ns-li"><span>2.</span><span>오픈 시 제품 탐색 및 링크 생성이 가능합니다.</span></div>' +
-      '<div class="ns-li"><span>3.</span><span>얼리버드 전용 채널 초대 링크를 발송드립니다.</span></div>';
-  }
 }
 
 /* ── FAQ ── */
@@ -1268,11 +999,10 @@ function closeDrawer() {
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('hb').classList.remove('open');
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
-/* ── KEYBOARD ── */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { close_(); closeDrawer(); }
-});
+/* ── Google Sheets ── */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec';
 </script>
 </body>
 </html>
