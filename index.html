@@ -290,6 +290,8 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
 /* ── MOBILE ── */
 @media(max-width:768px){
+  [class*="fee-3col"]{grid-template-columns:1fr!important}
+  [class*="fee-2col"]{grid-template-columns:1fr!important}
   .nav{padding:0 20px}
   .nav-links,.nav-act{display:none}
   .hb{display:flex}
@@ -307,6 +309,13 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   .cta-img-wrap{display:none}
   footer{padding:32px 20px}
   .foot-in{flex-direction:column;gap:12px}
+  /* 수수료 섹션 모바일 */
+  .fee-3col{grid-template-columns:1fr!important}
+  .fee-2col{grid-template-columns:1fr!important}
+  .fee-timeline{flex-direction:column!important;gap:12px!important}
+  .fee-timeline-arrows{display:none!important}
+  .fee-plan-3{grid-template-columns:1fr!important}
+
 }
 @media(max-width:380px){
   .hero-h{letter-spacing:-.8px}
@@ -324,7 +333,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </a>
   <div class="nav-links">
     <a href="#earn">수익 구조</a>
-    <a href="#fees">비용 안내</a>
+    <a href="#fees">수수료 안내</a>
     <a href="#grade">등급 시스템</a>
     <a href="#safety">안전장치</a>
     <a href="#faq">FAQ</a>
@@ -354,7 +363,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   <div class="h-orb h-orb-2"></div>
   <div class="h-orb h-orb-3"></div>
 
-  <div class="hero-live"><div class="live-dot"></div>얼리버드 231명 참여 중 · 파일럿 우대 수수료 적용</div>
+  <div class="hero-live"><div class="live-dot"></div>얼리버드 231명 참여 · 크리에이터 수수료 0% · 브랜드 1.8%</div>
 
   <!-- 살아있는 수익 카운터 -->
   <div class="hero-counter-wrap">
@@ -379,15 +388,15 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
       <div>
         <div class="rb-title">크리에이터로 시작</div>
         <div class="rb-desc">팔로워 100명부터 · 링크 생성 30초</div>
-        <span class="rb-tag rb-tag-g">파일럿 수수료 100% 수령</span>
+        <span class="rb-tag rb-tag-g">수수료 0% · 수익 100% 내 몫</span>
       </div>
     </button>
     <button class="role-btn" onclick="location.href='signup.html?role=brand'">
       <div class="rb-ico rb-ico-b">🏷️</div>
       <div>
-        <div class="rb-title">공급자로 시작</div>
-        <div class="rb-desc">사업자 + 보증금 · 제품 등록 5분</div>
-        <span class="rb-tag rb-tag-b">초기 광고비 0원</span>
+        <div class="rb-title">브랜드·셀러로 시작</div>
+        <div class="rb-desc">제품 등록 5분 · 광고비 없이 시작</div>
+        <span class="rb-tag rb-tag-b">광고 없이 크리에이터가 팔아드립니다</span>
       </div>
     </button>
   </div>
@@ -413,7 +422,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   <div class="proof-track">
     <div class="pt-item"><div class="pt-val">팔로워 3,200명</div><div class="pt-lbl">→ 첫 달 ₩89만 수익</div></div>
     <div class="pt-sep">·</div>
-    <div class="pt-item"><div class="pt-val">소자본 셀러</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
+    <div class="pt-item"><div class="pt-val">소자본 브랜드</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
     <div class="pt-sep">·</div>
     <div class="pt-item"><div class="pt-val">링크 생성 30초</div><div class="pt-lbl">→ 공유 즉시 판매 시작</div></div>
     <div class="pt-sep">·</div>
@@ -424,7 +433,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <!-- 복제 -->
     <div class="pt-item"><div class="pt-val">팔로워 3,200명</div><div class="pt-lbl">→ 첫 달 ₩89만 수익</div></div>
     <div class="pt-sep">·</div>
-    <div class="pt-item"><div class="pt-val">소자본 셀러</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
+    <div class="pt-item"><div class="pt-val">소자본 브랜드</div><div class="pt-lbl">→ 광고비 0원으로 ₩4,280만 거래</div></div>
     <div class="pt-sep">·</div>
     <div class="pt-item"><div class="pt-val">링크 생성 30초</div><div class="pt-lbl">→ 공유 즉시 판매 시작</div></div>
     <div class="pt-sep">·</div>
@@ -442,7 +451,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <h2 class="st">내가 어떻게<br>돈을 버는지 보여드립니다</h2>
     <div class="earn-tabs">
       <button class="etab on" onclick="switchTab('creator',this)">📱 크리에이터</button>
-      <button class="etab" onclick="switchTab('brand',this)">🏷️ 공급자</button>
+      <button class="etab" onclick="switchTab('brand',this)">🏷️ 브랜드·셀러</button>
     </div>
     <div class="earn-panels">
 
@@ -466,7 +475,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
             <div class="ec-val" id="val-price">₩30,000</div>
           </div>
           <div class="ec-result">
-            <div class="ec-result-label">예상 월 수익 (파일럿 기간)</div>
+            <div class="ec-result-label">예상 월 수익 (Vingly 수수료 0%)</div>
             <div class="ec-result-num" id="earn-result">₩216,000</div>
             <div class="ec-result-sub" id="earn-sub">팔로워 3,000명 · 전환율 0.3% 기준</div>
           </div>
@@ -533,12 +542,12 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           </div>
         </div>
         <div class="earn-flow">
-          <div class="ef-title">공급자 판매 흐름</div>
+          <div class="ef-title">브랜드·셀러 판매 흐름</div>
           <div class="ef-step">
             <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">1</div>
             <div>
               <div class="ef-t">제품 등록 5분</div>
-              <div class="ef-d">사업자등록증 + 보증금 예치 후 즉시 등록. 별도 심사 없음.</div>
+              <div class="ef-d">사업자 확인 + 안전 보증금 후 즉시 등록. 별도 심사 없음.</div>
               <span class="ef-badge" style="background:var(--blue-bg);color:var(--blue)">사업자 + 보증금 필수</span>
             </div>
           </div>
@@ -573,12 +582,12 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 <!-- 비용 구조 투명 공개 -->
 <section class="section" id="fees">
   <div class="wrap">
-    <div class="ey">수수료 구조 — 투명하게 공개합니다</div>
-    <h2 class="st">크리에이터는 0원,<br>공급자는 국내 최저 1.8%</h2>
+    <div class="ey">수수료 — 숨기는 거 없습니다</div>
+    <h2 class="st">크리에이터는 0원,<br>브랜드·셀러는 국내 최저 1.8%</h2>
     <p class="sb">Vingly는 크리에이터 수익에서 단 1원도 가져가지 않습니다. 공급자에게만 국내 최저 수준의 수수료를 받습니다.</p>
 
     <!-- 3자 구조 -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px" class="fee-3col" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px">
 
       <!-- 크리에이터 -->
       <div style="background:var(--white);border:1.5px solid rgba(4,108,78,.3);border-radius:var(--r-l);overflow:hidden;box-shadow:var(--sh-s)" class="reveal">
@@ -612,7 +621,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         </div>
       </div>
 
-      <!-- 공급자 -->
+      <!-- 브랜드·셀러 -->
       <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);overflow:hidden;box-shadow:var(--sh-s)" class="reveal">
         <div style="padding:18px 22px;background:var(--blue-bg);border-bottom:1px solid rgba(24,73,214,.12)">
           <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:6px">공급자</div>
@@ -650,7 +659,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           </div>
         </div>
         <div style="padding:13px 22px;background:var(--ink-06);border-top:1px solid var(--ink-14)">
-          <p style="font:600 12px/1.5 'Pretendard',sans-serif;color:var(--blue)">광고비 0원 + 국내 최저 수수료 = 소자본 셀러 최적</p>
+          <p style="font:600 12px/1.5 'Pretendard',sans-serif;color:var(--blue)">광고비 0원 + 국내 최저 수수료 = 소자본 브랜드 최적</p>
         </div>
       </div>
 
@@ -682,7 +691,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     </div>
 
     <!-- 실제 계산 + 구독 플랜 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px" class="fee-2col">
 
       <!-- 실제 계산 -->
       <div style="background:var(--ink);border-radius:var(--r-l);padding:26px 28px" class="reveal">
@@ -751,7 +760,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     </div>
 
     <!-- 수수료 전환 타임라인 -->
-    <div style="background:var(--ink);border-radius:var(--r-l);padding:24px 28px;margin-top:14px;display:flex;align-items:center;gap:24px;flex-wrap:wrap" class="reveal">
+    <div style="background:var(--ink);border-radius:var(--r-l);padding:24px 28px;margin-top:14px;display:flex;align-items:center;gap:24px;flex-wrap:wrap" class="fee-timeline" class="reveal">
       <div style="flex:1;min-width:180px">
         <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px">수수료 전환 일정</div>
         <div style="font:800 17px/1.2 'Pretendard',sans-serif;color:#fff;margin-bottom:6px">1,000명 달성 후 30일 전 공지</div>
@@ -852,19 +861,19 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
       <div class="safe reveal">
         <div class="safe-ico">🔒</div>
         <div class="safe-t">에스크로 + 정산 유예</div>
-        <div class="safe-d">구매자 결제금을 Vingly가 보관하고, 배송 완료 후 7일 뒤 공급자에게 지급합니다. 이 기간 동안 환불·분쟁 처리가 가능해 크리에이터가 보호됩니다.</div>
+        <div class="safe-d">구매자 결제금을 Vingly가 보관하고, 배송 완료 후 7일 뒤 브랜드·셀러에게 지급합니다. 이 기간 동안 환불·분쟁 처리가 가능해 크리에이터가 보호됩니다.</div>
         <div class="safe-flow">구매 결제 → Vingly 보관 → 배송 확인 → 7일 유예 → 공급자 지급</div>
       </div>
       <div class="safe reveal">
         <div class="safe-ico">💰</div>
         <div class="safe-t">리저브 적립 시스템</div>
-        <div class="safe-d">신규 공급자의 첫 30일 정산금 일부(10%)를 리저브로 자동 유보합니다. 3개월 분쟁 없이 정상 운영 시 전액 반환. 선불 부담 없는 안전장치입니다.</div>
+        <div class="safe-d">신규 브랜드·셀러의 첫 30일 정산금 일부(10%)를 리저브로 자동 유보합니다. 3개월 분쟁 없이 정상 운영 시 전액 반환. 선불 부담 없는 안전장치입니다.</div>
         <div class="safe-flow">첫 30일 정산의 10% 자동 유보 → 3개월 정상 운영 → 전액 반환</div>
       </div>
       <div class="safe reveal">
         <div class="safe-ico">⭐</div>
         <div class="safe-t">별점 기반 자동 퇴출</div>
-        <div class="safe-d">별점 3점 이하, 환불률 15% 초과 시 자동 경고 2회 → 판매 즉시 중단 → 강제 퇴출. 나쁜 공급자는 크리에이터가 발견하기 전에 자동으로 제거됩니다.</div>
+        <div class="safe-d">별점 3점 이하, 환불률 15% 초과 시 자동 경고 2회 → 판매 즉시 중단 → 강제 퇴출. 불량 브랜드는 크리에이터가 발견하기 전에 자동으로 제거됩니다.</div>
         <div class="safe-flow">경고 1회 → 개선 요구 → 경고 2회 → 즉시 판매 중단</div>
       </div>
       <div class="safe reveal">
@@ -878,30 +887,61 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 </section>
 
 <!-- 후기 -->
+<!-- 후기 -->
 <section class="section">
   <div class="wrap">
     <div class="ey">실제 수익 후기</div>
     <h2 class="st">숫자로 말하는<br>실제 결과</h2>
     <div class="rev-grid">
-      <div class="rev reveal">
+
+      <!-- 후기 1 — 크리에이터 -->
+      <div class="rev reveal" style="overflow:hidden">
+        <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:16px;position:relative">
+          <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&auto=format&fit=crop" alt="뷰티 크리에이터" style="width:100%;height:100%;object-fit:cover;display:block">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
+          <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
+            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">📱 인스타그램</div>
+            <div style="background:var(--green-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--green)">팔로워 3.2K</div>
+          </div>
+        </div>
         <div class="rev-stars">★★★★★</div>
         <div class="rev-earn"><span class="rev-earn-num">89만</span><span class="rev-earn-unit">원 / 첫 달</span></div>
         <div class="rev-text">"팔로워 3천 명으로 협찬 받으려면 거절이 대부분이었어요. Vingly는 기준 없이 바로 시작했고 첫 달 38만원, 지금은 매월 100만원 넘깁니다."</div>
         <div class="rev-author">
           <div class="rev-av" style="background:var(--green-bg);color:var(--green)">뷰</div>
-          <div><div class="rev-name">뷰티제인</div><div class="rev-role">인스타그램 · 팔로워 3.2K</div></div>
+          <div><div class="rev-name">뷰티제인</div><div class="rev-role">뷰티 크리에이터 · 파일럿 1기</div></div>
         </div>
       </div>
-      <div class="rev reveal">
+
+      <!-- 후기 2 — 브랜드 -->
+      <div class="rev reveal" style="overflow:hidden">
+        <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:16px;position:relative">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80&auto=format&fit=crop" alt="브랜드 운영" style="width:100%;height:100%;object-fit:cover;display:block">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
+          <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
+            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🏷️ 브랜드</div>
+            <div style="background:var(--blue-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--blue)">파일럿 1기</div>
+          </div>
+        </div>
         <div class="rev-stars">★★★★★</div>
         <div class="rev-earn"><span class="rev-earn-num">4,280만</span><span class="rev-earn-unit">원 거래액</span></div>
         <div class="rev-text">"DM 보내고 조건 맞추는 데 일주일이 걸리던 게 이제 없어요. 제품 올려두면 알아서 연결되고 저는 배송만 신경 씁니다."</div>
         <div class="rev-author">
           <div class="rev-av" style="background:var(--blue-bg);color:var(--blue)">헬</div>
-          <div><div class="rev-name">헬시팜 대표</div><div class="rev-role">건강식품 공급자 · 파일럿 1기</div></div>
+          <div><div class="rev-name">헬시팜 대표</div><div class="rev-role">건강식품 브랜드 · 파일럿 1기</div></div>
         </div>
       </div>
-      <div class="rev reveal">
+
+      <!-- 후기 3 — 셀러 -->
+      <div class="rev reveal" style="overflow:hidden">
+        <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:16px;position:relative">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop" alt="운동용품 셀러" style="width:100%;height:100%;object-fit:cover;display:block">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
+          <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
+            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🛒 셀러</div>
+            <div style="background:var(--amber-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--amber)">광고비 0원</div>
+          </div>
+        </div>
         <div class="rev-stars">★★★★★</div>
         <div class="rev-earn"><span class="rev-earn-num">광고비 0원</span><span class="rev-earn-unit">으로 시작</span></div>
         <div class="rev-text">"팔린 만큼만 수수료가 나가는 구조라 소자본 셀러한테 이보다 좋은 구조는 없어요. 지금 제품 5개 올려두고 운영 중입니다."</div>
@@ -921,12 +961,12 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <h2 class="st">궁금한 점을 확인하세요</h2>
     <div class="faq-inner">
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">파일럿 기간 우대 수수료는 어떻게 운영되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">파일럿 1,000명 달성 전까지 Vingly는 플랫폼 수수료를 받지 않습니다. 공급자가 설정한 수수료율 전액이 크리에이터에게 지급됩니다. 1,000명 달성 후 30일 전 이메일 공지 후 수수료 체계로 전환되며, 지금 가입한 얼리버드는 일반의 절반 수준 우대 수수료가 영구 적용됩니다.</div>
+        <div class="faq-q"><span class="fq-t">Vingly 수수료 구조가 어떻게 되나요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">크리에이터는 Vingly에 수수료를 내지 않습니다. 브랜드·셀러가 설정한 수수료 전액이 그대로 크리에이터 통장으로 들어옵니다. 파일럿 1,000명 달성 후 브랜드·셀러에게 거래 수수료 1.8%가 적용되며, 얼리버드는 1.5% 영구 고정입니다. 크리에이터는 전환 전후 모두 ₩0입니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q"><span class="fq-t">공급자로 등록하려면 무엇이 필요한가요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">사업자등록증 확인과 소액 보증금 예치가 필수입니다. 크리에이터와 구매자를 보호하기 위한 최소한의 안전장치입니다. 이 외에 별도 심사 없이 즉시 제품을 등록할 수 있습니다. 보증금은 퇴점 시 분쟁 없으면 전액 반환됩니다.</div>
+        <div class="faq-q"><span class="fq-t">브랜드·셀러로 등록하려면 무엇이 필요한가요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">사업자 확인과 소액 보증금 예치가 필요합니다. 크리에이터와 구매자를 보호하는 최소한의 안전장치입니다. 심사 없이 즉시 제품을 올릴 수 있고, 보증금은 분쟁 없이 종료 시 전액 반환됩니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">내가 추천한 제품이 불량이면 어떻게 되나요?</span><div class="fq-ic">+</div></div>
@@ -934,7 +974,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">정산은 어떻게 되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">크리에이터 수수료는 매월 말일 자동 입금됩니다. 공급자 정산은 배송 완료 후 7일 뒤 자동으로 처리됩니다. 별도 정산 요청이 필요 없으며, 대시보드에서 실시간으로 적립 내역과 정산 예정액을 확인할 수 있습니다.</div>
+        <div class="faq-a">크리에이터 수익은 매월 말일 등록된 계좌로 자동 입금됩니다. 브랜드·셀러 정산은 배송 완료 후 7일 뒤 자동 처리됩니다. 별도 정산 신청 없이 대시보드에서 실시간으로 수익 내역을 확인할 수 있습니다.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">팔로워가 100명인데 실제로 수익이 가능한가요?</span><div class="fq-ic">+</div></div>
