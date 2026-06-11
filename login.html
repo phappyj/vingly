@@ -279,7 +279,7 @@ function doLogin() {
       return;
     }
     // 로그인 성공 — 세션 저장
-    sessionStorage.setItem('vingly_user', JSON.stringify({ email, role:acc.role, name:acc.name }));
+    localStorage.setItem('vingly_user', JSON.stringify({ email, role:acc.role, name:acc.name }));
     // 역할별 이동
     if(acc.role==='brand')       location.href='brand-dashboard.html';
     else if(acc.role==='influencer') location.href='influencer-dashboard.html';
@@ -295,7 +295,7 @@ function showForgot() {
 }
 
 // 이미 로그인된 경우
-const sess = sessionStorage.getItem('vingly_user');
+const sess = localStorage.getItem('vingly_user');
 if(sess) {
   const u = JSON.parse(sess);
   if(u.role==='brand')       location.href='brand-dashboard.html';

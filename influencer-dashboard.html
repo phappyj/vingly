@@ -225,7 +225,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="topbar">
     <div class="tb-title" id="page-title">대시보드</div>
     <div class="tb-r">
-      <div class="icon-btn">🔔<div class="ndot"></div></div>
+      <div class="icon-btn" onclick="toggleNotif()" style="cursor:pointer;position:relative">🔔<div class="ndot"></div></div>
       <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
@@ -529,7 +529,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <script>
 // 로그인 보호
 (function(){
-  const u = sessionStorage.getItem('vingly_user');
+  const u = localStorage.getItem('vingly_user');
   if(!u){ location.href='login.html'; return; }
   const user = JSON.parse(u);
   if(user.role !== 'influencer' && user.role !== 'creator'){ location.href='login.html'; return; }
@@ -570,7 +570,7 @@ function showPage(id, btn) {
   setInterval(showFomo, 12000);
 })();
 
-function doLogout(){ sessionStorage.removeItem('vingly_user'); location.href='login.html'; }
+function doLogout(){ localStorage.removeItem('vingly_user'); location.href='login.html'; }
 
 // 수익 계산기
 function calcInfl() {
@@ -590,7 +590,7 @@ calcInfl();
 
 // 링크 생성
 function genLink(name, price, rate) {
-  const user = JSON.parse(sessionStorage.getItem('vingly_user') || '{}');
+  const user = JSON.parse(localStorage.getItem('vingly_user') || '{}');
   const handle = (user.name || 'creator').toLowerCase().replace(/\s/g,'-');
   const slug = name.replace(/\s/g,'-').replace(/[^a-zA-Z0-9가-힣-]/g,'');
   const url = `https://vingly.kr/p/${handle}-${slug}`;
@@ -662,5 +662,44 @@ function copyShareUrl() {
   </div>
 </div>
 
+
+<!-- 알림 패널 -->
+<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
+  <div style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto">
+    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
+      <div style="width:8px;height:8px;border-radius:50%;background:#00B37E;flex-shrink:0;margin-top:5px"></div>
+      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">새 판매 발생</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">뷰티제인 크리에이터 · 단백질 쉐이크 1건</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">방금 전</div></div>
+    </div>
+    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
+      <div style="width:8px;height:8px;border-radius:50%;background:#1D4ED8;flex-shrink:0;margin-top:5px"></div>
+      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">정산 예정 알림</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">이번 달 정산이 6월 30일 처리됩니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">오늘</div></div>
+    </div>
+    <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-start">
+      <div style="width:8px;height:8px;border-radius:50%;background:rgba(10,12,16,.2);flex-shrink:0;margin-top:5px"></div>
+      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5);margin-bottom:3px">Vingly 업데이트</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.4)">새 기능이 추가됐습니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">어제</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 벨 알림 ── */
+function toggleNotif() {
+  const el = document.getElementById('notifPanel');
+  if(!el) return;
+  const isOpen = el.style.display === 'block';
+  el.style.display = isOpen ? 'none' : 'block';
+  // 읽음 처리
+  const dot = document.querySelector('.ndot');
+  if(dot && !isOpen) dot.style.display = 'none';
+}
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notifPanel');
+  const btn = document.querySelector('.icon-btn');
+  if(panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
+</script>
 </body>
 </html>
