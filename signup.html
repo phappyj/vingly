@@ -588,21 +588,23 @@ function goDashboard() {
 // EmailJS 초기화
 
 async function sendWelcomeEmail(data) {
-  const roleLabel = data.role === 'brand' ? '브랜드/셀러' : '크리에이터';
+  const roleLabel = data.role === 'brand' ? '브랜드·셀러' : '크리에이터';
   const messageMap = {
-    brand: `제품 정보와 수수료율을 등록하면 AI가 적합한 크리에이터를 연결합니다.\n담당자가 24시간 내 연락드리겠습니다.\n\n👉 https://phappyj.github.io/vingly/login.html`,
-    creator: `내 채널에 맞는 제품을 선택해 링크를 공유하면 판매가 시작됩니다.\n얼리버드 혜택 — 수수료 100% 본인 수령이 적용됩니다.\n\n👉 https://phappyj.github.io/vingly/login.html`
+    brand: `브랜드·셀러 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품을 등록하면 크리에이터 자동 매칭이 시작됩니다.\n2. 광고비 없이 크리에이터가 제품을 판매합니다.\n3. 대시보드에서 실시간으로 판매 현황을 확인하세요.\n\nhttps://phappyj.github.io/vingly/login.html`,
+    influencer: `크리에이터(얼리버드) 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품 탐색에서 내 채널에 맞는 제품을 선택하세요.\n2. 전용 링크 30초 생성 후 SNS에 공유하면 바로 수익 시작.\n3. 매월 말 등록 계좌로 자동 입금됩니다.\n\nhttps://phappyj.github.io/vingly/login.html`
   };
 
   try {
-    await emailjs.send('service_jrejejn', 'template_sye5tib', {
-      user_name:  data.name,
-      user_role:  roleLabel,
-      email:      data.email,
-      message:    messageMap[data.role] || '',
-      title:      `Vingly ${roleLabel} 가입 완료`
+    const result = await emailjs.send('service_jrejejn', 'template_sye5tib', {
+      to_email:  data.email,
+      email:     data.email,
+      user_name: data.name,
+      user_role: roleLabel,
+      message:   messageMap[data.role === 'brand' ? 'brand' : 'influencer'],
+      title:     `Vingly ${roleLabel} 가입 완료`,
+      name:      data.name,
     });
-    console.log('[Vingly] 환영 메일 발송 완료 →', data.email);
+    console.log('[Vingly] 환영 메일 발송 완료:', data.email, result.status);
   } catch(e) {
     console.error('[Vingly] 메일 발송 실패:', e);
   }
