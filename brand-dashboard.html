@@ -157,7 +157,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <aside class="sb" id="sb">
   <div class="sb-top">
     <a class="sb-brand" href="index.html">
-      <div class="sb-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="sb-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="28" height="28" rx="7" fill="#00B37E"/>
+  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
+</svg></div>
       <span class="sb-wm">Vingly</span>
     </a>
     <div class="sb-role">공급자</div>
@@ -168,6 +172,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button class="ni" onclick="showPage('creators',this)"><span class="ni-ic">📱</span>크리에이터 현황</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ni-ic">💸</span>수익 및 비용</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ni-ic">🏦</span>정산 관리</button>
+    <button class="ni" onclick="showPage('sample',this)"><span class="ni-ic">📦</span>샘플 관리</button>
     <div class="divr"></div>
     <a class="ni" href="product-register.html"><span class="ni-ic">➕</span>제품 등록</a>
     <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
@@ -376,6 +381,106 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
     </div>
   </div>
+
+  <!-- 샘플 관리 페이지 -->
+  <div class="page content" id="pg-sample">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="sc"><div class="sc-top"><div class="sc-label">샘플 신청 대기</div><div class="sc-ico" style="background:var(--purple-bg)">📦</div></div><div class="sc-val">3건</div><div class="sc-ch" style="color:var(--amber)">승인 필요</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">발송 완료</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">12건</div><div class="sc-ch up">이번 달</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">리뷰 게시 확인</div><div class="sc-ico" style="background:var(--blue-bg)">⭐</div></div><div class="sc-val">8건</div><div class="sc-ch nt">평균 별점 4.6</div></div>
+    </div>
+
+    <!-- 샘플 정책 설정 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-h"><div class="card-t">📋 샘플 정책 설정</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">샘플 제공 여부</label>
+          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
+            <option>제공 가능 (크리에이터 신청 허용)</option>
+            <option>비공개 (별도 협의)</option>
+            <option>제공 안함</option>
+          </select>
+        </div>
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">월 샘플 제공 한도</label>
+          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
+            <option>월 5개</option>
+            <option>월 10개</option>
+            <option>월 20개</option>
+            <option>무제한</option>
+          </select>
+        </div>
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">최소 팔로워 조건</label>
+          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
+            <option>조건 없음 (100명 이상)</option>
+            <option>1,000명 이상</option>
+            <option>5,000명 이상</option>
+            <option>10,000명 이상</option>
+          </select>
+        </div>
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">리뷰 기한</label>
+          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
+            <option>수령 후 14일 이내</option>
+            <option>수령 후 7일 이내</option>
+            <option>수령 후 30일 이내</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="alert('샘플 정책이 저장됐습니다.')" style="margin-top:14px;padding:10px 22px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정책 저장</button>
+    </div>
+
+    <!-- 샘플 신청 목록 -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">샘플 신청 목록</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>신청일</th><th>크리에이터</th><th>팔로워</th><th>제품</th><th>채널</th><th>리뷰 형식</th><th>상태</th><th>처리</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="td-m">06.11</td>
+              <td class="td-b">뷰티제인</td>
+              <td>12.4K</td>
+              <td>단백질 쉐이크</td>
+              <td class="td-m">인스타그램</td>
+              <td class="td-m">피드+스토리</td>
+              <td><span class="badge ba">대기</span></td>
+              <td>
+                <button class="act-btn" onclick="approveSample(this)">승인</button>
+                <button class="act-btn r" onclick="rejectSample(this)">거절</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-m">06.11</td>
+              <td class="td-b">핏라이프</td>
+              <td>8.2K</td>
+              <td>단백질 쉐이크</td>
+              <td class="td-m">유튜브</td>
+              <td class="td-m">리뷰 영상</td>
+              <td><span class="badge ba">대기</span></td>
+              <td>
+                <button class="act-btn" onclick="approveSample(this)">승인</button>
+                <button class="act-btn r" onclick="rejectSample(this)">거절</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-m">06.10</td>
+              <td class="td-b">건강한식탁</td>
+              <td>5.1K</td>
+              <td>슈퍼푸드</td>
+              <td class="td-m">블로그</td>
+              <td class="td-m">상세 리뷰</td>
+              <td><span class="badge bg">발송 완료</span></td>
+              <td><button class="act-btn">리뷰 확인</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -402,6 +507,21 @@ function showPage(id, btn) {
   const t = titles[id] || '';
   document.getElementById('page-title').textContent = t;
   document.getElementById('mob-title').textContent = t;
+}
+
+
+function approveSample(btn) {
+  const row = btn.closest('tr');
+  const badge = row.querySelector('.badge');
+  if(badge){ badge.className='badge bg'; badge.textContent='승인됨'; }
+  btn.parentElement.innerHTML = '<span style="font-size:12px;color:var(--green)">발송 준비 중</span>';
+  alert('샘플 승인됐습니다. 배송지 정보를 확인해 발송해주세요.');
+}
+function rejectSample(btn) {
+  const row = btn.closest('tr');
+  const badge = row.querySelector('.badge');
+  if(badge){ badge.className='badge br'; badge.textContent='거절됨'; }
+  btn.parentElement.innerHTML = '<span style="font-size:12px;color:var(--red)">거절됨</span>';
 }
 
 function doLogout(){

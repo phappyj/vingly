@@ -161,7 +161,11 @@ select.fi{cursor:pointer}
 <aside class="sb" id="sb">
   <div class="sb-top">
     <a class="sb-brand" href="index.html">
-      <div class="sb-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="sb-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="28" height="28" rx="7" fill="#00B37E"/>
+  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
+</svg></div>
       <span class="sb-wm">Vingly</span>
     </a>
     <div class="sb-role">브랜드·셀러</div>
@@ -380,6 +384,46 @@ select.fi{cursor:pointer}
       </div>
     </div>
   </div>
+
+    <!-- 샘플 제공 설정 -->
+    <div class="card">
+      <div class="card-t"><span>📦</span>샘플 제공 설정 <span style="font:500 12px/1 'Pretendard',sans-serif;color:var(--purple);background:var(--purple-bg);padding:3px 8px;border-radius:4px;margin-left:4px">선택</span></div>
+      <div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:16px">샘플을 제공하면 크리에이터가 직접 체험 후 리뷰 콘텐츠를 제작합니다. 실제 사용 후기가 판매 전환율을 높입니다.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg">
+          <label class="fl">샘플 제공 여부</label>
+          <select class="fi" id="sampleAvail">
+            <option value="no">제공 안함</option>
+            <option value="yes">제공 가능</option>
+            <option value="private">별도 협의</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">월 최대 제공 수량</label>
+          <input class="fi" id="sampleQty" type="number" placeholder="예: 10" min="1">
+        </div>
+        <div class="fg">
+          <label class="fl">최소 팔로워 조건</label>
+          <select class="fi" id="sampleFollower">
+            <option value="100">100명 이상 (조건 없음)</option>
+            <option value="1000">1,000명 이상</option>
+            <option value="5000">5,000명 이상</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">리뷰 기한</label>
+          <select class="fi" id="sampleDeadline">
+            <option>수령 후 14일</option>
+            <option>수령 후 7일</option>
+            <option>수령 후 30일</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px;background:var(--purple-bg);border-radius:9px;padding:10px 14px;font:500 12px/1.55 'Pretendard',sans-serif;color:var(--purple)">
+        💡 샘플 제공 시 크리에이터 탐색 페이지에서 "샘플 제공" 뱃지가 표시되어 더 많은 크리에이터의 선택을 받습니다.
+      </div>
+    </div>
+
 
   <!-- STEP 4: 검토 및 등록 -->
   <div class="content" id="pg4" style="display:none">

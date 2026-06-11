@@ -23,8 +23,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .orb1{width:400px;height:400px;top:-120px;left:-80px;background:radial-gradient(circle,rgba(29,78,216,.3) 0%,transparent 65%)}
 .orb2{width:300px;height:300px;bottom:-80px;right:-60px;background:radial-gradient(circle,rgba(4,120,87,.2) 0%,transparent 65%)}
 .left-logo{display:flex;align-items:center;gap:9px;position:relative;z-index:1}
-.logo-gem{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.70)}
-.logo-gem svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo-gem{width:34px;height:34px;border-radius:9px;background:#00B37E;display:flex;align-items:center;justify-content:center}
+.logo-gem svg{width:34px;height:34px;}
 .logo-name{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.4px}
 .left-main{position:relative;z-index:1}
 .left-title{font-size:clamp(28px,3.5vw,44px);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-1.5px;margin-bottom:14px}
@@ -126,7 +126,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   <div class="orb1 left-orb"></div>
   <div class="orb2 left-orb"></div>
   <div class="left-logo">
-    <div class="logo-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <div class="logo-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="28" height="28" rx="7" fill="#00B37E"/>
+  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
+</svg></div>
     <span class="logo-name">Vingly</span>
   </div>
   <div class="left-main">

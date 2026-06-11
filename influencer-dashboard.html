@@ -188,7 +188,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <aside class="sb" id="sb">
   <div class="sb-top">
     <a class="sb-brand" href="index.html">
-      <div class="sb-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="sb-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="28" height="28" rx="7" fill="#00B37E"/>
+  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
+</svg></div>
       <span class="sb-wm">Vingly</span>
     </a>
     <div class="sb-role">크리에이터</div>
@@ -286,7 +290,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">15%</div>
               <div class="prod-per">건당 ₩6,300</div>
             </div>
-            <button class="gen-btn" onclick="genLink('단백질 쉐이크', 42000, 15)">링크 생성</button>
+            <div style="display:flex;flex-direction:column;gap:5px">
+      <button class="gen-btn" onclick="genLink('단백질 쉐이크', 42000, 15)">링크 생성</button>
+      <button onclick="requestSample('단백질 쉐이크')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
+    </div>
           </div>
           <div class="prod-item">
             <div class="prod-ico">🥗</div>
@@ -298,7 +305,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">12%</div>
               <div class="prod-per">건당 ₩4,560</div>
             </div>
-            <button class="gen-btn" onclick="genLink('슈퍼푸드', 38000, 12)">링크 생성</button>
+            <div style="display:flex;flex-direction:column;gap:5px">
+      <button class="gen-btn" onclick="genLink('슈퍼푸드', 38000, 12)">링크 생성</button>
+      <button onclick="requestSample('슈퍼푸드')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
+    </div>
           </div>
           <div class="prod-item">
             <div class="prod-ico">🧴</div>
@@ -310,7 +320,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">18%</div>
               <div class="prod-per">건당 ₩4,320</div>
             </div>
-            <button class="gen-btn" onclick="genLink('마그네슘', 24000, 18)">링크 생성</button>
+            <div style="display:flex;flex-direction:column;gap:5px">
+      <button class="gen-btn" onclick="genLink('마그네슘', 24000, 18)">링크 생성</button>
+      <button onclick="requestSample('마그네슘')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
+    </div>
           </div>
         </div>
       </div>
@@ -570,6 +583,29 @@ function showPage(id, btn) {
   setInterval(showFomo, 12000);
 })();
 
+
+/* ── 샘플 신청 ── */
+function requestSample(name) {
+  document.getElementById('sampleProductName').textContent = name;
+  document.getElementById('sampleModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeSampleModal() {
+  document.getElementById('sampleModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function submitSample() {
+  const addr = document.getElementById('sampleAddr').value.trim();
+  const ch = document.getElementById('sampleChannel').value.trim();
+  if(!addr || !ch) { alert('주소와 채널 URL을 입력해주세요.'); return; }
+  closeSampleModal();
+  showToast('📦 샘플 신청이 접수됐습니다! 브랜드 승인 후 배송됩니다.');
+}
+document.addEventListener('click', e => {
+  const m = document.getElementById('sampleModal');
+  if(m && e.target === m) closeSampleModal();
+});
+
 function doLogout(){ localStorage.removeItem('vingly_user'); location.href='login.html'; }
 
 // 수익 계산기
@@ -650,6 +686,49 @@ function copyShareUrl() {
   }
 }
 </script>
+
+
+<!-- 샘플 신청 모달 -->
+<div id="sampleModal" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;animation:slideUp .28s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="sampleProductName">제품명</div>
+        <div style="font:500 12px/1 'Pretendard',sans-serif;color:var(--purple);margin-top:5px">샘플 신청 — 무료 체험 후 리뷰 작성</div>
+      </div>
+      <button onclick="closeSampleModal()" style="width:30px;height:30px;border-radius:50%;background:var(--ink-07);border:none;font-size:14px;cursor:pointer">✕</button>
+    </div>
+
+    <div style="background:var(--purple-bg);border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid rgba(124,58,237,.15)">
+      <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--purple);margin-bottom:5px">샘플 제도란?</div>
+      <div style="font:400 12px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">브랜드·셀러가 제공하는 무료 체험 제품입니다. 받은 후 솔직한 리뷰 콘텐츠를 제작하면 됩니다. 리뷰 후 판매 링크를 공유하면 수익도 함께 발생합니다.</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">배송 받을 주소</label>
+        <input id="sampleAddr" placeholder="주소를 입력해주세요" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;font-family:inherit">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">채널 URL <span style="font-weight:400;color:var(--ink-40)">(인스타·유튜브·블로그)</span></label>
+        <input id="sampleChannel" placeholder="https://instagram.com/your_handle" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;font-family:inherit">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">리뷰 예정 콘텐츠 형식</label>
+        <select id="sampleType" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;cursor:pointer;font-family:inherit">
+          <option>인스타그램 피드 + 스토리</option>
+          <option>유튜브 리뷰 영상</option>
+          <option>틱톡 쇼츠</option>
+          <option>블로그 상세 리뷰</option>
+          <option>기타</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="submitSample()" style="width:100%;padding:13px;border-radius:10px;background:var(--purple);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px;font-family:inherit">샘플 신청하기</button>
+    <div style="margin-top:10px;font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);text-align:center">브랜드·셀러 승인 후 배송됩니다 · 리뷰 미작성 시 샘플비 청구될 수 있습니다</div>
+  </div>
+</div>
 
 <!-- FOMO 판매 알림 -->
 <div id="fomoNotif" style="position:fixed;bottom:80px;left:20px;z-index:888;background:var(--white);border:1px solid var(--ink-14);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-width:260px;transform:translateX(-120%);transition:transform .4s cubic-bezier(.22,1,.36,1);pointer-events:none">
