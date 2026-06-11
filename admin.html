@@ -402,6 +402,60 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
     </div>
   </div>
+
+  <!-- 신고·분쟁 처리 -->
+  <div class="page content" id="pg-report">
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="sc"><div class="sc-top"><div class="sc-label">전체 신고</div><div class="sc-ico" style="background:var(--red-bg)">🚨</div></div><div class="sc-val">3건</div><div class="sc-ch" style="color:var(--amber)">처리 대기 2건</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">처리 완료</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">12건</div><div class="sc-ch up">이번 달</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">환불 처리</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">5건</div><div class="sc-ch nt">보증금 처리 2건</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">강제 퇴출</div><div class="sc-ico" style="background:var(--red-bg)">🚫</div></div><div class="sc-val">1건</div><div class="sc-ch nt">이번 달</div></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">신고·분쟁 목록</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>신고일</th><th>유형</th><th>신고자</th><th>대상</th><th>내용</th><th>상태</th><th>처리</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="td-m">2026.06.11</td>
+              <td><span class="badge br">불량 제품</span></td>
+              <td class="td-b">뷰티제인</td>
+              <td class="td-m">XX화장품</td>
+              <td style="font-size:12px;color:var(--ink-70)">제품 설명과 실물이 달라요</td>
+              <td><span class="badge ba">대기</span></td>
+              <td>
+                <button class="act-btn" onclick="handleReport(this,'처리완료')">처리완료</button>
+                <button class="act-btn r" onclick="handleReport(this,'퇴출')">퇴출</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-m">2026.06.10</td>
+              <td><span class="badge ba">배송 지연</span></td>
+              <td class="td-b">핏라이프</td>
+              <td class="td-m">헬시팜</td>
+              <td style="font-size:12px;color:var(--ink-70)">2주째 배송 없음</td>
+              <td><span class="badge ba">대기</span></td>
+              <td>
+                <button class="act-btn" onclick="handleReport(this,'처리완료')">처리완료</button>
+                <button class="act-btn r" onclick="handleReport(this,'퇴출')">퇴출</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-m">2026.06.08</td>
+              <td><span class="badge bb">환불 요청</span></td>
+              <td class="td-b">구매자A</td>
+              <td class="td-m">러닝하우스</td>
+              <td style="font-size:12px;color:var(--ink-70)">단순 변심 환불</td>
+              <td><span class="badge bg">완료</span></td>
+              <td><button class="act-btn">상세</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>

@@ -321,6 +321,61 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   .hero-h{letter-spacing:-.8px}
   .hc-num{letter-spacing:-2px}
 }
+
+/* STICKY CTA */
+.sticky-cta{
+  position:fixed;bottom:0;left:0;right:0;z-index:190;
+  background:rgba(10,12,16,.92);backdrop-filter:blur(16px) saturate(160%);
+  border-top:1px solid rgba(255,255,255,.1);
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.sticky-cta.visible{transform:translateY(0)}
+.sca-left{display:flex;flex-direction:column;gap:3px}
+.sca-title{font:700 14px/1 'Pretendard',sans-serif;color:#fff}
+.sca-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.45)}
+.sca-btns{display:flex;gap:8px;flex-shrink:0}
+.sca-b{padding:10px 20px;border-radius:9px;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s;min-height:42px;border:none}
+.sca-creator{background:var(--green);color:#fff}
+.sca-creator:hover{background:#034732}
+.sca-brand{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.sca-brand:hover{background:rgba(255,255,255,.18)}
+@media(max-width:768px){
+  .sticky-cta{flex-direction:column;gap:10px;padding:12px 16px}
+  .sca-btns{width:100%;justify-content:stretch}
+  .sca-b{flex:1;text-align:center}
+}
+
+/* FOMO 지표 */
+.fomo-bar{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:100px;padding:6px 14px;
+  display:inline-flex;align-items:center;gap:10px;
+  font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6);
+  margin-top:16px;z-index:1;animation:fadeUp .7s .44s ease both;
+  flex-wrap:wrap;justify-content:center;
+}
+.fomo-dot{width:6px;height:6px;border-radius:50%;background:#10B981;animation:pulse 2s infinite;flex-shrink:0}
+.fomo-num{font:800 14px/1 'Pretendard',sans-serif;color:#fff}
+.fomo-sep{color:rgba(255,255,255,.2)}
+
+/* 게스트 모드 배너 */
+.guest-banner{
+  background:linear-gradient(135deg,var(--blue) 0%,#6D28D9 100%);
+  padding:10px 48px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:sticky;top:62px;z-index:190;
+}
+.gb-text{font:600 13px/1 'Pretendard',sans-serif;color:#fff}
+.gb-text span{color:#FCD34D;font-weight:700}
+.gb-btn{padding:6px 16px;border-radius:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font:700 12px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;white-space:nowrap}
+.gb-btn:hover{background:rgba(255,255,255,.25)}
+@media(max-width:768px){
+  .guest-banner{padding:10px 16px}
+  .gb-text{font-size:12px}
+}
+
 </style>
 </head>
 <body>
@@ -357,6 +412,13 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </div>
 </div>
 
+
+<!-- 게스트 배너 — 로그인 안 한 사용자에게만 표시 -->
+<div class="guest-banner" id="guestBanner">
+  <div class="gb-text">지금 <span>231명</span>이 Vingly에서 수익을 만들고 있습니다 — 무료로 시작하세요</div>
+  <button class="gb-btn" onclick="location.href='signup.html'">무료 가입 →</button>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="h-orb h-orb-1"></div>
@@ -377,8 +439,8 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </div>
 
   <h1 class="hero-h">
-    팔로워가 <span class="hl-g">수익</span>이 되고<br>
-    제품이 <span class="hl-b">판매 채널</span>이 됩니다
+    팔로워 100명이면<br>
+    <span class="hl-g">오늘부터 돈 벌 수 있습니다</span>
   </h1>
   <p class="hero-sub">크리에이터는 링크 하나로 수익을 만들고<br>공급자는 광고비 없이 크리에이터가 대신 팝니다</p>
 
@@ -409,6 +471,17 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <div class="hp-item"><div class="hp-val">14개사</div><div class="hp-lbl">공급자 참여 중</div></div>
     <div class="hp-div"></div>
     <div class="hp-item"><div class="hp-val">팔로워 100명</div><div class="hp-lbl">최소 기준</div></div>
+  </div>
+
+
+  <!-- FOMO 실시간 지표 -->
+  <div class="fomo-bar">
+    <div class="fomo-dot"></div>
+    <span>지금 <span class="fomo-num" id="fomo-viewers">47</span>명이 보는 중</span>
+    <span class="fomo-sep">|</span>
+    <span>최근 1시간 신규 가입 <span class="fomo-num" id="fomo-joins">8</span>명</span>
+    <span class="fomo-sep">|</span>
+    <span>오늘 발생한 수익 <span class="fomo-num" id="fomo-earn">₩128만</span></span>
   </div>
 
   <div class="scroll-hint">
@@ -1133,10 +1206,61 @@ function closeDrawer() {
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('hb').classList.remove('open');
 }
+
+/* ── STICKY CTA ── */
+(function(){
+  const cta = document.getElementById('stickyCta');
+  const hero = document.querySelector('.hero');
+  let shown = false;
+  window.addEventListener('scroll', () => {
+    const heroH = hero ? hero.offsetHeight : 600;
+    if(window.scrollY > heroH * 0.6 && !shown){
+      cta.classList.add('visible'); shown = true;
+    }
+  });
+})();
+
+/* ── GUEST BANNER ── */
+(function(){
+  const sess = sessionStorage.getItem('vingly_user');
+  const banner = document.getElementById('guestBanner');
+  if(sess && banner) banner.style.display = 'none';
+})();
+
+/* ── FOMO 숫자 랜덤 업데이트 ── */
+(function(){
+  function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  let viewers = 47, joins = 8, earn = 128;
+  setInterval(() => {
+    viewers += rnd(-2,4); if(viewers < 20) viewers = 20;
+    if(rnd(0,3) === 0) joins += rnd(0,2);
+    earn += rnd(0,3);
+    const ve = document.getElementById('fomo-viewers');
+    const je = document.getElementById('fomo-joins');
+    const ee = document.getElementById('fomo-earn');
+    if(ve) ve.textContent = viewers;
+    if(je) je.textContent = joins;
+    if(ee) ee.textContent = '₩' + earn + '만';
+  }, 5000 + rnd(0,3000));
+})();
+
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
 /* ── Google Sheets ── */
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec';
 </script>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="sca-left">
+    <div class="sca-title">지금 가입하면 얼리버드 혜택이 적용됩니다</div>
+    <div class="sca-sub">크리에이터 수수료 0% · 브랜드 거래 수수료 1.5% 영구 고정</div>
+  </div>
+  <div class="sca-btns">
+    <button class="sca-b sca-creator" onclick="location.href='signup.html'">크리에이터로 시작</button>
+    <button class="sca-b sca-brand" onclick="location.href='signup.html'">브랜드·셀러로 시작</button>
+  </div>
+</div>
+
 </body>
 </html>

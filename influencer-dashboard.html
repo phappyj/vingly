@@ -286,7 +286,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">15%</div>
               <div class="prod-per">건당 ₩6,300</div>
             </div>
-            <button class="gen-btn" onclick="genLink('단백질 쉐이크')">링크 생성</button>
+            <button class="gen-btn" onclick="genLink('단백질 쉐이크', 42000, 15)">링크 생성</button>
           </div>
           <div class="prod-item">
             <div class="prod-ico">🥗</div>
@@ -298,7 +298,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">12%</div>
               <div class="prod-per">건당 ₩4,560</div>
             </div>
-            <button class="gen-btn" onclick="genLink('슈퍼푸드')">링크 생성</button>
+            <button class="gen-btn" onclick="genLink('슈퍼푸드', 38000, 12)">링크 생성</button>
           </div>
           <div class="prod-item">
             <div class="prod-ico">🧴</div>
@@ -310,7 +310,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               <div class="prod-rate">18%</div>
               <div class="prod-per">건당 ₩4,320</div>
             </div>
-            <button class="gen-btn" onclick="genLink('마그네슘')">링크 생성</button>
+            <button class="gen-btn" onclick="genLink('마그네슘', 24000, 18)">링크 생성</button>
           </div>
         </div>
       </div>
@@ -482,6 +482,48 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </main>
 
 <!-- 링크 생성 토스트 -->
+
+<!-- SNS 공유 모달 -->
+<div id="shareModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;animation:slideUp .28s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="shareTitle">제품명</div>
+        <div style="font:500 12px/1 'Pretendard',sans-serif;color:var(--green);margin-top:4px" id="shareEarn"></div>
+      </div>
+      <button onclick="closeShareModal()" style="width:30px;height:30px;border-radius:50%;background:var(--ink-07);border:none;font-size:14px;cursor:pointer">✕</button>
+    </div>
+    <!-- URL 복사 -->
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <input id="shareUrl" readonly style="flex:1;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 12px/1 'Pretendard',sans-serif;color:var(--ink);outline:none">
+      <button onclick="copyShareUrl()" style="padding:10px 16px;border-radius:9px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">복사</button>
+    </div>
+    <!-- SNS 버튼 -->
+    <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">SNS에 공유하기</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <a id="shareKakao" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#FEE500;border-radius:12px;text-decoration:none;transition:all .2s">
+        <span style="font-size:22px">💬</span>
+        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#000">카카오톡</span>
+      </a>
+      <a id="shareTwitter" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E7F5FE;border-radius:12px;text-decoration:none;transition:all .2s">
+        <span style="font-size:22px">🐦</span>
+        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#1DA1F2">X (트위터)</span>
+      </a>
+      <a id="shareLineBtn" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E8F5E0;border-radius:12px;text-decoration:none;transition:all .2s">
+        <span style="font-size:22px">💚</span>
+        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#06C755">라인</span>
+      </a>
+    </div>
+    <div style="margin-top:12px;font:500 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);text-align:center">
+      📌 인스타그램·유튜브·블로그는 링크 복사 후 직접 붙여넣기 하세요
+    </div>
+  </div>
+</div>
+<style>
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#shareModal.on{display:flex}
+</style>
+
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)"></div>
 
 <script>
@@ -508,6 +550,26 @@ function showPage(id, btn) {
   document.getElementById('mob-title').textContent = t;
 }
 
+
+/* FOMO 판매 알림 */
+(function(){
+  const names = ['뷰티제인','핏라이프','건강식탁','헬스맨','다이어트퀸','런닝메이트'];
+  const products = ['단백질 쉐이크','슈퍼푸드','BCAA','마그네슘 젤리','비타민C'];
+  const earns = ['₩4,500','₩6,300','₩3,780','₩4,320','₩2,900'];
+  let idx = 0;
+  function showFomo() {
+    const el = document.getElementById('fomoNotif');
+    if(!el) return;
+    document.getElementById('fomoName').textContent = names[idx % names.length];
+    document.getElementById('fomoMsg').textContent = `${products[idx % products.length]} 판매 → ${earns[idx % earns.length]} 수익`;
+    idx++;
+    el.style.transform = 'translateX(0)';
+    setTimeout(() => { el.style.transform = 'translateX(-120%)'; }, 3500);
+  }
+  setTimeout(showFomo, 4000);
+  setInterval(showFomo, 12000);
+})();
+
 function doLogout(){ sessionStorage.removeItem('vingly_user'); location.href='login.html'; }
 
 // 수익 계산기
@@ -527,13 +589,78 @@ function calcInfl() {
 calcInfl();
 
 // 링크 생성
-function genLink(name) {
+function genLink(name, price, rate) {
+  const user = JSON.parse(sessionStorage.getItem('vingly_user') || '{}');
+  const handle = (user.name || 'creator').toLowerCase().replace(/\s/g,'-');
+  const slug = name.replace(/\s/g,'-').replace(/[^a-zA-Z0-9가-힣-]/g,'');
+  const url = `https://vingly.kr/p/${handle}-${slug}`;
+
+  // 클립보드 복사
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('🔗 링크가 복사됐습니다! SNS에 바로 붙여넣기 하세요');
+    }).catch(() => {
+      fallbackCopy(url);
+    });
+  } else {
+    fallbackCopy(url);
+  }
+
+  // 공유 모달 열기
+  showShareModal(name, url, price, rate);
+}
+
+function fallbackCopy(text) {
+  const el = document.createElement('textarea');
+  el.value = text; el.style.position = 'fixed'; el.style.opacity = '0';
+  document.body.appendChild(el); el.select();
+  document.execCommand('copy'); document.body.removeChild(el);
+  showToast('🔗 링크가 복사됐습니다!');
+}
+
+function showToast(msg) {
   const toast = document.getElementById('toast');
-  toast.textContent = `✅ ${name} 링크가 생성됐습니다! 복사되었어요`;
+  toast.textContent = msg;
   toast.style.transform = 'translateY(0)';
   toast.style.opacity = '1';
-  setTimeout(()=>{ toast.style.transform='translateY(80px)'; toast.style.opacity='0'; }, 2500);
+  setTimeout(()=>{ toast.style.transform='translateY(80px)'; toast.style.opacity='0'; }, 3000);
+}
+
+function showShareModal(name, url, price, rate) {
+  const earn = price && rate ? `₩${Math.floor(price*rate/100).toLocaleString()}` : '';
+  const text = `[Vingly] ${name} 추천${earn ? ' — 구매 시 '+earn+' 할인' : ''}`;
+  document.getElementById('shareUrl').value = url;
+  document.getElementById('shareTitle').textContent = name;
+  document.getElementById('shareEarn').textContent = earn ? `판매 시 ${earn} 수익` : '';
+  // 카카오 공유 링크
+  document.getElementById('shareKakao').href = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  document.getElementById('shareLineBtn').href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`;
+  document.getElementById('shareModal').classList.add('on');
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').classList.remove('on');
+}
+
+function copyShareUrl() {
+  const url = document.getElementById('shareUrl').value;
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(()=> showToast('✅ 복사됐습니다!'));
+  }
 }
 </script>
+
+<!-- FOMO 판매 알림 -->
+<div id="fomoNotif" style="position:fixed;bottom:80px;left:20px;z-index:888;background:var(--white);border:1px solid var(--ink-14);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-width:260px;transform:translateX(-120%);transition:transform .4s cubic-bezier(.22,1,.36,1);pointer-events:none">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:36px;height:36px;border-radius:9px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💸</div>
+    <div>
+      <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--ink)" id="fomoName">뷰티제인</div>
+      <div style="font:500 11px/1.4 'Pretendard',sans-serif;color:var(--green);margin-top:3px" id="fomoMsg">방금 ₩4,500 수익 발생</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
