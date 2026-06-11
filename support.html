@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 고객지원</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);--ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);--canvas:#F9F8F4;--white:#fff;--green:#00B37E;--green-bg:#E6FBF4;--blue:#1D4ED8;--blue-bg:#EEF3FD;--amber:#D97706;--amber-bg:#FFFBEB;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.7}
+.nav{position:sticky;top:0;z-index:100;background:rgba(249,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--ink-14);padding:0 48px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.nav-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.nav-back{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none}
+.nav-back:hover{color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding:56px 48px 100px}
+.hero{text-align:center;margin-bottom:56px}
+.hero-tag{display:inline-block;font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:var(--green-bg);color:var(--green);margin-bottom:14px}
+.hero-title{font:800 36px/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:var(--ink);margin-bottom:12px}
+.hero-sub{font:400 16px/1.7 'Pretendard',sans-serif;color:var(--ink-70);max-width:480px;margin:0 auto}
+/* 문의 채널 */
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:56px}
+.ch{background:var(--white);border:1px solid var(--ink-14);border-radius:20px;padding:24px;text-align:center;transition:all .2s;text-decoration:none}
+.ch:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
+.ch-ico{font-size:32px;margin-bottom:12px}
+.ch-title{font:700 16px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:6px}
+.ch-desc{font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:12px}
+.ch-action{display:inline-block;font:700 13px/1 'Pretendard',sans-serif;padding:8px 16px;border-radius:8px;transition:all .2s}
+.ch-email{background:var(--blue-bg);color:var(--blue)}
+.ch-kakao{background:#FEE500;color:#000}
+.ch-time{background:var(--ink-07);color:var(--ink-40)}
+/* 공지 */
+.notice-band{background:var(--amber-bg);border:1px solid rgba(217,119,6,.2);border-radius:14px;padding:16px 20px;margin-bottom:48px;display:flex;align-items:center;gap:12px}
+.nb-ico{font-size:18px;flex-shrink:0}
+.nb-t{font:600 14px/1 'Pretendard',sans-serif;color:var(--amber);margin-bottom:3px}
+.nb-d{font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(146,64,14,.7)}
+/* FAQ */
+.sec-title{font:800 24px/1.1 'Pretendard',sans-serif;letter-spacing:-.8px;color:var(--ink);margin-bottom:8px}
+.sec-sub{font:400 15px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:24px}
+.faq-tabs{display:flex;gap:6px;background:var(--ink-07);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content}
+.ftab{padding:8px 16px;border-radius:7px;border:none;background:transparent;font:600 13px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s;font-family:inherit}
+.ftab.on{background:var(--white);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.faq-list{display:flex;flex-direction:column;gap:0;margin-bottom:48px}
+.faq-item{border-bottom:1px solid var(--ink-14)}
+.faq-q{padding:18px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:16px}
+.fq-t{font:600 15px/1.4 'Pretendard',sans-serif;color:var(--ink)}
+.fq-ic{width:26px;height:26px;border-radius:7px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink-40);flex-shrink:0;transition:all .25s}
+.faq-item.open .fq-ic{background:var(--green-bg);color:var(--green);border-color:rgba(0,179,126,.2);transform:rotate(45deg)}
+.faq-a{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0}
+.faq-item.open .faq-a{max-height:300px;padding:0 0 18px}
+/* 문의 폼 */
+.form-card{background:var(--white);border:1px solid var(--ink-14);border-radius:20px;padding:32px}
+.fc-title{font:700 20px/1 'Pretendard',sans-serif;letter-spacing:-.5px;color:var(--ink);margin-bottom:6px}
+.fc-sub{font:400 14px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:24px}
+.fg{margin-bottom:14px}
+.fl{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
+.fi{width:100%;padding:11px 13px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;transition:all .18s;min-height:44px;color:var(--ink);font-family:inherit}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,78,216,.1);background:var(--white)}
+textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.submit-btn{width:100%;padding:13px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px;transition:all .2s;font-family:inherit;margin-top:4px}
+.submit-btn:hover{background:#1a1d24}
+.submit-btn:active{transform:scale(.97)}
+.success-msg{display:none;text-align:center;padding:32px 20px}
+.success-msg.on{display:block}
+.foot{margin-top:56px;padding-top:28px;border-top:1px solid var(--ink-14);display:flex;gap:20px;flex-wrap:wrap}
+.foot a{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none}
+.foot a:hover{color:var(--blue)}
+@media(max-width:768px){
+  .nav{padding:0 20px}.wrap{padding:36px 20px 80px}
+  .hero-title{font-size:26px}.channel-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <span class="nav-wm">Vingly</span>
+  </a>
+  <a class="nav-back" href="index.html">← 메인으로</a>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-tag">고객지원</div>
+    <h1 class="hero-title">무엇을 도와드릴까요?</h1>
+    <p class="hero-sub">Vingly 팀이 빠르게 도움을 드립니다. 아래에서 답을 찾거나 직접 문의해주세요.</p>
+  </div>
+
+  <!-- 문의 채널 -->
+  <div class="channel-grid">
+    <a class="ch" href="mailto:support@vingly.kr">
+      <div class="ch-ico">📧</div>
+      <div class="ch-title">이메일 문의</div>
+      <div class="ch-desc">일반 문의, 정산, 계정 관련</div>
+      <span class="ch-action ch-email">support@vingly.kr</span>
+    </a>
+    <a class="ch" href="#contact">
+      <div class="ch-ico">💬</div>
+      <div class="ch-title">1:1 문의</div>
+      <div class="ch-desc">아래 양식으로 문의하시면 24시간 내 답변 드립니다</div>
+      <span class="ch-action ch-email">문의하기</span>
+    </a>
+    <div class="ch">
+      <div class="ch-ico">⏰</div>
+      <div class="ch-title">운영 시간</div>
+      <div class="ch-desc">평일 오전 10시 ~ 오후 6시<br>(주말·공휴일 휴무)</div>
+      <span class="ch-action ch-time">평일 10:00~18:00</span>
+    </div>
+  </div>
+
+  <!-- 공지 -->
+  <div class="notice-band">
+    <div class="nb-ico">⚡</div>
+    <div>
+      <div class="nb-t">파일럿 운영 중 — 빠른 응대를 드리고 있습니다</div>
+      <div class="nb-d">현재 파일럿 기간으로 대부분의 문의에 24시간 내 답변드립니다. 정산 관련 문의는 이메일로 주시면 더 빠르게 처리됩니다.</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="sec-title">자주 묻는 질문</div>
+  <div class="sec-sub">찾으시는 답이 있을 수도 있습니다</div>
+
+  <div class="faq-tabs">
+    <button class="ftab on" onclick="filterFaq('all',this)">전체</button>
+    <button class="ftab" onclick="filterFaq('creator',this)">크리에이터</button>
+    <button class="ftab" onclick="filterFaq('brand',this)">브랜드·셀러</button>
+    <button class="ftab" onclick="filterFaq('settle',this)">정산</button>
+  </div>
+
+  <div class="faq-list">
+    <!-- 크리에이터 -->
+    <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">팔로워가 100명밖에 없는데 가입할 수 있나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">네, 가능합니다. Vingly는 팔로워 수 기준을 두지 않습니다. 팔로워 100명 이상이면 바로 가입하고 링크를 생성할 수 있습니다. 실제로 팔로워와의 신뢰 관계가 강한 소규모 채널의 구매 전환율이 더 높은 경우가 많습니다.</div>
+    </div>
+    <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">링크는 어떻게 만들고 어디에 공유하나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">로그인 후 제품 탐색 페이지에서 원하는 제품을 선택하고 "링크 생성" 버튼을 누르면 나만의 추적 URL이 즉시 생성됩니다. 이 링크를 인스타그램 바이오, 유튜브 설명란, 블로그 등 원하는 곳에 붙여넣기 하시면 됩니다.</div>
+    </div>
+    <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">수수료는 언제, 어떻게 받나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">매월 말일에 등록된 계좌로 자동 입금됩니다. 별도 정산 신청이 필요 없으며, 대시보드에서 실시간으로 수익 내역을 확인할 수 있습니다. 파일럿 기간에는 Vingly 수수료 차감 없이 전액 수령하실 수 있습니다.</div>
+    </div>
+    <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">내가 추천한 제품이 불량이면 어떻게 되나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">크리에이터에게는 금전적 피해가 없습니다. 환불은 브랜드·셀러의 보증금에서 우선 처리됩니다. 해당 브랜드·셀러는 자동 경고를 받고, 반복 시 플랫폼에서 퇴출됩니다. 고객지원팀에 신고해주시면 즉시 조치합니다.</div>
+    </div>
+
+    <!-- 브랜드·셀러 -->
+    <div class="faq-item" data-cat="brand" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">제품 등록에 어떤 서류가 필요한가요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">사업자등록증 사본과 소액 보증금 예치가 필요합니다. 보증금은 크리에이터와 구매자 보호를 위한 안전장치로, 분쟁 없이 종료 시 전액 반환됩니다. 별도 심사 없이 서류 확인 후 즉시 제품 등록이 가능합니다.</div>
+    </div>
+    <div class="faq-item" data-cat="brand" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">수수료율은 어떻게 설정하나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">제품 등록 시 수수료율을 직접 설정할 수 있습니다. 일반적으로 10~20% 범위에서 설정하시면 크리에이터들의 선택을 받기 쉽습니다. 수수료율이 높을수록 크리에이터 노출 우선순위가 높아집니다.</div>
+    </div>
+    <div class="faq-item" data-cat="brand" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">파일럿 기간 이후 수수료는 어떻게 바뀌나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">파일럿 회원 1,000명 달성 후 30일 전에 이메일로 사전 공지 드립니다. 정식 전환 후에는 거래 수수료와 월 구독료가 적용됩니다. 지금 가입하신 얼리버드 회원은 우대 수수료율이 적용됩니다. 자세한 내용은 수수료 안내 페이지를 참고해주세요.</div>
+    </div>
+
+    <!-- 정산 -->
+    <div class="faq-item" data-cat="settle" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">정산 유예 7일은 무슨 뜻인가요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">배송 완료 후 7일 동안 구매자의 반품·환불 신청을 받습니다. 이 기간이 지나면 대금이 브랜드·셀러에게 지급됩니다. 분쟁이 발생하면 이 기간 내에 처리되어 크리에이터와 구매자를 보호합니다.</div>
+    </div>
+    <div class="faq-item" data-cat="settle" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">계좌 정보는 어디서 등록하나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">대시보드 → 정산 설정에서 계좌 정보를 등록하실 수 있습니다. 예금주명과 계좌번호를 입력하시면 매월 말일 자동으로 입금됩니다.</div>
+    </div>
+    <div class="faq-item" data-cat="settle" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="fq-t">세금계산서 발행이 되나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">현재 파일럿 기간으로 세금계산서 자동 발행 시스템은 준비 중입니다. 세금계산서가 필요하신 경우 support@vingly.kr로 문의 주시면 개별 처리해드립니다.</div>
+    </div>
+  </div>
+
+  <!-- 1:1 문의 폼 -->
+  <div class="form-card" id="contact">
+    <div class="fc-title">1:1 문의하기</div>
+    <div class="fc-sub">평일 24시간 내 답변 드립니다</div>
+
+    <div id="formArea">
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">이름 <span style="color:#DC2626">*</span></label>
+          <input class="fi" id="c-name" type="text" placeholder="홍길동">
+        </div>
+        <div class="fg">
+          <label class="fl">이메일 <span style="color:#DC2626">*</span></label>
+          <input class="fi" id="c-email" type="email" placeholder="hello@email.com">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">문의 유형</label>
+        <select class="fi" id="c-type">
+          <option value="">유형 선택</option>
+          <option>가입 및 계정</option>
+          <option>수수료 및 정산</option>
+          <option>제품 등록</option>
+          <option>링크 생성 및 공유</option>
+          <option>분쟁 및 환불</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">문의 내용 <span style="color:#DC2626">*</span></label>
+        <textarea class="fi" id="c-msg" placeholder="문의하실 내용을 자세히 적어주세요."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitContact()">문의 보내기</button>
+    </div>
+
+    <div class="success-msg" id="successMsg">
+      <div style="font-size:48px;margin-bottom:16px">✅</div>
+      <div style="font:700 20px/1.2 'Pretendard',sans-serif;color:var(--ink);margin-bottom:8px">문의가 접수됐습니다</div>
+      <div style="font:400 14px/1.6 'Pretendard',sans-serif;color:var(--ink-40)">입력하신 이메일로 확인 메일을 발송했습니다.<br>평일 기준 24시간 내 답변 드리겠습니다.</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <a href="terms.html">이용약관</a>
+    <a href="privacy.html">개인정보처리방침</a>
+    <a href="index.html">메인으로</a>
+  </div>
+</div>
+
+<script>
+function toggleFaq(el) {
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) el.classList.add('open');
+}
+
+function filterFaq(cat, btn) {
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.faq-item').forEach(item => {
+    if(cat === 'all' || item.dataset.cat === cat) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+      item.classList.remove('open');
+    }
+  });
+}
+
+function submitContact() {
+  const name = document.getElementById('c-name').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const msg = document.getElementById('c-msg').value.trim();
+  if(!name || !email || !msg) { alert('이름, 이메일, 문의 내용을 입력해주세요.'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('올바른 이메일 주소를 입력해주세요.'); return; }
+  document.getElementById('formArea').style.display = 'none';
+  document.getElementById('successMsg').classList.add('on');
+}
+</script>
+</body>
+</html>

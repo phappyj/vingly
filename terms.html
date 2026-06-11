@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 이용약관</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);--ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);--canvas:#F9F8F4;--white:#fff;--green:#00B37E;--green-bg:#E6FBF4;--blue:#1D4ED8;--blue-bg:#EEF3FD;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.7}
+.nav{position:sticky;top:0;z-index:100;background:rgba(249,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--ink-14);padding:0 48px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.nav-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.nav-back{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none}
+.nav-back:hover{color:var(--ink)}
+.wrap{max-width:760px;margin:0 auto;padding:56px 48px 100px}
+.doc-header{margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--ink-14)}
+.doc-tag{display:inline-block;font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:var(--blue-bg);color:var(--blue);margin-bottom:12px}
+.doc-title{font:800 32px/1.1 'Pretendard',sans-serif;letter-spacing:-1px;color:var(--ink);margin-bottom:10px}
+.doc-meta{font:400 14px/1.6 'Pretendard',sans-serif;color:var(--ink-40)}
+.doc-meta strong{color:var(--ink-70);font-weight:600}
+.toc{background:var(--white);border:1px solid var(--ink-14);border-radius:16px;padding:22px 26px;margin-bottom:44px}
+.toc-title{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.toc ol{padding-left:16px;display:flex;flex-direction:column;gap:6px}
+.toc ol a{font:500 14px/1 'Pretendard',sans-serif;color:var(--blue);text-decoration:none}
+.sec{margin-bottom:40px}
+.sec-t{font:700 19px/1.3 'Pretendard',sans-serif;letter-spacing:-.4px;color:var(--ink);margin-bottom:14px;padding-top:20px;border-top:1px solid var(--ink-07)}
+.sec p{font:400 15px/1.8 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:12px}
+.sec p:last-child{margin-bottom:0}
+.ol{padding-left:18px;display:flex;flex-direction:column;gap:9px;margin-bottom:12px}
+.ol li{font:400 15px/1.7 'Pretendard',sans-serif;color:var(--ink-70)}
+.ol li strong{font-weight:600;color:var(--ink)}
+.ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.ul li{font:400 15px/1.7 'Pretendard',sans-serif;color:var(--ink-70);padding-left:14px;position:relative}
+.ul li::before{content:'·';position:absolute;left:0;color:var(--ink-40)}
+.hl{background:var(--green-bg);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:13px 17px;margin-bottom:13px}
+.hl p{color:var(--ink);font-weight:500;margin:0;font-size:14px}
+.wn{background:#FEF9EC;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:13px 17px;margin-bottom:13px}
+.wn p{color:#92400E;font-weight:500;margin:0;font-size:14px}
+table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:14px}
+table th{background:var(--ink-07);font:600 12px/1 'Pretendard',sans-serif;padding:9px 13px;text-align:left;border-bottom:1px solid var(--ink-14)}
+table td{padding:9px 13px;border-bottom:1px solid var(--ink-07);color:var(--ink-70);line-height:1.6;font-size:14px}
+table tr:last-child td{border:none}
+.foot{margin-top:56px;padding-top:28px;border-top:1px solid var(--ink-14);display:flex;gap:20px;flex-wrap:wrap}
+.foot a{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none}
+.foot a:hover{color:var(--blue)}
+@media(max-width:768px){.nav{padding:0 20px}.wrap{padding:36px 20px 80px}.doc-title{font-size:24px}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <span class="nav-wm">Vingly</span>
+  </a>
+  <a class="nav-back" href="index.html">← 메인으로</a>
+</nav>
+<div class="wrap">
+  <div class="doc-header">
+    <div class="doc-tag">법적 문서</div>
+    <h1 class="doc-title">이용약관</h1>
+    <div class="doc-meta"><strong>시행일:</strong> 2026년 6월 11일 &nbsp;·&nbsp; <strong>버전:</strong> v1.0 (파일럿)</div>
+  </div>
+  <div class="toc">
+    <div class="toc-title">목차</div>
+    <ol><li><a href="#s1">제1조 목적</a></li><li><a href="#s2">제2조 정의</a></li><li><a href="#s3">제3조 이용 계약</a></li><li><a href="#s4">제4조 회원 구분</a></li><li><a href="#s5">제5조 서비스 이용</a></li><li><a href="#s6">제6조 수수료 및 정산</a></li><li><a href="#s7">제7조 금지 행위</a></li><li><a href="#s8">제8조 계정 정지 및 해지</a></li><li><a href="#s9">제9조 분쟁 처리</a></li><li><a href="#s10">제10조 면책</a></li><li><a href="#s11">제11조 약관 변경</a></li><li><a href="#s12">제12조 준거법</a></li></ol>
+  </div>
+
+  <div class="sec" id="s1">
+    <div class="sec-t">제1조 목적</div>
+    <p>본 약관은 Vingly(이하 "회사")가 운영하는 커머스 플랫폼 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.</p>
+    <div class="hl"><p>Vingly는 브랜드·셀러(공급자)와 크리에이터를 연결하는 커머스 중개 플랫폼입니다. 회사는 통신판매의 당사자가 아니며, 통신판매중개자로서 플랫폼을 제공합니다.</p></div>
+  </div>
+
+  <div class="sec" id="s2">
+    <div class="sec-t">제2조 정의</div>
+    <ul class="ul">
+      <li><strong>"서비스"</strong>란 회사가 제공하는 Vingly 플랫폼 및 이와 관련된 모든 기능을 말합니다.</li>
+      <li><strong>"회원"</strong>이란 본 약관에 동의하고 서비스에 가입한 자를 말합니다.</li>
+      <li><strong>"브랜드·셀러"</strong>란 플랫폼에 제품을 등록하고 판매하는 사업자를 말합니다.</li>
+      <li><strong>"크리에이터"</strong>란 제품 링크를 공유하여 판매를 촉진하고 수수료를 받는 회원을 말합니다.</li>
+      <li><strong>"판매 링크"</strong>란 크리에이터가 생성한 제품 추적 고유 URL을 말합니다.</li>
+      <li><strong>"수수료"</strong>란 판매 발생 시 브랜드·셀러가 크리에이터에게 지급하는 금액을 말합니다.</li>
+    </ul>
+  </div>
+
+  <div class="sec" id="s3">
+    <div class="sec-t">제3조 서비스 이용 계약</div>
+    <ol class="ol">
+      <li>이용 계약은 회원이 본 약관에 동의하고 가입 신청을 완료한 시점에 성립합니다.</li>
+      <li>만 14세 미만의 자는 서비스에 가입할 수 없습니다.</li>
+      <li>브랜드·셀러로 가입 시 사업자등록증 확인 및 소액 보증금 예치가 필요합니다.</li>
+      <li>회사는 허위 정보 제공, 법령 위반 우려 등의 사유로 가입을 거절하거나 사후 취소할 수 있습니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s4">
+    <div class="sec-t">제4조 회원 구분 및 역할</div>
+    <table>
+      <thead><tr><th>구분</th><th>역할</th><th>가입 조건</th></tr></thead>
+      <tbody>
+        <tr><td>브랜드·셀러</td><td>제품 등록, 수수료율 설정, 재고·배송 관리</td><td>사업자등록증 + 보증금 예치</td></tr>
+        <tr><td>크리에이터</td><td>제품 선택, 판매 링크 생성 및 공유</td><td>SNS 채널 보유</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec" id="s5">
+    <div class="sec-t">제5조 서비스 이용</div>
+    <ol class="ol">
+      <li>크리에이터는 판매 링크를 생성하여 자신의 SNS 채널에 공유할 수 있습니다.</li>
+      <li>브랜드·셀러는 제품 정보를 정확하게 등록해야 하며, 허위·과장 정보 등록을 금합니다.</li>
+      <li>회사는 서비스의 안정적 운영을 위해 사전 고지 없이 서비스 일부를 변경하거나 중단할 수 있습니다. 단, 중요한 변경은 7일 전 공지합니다.</li>
+      <li>파일럿 기간(회원 1,000명 달성 전)에는 플랫폼 이용료가 면제될 수 있으며, 이후 수수료 체계로 전환됩니다. 전환 30일 전 이메일로 공지합니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s6">
+    <div class="sec-t">제6조 수수료 및 정산</div>
+    <ol class="ol">
+      <li>크리에이터 수수료율은 브랜드·셀러가 제품 등록 시 직접 설정하며, 판매 발생 시 해당 수수료가 크리에이터에게 지급됩니다.</li>
+      <li>정산은 매월 말일 기준으로 처리되며, 배송 완료 후 7일간의 정산 유예 기간이 적용됩니다.</li>
+      <li>PG(결제대행) 수수료는 브랜드·셀러가 부담합니다.</li>
+      <li>파일럿 기간 종료 후 브랜드·셀러에게 거래 수수료가 부과됩니다. 세부 요율은 서비스 내 수수료 안내 페이지에서 확인할 수 있습니다.</li>
+      <li>분쟁·환불 발생 시 브랜드·셀러의 보증금에서 우선 처리될 수 있습니다.</li>
+    </ol>
+    <div class="wn"><p>크리에이터에게는 플랫폼 이용료 및 수수료 차감이 없습니다. 단, 사기·허위 행위 등으로 인한 환불 발생 시 수령한 수수료가 회수될 수 있습니다.</p></div>
+  </div>
+
+  <div class="sec" id="s7">
+    <div class="sec-t">제7조 금지 행위</div>
+    <p>회원은 다음 행위를 해서는 안 됩니다.</p>
+    <ul class="ul">
+      <li>허위·과장 정보로 제품 등록 또는 리뷰 작성</li>
+      <li>타인의 계정 도용 또는 부정한 방법으로 수수료 취득</li>
+      <li>판매 링크를 통한 불법 콘텐츠 유통</li>
+      <li>플랫폼 시스템 해킹·우회 시도</li>
+      <li>자가 구매를 통한 수수료 편취</li>
+      <li>회사의 사전 동의 없는 무단 상업적 이용</li>
+      <li>관련 법령을 위반하는 일체의 행위</li>
+    </ul>
+    <p>금지 행위 적발 시 계정 정지, 수수료 환수, 법적 조치 등의 제재를 받을 수 있습니다.</p>
+  </div>
+
+  <div class="sec" id="s8">
+    <div class="sec-t">제8조 계정 정지 및 해지</div>
+    <ol class="ol">
+      <li>회원은 언제든지 서비스 탈퇴를 신청할 수 있습니다. 탈퇴 신청 후 정산 완료까지 계정이 유지될 수 있습니다.</li>
+      <li>별점 3점 이하 누적, 환불률 15% 초과, 금지 행위 반복, 관련 법령 위반 등의 경우 사전 통보 없이 계정을 정지하거나 해지할 수 있습니다.</li>
+      <li>계정 해지 시 미정산 수수료는 분쟁 해결 후 지급됩니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s9">
+    <div class="sec-t">제9조 분쟁 처리</div>
+    <ol class="ol">
+      <li>브랜드·셀러와 크리에이터 또는 구매자 간의 분쟁은 당사자 간 협의를 우선으로 합니다.</li>
+      <li>협의가 불가한 경우 회사의 고객지원팀에 분쟁 조정을 신청할 수 있습니다.</li>
+      <li>브랜드·셀러의 귀책으로 발생한 환불은 보증금 및 정산 유예 대금에서 우선 처리됩니다.</li>
+      <li>회사는 통신판매중개자로서 거래 당사자 간 분쟁에 직접적인 법적 책임을 지지 않습니다. 단, 분쟁 해결을 위한 합리적인 중재 노력을 제공합니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s10">
+    <div class="sec-t">제10조 면책 사항</div>
+    <ol class="ol">
+      <li>회사는 천재지변, 시스템 장애 등 불가항력으로 인한 서비스 중단에 대해 책임지지 않습니다.</li>
+      <li>회사는 브랜드·셀러가 등록한 제품의 품질, 안전성, 진위에 대해 보증하지 않습니다.</li>
+      <li>회원이 게시한 콘텐츠로 인해 발생한 분쟁은 해당 회원이 책임집니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s11">
+    <div class="sec-t">제11조 약관 변경</div>
+    <ol class="ol">
+      <li>회사는 필요시 본 약관을 변경할 수 있으며, 중요한 변경사항은 시행 7일 전 서비스 내 공지 및 이메일로 안내합니다.</li>
+      <li>변경된 약관에 동의하지 않을 경우 서비스 탈퇴를 신청할 수 있습니다.</li>
+      <li>약관 변경 공지 후 7일 이내에 거부 의사를 표시하지 않으면 동의한 것으로 간주합니다.</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="s12">
+    <div class="sec-t">제12조 준거법 및 관할</div>
+    <p>본 약관은 대한민국 법률에 따라 해석·적용됩니다. 서비스 이용과 관련한 소송은 서울중앙지방법원을 제1심 관할법원으로 합니다.</p>
+  </div>
+
+  <div class="foot">
+    <a href="privacy.html">개인정보처리방침</a>
+    <a href="support.html">고객지원</a>
+    <a href="index.html">메인으로</a>
+  </div>
+</div>
+</body>
+</html>
