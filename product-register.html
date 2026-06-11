@@ -4,672 +4,633 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 제품 등록</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --brand:#0D5C8F;--brand-light:#1A7DC4;--brand-bg:#E8F2FA;
-    --green:#0A6644;--green-light:#12A06A;--green-bg:#E1F5EE;
-    --orange:#BA7517;--orange-bg:#FAEEDA;
-    --red:#A32D2D;--red-bg:#FCEBEB;
-    --bg:#F4F3EF;--surface:#FFFFFF;
-    --text:#111111;--text-sub:#555555;--text-muted:#999999;
-    --border:#E0DED8;--radius:12px;--sidebar:240px;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+:root{
+  --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
+  --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
+  --canvas:#F9F8F4;--white:#fff;
+  --green:#00B37E;--green-bg:#E6FBF4;--green-dim:rgba(0,179,126,.12);
+  --blue:#1D4ED8;--blue-bg:#EEF3FD;--blue-dim:rgba(29,78,216,.12);
+  --amber:#D97706;--amber-bg:#FFFBEB;
+  --red:#991B1B;--red-bg:#FEF2F2;
+  --purple:#7C3AED;--purple-bg:#F5F0FF;
+  --sw:240px;--r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
 
-  /* SIDEBAR */
-  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
-  .sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
-  .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--brand)}
-  .logo-badge{font-size:11px;font-weight:600;color:var(--brand);background:var(--brand-bg);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
-  .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .15s;text-decoration:none}
-  .nav-item:hover{background:var(--bg);color:var(--text)}
-  .nav-item.active{background:var(--brand-bg);color:var(--brand)}
-  .nav-icon{font-size:16px;width:20px;text-align:center}
-  .nav-divider{height:1px;background:var(--border);margin:8px 0}
-  .sidebar-bottom{padding:16px;border-top:1px solid var(--border)}
-  .user-info{display:flex;align-items:center;gap:10px}
-  .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--brand-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--brand);flex-shrink:0}
-  .user-name{font-size:13px;font-weight:600}
-  .user-role{font-size:11px;color:var(--text-muted)}
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--white);border-right:1px solid var(--ink-14);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sb-top{padding:18px 16px 14px;border-bottom:1px solid var(--ink-14)}
+.sb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:12px}
+.sb-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.sb-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sb-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.sb-role{font:700 10px/1 'Pretendard',sans-serif;color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:3px}
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70);cursor:pointer;transition:all .15s;text-decoration:none;border:none;background:transparent;width:100%;font-family:inherit}
+.ni:hover{background:var(--ink-07);color:var(--ink)}
+.ni.act{background:var(--blue-bg);color:var(--blue);font-weight:600}
+.ni-ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.divr{height:1px;background:var(--ink-14);margin:6px 0}
+.sb-foot{padding:12px 14px;border-top:1px solid var(--ink-14)}
+.ua{display:flex;align-items:center;gap:10px}
+.ua-av{width:32px;height:32px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;color:var(--blue);flex-shrink:0}
+.ua-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink)}
+.ua-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
 
-  /* MAIN */
-  .main{margin-left:var(--sidebar);min-height:100vh}
-  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
-  .topbar-left{display:flex;align-items:center;gap:10px}
-  .topbar-back{width:32px;height:32px;border-radius:7px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;text-decoration:none;color:var(--text)}
-  .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
-  .topbar-right{display:flex;gap:10px}
-  .btn{padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none;min-height:38px;transition:all .2s}
-  .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text-sub)}
-  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
-  .btn-brand{background:var(--brand);color:#fff}
-  .btn-brand:hover{background:var(--brand-light)}
-  .btn:active{transform:scale(.98)}
+/* MAIN */
+.mn{margin-left:var(--sw);flex:1;min-width:0}
+.topbar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.tb-title{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.tb-r{display:flex;align-items:center;gap:10px}
+.logout-btn{padding:7px 14px;border-radius:8px;background:var(--red-bg);color:var(--red);border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer}
 
-  /* STEP INDICATOR */
-  .step-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:52px;display:flex;align-items:center;gap:0}
-  .step{display:flex;align-items:center;gap:8px;padding:0 20px 0 0;position:relative;cursor:pointer}
-  .step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
-  .step-num.done{background:var(--green);color:#fff}
-  .step-num.active{background:var(--brand);color:#fff}
-  .step-num.inactive{background:var(--bg);color:var(--text-muted);border:1.5px solid var(--border)}
-  .step-label{font-size:13px;font-weight:500;transition:all .2s}
-  .step-label.active{color:var(--brand);font-weight:600}
-  .step-label.done{color:var(--green)}
-  .step-label.inactive{color:var(--text-muted)}
-  .step-arrow{font-size:12px;color:var(--border);margin-right:12px}
+/* STEP BAR */
+.step-bar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:56px;display:flex;align-items:center;gap:0}
+.step-item{display:flex;align-items:center;gap:8px;padding:0 16px;height:100%;position:relative;cursor:pointer}
+.step-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+.step-item.act::after{background:var(--blue)}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 11px/1 'Pretendard',sans-serif;flex-shrink:0;transition:all .2s}
+.step-num.done{background:var(--green);color:#fff}
+.step-num.curr{background:var(--blue);color:#fff}
+.step-num.idle{background:var(--ink-07);color:var(--ink-40)}
+.step-label{font:600 13px/1 'Pretendard',sans-serif;transition:color .2s}
+.step-item.act .step-label{color:var(--blue)}
+.step-item:not(.act) .step-label{color:var(--ink-40)}
+.step-arrow{color:var(--ink-14);font-size:16px;padding:0 4px}
 
-  /* CONTENT */
-  .content{padding:28px 32px;max-width:960px}
+/* CONTENT */
+.content{padding:24px 28px;max-width:800px}
+.card{background:var(--white);border:1px solid var(--ink-14);border-radius:16px;padding:22px;margin-bottom:16px}
+.card-t{font:700 15px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-t span{font-size:16px}
 
-  /* SECTION */
-  .form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
-  .fs-title{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-  .fs-desc{font-size:13px;color:var(--text-muted);margin-bottom:20px}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .form-group{display:flex;flex-direction:column;gap:6px}
-  .form-group.full{grid-column:1/-1}
-  .form-label{font-size:13px;font-weight:600;color:var(--text)}
-  .form-hint{font-size:12px;color:var(--text-muted)}
-  .form-input{padding:11px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;min-height:44px;color:var(--text)}
-  .form-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(13,92,143,.08);background:var(--surface)}
-  textarea.form-input{resize:vertical;min-height:90px}
-  .input-prefix{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg);transition:border-color .2s,box-shadow .2s}
-  .input-prefix:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(13,92,143,.08);background:var(--surface)}
-  .prefix-label{padding:0 12px;font-size:14px;color:var(--text-muted);font-weight:500;border-right:1px solid var(--border);height:44px;display:flex;align-items:center;background:var(--bg);flex-shrink:0}
-  .prefix-input{flex:1;padding:11px 13px;border:none;background:transparent;font-size:14px;font-family:inherit;outline:none;min-height:44px;color:var(--text)}
-  .suffix-label{padding:0 12px;font-size:14px;color:var(--text-muted);border-left:1px solid var(--border);height:44px;display:flex;align-items:center;flex-shrink:0}
+/* FORM */
+.fg{margin-bottom:14px}
+.fl{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
+.fl .req{color:#DC2626;margin-left:2px}
+.fl .hint{font:400 12px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-left:6px;font-weight:400}
+.fi{width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;transition:all .18s;min-height:42px;color:var(--ink);font-family:inherit}
+.fi:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(29,78,216,.08)}
+textarea.fi{min-height:100px;resize:vertical;line-height:1.6}
+select.fi{cursor:pointer}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
-  /* IMAGE UPLOAD */
-  .upload-area{border:2px dashed var(--border);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
-  .upload-area:hover{border-color:var(--brand);background:var(--brand-bg)}
-  .upload-area.has-file{border-color:var(--green);background:var(--green-bg);border-style:solid}
-  .upload-icon{font-size:36px;margin-bottom:10px}
-  .upload-title{font-size:14px;font-weight:600;margin-bottom:4px}
-  .upload-desc{font-size:12px;color:var(--text-muted)}
-  .upload-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-  .upload-thumb{aspect-ratio:1;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
-  .upload-thumb:hover{border-color:var(--brand)}
-  .upload-thumb.filled{background:linear-gradient(135deg,#E8F2FA,#FAEEDA)}
-  .upload-thumb .del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(163,45,45,.85);color:#fff;font-size:10px;display:none;align-items:center;justify-content:center;cursor:pointer}
-  .upload-thumb:hover .del{display:flex}
+/* 미디어 업로드 */
+.media-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.media-slot{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--ink-14);background:var(--ink-07);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.media-slot:hover{border-color:var(--blue);background:var(--blue-bg)}
+.media-slot.filled{border-style:solid;border-color:var(--ink-14)}
+.media-slot img,.media-slot video{width:100%;height:100%;object-fit:cover;display:block}
+.media-slot .del-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(10,12,16,.7);color:#fff;border:none;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.media-slot.filled:hover .del-btn{display:flex}
+.media-slot .slot-ico{font-size:22px;margin-bottom:6px;opacity:.4}
+.media-slot .slot-txt{font:500 11px/1.3 'Pretendard',sans-serif;color:var(--ink-40);text-align:center}
+.media-slot .slot-badge{position:absolute;bottom:5px;left:5px;font:700 9px/1 'Pretendard',sans-serif;padding:2px 5px;border-radius:3px}
+.badge-img{background:var(--blue-bg);color:var(--blue)}
+.badge-vid{background:var(--purple-bg);color:var(--purple)}
+.badge-main{background:var(--green-bg);color:var(--green)}
+.media-tabs{display:flex;gap:6px;margin-bottom:12px}
+.mtab{padding:7px 14px;border-radius:8px;border:1px solid var(--ink-14);background:transparent;font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s;font-family:inherit}
+.mtab.on{background:var(--blue-bg);color:var(--blue);border-color:rgba(29,78,216,.2)}
+.upload-hint{background:var(--purple-bg);border:1px solid rgba(124,58,237,.15);border-radius:9px;padding:10px 14px;margin-top:8px}
+.uh-t{font:700 12px/1 'Pretendard',sans-serif;color:var(--purple);margin-bottom:4px}
+.uh-d{font:400 12px/1.55 'Pretendard',sans-serif;color:var(--ink-70)}
 
-  /* COMMISSION SLIDER */
-  .commission-wrap{background:var(--brand-bg);border-radius:10px;padding:18px 20px}
-  .commission-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-  .commission-value{font-size:28px;font-weight:700;color:var(--brand)}
-  .commission-earn{font-size:13px;color:var(--text-sub)}
-  input[type=range]{width:100%;height:6px;border-radius:3px;appearance:none;background:linear-gradient(to right, var(--brand) 0%, var(--brand) 50%, #D0DEF5 50%, #D0DEF5 100%);outline:none;cursor:pointer;margin-bottom:8px}
-  input[type=range]::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:var(--brand);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
-  .commission-tips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-  .ctip{background:var(--surface);border-radius:7px;padding:8px 10px;border:1px solid var(--border);cursor:pointer;text-align:center;transition:all .15s}
-  .ctip:hover,.ctip.selected{border-color:var(--brand);background:#fff}
-  .ctip-val{font-size:14px;font-weight:700;color:var(--brand)}
-  .ctip-label{font-size:11px;color:var(--text-muted)}
+/* 수수료 슬라이더 */
+.rate-wrap{background:var(--ink);border-radius:12px;padding:20px;margin-top:8px}
+.rate-display{display:flex;align-items:baseline;gap:6px;margin-bottom:16px}
+.rate-num{font:900 48px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-2px}
+.rate-unit{font:600 18px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5)}
+.rate-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;outline:none}
+.rate-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#00E5A0;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.rate-labels{display:flex;justify-content:space-between;font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:6px}
+.rate-preview{margin-top:16px;padding:12px;background:rgba(255,255,255,.06);border-radius:9px;border:1px solid rgba(255,255,255,.1)}
+.rp-row{display:flex;justify-content:space-between;font:500 12px/1 'Pretendard',sans-serif;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.rp-row:last-child{border:none;padding-top:8px;font-weight:700;font-size:14px}
+.rp-g{color:#00E5A0}.rp-b{color:#7CB9FF}.rp-w{color:#fff}.rp-d{color:rgba(255,255,255,.4)}
 
-  /* PREVIEW CARD */
-  .preview-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
-  .preview-thumb{height:140px;background:linear-gradient(135deg,#E8F2FA,#FAEEDA);display:flex;align-items:center;justify-content:center;font-size:40px}
-  .preview-body{padding:14px}
-  .preview-name{font-size:14px;font-weight:600;margin-bottom:4px}
-  .preview-brand{font-size:12px;color:var(--text-muted);margin-bottom:10px}
-  .preview-row{display:flex;justify-content:space-between;align-items:center}
-  .preview-price{font-size:16px;font-weight:700}
-  .preview-commission{font-size:12px;font-weight:600;color:var(--green);background:var(--green-bg);padding:3px 8px;border-radius:4px}
+/* 카테고리 칩 */
+.cat-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.chip{padding:7px 14px;border-radius:100px;border:1.5px solid var(--ink-14);background:transparent;font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s;font-family:inherit}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.on{background:var(--blue-bg);border-color:rgba(29,78,216,.2);color:var(--blue)}
 
-  /* CATEGORY TAGS */
-  .cat-tags{display:flex;flex-wrap:wrap;gap:8px}
-  .cat-tag{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;background:var(--surface)}
-  .cat-tag:hover{border-color:var(--brand);color:var(--brand)}
-  .cat-tag.selected{border-color:var(--brand);background:var(--brand-bg);color:var(--brand);font-weight:600}
+/* 하단 버튼 */
+.bottom-bar{position:sticky;bottom:0;background:rgba(249,248,244,.92);backdrop-filter:blur(16px);border-top:1px solid var(--ink-14);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.btn-prev{padding:11px 22px;border-radius:10px;background:transparent;border:1.5px solid var(--ink-14);font:600 14px/1 'Pretendard',sans-serif;color:var(--ink-70);cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-prev:hover{border-color:var(--ink-40)}
+.btn-next{padding:11px 28px;border-radius:10px;background:var(--blue);border:none;font:700 14px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;font-family:inherit;min-width:120px}
+.btn-next:hover{background:#1034A6}
+.btn-submit{padding:11px 28px;border-radius:10px;background:var(--green);border:none;font:700 14px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-submit:hover{background:#009A6B}
+.step-hint{font:400 13px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 
-  /* SUCCESS SCREEN */
-  .success-screen{display:none;text-align:center;padding:60px 32px}
-  .success-screen.active{display:block}
-  .success-icon{font-size:64px;margin-bottom:20px;animation:bounce .6s ease}
-  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .success-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin-bottom:8px;color:var(--text)}
-  .success-sub{font-size:16px;color:var(--text-sub);margin-bottom:32px;line-height:1.6}
-  .success-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:600px;margin:0 auto 32px}
-  .sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
-  .sc-icon{font-size:24px;margin-bottom:8px}
-  .sc-title{font-size:13px;font-weight:600;margin-bottom:3px}
-  .sc-desc{font-size:12px;color:var(--text-muted)}
-  .success-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+/* 태그 */
+.tag-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:100px;background:var(--blue-bg);color:var(--blue);font:600 12px/1 'Pretendard',sans-serif}
+.tag-chip button{background:none;border:none;cursor:pointer;color:var(--blue);font-size:12px;padding:0;line-height:1}
 
-  /* MOBILE */
-  .mob-topbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-  .hamburger{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
-  .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+/* 완료 화면 */
+.success-wrap{display:none;text-align:center;padding:60px 20px}
+.success-wrap.on{display:block}
 
-  @media(max-width:768px){
-    .sidebar{transform:translateX(-100%);transition:transform .3s}
-    .sidebar.open{transform:translateX(0)}
-    .main{margin-left:0}
-    .topbar,.step-bar{display:none}
-    .mob-topbar{display:flex}
-    .content{padding:16px}
-    .form-grid{grid-template-columns:1fr}
-    .form-group.full{grid-column:1}
-    .commission-tips{grid-template-columns:repeat(3,1fr)}
-    .success-cards{grid-template-columns:1fr}
-    .upload-grid{grid-template-columns:repeat(3,1fr)}
-  }
+/* 모바일 */
+.mob-top{display:none}
+.hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
+.hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
+@media(max-width:768px){
+  .sb{transform:translateX(-100%);transition:transform .3s}
+  .sb.open{transform:translateX(0)}
+  .mn{margin-left:0}
+  .topbar,.step-bar{display:none}
+  .mob-top{display:flex;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+  .content{padding:14px 16px}
+  .frow,.frow3{grid-template-columns:1fr}
+  .media-grid{grid-template-columns:repeat(3,1fr)}
+  .bottom-bar{padding:12px 16px}
+}
 </style>
-<link rel="stylesheet" href="vingly-common.css">
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text">Vingly</div>
-    <div class="logo-badge">브랜드/셀러</div>
+<aside class="sb" id="sb">
+  <div class="sb-top">
+    <a class="sb-brand" href="index.html">
+      <div class="sb-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="sb-wm">Vingly</span>
+    </a>
+    <div class="sb-role">브랜드·셀러</div>
   </div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" href="brand-dashboard.html"><span class="nav-icon">📊</span>대시보드</a>
-    <a class="nav-item active" href="#"><span class="nav-icon">📦</span>제품 등록</a>
-    <a class="nav-item" href="#"><span class="nav-icon">🛒</span>제품 관리</a>
-    <a class="nav-item" href="#"><span class="nav-icon">📱</span>인플루언서</a>
-    <a class="nav-item" href="payment-setup.html"><span class="nav-icon">💸</span>정산 관리</a>
-    <div class="nav-divider"></div>
-    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span>설정</a>
-    <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>메인으로</a>
+  <nav class="sb-nav">
+    <a class="ni" href="brand-dashboard.html"><span class="ni-ic">📊</span>대시보드</a>
+    <button class="ni act"><span class="ni-ic">📦</span>제품 관리</button>
+    <a class="ni" href="brand-dashboard.html"><span class="ni-ic">📱</span>크리에이터 현황</a>
+    <a class="ni" href="brand-dashboard.html"><span class="ni-ic">💸</span>수익 및 비용</a>
+    <div class="divr"></div>
+    <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
   </nav>
-  <div class="sidebar-bottom">
-    <div class="user-info">
-      <div class="user-avatar">헬</div>
-      <div><div class="user-name">헬시팜</div><div class="user-role">브랜드/셀러 · 파일럿</div></div>
+  <div class="sb-foot">
+    <div class="ua">
+      <div class="ua-av" id="sb-av">헬</div>
+      <div><div class="ua-name" id="sb-name">브랜드</div><div class="ua-role">공급자</div></div>
     </div>
   </div>
 </aside>
 
-<!-- MOBILE TOPBAR -->
-<div class="mob-topbar">
-  <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
-  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--brand)">제품 등록</div>
-  <button class="btn btn-brand" style="padding:7px 14px;font-size:13px" onclick="nextStep()">다음 →</button>
+<!-- 모바일 상단 -->
+<div class="mob-top">
+  <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+  <div style="font:700 15px/1 'Pretendard',sans-serif">제품 등록</div>
+  <div style="width:30px"></div>
 </div>
 
 <!-- MAIN -->
-<div class="main">
+<main class="mn">
   <div class="topbar">
-    <div class="topbar-left">
-      <a class="topbar-back" href="brand-dashboard.html">←</a>
-      <div class="topbar-title">새 제품 등록</div>
-    </div>
-    <div class="topbar-right">
-      <button class="btn btn-ghost" onclick="saveDraft()">임시저장</button>
-      <button class="btn btn-brand" onclick="nextStep()" id="nextBtn">다음 단계 →</button>
+    <div class="tb-title">제품 등록</div>
+    <div class="tb-r">
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 
   <!-- STEP BAR -->
-  <div class="step-bar" id="stepBar">
-    <div class="step" onclick="goStep(1)">
-      <div class="step-num active" id="sn1">1</div>
-      <div class="step-label active" id="sl1">기본 정보</div>
+  <div class="step-bar">
+    <div class="step-item act" id="si1" onclick="goStep(1)">
+      <div class="step-num curr" id="sn1">1</div>
+      <span class="step-label">기본 정보</span>
     </div>
-    <div class="step-arrow">›</div>
-    <div class="step" onclick="goStep(2)">
-      <div class="step-num inactive" id="sn2">2</div>
-      <div class="step-label inactive" id="sl2">이미지 등록</div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="si2" onclick="goStep(2)">
+      <div class="step-num idle" id="sn2">2</div>
+      <span class="step-label">미디어 등록</span>
     </div>
-    <div class="step-arrow">›</div>
-    <div class="step" onclick="goStep(3)">
-      <div class="step-num inactive" id="sn3">3</div>
-      <div class="step-label inactive" id="sl3">수수료 설정</div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="si3" onclick="goStep(3)">
+      <div class="step-num idle" id="sn3">3</div>
+      <span class="step-label">수수료 설정</span>
     </div>
-    <div class="step-arrow">›</div>
-    <div class="step" onclick="goStep(4)">
-      <div class="step-num inactive" id="sn4">4</div>
-      <div class="step-label inactive" id="sl4">최종 확인</div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="si4" onclick="goStep(4)">
+      <div class="step-num idle" id="sn4">4</div>
+      <span class="step-label">검토 및 등록</span>
     </div>
   </div>
 
   <!-- STEP 1: 기본 정보 -->
-  <div class="content" id="step1">
-    <div class="form-section">
-      <div class="fs-title">📝 제품 기본 정보</div>
-      <div class="fs-desc">인플루언서가 제품을 선택할 때 가장 먼저 보는 정보입니다. 정확하고 매력적으로 작성하세요.</div>
-      <div class="form-grid">
-        <div class="form-group full">
-          <label class="form-label">제품명 <span style="color:var(--red)">*</span></label>
-          <input class="form-input" type="text" id="productName" placeholder="예: 단백질 쉐이크 바닐라 맛 1kg" oninput="updatePreview()">
+  <div class="content" id="pg1">
+    <div class="card">
+      <div class="card-t"><span>📝</span>제품 기본 정보</div>
+      <div class="fg">
+        <label class="fl">제품명 <span class="req">*</span></label>
+        <input class="fi" id="pName" type="text" placeholder="예: 단백질 쉐이크 바닐라맛 1kg">
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">판매가 <span class="req">*</span></label>
+          <input class="fi" id="pPrice" type="number" placeholder="30000" oninput="updateRatePreview()">
         </div>
-        <div class="form-group full">
-          <label class="form-label">카테고리 <span style="color:var(--red)">*</span></label>
-          <div class="cat-tags" id="catTags">
-            <div class="cat-tag" onclick="selectCat(this)">💪 헬스·운동</div>
-            <div class="cat-tag" onclick="selectCat(this)">🥗 식품·건강</div>
-            <div class="cat-tag" onclick="selectCat(this)">💄 뷰티·스킨케어</div>
-            <div class="cat-tag" onclick="selectCat(this)">👗 패션·의류</div>
-            <div class="cat-tag" onclick="selectCat(this)">🏠 생활·홈</div>
-            <div class="cat-tag" onclick="selectCat(this)">📱 디지털·전자</div>
-            <div class="cat-tag" onclick="selectCat(this)">👶 유아·아동</div>
-            <div class="cat-tag" onclick="selectCat(this)">🐾 반려동물</div>
-            <div class="cat-tag" onclick="selectCat(this)">✈️ 여행·레저</div>
-            <div class="cat-tag" onclick="selectCat(this)">📚 도서·교육</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">판매가 <span style="color:var(--red)">*</span></label>
-          <div class="input-prefix">
-            <span class="prefix-label">₩</span>
-            <input class="prefix-input" type="number" id="productPrice" placeholder="42,000" oninput="updatePreview()">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">재고 수량</label>
-          <div class="input-prefix">
-            <input class="prefix-input" type="number" placeholder="100">
-            <span class="suffix-label">개</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">배송 소요일</label>
-          <select class="form-input">
-            <option>당일 출고 (1~2일 수령)</option>
-            <option>1~2일 출고 (2~3일 수령)</option>
-            <option>2~3일 출고 (3~5일 수령)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">배송비</label>
-          <select class="form-input">
-            <option>무료배송</option>
-            <option>3,000원</option>
-            <option>5,000원 (제주·도서 추가)</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label class="form-label">제품 설명 <span style="color:var(--red)">*</span></label>
-          <textarea class="form-input" id="productDesc" rows="4" placeholder="제품의 특징, 주요 성분, 효과 등을 인플루언서가 팔로워에게 설명할 수 있도록 자세히 적어주세요." oninput="updatePreview()"></textarea>
-          <div class="form-hint">인플루언서들이 이 설명을 보고 제품을 선택합니다. 구체적일수록 매칭 확률이 높아집니다.</div>
-        </div>
-        <div class="form-group full">
-          <label class="form-label">인플루언서에게 전달할 메시지 (선택)</label>
-          <textarea class="form-input" rows="2" placeholder="예: 운동 후 회복에 특화된 제품입니다. 헬스·다이어트 채널에 특히 잘 맞습니다."></textarea>
-          <div class="form-hint">인플루언서가 제품을 선택할 때 참고하는 메시지입니다.</div>
+        <div class="fg">
+          <label class="fl">재고 수량 <span class="req">*</span></label>
+          <input class="fi" id="pStock" type="number" placeholder="100">
         </div>
       </div>
-    </div>
-
-    <!-- 미리보기 -->
-    <div class="form-section">
-      <div class="fs-title">👁️ 인플루언서에게 보이는 미리보기</div>
-      <div class="fs-desc">인플루언서 대시보드의 제품 목록에서 이렇게 보입니다.</div>
-      <div style="max-width:200px">
-        <div class="preview-card">
-          <div class="preview-thumb">📦</div>
-          <div class="preview-body">
-            <div class="preview-name" id="prevName">제품명을 입력하세요</div>
-            <div class="preview-brand">헬시팜</div>
-            <div class="preview-row">
-              <div class="preview-price" id="prevPrice">₩0</div>
-              <div class="preview-commission" id="prevComm">수수료 15%</div>
-            </div>
-          </div>
+      <div class="fg">
+        <label class="fl">카테고리 <span class="req">*</span></label>
+        <div class="cat-chips">
+          <button class="chip" onclick="selectCat(this)">💊 헬스·식품</button>
+          <button class="chip" onclick="selectCat(this)">💄 뷰티·스킨케어</button>
+          <button class="chip" onclick="selectCat(this)">👗 패션·의류</button>
+          <button class="chip" onclick="selectCat(this)">🏠 생활·홈</button>
+          <button class="chip" onclick="selectCat(this)">📱 디지털·전자</button>
+          <button class="chip" onclick="selectCat(this)">🍼 유아·육아</button>
+          <button class="chip" onclick="selectCat(this)">🐾 펫·동물</button>
+          <button class="chip" onclick="selectCat(this)">🎮 취미·레저</button>
+          <button class="chip" onclick="selectCat(this)">기타</button>
         </div>
       </div>
-    </div>
-
-    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
-      <button class="btn btn-ghost" onclick="saveDraft()">임시저장</button>
-      <button class="btn btn-brand" onclick="nextStep()">다음 — 이미지 등록 →</button>
+      <div class="fg">
+        <label class="fl">제품 설명 <span class="req">*</span><span class="hint">크리에이터에게 보여지는 설명입니다</span></label>
+        <textarea class="fi" id="pDesc" placeholder="제품의 특징, 성분, 사용 방법 등을 자세히 적어주세요.&#10;크리에이터가 이 내용을 참고해 SNS에 소개합니다."></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">배송 정보</label>
+        <div class="frow">
+          <select class="fi" id="pDelivery">
+            <option value="">배송 방법 선택</option>
+            <option>일반 택배 (2~3일)</option>
+            <option>당일 배송</option>
+            <option>새벽 배송</option>
+            <option>직접 발송</option>
+          </select>
+          <input class="fi" id="pShipFee" type="number" placeholder="배송비 (0 = 무료)">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">검색 태그<span class="hint">엔터로 추가</span></label>
+        <input class="fi" id="tagInput" type="text" placeholder="태그 입력 후 엔터" onkeydown="addTag(event)">
+        <div class="tag-wrap" id="tagWrap"></div>
+      </div>
     </div>
   </div>
 
-  <!-- STEP 2: 이미지 -->
-  <div class="content" id="step2" style="display:none">
-    <div class="form-section">
-      <div class="fs-title">📸 제품 이미지</div>
-      <div class="fs-desc">첫 번째 이미지가 대표 이미지로 사용됩니다. 최대 6장까지 등록 가능합니다.</div>
-      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="dragOver(event)" ondrop="dropFile(event)">
-        <div class="upload-icon">📤</div>
-        <div class="upload-title">여기를 클릭하거나 이미지를 드래그하세요</div>
-        <div class="upload-desc">JPG, PNG, WEBP · 최대 10MB · 권장 사이즈 1:1 (1000×1000px)</div>
+  <!-- STEP 2: 미디어 등록 -->
+  <div class="content" id="pg2" style="display:none">
+    <div class="card">
+      <div class="card-t"><span>🖼️</span>제품 이미지</div>
+      <div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:12px">최대 6장 · JPG, PNG, WEBP · 첫 번째 이미지가 대표 이미지</div>
+      <div class="media-grid" id="imgGrid">
+        <div class="media-slot" id="imgSlot0" onclick="triggerImg()">
+          <div class="slot-ico">📷</div>
+          <div class="slot-txt">대표 이미지<br>클릭하여 추가</div>
+        </div>
+        <div class="media-slot" onclick="triggerImg()"><div class="slot-ico">➕</div><div class="slot-txt">추가</div></div>
+        <div class="media-slot" onclick="triggerImg()"><div class="slot-ico">➕</div><div class="slot-txt">추가</div></div>
+        <div class="media-slot" onclick="triggerImg()"><div class="slot-ico">➕</div><div class="slot-txt">추가</div></div>
+        <div class="media-slot" onclick="triggerImg()"><div class="slot-ico">➕</div><div class="slot-txt">추가</div></div>
+        <div class="media-slot" onclick="triggerImg()"><div class="slot-ico">➕</div><div class="slot-txt">추가</div></div>
       </div>
-      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
-      <div class="upload-grid" id="uploadGrid">
-        <div class="upload-thumb" onclick="document.getElementById('fileInput').click()">
-          <span style="font-size:20px;color:var(--text-muted)">+</span>
-        </div>
-        <div class="upload-thumb" style="opacity:.4" onclick="document.getElementById('fileInput').click()">
-          <span style="font-size:20px;color:var(--text-muted)">+</span>
-        </div>
-        <div class="upload-thumb" style="opacity:.3" onclick="document.getElementById('fileInput').click()">
-          <span style="font-size:20px;color:var(--text-muted)">+</span>
-        </div>
-        <div class="upload-thumb" style="opacity:.2" onclick="document.getElementById('fileInput').click()">
-          <span style="font-size:20px;color:var(--text-muted)">+</span>
-        </div>
-      </div>
+      <input type="file" id="imgInput" accept="image/*" multiple style="display:none" onchange="handleImgs(this.files)">
     </div>
 
-    <div class="form-section">
-      <div class="fs-title">💡 좋은 제품 이미지 체크리스트</div>
-      <div class="fs-desc" style="margin-bottom:12px">인플루언서들이 제품을 선택할 때 이미지가 가장 중요한 요소입니다.</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:16px;height:16px"> 흰 배경 또는 깔끔한 배경의 정면 사진</label>
-        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:16px;height:16px"> 제품 전체가 잘 보이는 사진</label>
-        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:16px;height:16px"> 제품 사용 중인 라이프스타일 사진 (선택)</label>
-        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:16px;height:16px"> 성분표·영양성분표 사진 (선택)</label>
-        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:16px;height:16px"> 1000px × 1000px 이상 고해상도</label>
+    <!-- 쇼츠/동영상 업로드 -->
+    <div class="card">
+      <div class="card-t"><span>🎬</span>제품 소개 영상 <span style="font:500 12px/1 'Pretendard',sans-serif;color:var(--purple);background:var(--purple-bg);padding:3px 8px;border-radius:4px;margin-left:4px">추천</span></div>
+      <div class="upload-hint" style="margin-bottom:16px">
+        <div class="uh-t">🎬 쇼츠·릴스·틱톡 형식으로 올리세요</div>
+        <div class="uh-d">15~60초 세로형 영상이 크리에이터 SNS 노출에 최적입니다.<br>크리에이터가 이 영상을 참고하거나 직접 리포스트할 수 있습니다.</div>
       </div>
-    </div>
 
-    <div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px">
-      <button class="btn btn-ghost" onclick="prevStep()">← 이전</button>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-ghost" onclick="saveDraft()">임시저장</button>
-        <button class="btn btn-brand" onclick="nextStep()">다음 — 수수료 설정 →</button>
+      <div class="media-tabs">
+        <button class="mtab on" onclick="switchMedia('upload',this)">📁 파일 업로드</button>
+        <button class="mtab" onclick="switchMedia('url',this)">🔗 URL 링크</button>
+      </div>
+
+      <div id="videoUploadArea">
+        <div class="media-grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="media-slot" id="vidSlot0" onclick="triggerVid()" style="aspect-ratio:9/16;border-radius:12px">
+            <div class="slot-ico">🎬</div>
+            <div class="slot-txt">쇼츠 영상<br>MP4, MOV<br>최대 100MB</div>
+          </div>
+          <div class="media-slot" onclick="triggerVid()" style="aspect-ratio:9/16;border-radius:12px">
+            <div class="slot-ico">➕</div>
+            <div class="slot-txt">추가 영상</div>
+          </div>
+        </div>
+        <input type="file" id="vidInput" accept="video/mp4,video/quicktime,video/webm" multiple style="display:none" onchange="handleVids(this.files)">
+        <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-top:8px">권장: 세로형 9:16 비율 · 15~60초 · 최대 100MB</div>
+      </div>
+
+      <div id="videoUrlArea" style="display:none">
+        <div class="fg">
+          <label class="fl">유튜브 쇼츠 URL</label>
+          <input class="fi" id="ytUrl" type="url" placeholder="https://youtube.com/shorts/...">
+        </div>
+        <div class="fg">
+          <label class="fl">인스타그램 릴스 URL</label>
+          <input class="fi" id="igUrl" type="url" placeholder="https://instagram.com/reel/...">
+        </div>
+        <div class="fg">
+          <label class="fl">틱톡 URL</label>
+          <input class="fi" id="ttUrl" type="url" placeholder="https://tiktok.com/@...">
+        </div>
       </div>
     </div>
   </div>
 
   <!-- STEP 3: 수수료 설정 -->
-  <div class="content" id="step3" style="display:none">
-    <div class="form-section">
-      <div class="fs-title">💰 인플루언서 수수료 설정</div>
-      <div class="fs-desc">수수료율이 높을수록 더 많은 인플루언서가 내 제품을 선택합니다. 판매가 발생할 때만 지급되므로 광고비 0원입니다.</div>
-
-      <div class="commission-wrap">
-        <div class="commission-top">
-          <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">인플루언서 수수료율</div>
-            <div class="commission-value"><span id="commVal">15</span>%</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">건당 인플루언서 수익</div>
-            <div style="font-size:20px;font-weight:700;color:var(--green)">₩<span id="commEarn">6,300</span></div>
-            <div style="font-size:12px;color:var(--text-muted)">판매가 ₩42,000 기준</div>
-          </div>
+  <div class="content" id="pg3" style="display:none">
+    <div class="card">
+      <div class="card-t"><span>💸</span>크리에이터 수수료율 설정</div>
+      <div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:16px">수수료율이 높을수록 크리에이터 노출 우선순위가 올라갑니다. 업종별 권장 범위를 참고하세요.</div>
+      <div class="rate-wrap">
+        <div class="rate-display">
+          <div class="rate-num" id="rateNum">15</div>
+          <div class="rate-unit">%</div>
         </div>
-        <input type="range" id="commSlider" min="5" max="40" value="15" step="1" oninput="updateComm(this.value)">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)">
-          <span>최소 5%</span><span>최대 40%</span>
-        </div>
-        <div class="commission-tips">
-          <div class="ctip" onclick="setComm(10)"><div class="ctip-val">10%</div><div class="ctip-label">일반</div></div>
-          <div class="ctip selected" onclick="setComm(15)"><div class="ctip-val">15%</div><div class="ctip-label">권장 ⭐</div></div>
-          <div class="ctip" onclick="setComm(20)"><div class="ctip-val">20%</div><div class="ctip-label">공격적</div></div>
+        <input class="rate-slider" type="range" min="5" max="30" value="15" id="rateSlider" oninput="updateRate(this.value)">
+        <div class="rate-labels"><span>5% (최소)</span><span>15% (권장)</span><span>30% (최대)</span></div>
+        <div class="rate-preview" id="ratePreview">
+          <div class="rp-row"><span class="rp-d">판매가</span><span class="rp-w" id="rpPrice">₩30,000</span></div>
+          <div class="rp-row"><span class="rp-d">크리에이터 수수료</span><span class="rp-g" id="rpCreator">₩4,500</span></div>
+          <div class="rp-row"><span class="rp-d">Vingly 거래 수수료 (1.8%)</span><span class="rp-b" id="rpVingly">₩540</span></div>
+          <div class="rp-row"><span class="rp-d">PG 수수료 (2.2%)</span><span style="color:rgba(255,255,255,.4)" id="rpPg">₩660</span></div>
+          <div class="rp-row"><span class="rp-w">공급자 정산액</span><span class="rp-w" id="rpSeller">₩24,300</span></div>
         </div>
       </div>
-    </div>
 
-    <div class="form-section">
-      <div class="fs-title">📊 수수료별 예상 매칭 효과</div>
-      <div class="fs-desc">수수료율에 따라 제품에 관심을 가질 인플루언서 수가 달라집니다.</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:50px;font-size:12px;font-weight:600;color:var(--text-muted);flex-shrink:0">5~9%</div>
-          <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:20%;height:100%;background:#D0DEF5;border-radius:4px"></div></div>
-          <div style="font-size:12px;color:var(--text-muted);width:80px">관심 낮음</div>
+      <!-- 권장 수수료 가이드 -->
+      <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="background:var(--ink-07);border-radius:9px;padding:10px;text-align:center;cursor:pointer" onclick="setRate(15)">
+          <div style="font:700 18px/1 'Pretendard',sans-serif;color:var(--green)">15%</div>
+          <div style="font:500 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:4px">헬스·식품<br>권장</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:50px;font-size:12px;font-weight:600;color:var(--text-muted);flex-shrink:0">10~14%</div>
-          <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:45%;height:100%;background:var(--brand-bg);border-radius:4px"></div></div>
-          <div style="font-size:12px;color:var(--text-muted);width:80px">평균 수준</div>
+        <div style="background:var(--ink-07);border-radius:9px;padding:10px;text-align:center;cursor:pointer" onclick="setRate(13)">
+          <div style="font:700 18px/1 'Pretendard',sans-serif;color:var(--blue)">13%</div>
+          <div style="font:500 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:4px">뷰티·패션<br>권장</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:50px;font-size:12px;font-weight:700;color:var(--brand);flex-shrink:0">15~19%</div>
-          <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:72%;height:100%;background:var(--brand);border-radius:4px"></div></div>
-          <div style="font-size:12px;font-weight:600;color:var(--brand);width:80px">추천 ⭐ 인기</div>
+        <div style="background:var(--ink-07);border-radius:9px;padding:10px;text-align:center;cursor:pointer" onclick="setRate(8)">
+          <div style="font:700 18px/1 'Pretendard',sans-serif;color:var(--amber)">8%</div>
+          <div style="font:500 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:4px">전자·디지털<br>권장</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:50px;font-size:12px;font-weight:600;color:var(--green);flex-shrink:0">20%+</div>
-          <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:95%;height:100%;background:var(--green);border-radius:4px"></div></div>
-          <div style="font-size:12px;font-weight:600;color:var(--green);width:80px">매우 높음</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <div class="fs-title">⚙️ 추가 설정</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label">할인 코드 자동 생성</label>
-          <select class="form-input">
-            <option>인플루언서별 자동 생성 (권장)</option>
-            <option>할인 코드 사용 안 함</option>
-          </select>
-          <div class="form-hint">인플루언서 닉네임 기반 코드 자동 생성 (예: JANE10)</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">할인 코드 할인율</label>
-          <div class="input-prefix">
-            <input class="prefix-input" type="number" placeholder="5" value="5">
-            <span class="suffix-label">%</span>
-          </div>
-          <div class="form-hint">구매자에게 제공되는 할인. 수수료와 별도.</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">최대 인플루언서 수</label>
-          <select class="form-input">
-            <option>제한 없음 (권장)</option>
-            <option>최대 5명</option>
-            <option>최대 10명</option>
-            <option>최대 20명</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">쿠키 추적 기간</label>
-          <select class="form-input">
-            <option>30일 (권장)</option>
-            <option>7일</option>
-            <option>14일</option>
-            <option>60일</option>
-          </select>
-          <div class="form-hint">링크 클릭 후 구매까지의 인정 기간</div>
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px">
-      <button class="btn btn-ghost" onclick="prevStep()">← 이전</button>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-ghost" onclick="saveDraft()">임시저장</button>
-        <button class="btn btn-brand" onclick="nextStep()">다음 — 최종 확인 →</button>
       </div>
     </div>
   </div>
 
-  <!-- STEP 4: 최종 확인 -->
-  <div class="content" id="step4" style="display:none">
-    <div class="form-section">
-      <div class="fs-title">✅ 등록 전 최종 확인</div>
-      <div class="fs-desc">아래 내용을 확인하고 등록하세요.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">제품명</div>
-          <div style="font-size:14px;font-weight:600" id="confName">단백질 쉐이크 바닐라</div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">카테고리</div>
-          <div style="font-size:14px;font-weight:600">헬스·운동</div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">판매가</div>
-          <div style="font-size:14px;font-weight:600" id="confPrice">₩42,000</div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">인플루언서 수수료</div>
-          <div style="font-size:14px;font-weight:600;color:var(--green)"><span id="confComm">15</span>% (건당 ₩<span id="confEarn">6,300</span>)</div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">할인 코드</div>
-          <div style="font-size:14px;font-weight:600">자동 생성 · 5% 할인</div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">배송</div>
-          <div style="font-size:14px;font-weight:600">무료배송 · 1~2일</div>
-        </div>
-      </div>
+  <!-- STEP 4: 검토 및 등록 -->
+  <div class="content" id="pg4" style="display:none">
+    <div class="card" id="reviewCard">
+      <div class="card-t"><span>✅</span>등록 전 최종 확인</div>
+      <div id="reviewContent" style="display:flex;flex-direction:column;gap:0"></div>
     </div>
 
-    <div class="form-section" style="background:var(--green-bg);border-color:rgba(10,102,68,.2)">
-      <div class="fs-title" style="color:var(--green)">🚀 등록 후 다음 단계</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px">
-          <span style="font-size:16px">1️⃣</span>
-          <div><strong>AI 자동 매칭 시작</strong> — 제품 카테고리에 맞는 인플루언서에게 자동으로 노출됩니다.</div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px">
-          <span style="font-size:16px">2️⃣</span>
-          <div><strong>인플루언서 선택 대기</strong> — 관심 있는 인플루언서가 링크를 생성하면 알림을 보내드립니다.</div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px">
-          <span style="font-size:16px">3️⃣</span>
-          <div><strong>판매 발생 시 자동 정산</strong> — 매월 말일 수수료가 자동으로 인플루언서에게 지급됩니다.</div>
-        </div>
+    <!-- 성공 화면 -->
+    <div class="success-wrap" id="successWrap">
+      <div style="font-size:56px;margin-bottom:20px">🎉</div>
+      <div style="font:800 24px/1.2 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px;margin-bottom:10px">제품이 등록됐습니다!</div>
+      <div style="font:400 15px/1.7 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:28px">AI가 적합한 크리에이터 매칭을 시작합니다.<br>대시보드에서 매칭 현황을 확인하세요.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button onclick="location.href='brand-dashboard.html'" style="padding:12px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">대시보드로 이동</button>
+        <button onclick="resetForm()" style="padding:12px 24px;border-radius:10px;background:transparent;border:1.5px solid var(--ink-14);font:600 14px/1 'Pretendard',sans-serif;cursor:pointer;color:var(--ink-70)">다른 제품 등록</button>
       </div>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px">
-      <button class="btn btn-ghost" onclick="prevStep()">← 이전</button>
-      <button class="btn btn-brand" style="padding:12px 32px;font-size:15px" onclick="submitProduct()">🚀 제품 등록하기</button>
     </div>
   </div>
 
-  <!-- SUCCESS -->
-  <div class="success-screen" id="successScreen">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">제품이 등록됐습니다!</div>
-    <div class="success-sub">인플루언서들에게 노출되기 시작했습니다.<br>관심 있는 인플루언서가 링크를 생성하면 알림을 드립니다.</div>
-    <div class="success-cards">
-      <div class="sc"><div class="sc-icon">🤖</div><div class="sc-title">AI 매칭 시작</div><div class="sc-desc">카테고리 맞는 인플루언서에게 자동 노출</div></div>
-      <div class="sc"><div class="sc-icon">🔔</div><div class="sc-title">실시간 알림</div><div class="sc-desc">인플루언서가 링크 생성 시 즉시 알림</div></div>
-      <div class="sc"><div class="sc-icon">💸</div><div class="sc-title">자동 정산</div><div class="sc-desc">판매 발생 시 수수료 자동 처리</div></div>
-    </div>
-    <div class="success-btns">
-      <button class="btn btn-ghost" onclick="resetForm()">+ 제품 추가 등록</button>
-      <button class="btn btn-brand" onclick="location.href='brand-dashboard.html'">대시보드로 가기 →</button>
+  <!-- 하단 버튼 -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="step-hint" id="stepHint">STEP 1 / 4 — 기본 정보를 입력해주세요</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none">← 이전</button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">다음 →</button>
+      <button class="btn-submit" id="btnSubmit" onclick="submitProduct()" style="display:none">제품 등록 완료</button>
     </div>
   </div>
-</div>
+</main>
 
 <script>
-  let currentStep = 1;
-  const totalSteps = 4;
+// 로그인 보호
+(function(){
+  const u = localStorage.getItem('vingly_user');
+  if(!u){ location.href='login.html'; return; }
+  const user = JSON.parse(u);
+  if(user.role !== 'brand'){ location.href='login.html'; return; }
+  const n = user.name || user.email || '브랜드';
+  document.getElementById('sb-name').textContent = n;
+  document.getElementById('sb-av').textContent = n[0];
+})();
 
-  function goStep(n) {
-    document.getElementById('step' + currentStep).style.display = 'none';
-    currentStep = n;
-    document.getElementById('step' + currentStep).style.display = 'block';
+let curStep = 1;
+const totalSteps = 4;
+let tags = [];
+let imgFiles = [];
+let vidFiles = [];
+let selectedCat = '';
+
+// ── 스텝 이동 ──
+function goStep(n) {
+  if(n > curStep) return; // 앞으로 건너뛰기 금지
+  curStep = n;
+  updateStepUI();
+}
+
+function nextStep() {
+  if(!validateStep()) return;
+  if(curStep < totalSteps) {
+    curStep++;
     updateStepUI();
-    window.scrollTo(0, 0);
   }
+}
 
-  function nextStep() {
-    if (currentStep < totalSteps) {
-      goStep(currentStep + 1);
-    } else {
-      submitProduct();
-    }
+function prevStep() {
+  if(curStep > 1) { curStep--; updateStepUI(); }
+}
+
+function updateStepUI() {
+  for(let i=1; i<=totalSteps; i++) {
+    document.getElementById('pg'+i).style.display = i === curStep ? 'block' : 'none';
+    const sn = document.getElementById('sn'+i);
+    const si = document.getElementById('si'+i);
+    if(i < curStep){ sn.className='step-num done'; sn.textContent='✓'; }
+    else if(i === curStep){ sn.className='step-num curr'; sn.textContent=i; si.classList.add('act'); }
+    else { sn.className='step-num idle'; sn.textContent=i; si.classList.remove('act'); }
   }
+  const hints = ['STEP 1 / 4 — 기본 정보를 입력해주세요','STEP 2 / 4 — 이미지와 영상을 등록하세요','STEP 3 / 4 — 크리에이터 수수료를 설정하세요','STEP 4 / 4 — 최종 확인 후 등록하세요'];
+  document.getElementById('stepHint').textContent = hints[curStep-1];
+  document.getElementById('btnPrev').style.display = curStep > 1 ? '' : 'none';
+  document.getElementById('btnNext').style.display = curStep < totalSteps ? '' : 'none';
+  document.getElementById('btnSubmit').style.display = curStep === totalSteps ? '' : 'none';
+  if(curStep === totalSteps) buildReview();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-  function prevStep() {
-    if (currentStep > 1) goStep(currentStep - 1);
+// ── 유효성 검사 ──
+function validateStep() {
+  if(curStep === 1) {
+    if(!document.getElementById('pName').value.trim()){ alert('제품명을 입력해주세요.'); return false; }
+    if(!document.getElementById('pPrice').value){ alert('판매가를 입력해주세요.'); return false; }
+    if(!selectedCat){ alert('카테고리를 선택해주세요.'); return false; }
+    if(!document.getElementById('pDesc').value.trim()){ alert('제품 설명을 입력해주세요.'); return false; }
   }
+  return true;
+}
 
-  function updateStepUI() {
-    for (let i = 1; i <= totalSteps; i++) {
-      const num = document.getElementById('sn' + i);
-      const label = document.getElementById('sl' + i);
-      if (i < currentStep) {
-        num.className = 'step-num done'; num.textContent = '✓';
-        label.className = 'step-label done';
-      } else if (i === currentStep) {
-        num.className = 'step-num active'; num.textContent = i;
-        label.className = 'step-label active';
-      } else {
-        num.className = 'step-num inactive'; num.textContent = i;
-        label.className = 'step-label inactive';
-      }
-    }
-    const btn = document.getElementById('nextBtn');
-    if (btn) btn.textContent = currentStep === totalSteps ? '🚀 제품 등록하기' : '다음 단계 →';
-  }
+// ── 카테고리 ──
+function selectCat(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  selectedCat = el.textContent.trim();
+}
 
-  function updatePreview() {
-    const name = document.getElementById('productName').value || '제품명을 입력하세요';
-    const price = document.getElementById('productPrice').value;
-    document.getElementById('prevName').textContent = name;
-    document.getElementById('prevPrice').textContent = price ? '₩' + Number(price).toLocaleString() : '₩0';
-  }
+// ── 태그 ──
+function addTag(e) {
+  if(e.key !== 'Enter') return;
+  const val = e.target.value.trim();
+  if(!val || tags.includes(val)) { e.target.value=''; return; }
+  tags.push(val);
+  renderTags();
+  e.target.value = '';
+}
+function removeTag(tag) {
+  tags = tags.filter(t => t !== tag);
+  renderTags();
+}
+function renderTags() {
+  const wrap = document.getElementById('tagWrap');
+  wrap.innerHTML = tags.map(t => `<span class="tag-chip">#${t}<button onclick="removeTag('${t}')">×</button></span>`).join('');
+}
 
-  function updateComm(val) {
-    document.getElementById('commVal').textContent = val;
-    const price = 42000;
-    const earn = Math.round(price * val / 100);
-    document.getElementById('commEarn').textContent = earn.toLocaleString();
-    document.getElementById('confComm').textContent = val;
-    document.getElementById('confEarn').textContent = earn.toLocaleString();
-    const slider = document.getElementById('commSlider');
-    const pct = (val - slider.min) / (slider.max - slider.min) * 100;
-    slider.style.background = `linear-gradient(to right, var(--brand) 0%, var(--brand) ${pct}%, #D0DEF5 ${pct}%, #D0DEF5 100%)`;
-    document.querySelectorAll('.ctip').forEach(t => t.classList.remove('selected'));
-  }
+// ── 이미지 업로드 ──
+function triggerImg() { document.getElementById('imgInput').click(); }
+function handleImgs(files) {
+  const slots = document.querySelectorAll('#imgGrid .media-slot');
+  Array.from(files).forEach((file, i) => {
+    if(i >= slots.length) return;
+    const slot = slots[i];
+    const url = URL.createObjectURL(file);
+    slot.innerHTML = `<img src="${url}" alt=""><button class="del-btn" onclick="clearSlot(this.parentElement)">✕</button><span class="slot-badge ${i===0?'badge-main':'badge-img'}">${i===0?'대표':'이미지'}</span>`;
+    slot.classList.add('filled');
+    imgFiles.push(file);
+  });
+}
+function clearSlot(slot) {
+  slot.innerHTML = '<div class="slot-ico">➕</div><div class="slot-txt">추가</div>';
+  slot.classList.remove('filled');
+}
 
-  function setComm(val) {
-    document.getElementById('commSlider').value = val;
-    updateComm(val);
-    document.querySelectorAll('.ctip').forEach(t => {
-      const v = parseInt(t.querySelector('.ctip-val').textContent);
-      t.classList.toggle('selected', v === val);
+// ── 동영상 업로드 ──
+function triggerVid() { document.getElementById('vidInput').click(); }
+function handleVids(files) {
+  const slots = [document.getElementById('vidSlot0'), document.querySelector('#videoUploadArea .media-slot:last-of-type')];
+  Array.from(files).forEach((file, i) => {
+    if(i >= slots.length || !slots[i]) return;
+    const url = URL.createObjectURL(file);
+    const sizeM = (file.size/1024/1024).toFixed(1);
+    slots[i].innerHTML = `<video src="${url}" style="width:100%;height:100%;object-fit:cover" muted></video><button class="del-btn" onclick="clearSlot(this.parentElement)">✕</button><span class="slot-badge badge-vid">쇼츠 ${sizeM}MB</span>`;
+    slots[i].classList.add('filled');
+    vidFiles.push(file);
+  });
+}
+
+// ── 미디어 탭 전환 ──
+function switchMedia(type, btn) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('videoUploadArea').style.display = type === 'upload' ? '' : 'none';
+  document.getElementById('videoUrlArea').style.display = type === 'url' ? '' : 'none';
+}
+
+// ── 수수료 ──
+function updateRate(v) {
+  document.getElementById('rateNum').textContent = v;
+  const price = parseInt(document.getElementById('pPrice').value) || 30000;
+  const creator = Math.floor(price * v / 100);
+  const vingly = Math.floor(price * 0.018);
+  const pg = Math.floor(price * 0.022);
+  const seller = price - creator - vingly - pg;
+  document.getElementById('rpPrice').textContent = '₩'+price.toLocaleString();
+  document.getElementById('rpCreator').textContent = '₩'+creator.toLocaleString();
+  document.getElementById('rpVingly').textContent = '₩'+vingly.toLocaleString();
+  document.getElementById('rpPg').textContent = '₩'+pg.toLocaleString();
+  document.getElementById('rpSeller').textContent = '₩'+seller.toLocaleString();
+}
+function updateRatePreview() { updateRate(document.getElementById('rateSlider').value); }
+function setRate(v) {
+  document.getElementById('rateSlider').value = v;
+  updateRate(v);
+}
+
+// ── 검토 화면 ──
+function buildReview() {
+  const name = document.getElementById('pName').value;
+  const price = document.getElementById('pPrice').value;
+  const rate = document.getElementById('rateSlider').value;
+  const desc = document.getElementById('pDesc').value;
+  const rows = [
+    ['제품명', name || '—'],
+    ['카테고리', selectedCat || '—'],
+    ['판매가', price ? '₩'+parseInt(price).toLocaleString() : '—'],
+    ['크리에이터 수수료', rate+'%'],
+    ['이미지', imgFiles.length+'장 등록'],
+    ['쇼츠 영상', vidFiles.length ? vidFiles.length+'개 등록' : '미등록'],
+    ['태그', tags.length ? tags.map(t=>'#'+t).join(' ') : '없음'],
+  ];
+  document.getElementById('reviewContent').innerHTML = rows.map(([k,v]) => `
+    <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--ink-07);font-size:14px">
+      <span style="color:var(--ink-40);font-weight:500">${k}</span>
+      <span style="color:var(--ink);font-weight:600;text-align:right;max-width:60%">${v}</span>
+    </div>`).join('');
+  document.getElementById('reviewCard').style.display = 'block';
+  document.getElementById('successWrap').style.display = 'none';
+}
+
+// ── 제품 등록 ──
+async function submitProduct() {
+  const btn = document.getElementById('btnSubmit');
+  btn.textContent = '등록 중...';
+  btn.disabled = true;
+
+  const data = {
+    type: 'product',
+    name: document.getElementById('pName').value,
+    price: document.getElementById('pPrice').value,
+    category: selectedCat,
+    description: document.getElementById('pDesc').value,
+    commissionRate: document.getElementById('rateSlider').value,
+    stock: document.getElementById('pStock').value,
+    tags: tags.join(','),
+    hasVideo: vidFiles.length > 0,
+    registeredAt: new Date().toLocaleString('ko-KR'),
+  };
+
+  // Google Sheets 저장
+  try {
+    await fetch('https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec', {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
     });
-  }
+  } catch(e) { console.log('Sheets 저장:', e); }
 
-  function selectCat(el) {
-    document.querySelectorAll('.cat-tag').forEach(t => t.classList.remove('selected'));
-    el.classList.add('selected');
-  }
+  // 성공 화면
+  document.getElementById('reviewCard').style.display = 'none';
+  document.getElementById('successWrap').classList.add('on');
+  document.getElementById('bottomBar').style.display = 'none';
+}
 
-  function saveDraft() {
-    const btn = event.target;
-    btn.textContent = '저장됨 ✓';
-    btn.style.color = 'var(--green)';
-    setTimeout(() => { btn.textContent = '임시저장'; btn.style.color = ''; }, 2000);
-  }
+function resetForm() {
+  location.reload();
+}
+function doLogout() {
+  localStorage.removeItem('vingly_user');
+  location.href = 'login.html';
+}
 
-  function dragOver(e) { e.preventDefault(); document.getElementById('uploadArea').style.borderColor = 'var(--brand)'; }
-
-  function dropFile(e) {
-    e.preventDefault();
-    handleFiles(e.dataTransfer.files);
-  }
-
-  function handleFiles(files) {
-    if (files.length > 0) {
-      const area = document.getElementById('uploadArea');
-      area.classList.add('has-file');
-      area.querySelector('.upload-title').textContent = files.length + '개 파일 선택됨 ✓';
-      area.querySelector('.upload-desc').textContent = Array.from(files).map(f => f.name).join(', ');
-    }
-  }
-
-  function submitProduct() {
-    document.getElementById('step' + currentStep).style.display = 'none';
-    document.getElementById('stepBar').style.display = 'none';
-    document.getElementById('successScreen').classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  function resetForm() {
-    document.getElementById('successScreen').classList.remove('active');
-    document.getElementById('stepBar').style.display = 'flex';
-    currentStep = 1;
-    document.getElementById('step1').style.display = 'block';
-    updateStepUI();
-  }
-
-  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+// 초기화
+updateRate(15);
 </script>
-<script src="vingly-common.js"></script>
 </body>
 </html>
