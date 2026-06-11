@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 회사 소개</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
+  --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
+  --canvas:#F9F8F4;--white:#fff;
+  --green:#00B37E;--green-bg:#E6FBF4;
+  --blue:#1D4ED8;--blue-bg:#EEF3FD;
+  --purple:#7C3AED;--purple-bg:#F5F0FF;
+  --amber:#D97706;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(249,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--ink-14);padding:0 48px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.nav-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.nav-links{display:flex;gap:8px}
+.nb{padding:8px 16px;border-radius:9px;border:1px solid var(--ink-14);background:transparent;font:600 13px/1 'Pretendard',sans-serif;color:var(--ink);cursor:pointer;transition:all .18s;min-height:38px;text-decoration:none;display:inline-flex;align-items:center}
+.nb:hover{border-color:var(--ink-40)}
+.nf{padding:8px 18px;border-radius:9px;border:none;background:var(--ink);font:700 13px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .18s;min-height:38px;text-decoration:none;display:inline-flex;align-items:center}
+.nf:hover{background:#1a1d24}
+
+/* HERO */
+.hero{background:var(--ink);padding:100px 48px 80px;text-align:center;position:relative;overflow:hidden}
+.h-orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.h-orb-1{width:500px;height:500px;top:-150px;left:-100px;background:radial-gradient(circle,rgba(0,179,126,.15) 0%,transparent 60%)}
+.h-orb-2{width:400px;height:400px;bottom:-100px;right:-80px;background:radial-gradient(circle,rgba(29,78,216,.2) 0%,transparent 60%)}
+.hero-ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:16px}
+.hero-name{font:900 clamp(48px,8vw,96px)/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-3px;margin-bottom:16px}
+.hero-name .v{color:#00E5A0}
+.hero-meaning{display:inline-flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.hm-item{text-align:center}
+.hm-word{font:800 22px/1 'Pretendard',sans-serif;letter-spacing:-.5px}
+.hm-desc{font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-top:4px}
+.hm-plus{font:300 28px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.2)}
+.hero-tagline{font:400 clamp(15px,2vw,19px)/1.7 'Pretendard',sans-serif;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto}
+
+/* LAYOUT */
+.wrap{max-width:1060px;margin:0 auto;padding:0 48px}
+.section{padding:80px 0}
+
+/* MISSION */
+.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.mc{border-radius:20px;padding:28px}
+.mc-dark{background:var(--ink)}
+.mc-light{background:var(--white);border:1px solid var(--ink-14)}
+.mc-ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.mc-dark .mc-ey{color:rgba(255,255,255,.35)}
+.mc-light .mc-ey{color:var(--ink-40)}
+.mc-title{font:800 22px/1.3 'Pretendard',sans-serif;letter-spacing:-.5px;margin-bottom:12px}
+.mc-dark .mc-title{color:#fff}
+.mc-light .mc-title{color:var(--ink)}
+.mc-desc{font:400 14px/1.75 'Pretendard',sans-serif}
+.mc-dark .mc-desc{color:rgba(255,255,255,.55)}
+.mc-light .mc-desc{color:var(--ink-70)}
+
+/* 가치 섹션 */
+.value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.vc{background:var(--white);border:1px solid var(--ink-14);border-radius:20px;padding:26px;transition:all .2s}
+.vc:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
+.vc-ico{font-size:30px;margin-bottom:14px}
+.vc-title{font:700 17px/1.3 'Pretendard',sans-serif;color:var(--ink);margin-bottom:8px;letter-spacing:-.3px}
+.vc-desc{font:400 14px/1.7 'Pretendard',sans-serif;color:var(--ink-70)}
+
+/* 로드맵 */
+.roadmap{margin-top:48px;position:relative}
+.roadmap::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:1px;background:var(--ink-14)}
+.rm-item{display:flex;gap:20px;margin-bottom:32px;position:relative}
+.rm-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1}
+.rm-done{background:var(--green-bg);border:2px solid var(--green)}
+.rm-curr{background:var(--ink);border:2px solid var(--ink)}
+.rm-future{background:var(--white);border:1.5px solid var(--ink-14)}
+.rm-content{padding-top:10px;flex:1}
+.rm-period{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.rm-title{font:700 16px/1.3 'Pretendard',sans-serif;color:var(--ink);margin-bottom:5px;letter-spacing:-.3px}
+.rm-desc{font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)}
+.rm-badge{display:inline-block;font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px;margin-top:6px}
+
+/* 팀 섹션 */
+.team-card{background:var(--ink);border-radius:24px;padding:40px;margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.tc-left .tc-ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
+.tc-title{font:800 26px/1.2 'Pretendard',sans-serif;color:#fff;letter-spacing:-.8px;margin-bottom:14px}
+.tc-desc{font:400 14px/1.8 'Pretendard',sans-serif;color:rgba(255,255,255,.55);margin-bottom:20px}
+.tc-contact{display:flex;flex-direction:column;gap:8px}
+.tc-contact-item{display:flex;align-items:center;gap:10px;font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6)}
+.tc-contact-item span:first-child{font-size:16px}
+.tc-right{display:flex;flex-direction:column;gap:12px}
+.tc-stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 18px}
+.tc-stat-num{font:900 28px/1 'Pretendard',sans-serif;letter-spacing:-.8px;margin-bottom:5px}
+.tc-stat-label{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)}
+
+/* CTA */
+.cta-band{background:var(--green);border-radius:24px;padding:48px;text-align:center;margin-top:80px;margin-bottom:80px}
+.cb-title{font:800 32px/1.1 'Pretendard',sans-serif;color:#fff;letter-spacing:-1px;margin-bottom:12px}
+.cb-sub{font:400 15px/1.6 'Pretendard',sans-serif;color:rgba(255,255,255,.7);margin-bottom:28px}
+.cb-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cb-btn-w{padding:14px 28px;border-radius:12px;background:#fff;color:var(--ink);font:700 14px/1 'Pretendard',sans-serif;border:none;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
+.cb-btn-w:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.cb-btn-t{padding:14px 28px;border-radius:12px;background:transparent;color:#fff;font:700 14px/1 'Pretendard',sans-serif;border:2px solid rgba(255,255,255,.4);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
+.cb-btn-t:hover{background:rgba(255,255,255,.1)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--ink-14);padding:36px 48px}
+.foot-in{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.foot-links{display:flex;gap:20px}
+.foot-links a{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:none}
+.foot-links a:hover{color:var(--ink)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* EYEBROW */
+.ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-40);margin-bottom:10px}
+.st{font:800 clamp(26px,3.2vw,40px)/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:var(--ink);margin-bottom:12px}
+.sb{font:400 16px/1.75 'Pretendard',sans-serif;color:var(--ink-70)}
+
+@media(max-width:768px){
+  .nav{padding:0 20px}
+  .hero{padding:72px 20px 56px}
+  .wrap{padding:0 20px}
+  .section{padding:56px 0}
+  .mission-grid,.value-grid,.team-card{grid-template-columns:1fr}
+  footer{padding:28px 20px}
+  .foot-in{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <span class="nav-wm">Vingly</span>
+  </a>
+  <div class="nav-links">
+    <a class="nb" href="index.html">← 메인으로</a>
+    <a class="nf" href="signup.html">무료 시작하기</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="h-orb h-orb-1"></div>
+  <div class="h-orb h-orb-2"></div>
+  <div class="hero-ey">About Vingly</div>
+  <div class="hero-name"><span class="v">V</span>ingly</div>
+  <div class="hero-meaning">
+    <div class="hm-item">
+      <div class="hm-word" style="color:#00E5A0">Ving</div>
+      <div class="hm-desc">연결의 현재진행형<br>"지금 연결되는 중"</div>
+    </div>
+    <div class="hm-plus">+</div>
+    <div class="hm-item">
+      <div class="hm-word" style="color:#7CB9FF">-ly</div>
+      <div class="hm-desc">자연스럽게, 유연하게<br>"흐르듯 연결되는"</div>
+    </div>
+    <div class="hm-plus">=</div>
+    <div class="hm-item">
+      <div class="hm-word" style="color:#fff">Vingly</div>
+      <div class="hm-desc">자연스럽게 연결되어<br>가치를 만드는 플랫폼</div>
+    </div>
+  </div>
+  <p class="hero-tagline">
+    크리에이터와 브랜드가 광고비 없이 만나는 가장 간단한 방법
+  </p>
+</section>
+
+<!-- MISSION -->
+<section class="section">
+  <div class="wrap">
+    <div class="ey">우리의 미션</div>
+    <h2 class="st">작은 채널도, 소자본 브랜드도<br>기회가 있어야 합니다</h2>
+    <p class="sb">기존 플랫폼은 팔로워 수천 명 이상의 크리에이터와 광고 예산이 있는 대형 브랜드만을 위해 설계됐습니다. Vingly는 그 반대편에 있는 사람들을 위해 만들어졌습니다.</p>
+    <div class="mission-grid">
+      <div class="mc mc-dark reveal">
+        <div class="mc-ey">Problem</div>
+        <div class="mc-title">기존 플랫폼의 한계</div>
+        <div class="mc-desc">
+          팔로워 수천 명 이상의 인플루언서만 협찬을 받을 수 있고, 소자본 브랜드는 광고비 없이 노출될 방법이 없습니다. 크리에이터와 브랜드 간 직접 협상은 시간이 너무 오래 걸립니다.
+        </div>
+      </div>
+      <div class="mc mc-light reveal">
+        <div class="mc-ey">Solution</div>
+        <div class="mc-title">Vingly의 답</div>
+        <div class="mc-desc">
+          팔로워 100명부터 시작 가능. 브랜드는 제품만 올리면 크리에이터가 선택해서 팝니다. 팔린 만큼만 수수료를 냅니다. 복잡한 계약 없이 링크 하나로 시작합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 핵심 가치 -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="ey">핵심 가치</div>
+    <h2 class="st">Vingly가 지키는 3가지</h2>
+    <div class="value-grid">
+      <div class="vc reveal">
+        <div class="vc-ico">🔓</div>
+        <div class="vc-title">진입 장벽 없음</div>
+        <div class="vc-desc">팔로워 수, 사업 규모, 경력에 관계없이 누구나 시작할 수 있습니다. 팔로워 100명의 크리에이터도, 막 시작한 소자본 브랜드도 똑같은 기회를 가집니다.</div>
+      </div>
+      <div class="vc reveal">
+        <div class="vc-ico">💯</div>
+        <div class="vc-title">투명한 수수료</div>
+        <div class="vc-desc">숨겨진 비용이 없습니다. 크리에이터는 플랫폼 수수료 0원. 브랜드는 거래 수수료 1.8%와 낮은 월 구독료만 냅니다. 모든 수수료 구조를 공개합니다.</div>
+      </div>
+      <div class="vc reveal">
+        <div class="vc-ico">🛡️</div>
+        <div class="vc-title">신뢰 기반 거래</div>
+        <div class="vc-desc">에스크로 결제, 보증금 예치, AI 품질 모니터링으로 크리에이터와 구매자를 보호합니다. 나쁜 브랜드는 자동으로 걸러집니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 로드맵 -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="ey">Vingly 로드맵</div>
+    <h2 class="st">지금 어디에 있고<br>어디로 가는지</h2>
+    <div class="roadmap">
+      <div class="rm-item reveal">
+        <div class="rm-dot rm-done">✅</div>
+        <div class="rm-content">
+          <div class="rm-period" style="color:var(--green)">2026년 6월 · 완료</div>
+          <div class="rm-title">파일럿 서비스 론칭</div>
+          <div class="rm-desc">랜딩 페이지, 회원가입, 대시보드, 제품 탐색, 링크 생성 시스템 구축 완료. 얼리버드 회원 모집 시작.</div>
+          <span class="rm-badge" style="background:var(--green-bg);color:var(--green)">진행 중</span>
+        </div>
+      </div>
+      <div class="rm-item reveal">
+        <div class="rm-dot rm-curr">🎯</div>
+        <div class="rm-content">
+          <div class="rm-period" style="color:var(--blue)">2026년 하반기 · 진행 예정</div>
+          <div class="rm-title">첫 실제 거래 + 결제 연동</div>
+          <div class="rm-desc">토스페이먼츠 결제 연동, 실제 수수료 정산 시스템 구축. 첫 100개 제품·100명 크리에이터 확보.</div>
+          <span class="rm-badge" style="background:var(--blue-bg);color:var(--blue)">예정</span>
+        </div>
+      </div>
+      <div class="rm-item reveal">
+        <div class="rm-dot rm-future">📦</div>
+        <div class="rm-content">
+          <div class="rm-period" style="color:var(--ink-40)">2027년 상반기</div>
+          <div class="rm-title">정식 서비스 전환</div>
+          <div class="rm-desc">실제 DB·로그인·결제가 완전히 작동하는 플랫폼으로 전환. AI 크리에이터 매칭 고도화.</div>
+          <span class="rm-badge" style="background:var(--ink-07);color:var(--ink-40)">계획</span>
+        </div>
+      </div>
+      <div class="rm-item reveal">
+        <div class="rm-dot rm-future">🌏</div>
+        <div class="rm-content">
+          <div class="rm-period" style="color:var(--ink-40)">2027년 하반기</div>
+          <div class="rm-title">글로벌 확장</div>
+          <div class="rm-desc">말레이시아·동남아시아 영어 버전 확장. K-브랜드와 현지 크리에이터 연결.</div>
+          <span class="rm-badge" style="background:var(--purple-bg);color:var(--purple)">비전</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 팀 -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="team-card reveal">
+      <div class="tc-left">
+        <div class="tc-ey">Contact & Team</div>
+        <div class="tc-title">함께 만들어가고<br>있습니다</div>
+        <div class="tc-desc">Vingly는 지금 파일럿 단계로 운영 중입니다. 브랜드·셀러 파트너십, 크리에이터 협업, 투자 문의는 언제든 환영합니다.</div>
+        <div class="tc-contact">
+          <div class="tc-contact-item"><span>📧</span><span>support@vingly.kr</span></div>
+          <div class="tc-contact-item"><span>🌐</span><span>phappyj.github.io/vingly</span></div>
+          <div class="tc-contact-item"><span>📍</span><span>대한민국 · 2026 파일럿 운영 중</span></div>
+        </div>
+      </div>
+      <div class="tc-right">
+        <div class="tc-stat">
+          <div class="tc-stat-num" style="color:#00E5A0">231명+</div>
+          <div class="tc-stat-label">얼리버드 참여 중</div>
+        </div>
+        <div class="tc-stat">
+          <div class="tc-stat-num" style="color:#7CB9FF">1,000명</div>
+          <div class="tc-stat-label">파일럿 목표 회원</div>
+        </div>
+        <div class="tc-stat">
+          <div class="tc-stat-num" style="color:#fff">₩0</div>
+          <div class="tc-stat-label">크리에이터 플랫폼 수수료</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div style="padding:0 48px">
+  <div class="cta-band reveal" style="max-width:1060px;margin:0 auto 80px">
+    <div class="cb-title">지금 시작할 수 있습니다</div>
+    <div class="cb-sub">팔로워 100명이면 크리에이터로, 사업자가 있으면 브랜드·셀러로 바로 시작하세요</div>
+    <div class="cb-btns">
+      <a class="cb-btn-w" href="signup.html">무료로 가입하기 →</a>
+      <a class="cb-btn-t" href="support.html">문의하기</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-in">
+    <a class="nav-brand" href="index.html" style="text-decoration:none">
+      <div class="nav-gem"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <span class="nav-wm">Vingly</span>
+    </a>
+    <div class="foot-links">
+      <a href="terms.html">이용약관</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="support.html">고객지원</a>
+      <a href="index.html">메인으로</a>
+    </div>
+    <div style="font:500 12px/1 'Pretendard',sans-serif;color:var(--ink-40)">© 2026 Vingly. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+});
+</script>
+</body>
+</html>
