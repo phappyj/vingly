@@ -10,10 +10,13 @@
 :root{
   --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
   --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
-  --canvas:#F4F3EF;--white:#FFFFFF;
-  --blue:#1849D6;--blue-bg:#EEF3FD;--blue-dim:rgba(24,73,214,.12);
-  --green:#046C4E;--green-bg:#EDFAF4;--green-dim:rgba(4,108,78,.12);
-  --amber:#92400E;--amber-bg:#FFFBEB;
+  --canvas:#F9F8F4;--white:#FFFFFF;
+  /* 시그니처 그린 — 수익·CTA */
+  --blue:#1D4ED8;--blue-bg:#EEF3FD;--blue-dim:rgba(29,78,216,.12);
+  --green:#00B37E;--green-bg:#E6FBF4;--green-dim:rgba(0,179,126,.12);
+  /* 퍼플 — 얼리버드·프리미엄 */
+  --purple:#7C3AED;--purple-bg:#F5F0FF;--purple-dim:rgba(124,58,237,.12);
+  --amber:#D97706;--amber-bg:#FFFBEB;
   --red:#991B1B;--red-bg:#FEF2F2;
   --r-s:10px;--r-m:16px;--r-l:24px;--r-xl:32px;
   --sh-s:0 2px 12px rgba(0,0,0,.06);
@@ -55,12 +58,12 @@ img{display:block;max-width:100%}
 .hero{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 48px 80px;text-align:center;position:relative;overflow:hidden}
 /* 배경 그라디언트 오브 */
 .h-orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
-.h-orb-1{width:800px;height:800px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(24,73,214,.25) 0%,transparent 60%)}
+.h-orb-1{width:800px;height:800px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(29,78,216,.25) 0%,transparent 60%)}
 .h-orb-2{width:600px;height:600px;bottom:-150px;right:-100px;background:radial-gradient(circle,rgba(4,108,78,.2) 0%,transparent 60%)}
 .h-orb-3{width:400px;height:400px;top:40%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,255,255,.03) 0%,transparent 60%)}
 
 /* LIVE 배지 */
-.hero-live{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.7);margin-bottom:28px;z-index:1;animation:fadeUp .7s ease both}
+.hero-live{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.14);font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.7);margin-bottom:28px;z-index:1;animation:fadeUp .7s ease both}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#10B981;animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
@@ -70,35 +73,35 @@ img{display:block;max-width:100%}
 .hc-num{font:900 clamp(64px,10vw,120px)/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-4px;display:flex;align-items:baseline;justify-content:center;gap:4px}
 .hc-num .won{font:800 clamp(32px,5vw,56px)/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-right:4px}
 .hc-num .unit{font:600 clamp(16px,2.5vw,28px)/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-left:4px}
-.hc-sub{font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:8px}
+.hc-sub{font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.60);margin-top:8px}
 
 /* 히어로 타이틀 */
 .hero-h{font:800 clamp(28px,4.5vw,58px)/1.1 'Pretendard',sans-serif;color:#fff;letter-spacing:-1.5px;z-index:1;max-width:800px;animation:fadeUp .7s .14s ease both;margin-bottom:0}
-.hero-h .hl-b{color:#93C5FD}
-.hero-h .hl-g{color:#6EE7B7}
+.hero-h .hl-b{color:#7CB9FF}
+.hero-h .hl-g{color:#00E5A0}
 
 .hero-sub{font:400 clamp(14px,1.6vw,17px)/1.8 'Pretendard',sans-serif;color:rgba(255,255,255,.5);max-width:480px;z-index:1;animation:fadeUp .7s .22s ease both;margin-top:18px}
 
 /* 역할 선택 CTA */
 .hero-roles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px;z-index:1;animation:fadeUp .7s .30s ease both;max-width:560px;width:100%}
-.role-btn{padding:18px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);cursor:pointer;text-align:left;font-family:inherit;transition:all .22s;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px)}
-.role-btn:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.role-btn{padding:18px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);cursor:pointer;text-align:left;font-family:inherit;transition:all .22s;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px)}
+.role-btn:hover{border-color:rgba(255,255,255,.70);background:rgba(255,255,255,.1);transform:translateY(-2px)}
 .role-btn:active{transform:scale(.97)}
 .rb-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .rb-ico-b{background:rgba(147,197,253,.15)}
 .rb-ico-g{background:rgba(110,231,183,.15)}
 .rb-title{font:700 15px/1 'Pretendard',sans-serif;color:#fff;margin-bottom:4px}
-.rb-desc{font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.45)}
+.rb-desc{font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.68)}
 .rb-tag{display:inline-block;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;margin-top:5px}
-.rb-tag-b{background:rgba(147,197,253,.2);color:#93C5FD}
-.rb-tag-g{background:rgba(110,231,183,.2);color:#6EE7B7}
+.rb-tag-b{background:rgba(147,197,253,.2);color:#7CB9FF}
+.rb-tag-g{background:rgba(110,231,183,.2);color:#00E5A0}
 
 /* 신뢰 수치 */
 .hero-proof{display:flex;align-items:center;gap:24px;margin-top:36px;z-index:1;animation:fadeUp .7s .38s ease both;flex-wrap:wrap;justify-content:center}
 .hp-item{text-align:center}
 .hp-val{font:800 22px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px}
-.hp-lbl{font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:4px}
-.hp-div{width:1px;height:28px;background:rgba(255,255,255,.12)}
+.hp-lbl{font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.60);margin-top:4px}
+.hp-div{width:1px;height:28px;background:rgba(255,255,255,.22)}
 
 /* 스크롤 힌트 */
 .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:1;animation:fadeUp .7s .5s ease both;opacity:.4}
@@ -137,16 +140,16 @@ img{display:block;max-width:100%}
 
 /* 수익 계산 카드 */
 .earn-calc{background:var(--ink);border-radius:var(--r-l);padding:32px;color:#fff}
-.ec-label{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px}
+.ec-label{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.60);margin-bottom:20px}
 .ec-row{margin-bottom:16px}
 .ec-row-label{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px}
-.ec-slider{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.15);outline:none;cursor:pointer}
+.ec-slider{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.70);outline:none;cursor:pointer}
 .ec-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .ec-val{font:700 13px/1 'Pretendard',sans-serif;color:#fff;margin-top:5px}
 .ec-result{margin-top:24px;padding:16px;background:rgba(255,255,255,.06);border-radius:10px;border:1px solid rgba(255,255,255,.1)}
 .ec-result-label{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:6px}
-.ec-result-num{font:900 36px/1 'Pretendard',sans-serif;color:#6EE7B7;letter-spacing:-1px}
-.ec-result-sub{font:400 12px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:6px}
+.ec-result-num{font:900 36px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px}
+.ec-result-sub{font:400 12px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.60);margin-top:6px}
 
 /* 수익 흐름 카드 */
 .earn-flow{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:28px}
@@ -188,8 +191,8 @@ img{display:block;max-width:100%}
 .cd-box-g{background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.2)}
 .cd-box-y{background:rgba(252,211,77,.12);border:1px solid rgba(252,211,77,.2)}
 .cd-v{font:800 18px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px}
-.cd-l{font:500 10px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:3px}
-.cd-op{font:700 18px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.25)}
+.cd-l{font:500 10px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.60);margin-top:3px}
+.cd-op{font:700 18px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.70)}
 
 /* ── 입점 기준 ── */
 .std-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
@@ -205,14 +208,14 @@ img{display:block;max-width:100%}
 .gc{border-radius:var(--r-l);padding:22px 18px;transition:all .22s;position:relative;overflow:hidden}
 .gc:hover{transform:translateY(-4px)}
 .gc-new{background:var(--white);border:1px solid var(--ink-14);box-shadow:var(--sh-s)}
-.gc-active{background:var(--blue-bg);border:1px solid rgba(24,73,214,.18)}
+.gc-active{background:var(--blue-bg);border:1px solid rgba(29,78,216,.18)}
 .gc-pro{background:var(--ink);color:#fff}
-.gc-elite{background:linear-gradient(135deg,#1849D6 0%,#7C3AED 100%);color:#fff}
+.gc-elite{background:linear-gradient(135deg,#1D4ED8 0%,#7C3AED 100%);color:#fff}
 .gc-badge{display:inline-block;font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:100px;margin-bottom:10px}
 .gc-new .gc-badge{background:var(--ink-07);color:var(--ink-40)}
 .gc-active .gc-badge{background:var(--blue-dim);color:var(--blue)}
-.gc-pro .gc-badge{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
-.gc-elite .gc-badge{background:rgba(255,255,255,.18);color:#fff}
+.gc-pro .gc-badge{background:rgba(255,255,255,.22);color:rgba(255,255,255,.7)}
+.gc-elite .gc-badge{background:rgba(255,255,255,.22);color:#fff}
 .gc-ico{font-size:28px;margin-bottom:10px}
 .gc-name{font:800 20px/1 'Pretendard',sans-serif;letter-spacing:-.5px;margin-bottom:5px}
 .gc-new .gc-name,.gc-active .gc-name{color:var(--ink)}
@@ -254,25 +257,25 @@ img{display:block;max-width:100%}
 .faq-q{padding:19px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:16px}
 .fq-t{font:700 15px/1.4 'Pretendard',sans-serif;color:var(--ink)}
 .fq-ic{width:26px;height:26px;border-radius:7px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;font:600 13px/1 'Pretendard',sans-serif;color:var(--ink-40);flex-shrink:0;transition:all .25s}
-.faq-item.open .fq-ic{background:var(--blue-bg);color:var(--blue);border-color:rgba(24,73,214,.2);transform:rotate(45deg)}
+.faq-item.open .fq-ic{background:var(--blue-bg);color:var(--blue);border-color:rgba(29,78,216,.2);transform:rotate(45deg)}
 .faq-a{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0}
 .faq-item.open .faq-a{max-height:220px;padding:0 0 18px}
 
 /* ── CTA FINAL ── */
 .cta-final{padding:96px 48px}
 .cta-inner{max-width:1120px;margin:0 auto;background:var(--ink);border-radius:var(--r-xl);padding:64px 56px;display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden;position:relative;box-shadow:var(--sh-l)}
-.cta-glow{position:absolute;top:-100px;left:-60px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(24,73,214,.3) 0%,transparent 65%);filter:blur(60px);pointer-events:none}
+.cta-glow{position:absolute;top:-100px;left:-60px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(29,78,216,.3) 0%,transparent 65%);filter:blur(60px);pointer-events:none}
 .cta-content{position:relative;z-index:1}
 .cta-ey{font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:12px}
 .cta-h{font:800 clamp(24px,3.5vw,44px)/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:#fff;margin-bottom:14px}
-.cta-h em{font-style:normal;color:#93C5FD}
-.cta-p{font:400 15px/1.75 'Pretendard',sans-serif;color:rgba(255,255,255,.45);max-width:400px;margin-bottom:28px}
+.cta-h em{font-style:normal;color:#7CB9FF}
+.cta-p{font:400 15px/1.75 'Pretendard',sans-serif;color:rgba(255,255,255,.68);max-width:400px;margin-bottom:28px}
 .cta-perks{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
 .cp{display:flex;align-items:center;gap:10px;font:500 14px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.7)}
 .cp-chk{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font:700 10px/1 'Pretendard',sans-serif;flex-shrink:0}
 .cta-counter{display:flex;align-items:center;gap:10px;font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-bottom:24px}
 .cta-bar{flex:1;max-width:130px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
-.cta-prog{height:100%;border-radius:2px;background:linear-gradient(90deg,#93C5FD,#6EE7B7);width:23.1%}
+.cta-prog{height:100%;border-radius:2px;background:linear-gradient(90deg,#60A5FA,#00E5A0);width:23.1%}
 .cta-btn{padding:16px 32px;border-radius:12px;background:#fff;color:var(--ink);font:800 15px/1 'Pretendard',sans-serif;border:none;cursor:pointer;min-height:52px;max-width:260px;width:100%;transition:all .22s;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
 .cta-btn:active{transform:scale(.97)}
@@ -334,13 +337,13 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 .sticky-cta.visible{transform:translateY(0)}
 .sca-left{display:flex;flex-direction:column;gap:3px}
 .sca-title{font:700 14px/1 'Pretendard',sans-serif;color:#fff}
-.sca-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.45)}
+.sca-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.68)}
 .sca-btns{display:flex;gap:8px;flex-shrink:0}
 .sca-b{padding:10px 20px;border-radius:9px;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s;min-height:42px;border:none}
 .sca-creator{background:var(--green);color:#fff}
 .sca-creator:hover{background:#034732}
 .sca-brand{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
-.sca-brand:hover{background:rgba(255,255,255,.18)}
+.sca-brand:hover{background:rgba(255,255,255,.22)}
 @media(max-width:768px){
   .sticky-cta{flex-direction:column;gap:10px;padding:12px 16px}
   .sca-btns{width:100%;justify-content:stretch}
@@ -368,9 +371,9 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   position:sticky;top:62px;z-index:190;
 }
 .gb-text{font:600 13px/1 'Pretendard',sans-serif;color:#fff}
-.gb-text span{color:#FCD34D;font-weight:700}
-.gb-btn{padding:6px 16px;border-radius:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font:700 12px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;white-space:nowrap}
-.gb-btn:hover{background:rgba(255,255,255,.25)}
+.gb-text span{color:#A78BFA;font-weight:700}
+.gb-btn{padding:6px 16px;border-radius:7px;background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.70);font:700 12px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;white-space:nowrap}
+.gb-btn:hover{background:rgba(255,255,255,.70)}
 @media(max-width:768px){
   .guest-banner{padding:10px 16px}
   .gb-text{font-size:12px}
@@ -696,7 +699,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
       <!-- 브랜드·셀러 -->
       <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);overflow:hidden;box-shadow:var(--sh-s)" class="reveal">
-        <div style="padding:18px 22px;background:var(--blue-bg);border-bottom:1px solid rgba(24,73,214,.12)">
+        <div style="padding:18px 22px;background:var(--blue-bg);border-bottom:1px solid rgba(29,78,216,.12)">
           <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:6px">공급자</div>
           <div style="font:800 16px/1.2 'Pretendard',sans-serif;color:var(--ink)">국내 최저 수준</div>
           <div style="font:600 11px/1 'Pretendard',sans-serif;color:var(--blue);margin-top:7px">네이버(1.98~3.63%)보다 낮음</div>
@@ -739,26 +742,26 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
       <!-- Vingly -->
       <div style="background:var(--ink);border-radius:var(--r-l);overflow:hidden;box-shadow:var(--sh-s)" class="reveal">
         <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.1)">
-          <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px">Vingly 수익 원칙</div>
+          <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.60);margin-bottom:6px">Vingly 수익 원칙</div>
           <div style="font:800 16px/1.2 'Pretendard',sans-serif;color:#fff">투명하고 합리적인 구조</div>
-          <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35);margin-top:7px">크리에이터 수익 미징수</div>
+          <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.60);margin-top:7px">크리에이터 수익 미징수</div>
         </div>
         <div style="padding:6px 0">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08)">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.22)">
             <span style="font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6)">크리에이터에서 수취</span>
-            <span style="font:800 16px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.25)">₩0</span>
+            <span style="font:800 16px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.70)">₩0</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08)">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.22)">
             <span style="font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6)">공급자 거래 수수료</span>
-            <span style="font:800 16px/1 'Pretendard',sans-serif;color:#93C5FD">1.8%</span>
+            <span style="font:800 16px/1 'Pretendard',sans-serif;color:#7CB9FF">1.8%</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px">
             <span style="font:500 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6)">공급자 월 구독</span>
-            <span style="font:800 14px/1 'Pretendard',sans-serif;color:#93C5FD">₩9,900 / ₩29,000</span>
+            <span style="font:800 14px/1 'Pretendard',sans-serif;color:#7CB9FF">₩9,900 / ₩29,000</span>
           </div>
         </div>
-        <div style="padding:13px 22px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.08)">
-          <p style="font:500 12px/1.55 'Pretendard',sans-serif;color:rgba(255,255,255,.35)">공급자 500명 · 월 거래 ₩300만<br>→ 월 MRR 약 ₩2,900만 예상</p>
+        <div style="padding:13px 22px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.22)">
+          <p style="font:500 12px/1.55 'Pretendard',sans-serif;color:rgba(255,255,255,.60)">공급자 500명 · 월 거래 ₩300만<br>→ 월 MRR 약 ₩2,900만 예상</p>
         </div>
       </div>
     </div>
@@ -768,7 +771,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
       <!-- 실제 계산 -->
       <div style="background:var(--ink);border-radius:var(--r-l);padding:26px 28px" class="reveal">
-        <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:14px">실제 수익 계산 예시</div>
+        <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.60);margin-bottom:14px">실제 수익 계산 예시</div>
         <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:14px">판매가 ₩30,000 · 수수료 15% 설정</div>
         <div style="display:flex;flex-direction:column;gap:0">
           <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
@@ -777,15 +780,15 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           </div>
           <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
             <span style="font:400 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5)">크리에이터 수령 (15%)</span>
-            <span style="font:800 13px/1 'Pretendard',sans-serif;color:#6EE7B7">₩4,500 (100% 전액)</span>
+            <span style="font:800 13px/1 'Pretendard',sans-serif;color:#00E5A0">₩4,500 (100% 전액)</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
             <span style="font:400 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5)">Vingly 거래 수수료 (1.8%)</span>
-            <span style="font:700 13px/1 'Pretendard',sans-serif;color:#93C5FD">₩540</span>
+            <span style="font:700 13px/1 'Pretendard',sans-serif;color:#7CB9FF">₩540</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
             <span style="font:400 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5)">PG 수수료 (2.2%)</span>
-            <span style="font:400 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.35)">₩660</span>
+            <span style="font:400 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.60)">₩660</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:11px 0 0">
             <span style="font:700 14px/1 'Pretendard',sans-serif;color:#fff">공급자 정산</span>
@@ -805,7 +808,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
             </div>
             <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--green)">₩0</div>
           </div>
-          <div style="padding:12px 14px;background:var(--blue-bg);border-radius:10px;border:1px solid rgba(24,73,214,.18);display:flex;justify-content:space-between;align-items:center">
+          <div style="padding:12px 14px;background:var(--blue-bg);border-radius:10px;border:1px solid rgba(29,78,216,.18);display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--blue)">Basic</div>
               <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">제품 10개 · 얼리버드 ₩4,900</div>
@@ -835,29 +838,29 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <!-- 수수료 전환 타임라인 -->
     <div style="background:var(--ink);border-radius:var(--r-l);padding:24px 28px;margin-top:14px;display:flex;align-items:center;gap:24px;flex-wrap:wrap" class="fee-timeline" class="reveal">
       <div style="flex:1;min-width:180px">
-        <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px">수수료 전환 일정</div>
+        <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.60);margin-bottom:8px">수수료 전환 일정</div>
         <div style="font:800 17px/1.2 'Pretendard',sans-serif;color:#fff;margin-bottom:6px">1,000명 달성 후 30일 전 공지</div>
         <div style="font:400 12px/1.6 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">얼리버드는 전환 후 거래 수수료 1.5% 영구 고정 · 크리에이터는 전환 전후 모두 ₩0</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div style="text-align:center;padding:10px 16px;background:rgba(110,231,183,.1);border-radius:9px;border:1px solid rgba(110,231,183,.2)">
-          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#6EE7B7">현재</div>
+          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#00E5A0">현재</div>
           <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:3px">0%</div>
         </div>
         <div style="color:rgba(255,255,255,.2);font-size:16px">→</div>
         <div style="text-align:center;padding:10px 16px;background:rgba(252,211,77,.1);border-radius:9px;border:1px solid rgba(252,211,77,.2)">
-          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#FCD34D">얼리버드</div>
+          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#A78BFA">얼리버드</div>
           <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:3px">1.5% 영구</div>
         </div>
         <div style="color:rgba(255,255,255,.2);font-size:16px">→</div>
         <div style="text-align:center;padding:10px 16px;background:rgba(147,197,253,.1);border-radius:9px;border:1px solid rgba(147,197,253,.2)">
-          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#93C5FD">일반</div>
+          <div style="font:800 15px/1 'Pretendard',sans-serif;color:#7CB9FF">일반</div>
           <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:3px">1.8%</div>
         </div>
         <div style="color:rgba(255,255,255,.2);font-size:16px">→</div>
-        <div style="text-align:center;padding:10px 16px;background:rgba(255,255,255,.04);border-radius:9px;border:1px solid rgba(255,255,255,.08)">
+        <div style="text-align:center;padding:10px 16px;background:rgba(255,255,255,.04);border-radius:9px;border:1px solid rgba(255,255,255,.22)">
           <div style="font:800 15px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">성장기</div>
-          <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.25);margin-top:3px">최대 2.2%</div>
+          <div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.70);margin-top:3px">최대 2.2%</div>
         </div>
       </div>
     </div>
@@ -973,7 +976,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&auto=format&fit=crop" alt="뷰티 크리에이터" style="width:100%;height:100%;object-fit:cover;display:block">
           <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
           <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
-            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">📱 인스타그램</div>
+            <div style="background:rgba(255,255,255,.70);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">📱 인스타그램</div>
             <div style="background:var(--green-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--green)">팔로워 3.2K</div>
           </div>
         </div>
@@ -992,7 +995,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80&auto=format&fit=crop" alt="브랜드 운영" style="width:100%;height:100%;object-fit:cover;display:block">
           <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
           <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
-            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🏷️ 브랜드</div>
+            <div style="background:rgba(255,255,255,.70);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🏷️ 브랜드</div>
             <div style="background:var(--blue-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--blue)">파일럿 1기</div>
           </div>
         </div>
@@ -1011,7 +1014,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
           <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop" alt="운동용품 셀러" style="width:100%;height:100%;object-fit:cover;display:block">
           <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,16,.7) 0%,transparent 50%)"></div>
           <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:8px">
-            <div style="background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🛒 셀러</div>
+            <div style="background:rgba(255,255,255,.70);backdrop-filter:blur(8px);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:#fff">🛒 셀러</div>
             <div style="background:var(--amber-bg);padding:4px 10px;border-radius:100px;font:700 11px/1 'Pretendard',sans-serif;color:var(--amber)">광고비 0원</div>
           </div>
         </div>
@@ -1019,7 +1022,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         <div class="rev-earn"><span class="rev-earn-num">광고비 0원</span><span class="rev-earn-unit">으로 시작</span></div>
         <div class="rev-text">"팔린 만큼만 수수료가 나가는 구조라 소자본 셀러한테 이보다 좋은 구조는 없어요. 지금 제품 5개 올려두고 운영 중입니다."</div>
         <div class="rev-author">
-          <div class="rev-av" style="background:var(--amber-bg);color:var(--amber)">러</div>
+          <div class="rev-av" style="background:var(--purple-bg);color:var(--purple)">러</div>
           <div><div class="rev-name">러닝하우스</div><div class="rev-role">운동용품 셀러 · 파일럿 1기</div></div>
         </div>
       </div>

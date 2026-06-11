@@ -10,8 +10,8 @@
   --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
   --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
   --canvas:#F4F3EF;--white:#fff;
-  --blue:#1849D6;--blue-bg:#EEF3FD;
-  --green:#046C4E;--green-bg:#EDFAF4;--green-dim:rgba(4,108,78,.12);
+  --blue:#1D4ED8;--blue-bg:#EEF3FD;
+  --green:#00B37E;--green-bg:#E6FBF4;--green-dim:rgba(4,108,78,.12);
   --amber:#92400E;--amber-bg:#FFFBEB;
   --red:#991B1B;--red-bg:#FEF2F2;
   --sw:240px;--r:12px;
@@ -37,7 +37,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ua-av{width:32px;height:32px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;color:var(--green);flex-shrink:0}
 .ua-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink)}
 .ua-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
-.eb-badge{display:inline-flex;align-items:center;gap:4px;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;background:var(--amber-bg);color:var(--amber);margin-top:4px}
+.eb-badge{display:inline-flex;align-items:center;gap:4px;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;background:var(--purple-bg);color:var(--purple);margin-top:4px}
 
 .mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
@@ -84,12 +84,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .calc-title{font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
 .calc-row{margin-bottom:14px}
 .calc-lbl{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:5px}
-.calc-input{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;outline:none}
+.calc-input{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.70);cursor:pointer;outline:none}
 .calc-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .calc-val{font:700 12px/1 'Pretendard',sans-serif;color:#fff;margin-top:4px}
 .calc-result{background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:10px;padding:14px;margin-top:16px}
 .cr-lbl{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:5px}
-.cr-num{font:900 32px/1 'Pretendard',sans-serif;color:#6EE7B7;letter-spacing:-1px}
+.cr-num{font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px}
 .cr-sub{font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:5px}
 
 /* 인기 제품 */
@@ -122,7 +122,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .grade-current{background:var(--ink);color:#fff}
 .grade-next{background:var(--ink-07);border:1px solid var(--ink-14)}
 .gc-badge{font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:100px;margin-bottom:8px;display:inline-block}
-.gc-b-curr{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.gc-b-curr{background:rgba(255,255,255,.22);color:rgba(255,255,255,.6)}
 .gc-b-next{background:var(--blue-bg);color:var(--blue)}
 .gc-name{font:800 22px/1 'Pretendard',sans-serif;letter-spacing:-.5px;margin-bottom:5px}
 .grade-current .gc-name{color:#fff}
@@ -161,7 +161,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
 .bb{background:var(--blue-bg);color:var(--blue)}
-.ba{background:var(--amber-bg);color:var(--amber)}
+.ba{background:var(--purple-bg);color:var(--purple)}
 
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
 .btn-primary:hover{background:#034732}
