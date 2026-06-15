@@ -629,7 +629,7 @@ function genLink(name, price, rate) {
   const user = JSON.parse(localStorage.getItem('vingly_user') || '{}');
   const handle = (user.name || 'creator').toLowerCase().replace(/\s/g,'-');
   const slug = name.replace(/\s/g,'-').replace(/[^a-zA-Z0-9가-힣-]/g,'');
-  const url = `https://vingly.kr/p/${handle}-${slug}`;
+  const url = `https://vingly.kr/product-detail.html?ref=${encodeURIComponent(user.name||'creator')}&name=${encodeURIComponent(name)}&pid=${slug}`;
 
   // 클립보드 복사
   if(navigator.clipboard) {

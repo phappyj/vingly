@@ -362,5 +362,18 @@ function filterProducts() { render(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 render();
 </script>
+<script>
+function viewProduct(name, price, brand, rate, buyUrl) {
+  const user = JSON.parse(localStorage.getItem("vingly_user") || "{}");
+  const ref = encodeURIComponent(user.name || "creator");
+  const url = "product-detail.html?ref=" + ref
+    + "&name=" + encodeURIComponent(name)
+    + "&price=" + price
+    + "&brand=" + encodeURIComponent(brand)
+    + "&rate=" + rate
+    + "&url=" + encodeURIComponent(buyUrl || "#");
+  location.href = url;
+}
+</script>
 </body>
 </html>
