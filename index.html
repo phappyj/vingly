@@ -424,7 +424,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
 <!-- 게스트 배너 — 로그인 안 한 사용자에게만 표시 -->
 <div class="guest-banner" id="guestBanner">
-  <div class="gb-text">지금 <span>231명</span>이 Vingly에서 수익을 만들고 있습니다 — 무료로 시작하세요</div>
+  <div class="gb-text">지금 파일럿 오픈 중 · 얼리버드 가입하면 수수료 혜택 영구 적용</div>
   <button class="gb-btn" onclick="location.href='signup.html'">무료 가입 →</button>
 </div>
 
@@ -469,7 +469,14 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </div>
 
   <div class="hero-proof">
-    <div class="hp-item"><div class="hp-val">₩4,280만</div><div class="hp-lbl">파일럿 누적 거래액</div></div>
+        <div class="hp"><div class="hp-val" style="color:#00E5A0">0%</div><div class="hp-lbl">크리에이터 수수료</div></div>
+        <div class="hp-div"></div>
+        <div class="hp"><div class="hp-val">1.8%</div><div class="hp-lbl">브랜드 거래 수수료</div></div>
+        <div class="hp-div"></div>
+        <div class="hp"><div class="hp-val">30초</div><div class="hp-lbl">링크 생성 시간</div></div>
+        <div class="hp-div"></div>
+        <div class="hp"><div class="hp-val">100명+</div><div class="hp-lbl">크리에이터 최소 기준</div></div>
+      </div>
     <div class="hp-div"></div>
     <div class="hp-item"><div class="hp-val">231명</div><div class="hp-lbl">얼리버드 참여</div></div>
     <div class="hp-div"></div>
@@ -482,11 +489,28 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   <!-- FOMO 실시간 지표 -->
   <div class="fomo-bar">
     <div class="fomo-dot"></div>
-    <span>지금 <span class="fomo-num" id="fomo-viewers">47</span>명이 보는 중</span>
+    <span>Vingly 파일럿 오픈 중</span>
     <span class="fomo-sep">|</span>
-    <span>최근 1시간 신규 가입 <span class="fomo-num" id="fomo-joins">8</span>명</span>
+    <span>크리에이터 수수료 0%</span>
     <span class="fomo-sep">|</span>
-    <span>오늘 발생한 수익 <span class="fomo-num" id="fomo-earn">₩128만</span></span>
+    <span>브랜드 1.8% · 얼리버드 1.5%</span>
+  </div>
+
+
+  <!-- 히어로 비주얼 카드 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:800px;margin:0 auto 28px;padding:0 24px;position:relative;z-index:1">
+    <div style="background:rgba(0,179,126,.12);border:1px solid rgba(0,179,126,.25);border-radius:14px;padding:16px;text-align:center">
+      <div style="font:800 28px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px;margin-bottom:6px">0%</div>
+      <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.55)">크리에이터<br>플랫폼 수수료</div>
+    </div>
+    <div style="background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.3);border-radius:14px;padding:16px;text-align:center">
+      <div style="font:800 28px/1 'Pretendard',sans-serif;color:#7CB9FF;letter-spacing:-1px;margin-bottom:6px">1.8%</div>
+      <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.55)">브랜드 거래<br>수수료</div>
+    </div>
+    <div style="background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:16px;text-align:center">
+      <div style="font:800 28px/1 'Pretendard',sans-serif;color:#C4B5FD;letter-spacing:-1px;margin-bottom:6px">30초</div>
+      <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.55)">링크 생성<br>시간</div>
+    </div>
   </div>
 
   <div class="scroll-hint">
