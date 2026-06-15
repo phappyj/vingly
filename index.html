@@ -127,7 +127,7 @@ img{display:block;max-width:100%}
 .st{font:800 clamp(26px,3.2vw,44px)/1.1 'Pretendard',sans-serif;letter-spacing:-1.2px;color:var(--ink);margin-bottom:14px}
 .sb{font:400 16px/1.75 'Pretendard',sans-serif;color:var(--ink-70)}
 
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.reveal{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
 /* ── EARN SECTION (탭) ── */
@@ -293,6 +293,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
 /* ── MOBILE ── */
 @media(max-width:768px){
+  .reveal{opacity:1!important;transform:none!important}
   [class*="fee-3col"]{grid-template-columns:1fr!important}
   [class*="fee-2col"]{grid-template-columns:1fr!important}
   .nav{padding:0 20px}
@@ -305,13 +306,22 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   .wrap{padding:0 20px}
   .section{padding-top:64px}
   .ep.on,.fee-wrap,.std-grid,.safe-grid,.rev-grid,.grade-grid{grid-template-columns:1fr!important;gap:12px}
-  .grade-grid{grid-template-columns:1fr 1fr!important}
+  .grade-grid{grid-template-columns:1fr!important}
   .calc-demo{grid-column:1}
   .cta-final{padding:64px 20px}
   .cta-inner{grid-template-columns:1fr;padding:36px 24px}
   .cta-img-wrap{display:none}
   footer{padding:32px 20px}
   .foot-in{flex-direction:column;gap:12px}
+@media(max-width:600px){
+  .safety-grid{grid-template-columns:1fr!important}
+  .grade-grid{grid-template-columns:1fr!important}
+  .fee-3col{grid-template-columns:1fr!important;gap:12px!important}
+  .fee-2col{grid-template-columns:1fr!important;gap:12px!important}
+  .fee-timeline{flex-direction:column!important}
+  .fee-timeline-arrows{display:none!important}
+}
+
   .about-grid{grid-template-columns:1fr!important;gap:32px!important}
   .about-nums{grid-template-columns:1fr 1fr!important}
   /* 수수료 섹션 모바일 */
@@ -1241,8 +1251,15 @@ function switchTab(id, btn) {
 function initReveal() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.08 });
+  }, { threshold: 0.01, rootMargin: "0px 0px -20px 0px" });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // 페이지 로드 시 이미 뷰포트에 있는 요소 즉시 표시
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if(rect.top < window.innerHeight) el.classList.add('visible');
+    });
+  }, 100);
 }
 
 /* ── FAQ ── */
