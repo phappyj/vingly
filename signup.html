@@ -417,7 +417,11 @@ function selectRole(r) {
 
 
 function goStep(n) {
-  if(n > currentStep && !validate(currentStep)) return;
+  // role 파라미터로 진입 시 Step1 validation 스킵
+  const roleParam = new URLSearchParams(location.search).get('role');
+  if(n > currentStep && currentStep === 1 && roleParam) {
+    // Step1은 이미 자동 선택됨 — validation 스킵
+  } else if(n > currentStep && !validate(currentStep)) return;
   // 스텝 3 상세 폼 전환
   if(n === 3) {
     document.getElementById('s3_title').textContent = role==='brand' ? '브랜드 정보' : '채널 정보';
@@ -726,12 +730,12 @@ window.addEventListener('DOMContentLoaded', function() {
   const params = new URLSearchParams(location.search);
   const role = params.get('role');
   if(role === 'creator' || role === 'brand') {
-    // 역할 자동 선택
+    // 역할 자동 선택 후 즉시 Step 2로 이동
     selectRole(role);
-    // 0.3초 후 Step 2로 자동 이동
+    // Step 1 숨기고 Step 2 바로 표시
     setTimeout(function() {
-      nextStep();
-    }, 300);
+      goStep(2);
+    }, 50);
   }
 });
 </script>
