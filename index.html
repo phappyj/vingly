@@ -1035,7 +1035,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         <div style="background:var(--green-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--green)">혜택: 얼리버드 수수료 영구 적용<br>+ 공식 베타테스터 배지</div>
         </div>
-        <button onclick="location.href='signup.html?role=creator'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer" onclick="location.href='signup.html?role=creator'">크리에이터로 바로 가입 →</button>
+        <button onclick="location.href='signup.html?role=creator'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 바로 가입 →</button>
       </div>
 
       <!-- 브랜드 모집 -->
@@ -1046,7 +1046,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         <div style="background:var(--blue-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--blue)">혜택: 파일럿 거래 수수료 0%<br>+ 얼리버드 1.5% 영구 적용</div>
         </div>
-        <button onclick="location.href='signup.html?role=brand'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer" onclick="location.href='signup.html?role=brand'">브랜드로 바로 가입 →</button>
+        <button onclick="location.href='signup.html?role=brand'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">브랜드로 바로 가입 →</button>
       </div>
 
       <!-- 문의 -->
@@ -1185,42 +1185,11 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 </footer>
 
 <script>
-/* ── 라이브 카운터 애니메이션 ── */
-const BASE = 42800000;
-let current = BASE;
-let displayed = 0;
-
-function animateCounter(target, duration) {
-  const start = displayed;
-  const diff = target - start;
-  const startTime = performance.now();
-  function step(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 4);
-    displayed = Math.floor(start + diff * ease);
-    document.getElementById('liveCounter').textContent = displayed.toLocaleString('ko-KR');
-    if (progress < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// 페이지 로드 시 카운터 시작
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    animateCounter(BASE, 2000);
-    // 이후 랜덤하게 조금씩 증가
-    setInterval(() => {
-      const increase = Math.floor(Math.random() * 50000) + 10000;
-      current += increase;
-      animateCounter(current, 800);
-      // 서브텍스트 업데이트
-      const now = new Date();
-      document.getElementById('counterSub').textContent =
-        `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')} 기준 실시간 업데이트`;
-    }, 4000 + Math.random() * 3000);
-  }, 500);
+/* ── 페이지 로드 ── */
+window.addEventListener('load', function() {
   initReveal();
+  calcCreator();
+  calcBrand2();
 });
 
 /* ── 수익 계산기 — 크리에이터 ── */
@@ -1231,7 +1200,7 @@ window.addEventListener('load', () => {
 
 /* ── 탭 전환 ── */
 /* switchEarn removed */
-/* switchTab removed */);
+/* switchTab removed */
 
 /* ── 스크롤 리빌 ── */
 function initReveal() {
@@ -1357,8 +1326,7 @@ function closeDrawer() {
   if(sess && banner) banner.style.display = 'none';
 })();
 
-/* ── FOMO 비활성화 (실제 데이터 확보 후 활성화) ── */
-  return; //
+/* ── FOMO 비활성화 ── */
 (function(){
   function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
   let viewers = 47, joins = 8, earn = 128;
