@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
 <script>
@@ -9,6 +12,7 @@
   gtag('js', new Date());
   gtag('config', 'G-TH29BK6O6P');
 </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 크리에이터 대시보드</title>
@@ -190,6 +194,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .onboard{flex-direction:column;align-items:flex-start}
 }
 </style>
+
 </head>
 <body>
 
@@ -571,7 +576,6 @@ function showPage(id, btn) {
   document.getElementById('mob-title').textContent = t;
 }
 
-
 /* FOMO 판매 알림 */
 (function(){
   const names = ['뷰티제인','핏라이프','건강식탁','헬스맨','다이어트퀸','런닝메이트'];
@@ -590,7 +594,6 @@ function showPage(id, btn) {
   setTimeout(showFomo, 4000);
   setInterval(showFomo, 12000);
 })();
-
 
 /* ── 샘플 신청 ── */
 function requestSample(name) {
@@ -695,7 +698,6 @@ function copyShareUrl() {
 }
 </script>
 
-
 <!-- 샘플 신청 모달 -->
 <div id="sampleModal" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
   <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;animation:slideUp .28s ease">
@@ -748,7 +750,6 @@ function copyShareUrl() {
     </div>
   </div>
 </div>
-
 
 <!-- 알림 패널 -->
 <div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">

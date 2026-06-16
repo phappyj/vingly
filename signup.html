@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
 <script>
@@ -532,13 +535,15 @@ function doSignup() {
   // 데이터 수집
   const data = {
     role,
-    name:    g('s2_name').value.trim(),
-    phone:   g('s2_phone').value.trim(),
-    email:   g('s2_email').value.trim(),
-    brandOrName: role==='brand' ? g('b_brand').value.trim() : g('c_handle').value.trim(),
-    categoryOrChannel: role==='brand' ? g('b_cat').value : g('c_ch').value,
+    name:     g('s2_name').value.trim(),
+    phone:    g('s2_phone').value.trim(),
+    email:    g('s2_email').value.trim(),
+    channel:  role==='brand' ? g('b_brand').value.trim() : g('c_handle').value.trim(),
+    category: role==='brand' ? g('b_cat').value : g('c_ch').value,
+    brandName: role==='brand' ? g('b_brand').value.trim() : '',
+    memo:     role==='brand' ? '브랜드·셀러' : '크리에이터',
     marketing: g('agree3').checked,
-    joinedAt: new Date().toISOString(),
+    joinedAt:  new Date().toISOString(),
   };
 
   // Google Sheets 저장 (URL 연동 후 활성화)
@@ -724,7 +729,6 @@ function validateBizNo(n) {
 }
 
 /* ── URL role 파라미터 자동 선택 ── */
-
 
 /* ── URL role 파라미터로 자동 역할 선택 + Step2 이동 ── */
 window.addEventListener('DOMContentLoaded', function() {
