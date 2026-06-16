@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 제품 등록</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
   --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
@@ -662,7 +662,6 @@ async function submitProduct() {
   try {
     await fetch('https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL9g8rFh5TErh8s1oiLZwgxC1aKFFLK-ryGfsZWSiMLVEsk6TXw/exec', {
       method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(data)
     });
   } catch(e) { console.log('Sheets 저장:', e); }
