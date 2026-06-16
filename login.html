@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TH29BK6O6P');
-</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 로그인</title>
@@ -126,6 +119,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   .social-btns{grid-template-columns:1fr}
 }
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TH29BK6O6P');
+</script>
 </head>
 <body>
 
@@ -204,7 +205,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     <!-- FORM -->
     <div class="fg">
       <label class="fl">이메일</label>
-      <input class="fi" id="email" type="email" placeholder="hello@vingly.kr" oninput="clearErr(this)">
+      <input class="fi" id="email" type="email" placeholder="vingly.official@gmail.com" oninput="clearErr(this)">
       <div class="ferr" id="email_err">이메일을 입력해주세요</div>
     </div>
     <div class="fg">

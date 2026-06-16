@@ -248,7 +248,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       </div>
       <div class="fg">
         <label class="fl">이메일 <span class="req">*</span></label>
-        <input class="fi" id="s2_email" type="email" placeholder="hello@vingly.kr" oninput="clearErr(this)">
+        <input class="fi" id="s2_email" type="email" placeholder="vingly.official@gmail.com" oninput="clearErr(this)">
         <div class="ferr" id="s2_email_err">올바른 이메일을 입력해주세요</div>
       </div>
       <div class="fg">
@@ -445,7 +445,9 @@ function updateNav(n, state) {
 /* ── VALIDATE ── */
 function validate(step) {
   if(step===1) {
-    if(!role) { alert('역할을 선택해주세요'); return false; }
+    var rp = new URLSearchParams(location.search).get('role');
+    if(!role && !rp) { alert('역할을 선택해주세요'); return false; }
+    if(rp && !role) selectRole(rp);
     return true;
   }
   if(step===2) {
@@ -608,8 +610,8 @@ function goDashboard() {
 async function sendWelcomeEmail(data) {
   const roleLabel = data.role === 'brand' ? '브랜드·셀러' : '크리에이터';
   const messageMap = {
-    brand: `브랜드·셀러 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품을 등록하면 크리에이터 자동 매칭이 시작됩니다.\n2. 광고비 없이 크리에이터가 제품을 판매합니다.\n3. 대시보드에서 실시간으로 판매 현황을 확인하세요.\n\nhttps://phappyj.github.io/vingly/login.html`,
-    influencer: `크리에이터(얼리버드) 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품 탐색에서 내 채널에 맞는 제품을 선택하세요.\n2. 전용 링크 30초 생성 후 SNS에 공유하면 바로 수익 시작.\n3. 매월 말 등록 계좌로 자동 입금됩니다.\n\nhttps://phappyj.github.io/vingly/login.html`
+    brand: `브랜드·셀러 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품을 등록하면 크리에이터 자동 매칭이 시작됩니다.\n2. 광고비 없이 크리에이터가 제품을 판매합니다.\n3. 대시보드에서 실시간으로 판매 현황을 확인하세요.\n\nhttps://vingly.kr/login.html`,
+    influencer: `크리에이터(얼리버드) 등록이 완료됐습니다.\n\n다음 단계:\n1. 제품 탐색에서 내 채널에 맞는 제품을 선택하세요.\n2. 전용 링크 30초 생성 후 SNS에 공유하면 바로 수익 시작.\n3. 매월 말 등록 계좌로 자동 입금됩니다.\n\nhttps://vingly.kr/login.html`
   };
 
   try {
@@ -658,7 +660,7 @@ const termsContent = {
       <h3 style="font:700 16px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:12px">제3자 제공</h3>
       <p style="margin-bottom:16px">Google Sheets (가입자 데이터 저장), 이메일 발송 서비스 외 제3자 미제공</p>
       <h3 style="font:700 16px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:12px">이용자 권리</h3>
-      <p>언제든지 개인정보 열람·정정·삭제를 요청할 수 있습니다. 문의: support@vingly.kr</p>
+      <p>언제든지 개인정보 열람·정정·삭제를 요청할 수 있습니다. 문의: vingly.official@gmail.com</p>
       <p style="margin-top:16px;font-size:13px;color:rgba(10,12,16,.4)">전체 방침 보기: <a href="privacy.html" target="_blank" style="color:#1D4ED8">개인정보처리방침 전문</a></p>
     `
   }
@@ -722,16 +724,15 @@ function validateBizNo(n) {
 }
 
 /* ── URL role 파라미터 자동 선택 ── */
+
+
+/* ── URL role 파라미터로 자동 역할 선택 + Step2 이동 ── */
 window.addEventListener('DOMContentLoaded', function() {
-  const params = new URLSearchParams(location.search);
-  const role = params.get('role');
+  var params = new URLSearchParams(location.search);
+  var role = params.get('role');
   if(role === 'creator' || role === 'brand') {
-    // 역할 자동 선택 후 즉시 Step 2로 이동
     selectRole(role);
-    // Step 1 숨기고 Step 2 바로 표시
-    setTimeout(function() {
-      goStep(2);
-    }, 50);
+    setTimeout(function() { goStep(2); }, 100);
   }
 });
 </script>
