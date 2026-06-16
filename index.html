@@ -9,6 +9,7 @@
   gtag('js', new Date());
   gtag('config', 'G-TH29BK6O6P');
 </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 팔로워가 수익이 되는 커머스 플랫폼</title>
@@ -140,7 +141,7 @@ img{display:block;max-width:100%}
 
 /* ── EARN SECTION (탭) ── */
 .earn-tabs{display:flex;gap:6px;margin-top:36px;background:var(--ink-07);border-radius:12px;padding:4px;max-width:320px}
-.etab{flex:1;padding:10px 16px;border-radius:9px;border:none;background:transparent;font:600 14px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s}
+.etab{cursor:pointer;flex:1;padding:10px 16px;border-radius:9px;border:none;background:transparent;font:600 14px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;transition:all .2s}
 .etab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh-s)}
 .earn-panels{margin-top:28px}
 .ep{display:none}
@@ -400,6 +401,13 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 }
 
 </style>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TH29BK6O6P');
+</script>
 </head>
 <body>
 
@@ -438,7 +446,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <button class="nf" style="width:100%;min-height:48px" onclick="closeDrawer();location.href='signup.html'">무료 시작하기</button>
   </div>
 </div>
-
 
 <!-- 게스트 배너 — 로그인 안 한 사용자에게만 표시 -->
 <div class="guest-banner" id="guestBanner">
@@ -503,7 +510,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <div class="hp-item"><div class="hp-val">팔로워 100명</div><div class="hp-lbl">최소 기준</div></div>
   </div>
 
-
   <!-- FOMO 실시간 지표 -->
   <div class="fomo-bar">
     <div class="fomo-dot"></div>
@@ -513,7 +519,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <span class="fomo-sep">|</span>
     <span>브랜드 1.8% · 얼리버드 1.5%</span>
   </div>
-
 
   <!-- 히어로 비주얼 카드 -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:800px;margin:0 auto 28px;padding:0 24px;position:relative;z-index:1">
@@ -911,10 +916,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </div>
 </section>
 
-
-
-
-
 <!-- 등급 시스템 -->
 <section class="section" id="grade">
   <div class="wrap">
@@ -1023,7 +1024,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         <div style="background:var(--green-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--green)">혜택: 얼리버드 수수료 영구 적용<br>+ 공식 베타테스터 배지</div>
         </div>
-        <button onclick="location.href='signup.html'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 참여하기</button>
+        <button onclick="location.href='signup.html?role=creator'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 바로 가입 →</button>
       </div>
 
       <!-- 브랜드 모집 -->
@@ -1034,7 +1035,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
         <div style="background:var(--blue-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--blue)">혜택: 파일럿 거래 수수료 0%<br>+ 얼리버드 1.5% 영구 적용</div>
         </div>
-        <button onclick="location.href='signup.html'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">브랜드로 참여하기</button>
+        <button onclick="location.href='signup.html?role=brand'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">브랜드로 바로 가입 →</button>
       </div>
 
       <!-- 문의 -->
@@ -1080,7 +1081,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     </div>
   </div>
 </section>
-
 
 <!-- ABOUT SECTION -->
 <section class="section" style="padding-bottom:100px">

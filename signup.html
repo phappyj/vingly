@@ -9,6 +9,7 @@
   gtag('js', new Date());
   gtag('config', 'G-TH29BK6O6P');
 </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 회원가입</title>
@@ -147,6 +148,13 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     emailjs.init('ni95sDX1JNQCe4_tI');
   });
 </script>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TH29BK6O6P');
+</script>
 </head>
 <body>
 <div class="container">
@@ -205,13 +213,13 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         <p class="step-sub">역할에 따라 맞춤 화면을 제공합니다.</p>
       </div>
       <div class="role-grid">
-        <button class="rc" id="rc-brand" onclick="selectRole('brand')">
+        <button class="rc" id="rc-brand" onclick="selectRole('brand')" data-role="brand" class="role-btn">
           <div class="rc-ico">🏷️</div>
           <span class="rc-name">브랜드 / 셀러</span>
           <span class="rc-desc">판매할 제품이 있고 크리에이터 채널을 통해 홍보·판매하고 싶은 분</span>
           <span class="rc-tag rct-b">제품 등록 5분</span>
         </button>
-        <button class="rc" id="rc-creator" onclick="selectRole('creator')">
+        <button class="rc" id="rc-creator" onclick="selectRole('creator')" data-role="creator" class="role-btn" data-role="creator" class="role-btn">
           <div class="rc-ico">📱</div>
           <span class="rc-name">크리에이터</span>
           <span class="rc-desc">SNS·유튜브·블로그 채널이 있고 제품 판매로 수익을 만들고 싶은 분</span>
@@ -405,6 +413,25 @@ function selectRole(r) {
 }
 
 /* ── STEP NAV ── */
+
+/* ── URL role 파라미터 자동 선택 ── */
+(function(){
+  const params = new URLSearchParams(location.search);
+  const role = params.get('role');
+  if(role === 'creator' || role === 'brand') {
+    // 역할 자동 선택
+    setTimeout(() => {
+      const btn = document.querySelector(`.role-btn[data-role="${role}"]`);
+      if(btn) {
+        btn.click();
+      } else {
+        // selectRole 직접 호출
+        selectRole(role);
+      }
+    }, 100);
+  }
+})();
+
 function goStep(n) {
   if(n > currentStep && !validate(currentStep)) return;
   // 스텝 3 상세 폼 전환
@@ -710,7 +737,6 @@ function validateBizNo(n) {
 }
 
 </script>
-
 
 <!-- 약관 모달 -->
 <div id="termsModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,12,16,.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px">
