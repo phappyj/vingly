@@ -574,7 +574,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
     <div class="earn-panels">
 
       <!-- 크리에이터 패널 -->
-      <div class="ep on" id="ep-creator">
+      <div class="ep on" id="ep-creator" style="display:grid">
         <div class="earn-calc">
           <div class="ec-label">예상 월 수익 계산기</div>
           <div class="ec-row">
@@ -635,7 +635,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
       </div>
 
       <!-- 공급자 패널 -->
-      <div class="ep" id="ep-brand">
+      <div class="ep" id="ep-brand" style="display:none">
         <div class="earn-calc">
           <div class="ec-label">예상 월 판매 시뮬레이션</div>
           <div class="ec-row">
@@ -1242,13 +1242,39 @@ function calcBrand() {
 
 /* ── 탭 전환 ── */
 function switchEarn(id, btn) {
-  document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
-  document.querySelectorAll('.ep').forEach(p => { p.classList.remove('on'); p.style.display='none'; });
+  // 모든 탭 off
+  document.querySelectorAll('.etab').forEach(function(t) {
+    t.classList.remove('on');
+    t.style.background = '';
+    t.style.color = '';
+    t.style.borderColor = '';
+  });
+  // 모든 패널 숨기기
+  document.querySelectorAll('.ep').forEach(function(p) {
+    p.classList.remove('on');
+    p.style.display = 'none';
+  });
+  // 선택한 탭 on
   btn.classList.add('on');
-  const el = document.getElementById('ep-' + id);
-  if(el) { el.classList.add('on'); el.style.display=''; }
+  btn.style.background = '#0A0C10';
+  btn.style.color = '#fff';
+  btn.style.borderColor = '#0A0C10';
+  // 선택한 패널 보이기
+  var el = document.getElementById('ep-' + id);
+  if(el) {
+    el.classList.add('on');
+    el.style.display = 'grid';
+  }
 }
 function switchTab(id, btn) { switchEarn(id, btn); }
+function switchTab(id, btn) { switchEarn(id, btn); }
+
+
+/* ── 페이지 로드 시 계산기 초기화 ── */
+window.addEventListener('load', function() {
+  if(typeof calcEarn === 'function') calcEarn();
+  if(typeof calcBrand === 'function') calcBrand();
+});
 
 /* ── 스크롤 리빌 ── */
 function initReveal() {
