@@ -1306,22 +1306,27 @@ function closeDrawer() {
 
 /* ── STICKY CTA ── */
 (function(){
-  const cta = document.getElementById('stickyCta');
-  const hero = document.querySelector('.hero');
-  let shown = false;
-  window.addEventListener('scroll', () => {
-    const heroH = hero ? hero.offsetHeight : 600;
-    if(window.scrollY > heroH * 0.6 && !shown){
-      cta.classList.add('visible'); shown = true;
-    }
+  window.addEventListener('load', function() {
+    const cta = document.getElementById('stickyCta');
+    const hero = document.querySelector('.hero');
+    if(!cta) return;
+    let shown = false;
+    window.addEventListener('scroll', function() {
+      const heroH = hero ? hero.offsetHeight : 600;
+      if(window.scrollY > heroH * 0.6 && !shown){
+        cta.classList.add('visible'); shown = true;
+      }
+    });
   });
 })();
 
 /* ── GUEST BANNER ── */
 (function(){
-  const sess = sessionStorage.getItem('vingly_user');
-  const banner = document.getElementById('guestBanner');
-  if(sess && banner) banner.style.display = 'none';
+  window.addEventListener('load', function() {
+    const sess = localStorage.getItem('vingly_user');
+    const banner = document.getElementById('guestBanner');
+    if(sess && banner) banner.style.display = 'none';
+  });
 })();
 
 /* ── FOMO 비활성화 ── */
