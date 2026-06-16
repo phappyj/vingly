@@ -414,23 +414,7 @@ function selectRole(r) {
 
 /* ── STEP NAV ── */
 
-/* ── URL role 파라미터 자동 선택 ── */
-(function(){
-  const params = new URLSearchParams(location.search);
-  const role = params.get('role');
-  if(role === 'creator' || role === 'brand') {
-    // 역할 자동 선택
-    setTimeout(() => {
-      const btn = document.querySelector(`.role-btn[data-role="${role}"]`);
-      if(btn) {
-        btn.click();
-      } else {
-        // selectRole 직접 호출
-        selectRole(role);
-      }
-    }, 100);
-  }
-})();
+
 
 function goStep(n) {
   if(n > currentStep && !validate(currentStep)) return;
@@ -736,6 +720,20 @@ function validateBizNo(n) {
   return (10 - (sum % 10)) % 10 === parseInt(n[9]);
 }
 
+
+/* ── URL role 파라미터 자동 선택 ── */
+window.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(location.search);
+  const role = params.get('role');
+  if(role === 'creator' || role === 'brand') {
+    // 역할 자동 선택
+    selectRole(role);
+    // 0.3초 후 Step 2로 자동 이동
+    setTimeout(function() {
+      nextStep();
+    }, 300);
+  }
+});
 </script>
 
 <!-- 약관 모달 -->
