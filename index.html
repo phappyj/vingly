@@ -1224,75 +1224,14 @@ window.addEventListener('load', () => {
 });
 
 /* ── 수익 계산기 — 크리에이터 ── */
-function calcEarn() {
-  const followers = parseInt(document.getElementById('sl-followers').value);
-  const posts = parseInt(document.getElementById('sl-posts').value);
-  const price = parseInt(document.getElementById('sl-price').value);
-  document.getElementById('val-followers').textContent = followers.toLocaleString() + '명';
-  document.getElementById('val-posts').textContent = '월 ' + posts + '회';
-  document.getElementById('val-price').textContent = '₩' + price.toLocaleString();
-  // 전환율: 마이크로 0.3~0.8%, 대형 0.1~0.3%
-  const ctr = followers < 10000 ? 0.005 : followers < 50000 ? 0.003 : 0.002;
-  const sales = Math.floor(followers * ctr * posts);
-  const commission = 0.15; // 평균 15%
-  const earn = Math.floor(sales * price * commission);
-  document.getElementById('earn-result').textContent = '₩' + earn.toLocaleString();
-  document.getElementById('earn-sub').textContent =
-    `팔로워 ${followers.toLocaleString()}명 · 월 ${posts}회 · 전환율 ${(ctr*100).toFixed(1)}% 기준`;
-}
+/* calcEarn removed */
 
 /* ── 수익 계산기 — 공급자 ── */
-function calcBrand() {
-  const creators = parseInt(document.getElementById('sl-creators').value);
-  const sales = parseInt(document.getElementById('sl-sales').value);
-  const price = parseInt(document.getElementById('sl-bprice').value);
-  document.getElementById('val-creators').textContent = '크리에이터 ' + creators + '명';
-  document.getElementById('val-sales').textContent = '월 ' + sales + '건';
-  document.getElementById('val-bprice').textContent = '₩' + price.toLocaleString();
-  const revenue = creators * sales * price;
-  const commission = price * 0.15 * creators * sales; // 15% 수수료
-  const pg = revenue * 0.022;
-  const net = revenue - commission - pg;
-  document.getElementById('brand-result').textContent = '₩' + revenue.toLocaleString();
-  document.getElementById('brand-sub').textContent =
-    `크리에이터 ${creators}명 · 건당 ₩${price.toLocaleString()} · 수수료 지급 후 순수익 ₩${Math.floor(net).toLocaleString()}`;
-}
+/* calcBrand removed */
 
 /* ── 탭 전환 ── */
-function switchEarn(id, btn) {
-  // 모든 탭 off
-  document.querySelectorAll('.etab').forEach(function(t) {
-    t.classList.remove('on');
-    t.style.background = '';
-    t.style.color = '';
-    t.style.borderColor = '';
-  });
-  // 모든 패널 숨기기
-  document.querySelectorAll('.ep').forEach(function(p) {
-    p.classList.remove('on');
-    p.style.display = 'none';
-  });
-  // 선택한 탭 on
-  btn.classList.add('on');
-  btn.style.background = '#0A0C10';
-  btn.style.color = '#fff';
-  btn.style.borderColor = '#0A0C10';
-  // 선택한 패널 보이기
-  var el = document.getElementById('ep-' + id);
-  if(el) {
-    el.classList.add('on');
-    el.style.display = 'grid';
-  }
-}
-function switchTab(id, btn) { switchEarn(id, btn); }
-function switchTab(id, btn) { switchEarn(id, btn); }
-
-
-/* ── 페이지 로드 시 계산기 초기화 ── */
-window.addEventListener('load', function() {
-  if(typeof calcEarn === 'function') calcEarn();
-  if(typeof calcBrand === 'function') calcBrand();
-});
+/* switchEarn removed */
+/* switchTab removed */);
 
 /* ── 스크롤 리빌 ── */
 function initReveal() {
