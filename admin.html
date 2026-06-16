@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TH29BK6O6P');
-</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly Admin</title>
@@ -155,6 +148,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 }
 </style>
 <link rel="stylesheet" href="vingly-common.css">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK6O6P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TH29BK6O6P');
+</script>
 </head>
 <body>
 
@@ -543,7 +544,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); })
 </script>
 
 <script>
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx2UPP8H6xGVFklD-__iSotcs5WeeG0neiBy3-RT_VrdGrHxGsTB08Tlrc1oqxAX_CgKQ/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL9g8rFh5TErh8s1oiLZwgxC1aKFFLK-ryGfsZWSiMLVEsk6TXw/exec';
 
 // Sheets에서 가입자 불러오기 (GET 요청)
 async function loadMembersFromSheets() {
