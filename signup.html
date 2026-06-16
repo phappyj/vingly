@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Vingly signup v1781612240 -->
 <html lang="ko">
 <head>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -239,23 +240,23 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       </div>
       <div class="frow">
         <div class="fg">
-          <label class="fl">이름 <span class="req">*</span></label>
+          <label class="fl" for="s2_name">이름 <span class="req">*</span></label>
           <input class="fi" id="s2_name" type="text" placeholder="홍길동" oninput="clearErr(this)">
           <div class="ferr" id="s2_name_err">이름을 입력해주세요</div>
         </div>
         <div class="fg">
-          <label class="fl">연락처 <span class="req">*</span></label>
+          <label class="fl" for="s2_phone">연락처 <span class="req">*</span></label>
           <input class="fi" id="s2_phone" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this);clearErr(this)">
           <div class="ferr" id="s2_phone_err">올바른 연락처를 입력해주세요</div>
         </div>
       </div>
       <div class="fg">
-        <label class="fl">이메일 <span class="req">*</span></label>
+        <label class="fl" for="s2_email">이메일 <span class="req">*</span></label>
         <input class="fi" id="s2_email" type="email" placeholder="vingly.official@gmail.com" oninput="clearErr(this)">
         <div class="ferr" id="s2_email_err">올바른 이메일을 입력해주세요</div>
       </div>
       <div class="fg">
-        <label class="fl">비밀번호 <span class="req">*</span></label>
+        <label class="fl" for="s2_pw">비밀번호 <span class="req">*</span></label>
         <div class="pw-wrap">
           <input class="fi" id="s2_pw" type="password" placeholder="8자 이상" oninput="checkPwStrength(this.value);clearErr(this)">
           <button class="pw-toggle" onclick="togglePw2()">👁</button>
@@ -267,7 +268,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         <div class="ferr" id="s2_pw_err">8자 이상 입력해주세요</div>
       </div>
       <div class="fg">
-        <label class="fl">비밀번호 확인 <span class="req">*</span></label>
+        <label class="fl" for="s2_pw2">비밀번호 확인 <span class="req">*</span></label>
         <div class="pw-wrap">
           <input class="fi" id="s2_pw2" type="password" placeholder="비밀번호 재입력" oninput="clearErr(this)">
           <button class="pw-toggle" onclick="togglePw3()">👁</button>
@@ -291,7 +292,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       <!-- 브랜드 폼 -->
       <div class="fsec on" id="s3_brand">
         <div class="fg">
-          <label class="fl">브랜드명 / 상호명 <span class="req">*</span></label>
+          <label class="fl" for="b_brand">브랜드명 / 상호명 <span class="req">*</span></label>
           <input class="fi" id="b_brand" type="text" placeholder="예: 헬시팜" oninput="clearErr(this)">
           <div class="ferr" id="b_brand_err">브랜드명을 입력해주세요</div>
         </div>
