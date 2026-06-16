@@ -149,12 +149,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   });
 </script>
 
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TH29BK6O6P');
-</script>
 </head>
 <body>
 <div class="container">
@@ -413,8 +407,6 @@ function selectRole(r) {
 }
 
 /* ── STEP NAV ── */
-
-
 
 function goStep(n) {
   // role 파라미터로 진입 시 Step1 validation 스킵
@@ -685,8 +677,13 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-document.getElementById('termsModal').addEventListener('click', function(e) {
-  if(e.target === this) closeModal();
+window.addEventListener('load', function() {
+  var modal = document.getElementById('termsModal');
+  if(modal) {
+    modal.addEventListener('click', function(e) {
+      if(e.target === this) closeModal();
+    });
+  }
 });
 
 /* ── 사업자번호 포맷 + 검증 ── */
@@ -701,7 +698,7 @@ function formatBizNo(input) {
   if(digits.length === 10) {
     const valid = validateBizNo(digits);
     input.style.borderColor = valid ? '#00B37E' : '#DC2626';
-    const msg = document.getElementById('bizValidMsg');
+    const msg = document.getElementById('bizValidMsg'); if(!msg) return;
     if(msg) {
       msg.style.display = 'block';
       msg.style.color = valid ? '#00B37E' : '#DC2626';
@@ -709,7 +706,7 @@ function formatBizNo(input) {
     }
   } else {
     input.style.borderColor = '';
-    const msg = document.getElementById('bizValidMsg');
+    const msg = document.getElementById('bizValidMsg'); if(!msg) return;
     if(msg) msg.style.display = 'none';
   }
 }
@@ -723,7 +720,6 @@ function validateBizNo(n) {
   sum += Math.floor(checkArr[8] * parseInt(n[8]) / 10);
   return (10 - (sum % 10)) % 10 === parseInt(n[9]);
 }
-
 
 /* ── URL role 파라미터 자동 선택 ── */
 window.addEventListener('DOMContentLoaded', function() {
