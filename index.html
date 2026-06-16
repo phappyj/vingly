@@ -567,129 +567,148 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   <div class="wrap">
     <div class="ey">수익 구조</div>
     <h2 class="st">내가 어떻게<br>돈을 버는지 보여드립니다</h2>
-    <div class="earn-tabs">
-      <button class="etab on" onclick="switchEarn('creator',this)">📱 크리에이터</button>
-      <button class="etab" onclick="switchEarn('brand',this)">🏷️ 브랜드·셀러</button>
-    </div>
-    <div class="earn-panels">
 
-      <!-- 크리에이터 패널 -->
-      <div class="ep on" id="ep-creator" style="display:grid">
-        <div class="earn-calc">
-          <div class="ec-label">예상 월 수익 계산기</div>
-          <div class="ec-row">
-            <div class="ec-row-label">팔로워 수</div>
-            <input class="ec-slider" type="range" min="100" max="100000" step="100" value="3000" id="sl-followers" oninput="calcEarn()">
-            <div class="ec-val" id="val-followers">3,000명</div>
+    <!-- 탭 버튼 -->
+    <div style="display:flex;gap:8px;margin-top:32px;margin-bottom:24px">
+      <button id="tab-creator" onclick="showEarn('creator')"
+        style="padding:10px 22px;border-radius:100px;border:1.5px solid #0A0C10;background:#0A0C10;color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s;font-family:inherit">
+        📱 크리에이터
+      </button>
+      <button id="tab-brand" onclick="showEarn('brand')"
+        style="padding:10px 22px;border-radius:100px;border:1.5px solid rgba(10,12,16,.14);background:transparent;color:rgba(10,12,16,.4);font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s;font-family:inherit">
+        🏷️ 브랜드·셀러
+      </button>
+    </div>
+
+    <!-- 크리에이터 패널 -->
+    <div id="panel-creator" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <!-- 계산기 -->
+      <div style="background:var(--ink);border-radius:var(--r-l);padding:28px;color:#fff">
+        <div style="font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px">예상 월 수익 계산기</div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">팔로워 수</span>
+            <span style="color:#fff;font-weight:700" id="v-followers">3,000명</span>
           </div>
-          <div class="ec-row">
-            <div class="ec-row-label">월 평균 포스팅 수</div>
-            <input class="ec-slider" type="range" min="1" max="30" value="8" id="sl-posts" oninput="calcEarn()">
-            <div class="ec-val" id="val-posts">월 8회</div>
+          <input type="range" min="100" max="50000" step="100" value="3000" id="sl-followers"
+            oninput="calcCreator()"
+            style="width:100%;accent-color:#00B37E;cursor:pointer">
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">월 평균 포스팅 수</span>
+            <span style="color:#fff;font-weight:700" id="v-posts">월 8회</span>
           </div>
-          <div class="ec-row">
-            <div class="ec-row-label">평균 제품 가격</div>
-            <input class="ec-slider" type="range" min="10000" max="200000" step="5000" value="30000" id="sl-price" oninput="calcEarn()">
-            <div class="ec-val" id="val-price">₩30,000</div>
+          <input type="range" min="1" max="30" step="1" value="8" id="sl-posts"
+            oninput="calcCreator()"
+            style="width:100%;accent-color:#00B37E;cursor:pointer">
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">평균 제품 가격</span>
+            <span style="color:#fff;font-weight:700" id="v-price">₩30,000</span>
           </div>
-          <div class="ec-result">
-            <div class="ec-result-label">예상 월 수익 (Vingly 수수료 0%)</div>
-            <div class="ec-result-num" id="earn-result">₩216,000</div>
-            <div class="ec-result-sub" id="earn-sub">팔로워 3,000명 · 전환율 0.3% 기준</div>
+          <input type="range" min="5000" max="200000" step="1000" value="30000" id="sl-price"
+            oninput="calcCreator()"
+            style="width:100%;accent-color:#00B37E;cursor:pointer">
+        </div>
+        <div style="background:rgba(0,179,126,.15);border-radius:12px;padding:16px">
+          <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px">예상 월 수익 (수수료 0%)</div>
+          <div style="font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px" id="v-result">₩216,000</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:6px" id="v-basis">팔로워 3,000명 · 전환율 0.3% 기준</div>
+        </div>
+      </div>
+      <!-- 흐름 -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E6FBF4;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#00B37E;flex-shrink:0">1</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">내 분야 제품 선택</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">카테고리에서 채널에 맞는 제품 선택. 수수료율 미리 확인.</div></div>
           </div>
         </div>
-        <div class="earn-flow">
-          <div class="ef-title">크리에이터 수익 흐름</div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">1</div>
-            <div>
-              <div class="ef-t">내 분야 제품 선택</div>
-              <div class="ef-d">카테고리에서 채널에 맞는 제품 선택. 수수료율 미리 확인.</div>
-              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">팔로워 100명 이상</span>
-            </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E6FBF4;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#00B37E;flex-shrink:0">2</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">전용 링크 30초 생성</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">나만의 추적 링크 생성. 브랜드 연락 불필요.</div></div>
           </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">2</div>
-            <div>
-              <div class="ef-t">전용 링크 30초 생성</div>
-              <div class="ef-d">나만의 추적 링크 + 팔로워 전용 할인코드 자동 발급.</div>
-              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">브랜드 연락 불필요</span>
-            </div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E6FBF4;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#00B37E;flex-shrink:0">3</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">SNS에 공유</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">인스타, 유튜브, 블로그, 카카오톡 어디든.</div></div>
           </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">3</div>
-            <div>
-              <div class="ef-t">SNS에 공유</div>
-              <div class="ef-d">인스타, 유튜브, 블로그, 카카오톡 어디든.</div>
-            </div>
-          </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--green-bg);color:var(--green)">4</div>
-            <div>
-              <div class="ef-t">매월 말 계좌 자동 입금</div>
-              <div class="ef-d">정산 요청 없이 등록된 계좌로 직접 입금.</div>
-              <span class="ef-badge" style="background:var(--green-bg);color:var(--green)">파일럿 기간 전액 수령</span>
-            </div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E6FBF4;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#00B37E;flex-shrink:0">4</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">매월 말 계좌 자동 입금</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">정산 요청 없이 등록된 계좌로 직접 입금.</div></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 공급자 패널 -->
-      <div class="ep" id="ep-brand" style="display:none">
-        <div class="earn-calc">
-          <div class="ec-label">예상 월 판매 시뮬레이션</div>
-          <div class="ec-row">
-            <div class="ec-row-label">연결 크리에이터 수</div>
-            <input class="ec-slider" type="range" min="1" max="100" value="10" id="sl-creators" oninput="calcBrand()">
-            <div class="ec-val" id="val-creators">크리에이터 10명</div>
+    <!-- 브랜드 패널 -->
+    <div id="panel-brand" style="display:none;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <!-- 계산기 -->
+      <div style="background:var(--ink);border-radius:var(--r-l);padding:28px;color:#fff">
+        <div style="font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px">예상 월 판매 시뮬레이션</div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">연결 크리에이터 수</span>
+            <span style="color:#fff;font-weight:700" id="v-creators">크리에이터 10명</span>
           </div>
-          <div class="ec-row">
-            <div class="ec-row-label">크리에이터당 월 판매 건수</div>
-            <input class="ec-slider" type="range" min="1" max="50" value="8" id="sl-sales" oninput="calcBrand()">
-            <div class="ec-val" id="val-sales">월 8건</div>
+          <input type="range" min="1" max="100" step="1" value="10" id="sl-creators"
+            oninput="calcBrand2()"
+            style="width:100%;accent-color:#1D4ED8;cursor:pointer">
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">크리에이터당 월 판매 건수</span>
+            <span style="color:#fff;font-weight:700" id="v-sales">월 8건</span>
           </div>
-          <div class="ec-row">
-            <div class="ec-row-label">제품 판매가</div>
-            <input class="ec-slider" type="range" min="10000" max="200000" step="5000" value="30000" id="sl-bprice" oninput="calcBrand()">
-            <div class="ec-val" id="val-bprice">₩30,000</div>
+          <input type="range" min="1" max="50" step="1" value="8" id="sl-sales"
+            oninput="calcBrand2()"
+            style="width:100%;accent-color:#1D4ED8;cursor:pointer">
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
+            <span style="color:rgba(255,255,255,.6)">제품 판매가</span>
+            <span style="color:#fff;font-weight:700" id="v-price2">₩30,000</span>
           </div>
-          <div class="ec-result">
-            <div class="ec-result-label">예상 월 매출 (광고비 0원)</div>
-            <div class="ec-result-num" id="brand-result">₩2,400,000</div>
-            <div class="ec-result-sub" id="brand-sub">크리에이터 10명 · 건당 ₩30,000 기준</div>
+          <input type="range" min="5000" max="200000" step="1000" value="30000" id="sl-price2"
+            oninput="calcBrand2()"
+            style="width:100%;accent-color:#1D4ED8;cursor:pointer">
+        </div>
+        <div style="background:rgba(29,78,216,.2);border-radius:12px;padding:16px">
+          <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px">예상 월 매출 (광고비 0원)</div>
+          <div style="font:900 32px/1 'Pretendard',sans-serif;color:#7CB9FF;letter-spacing:-1px" id="v-result2">₩2,400,000</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:6px" id="v-basis2">크리에이터 10명 · 건당 ₩30,000 기준</div>
+        </div>
+      </div>
+      <!-- 흐름 -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEF3FD;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#1D4ED8;flex-shrink:0">1</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">제품 등록 5분</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">사업자 확인 + 보증금 후 즉시 등록. 별도 심사 없음.</div></div>
           </div>
         </div>
-        <div class="earn-flow">
-          <div class="ef-title">브랜드·셀러 판매 흐름</div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">1</div>
-            <div>
-              <div class="ef-t">제품 등록 5분</div>
-              <div class="ef-d">사업자 확인 + 안전 보증금 후 즉시 등록. 별도 심사 없음.</div>
-              <span class="ef-badge" style="background:var(--blue-bg);color:var(--blue)">사업자 + 보증금 필수</span>
-            </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEF3FD;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#1D4ED8;flex-shrink:0">2</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">크리에이터 자동 매칭</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">카테고리 분석 후 적합한 크리에이터 자동 연결. DM 불필요.</div></div>
           </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">2</div>
-            <div>
-              <div class="ef-t">AI 크리에이터 자동 매칭</div>
-              <div class="ef-d">카테고리 분석 후 적합한 크리에이터 자동 연결. DM 불필요.</div>
-            </div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEF3FD;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#1D4ED8;flex-shrink:0">3</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">실시간 판매 현황 확인</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">크리에이터별 클릭·전환·수익을 대시보드에서 실시간 확인.</div></div>
           </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">3</div>
-            <div>
-              <div class="ef-t">실시간 판매 현황 확인</div>
-              <div class="ef-d">크리에이터별 클릭·전환·수익을 대시보드에서 실시간 확인.</div>
-            </div>
-          </div>
-          <div class="ef-step">
-            <div class="ef-num" style="background:var(--blue-bg);color:var(--blue)">4</div>
-            <div>
-              <div class="ef-t">정산 자동화</div>
-              <div class="ef-d">배송 완료 후 7일 뒤 자동 정산. 크리에이터 수수료 자동 지급.</div>
-              <span class="ef-badge" style="background:var(--blue-bg);color:var(--blue)">정산 유예 7일 구조</span>
-            </div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(10,12,16,.1);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEF3FD;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:#1D4ED8;flex-shrink:0">4</div>
+            <div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:4px">정산 자동화</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">배송 완료 후 7일 뒤 자동 정산. 크리에이터 수수료 자동 지급.</div></div>
           </div>
         </div>
       </div>
@@ -697,7 +716,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   </div>
 </section>
 
-<!-- 비용 구조 투명 공개 -->
 <section class="section" id="fees">
   <div class="wrap">
     <div class="ey">수수료 — 숨기는 거 없습니다</div>
@@ -1292,6 +1310,78 @@ function initReveal() {
 }
 
 /* ── FAQ ── */
+
+/* ── EARN 탭 전환 ── */
+function showEarn(type) {
+  var creator = document.getElementById('panel-creator');
+  var brand = document.getElementById('panel-brand');
+  var tabC = document.getElementById('tab-creator');
+  var tabB = document.getElementById('tab-brand');
+  if(type === 'creator') {
+    creator.style.display = 'grid';
+    brand.style.display = 'none';
+    tabC.style.background = '#0A0C10';
+    tabC.style.color = '#fff';
+    tabC.style.borderColor = '#0A0C10';
+    tabB.style.background = 'transparent';
+    tabB.style.color = 'rgba(10,12,16,.4)';
+    tabB.style.borderColor = 'rgba(10,12,16,.14)';
+  } else {
+    creator.style.display = 'none';
+    brand.style.display = 'grid';
+    tabB.style.background = '#0A0C10';
+    tabB.style.color = '#fff';
+    tabB.style.borderColor = '#0A0C10';
+    tabC.style.background = 'transparent';
+    tabC.style.color = 'rgba(10,12,16,.4)';
+    tabC.style.borderColor = 'rgba(10,12,16,.14)';
+  }
+}
+
+/* ── 크리에이터 계산기 ── */
+function calcCreator() {
+  var followers = parseInt(document.getElementById('sl-followers').value);
+  var posts = parseInt(document.getElementById('sl-posts').value);
+  var price = parseInt(document.getElementById('sl-price').value);
+  document.getElementById('v-followers').textContent = followers.toLocaleString() + '명';
+  document.getElementById('v-posts').textContent = '월 ' + posts + '회';
+  document.getElementById('v-price').textContent = '₩' + price.toLocaleString();
+  var convRate = 0.003;
+  var result = Math.floor(followers * convRate * posts * price * 0.15);
+  document.getElementById('v-result').textContent = '₩' + result.toLocaleString();
+  document.getElementById('v-basis').textContent = '팔로워 ' + followers.toLocaleString() + '명 · 전환율 0.3% 기준';
+}
+
+/* ── 브랜드 계산기 ── */
+function calcBrand2() {
+  var creators = parseInt(document.getElementById('sl-creators').value);
+  var sales = parseInt(document.getElementById('sl-sales').value);
+  var price = parseInt(document.getElementById('sl-price2').value);
+  document.getElementById('v-creators').textContent = '크리에이터 ' + creators + '명';
+  document.getElementById('v-sales').textContent = '월 ' + sales + '건';
+  document.getElementById('v-price2').textContent = '₩' + price.toLocaleString();
+  var result = creators * sales * price;
+  document.getElementById('v-result2').textContent = '₩' + result.toLocaleString();
+  document.getElementById('v-basis2').textContent = '크리에이터 ' + creators + '명 · 건당 ₩' + price.toLocaleString() + ' 기준';
+}
+
+/* 모바일 반응형 */
+(function() {
+  function checkMobile() {
+    var isMobile = window.innerWidth <= 768;
+    var pc = document.getElementById('panel-creator');
+    var pb = document.getElementById('panel-brand');
+    if(pc) pc.style.gridTemplateColumns = isMobile ? '1fr' : '1fr 1fr';
+    if(pb && pb.style.display !== 'none') pb.style.gridTemplateColumns = isMobile ? '1fr' : '1fr 1fr';
+  }
+  window.addEventListener('resize', checkMobile);
+  window.addEventListener('load', function() {
+    checkMobile();
+    calcCreator();
+    calcBrand2();
+  });
+})();
+
 function toggleFaq(el) {
   const wasOpen = el.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
