@@ -389,20 +389,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 .fomo-sep{color:rgba(255,255,255,.2)}
 
 /* 게스트 모드 배너 */
-.guest-banner{
-  background:linear-gradient(135deg,var(--blue) 0%,#6D28D9 100%);
-  padding:10px 48px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  position:sticky;top:62px;z-index:190;
-}
-.gb-text{font:600 13px/1 'Pretendard',sans-serif;color:#fff}
-.gb-text span{color:#A78BFA;font-weight:700}
-.gb-btn{padding:6px 16px;border-radius:7px;background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.70);font:700 12px/1 'Pretendard',sans-serif;color:#fff;cursor:pointer;transition:all .2s;white-space:nowrap}
-.gb-btn:hover{background:rgba(255,255,255,.70)}
-@media(max-width:768px){
-  .guest-banner{padding:10px 16px}
-  .gb-text{font-size:12px}
-}
+/* guest-banner removed — sticky-cta handles all CTA */
 
 </style>
 
@@ -446,10 +433,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 </div>
 
 <!-- 게스트 배너 — 로그인 안 한 사용자에게만 표시 -->
-<div class="guest-banner" id="guestBanner">
-  <div class="gb-text">지금 파일럿 오픈 중 · 얼리버드 가입하면 수수료 혜택 영구 적용</div>
-  <button class="gb-btn" onclick="location.href='signup.html'">무료 가입 →</button>
-</div>
+
 
 <!-- HERO -->
 <section class="hero">
@@ -1310,6 +1294,8 @@ function closeDrawer() {
     const cta = document.getElementById('stickyCta');
     const hero = document.querySelector('.hero');
     if(!cta) return;
+    // 로그인 상태면 CTA 숨김
+    if(localStorage.getItem('vingly_user')) { cta.style.display='none'; return; }
     let shown = false;
     window.addEventListener('scroll', function() {
       const heroH = hero ? hero.offsetHeight : 600;
@@ -1320,14 +1306,8 @@ function closeDrawer() {
   });
 })();
 
-/* ── GUEST BANNER ── */
-(function(){
-  window.addEventListener('load', function() {
-    const sess = localStorage.getItem('vingly_user');
-    const banner = document.getElementById('guestBanner');
-    if(sess && banner) banner.style.display = 'none';
-  });
-})();
+
+
 
 /* ── FOMO 비활성화 ── */
 (function(){
@@ -1355,12 +1335,15 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
 <!-- STICKY CTA -->
 <div class="sticky-cta" id="stickyCta">
   <div class="sca-left">
-    <div class="sca-title">지금 가입하면 얼리버드 혜택이 적용됩니다</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="display:inline-flex;align-items:center;gap:4px;background:#7C3AED;color:#fff;font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px;letter-spacing:.04em">⚡ 얼리버드</span>
+      <div class="sca-title">지금 가입하면 수수료 혜택이 영구 적용됩니다</div>
+    </div>
     <div class="sca-sub">크리에이터 수수료 0% · 브랜드 거래 수수료 1.5% 영구 고정</div>
   </div>
   <div class="sca-btns">
-    <button class="sca-b sca-creator" onclick="location.href='signup.html'">크리에이터로 시작</button>
-    <button class="sca-b sca-brand" onclick="location.href='signup.html'">브랜드·셀러로 시작</button>
+    <button class="sca-b sca-creator" onclick="location.href='signup.html?role=creator'">📱 크리에이터로 시작</button>
+    <button class="sca-b sca-brand" onclick="location.href='signup.html?role=brand'">🏷️ 브랜드·셀러로 시작</button>
   </div>
 </div>
 
