@@ -236,31 +236,31 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <div class="sc-label">이번 달 매출</div>
           <div class="sc-ico" style="background:var(--blue-bg)">💰</div>
         </div>
-        <div class="sc-val">₩4,280만</div>
-        <div class="sc-ch up">↑ 23% 지난달 대비</div>
+        <div class="sc-val">₩0</div>
+        <div class="sc-ch nt">제품 등록 후 시작됩니다</div>
       </div>
       <div class="sc">
         <div class="sc-top">
           <div class="sc-label">활동 크리에이터</div>
           <div class="sc-ico" style="background:var(--green-bg)">📱</div>
         </div>
-        <div class="sc-val">14명</div>
-        <div class="sc-ch up">↑ 이번 달 +3명</div>
+        <div class="sc-val">0명</div>
+        <div class="sc-ch nt">제품 등록 시 매칭 시작</div>
       </div>
       <div class="sc">
         <div class="sc-top">
           <div class="sc-label">총 판매 건수</div>
           <div class="sc-ico" style="background:var(--amber-bg)">🛒</div>
         </div>
-        <div class="sc-val">1,428건</div>
-        <div class="sc-ch up">↑ 이번 달 +284건</div>
+        <div class="sc-val">0건</div>
+        <div class="sc-ch nt">아직 판매 없음</div>
       </div>
       <div class="sc">
         <div class="sc-top">
           <div class="sc-label">정산 예정 (다음 달)</div>
           <div class="sc-ico" style="background:var(--red-bg)">📋</div>
         </div>
-        <div class="sc-val">₩3,840만</div>
+        <div class="sc-val">₩0</div>
         <div class="sc-ch nt">배송 완료 후 7일</div>
       </div>
     </div>
@@ -269,23 +269,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <!-- 크리에이터별 실적 -->
       <div class="card">
         <div class="card-h"><div class="card-t">크리에이터별 판매 실적</div><a class="card-a" onclick="showPage('creators',null)">전체 보기</a></div>
-        <div class="bar-list">
-          <div class="bar-row"><span class="bar-name">뷰티제인</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">₩890만</span></div>
-          <div class="bar-row"><span class="bar-name">핏라이프김</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div><span class="bar-val">₩642만</span></div>
-          <div class="bar-row"><span class="bar-name">건강한식탁</span><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div><span class="bar-val">₩480만</span></div>
-          <div class="bar-row"><span class="bar-name">헬스맨</span><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><span class="bar-val">₩395만</span></div>
-          <div class="bar-row"><span class="bar-name">다이어트퀸</span><div class="bar-track"><div class="bar-fill" style="width:28%"></div></div><span class="bar-val">₩290만</span></div>
+        <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+          <div style="font-size:28px;margin-bottom:8px">📭</div>
+          <div style="font-size:13px;font-weight:500">아직 연결된 크리에이터가 없습니다</div>
+          <div style="font-size:12px;margin-top:4px">제품을 등록하면 크리에이터가 자동 매칭됩니다</div>
         </div>
       </div>
 
       <!-- 이번 달 비용 요약 -->
       <div class="card">
         <div class="card-h"><div class="card-t">이번 달 비용 요약</div></div>
-        <div class="flow-row"><div class="fl-l">총 매출<small>구매자 결제 합계</small></div><div class="fl-r">₩4,280만</div></div>
-        <div class="flow-row"><div class="fl-l">크리에이터 수수료<small>평균 15% 기준</small></div><div class="fl-r r">-₩642만</div></div>
-        <div class="flow-row"><div class="fl-l">PG 결제 수수료<small>토스페이먼츠 2.2%</small></div><div class="fl-r r">-₩94만</div></div>
+        <div class="flow-row"><div class="fl-l">총 매출<small>구매자 결제 합계</small></div><div class="fl-r">₩0</div></div>
+        <div class="flow-row"><div class="fl-l">크리에이터 수수료<small>평균 15% 기준</small></div><div class="fl-r r">-₩0</div></div>
+        <div class="flow-row"><div class="fl-l">PG 결제 수수료<small>토스페이먼츠 2.2%</small></div><div class="fl-r r">-₩0</div></div>
         <div class="flow-row"><div class="fl-l">Vingly 플랫폼<small>파일럿 기간</small></div><div class="fl-r g">₩0</div></div>
-        <div class="flow-row"><div class="fl-l" style="font-weight:700;color:var(--ink)">공급자 정산 예정액<small>원가 제외 전</small></div><div class="fl-r" style="font-size:18px;font-weight:800;letter-spacing:-.5px">₩3,544만</div></div>
+        <div class="flow-row"><div class="fl-l" style="font-weight:700;color:var(--ink)">공급자 정산 예정액<small>원가 제외 전</small></div><div class="fl-r" style="font-size:18px;font-weight:800;letter-spacing:-.5px">₩0</div></div>
       </div>
     </div>
 
@@ -296,10 +294,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>제품명</th><th>수수료율</th><th>이번 달 판매</th><th>매출</th><th>크리에이터</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="td-b">💊 단백질 쉐이크 바닐라</td><td>15%</td><td>152건</td><td class="td-b">₩639만</td><td>8명</td><td><span class="badge bg">판매중</span></td></tr>
-            <tr><td class="td-b">🥗 그린 슈퍼푸드 파우더</td><td>12%</td><td>98건</td><td class="td-b">₩372만</td><td>6명</td><td><span class="badge bg">판매중</span></td></tr>
-            <tr><td class="td-b">💪 BCAA 레몬맛</td><td>10%</td><td>48건</td><td class="td-b">₩139만</td><td>3명</td><td><span class="badge bg">판매중</span></td></tr>
-            <tr><td class="td-b">🧴 마그네슘 수면 젤리</td><td>18%</td><td>—</td><td class="td-b">—</td><td>—</td><td><span class="badge ba">승인 대기</span></td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">등록된 제품이 없습니다 · 위 버튼으로 첫 제품을 등록하세요</td></tr>
           </tbody>
         </table>
       </div>
@@ -311,17 +306,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩4,280만</div><div class="sc-ch up">↑ 23%</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val">₩642만</div><div class="sc-ch nt">크리에이터 14명</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩94만</div><div class="sc-ch nt">2.2% 토스</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">2.2% 토스</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch g" style="color:var(--green)">파일럿 무료</div></div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-        <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r">₩42,800,000</div></div>
-        <div class="flow-row"><div class="fl-l">크리에이터 수수료 (평균 15%)</div><div class="fl-r r">-₩6,420,000</div></div>
-        <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r">-₩941,600</div></div>
-        <div class="flow-row"><div class="fl-l">Vingly 거래 수수료 (1.8%)<small>파일럿 무료 → 정식 후 적용</small></div><div class="fl-r r">-₩770,400</div></div>
-        <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액 (원가 전)</div><div class="fl-r" style="font-size:18px;font-weight:800">₩34,668,000</div></div>
+        <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r">₩0</div></div>
+        <div class="flow-row"><div class="fl-l">크리에이터 수수료 (평균 15%)</div><div class="fl-r r">-₩0</div></div>
+        <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r">-₩0</div></div>
+        <div class="flow-row"><div class="fl-l">Vingly 거래 수수료 (1.8%)<small>파일럿 무료 → 정식 후 적용</small></div><div class="fl-r r">-₩0</div></div>
+        <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액 (원가 전)</div><div class="fl-r" style="font-size:18px;font-weight:800">₩0</div></div>
       </div>
       <div class="card">
         <div class="card-h"><div class="card-t">수수료 전환 안내</div></div>
@@ -340,17 +335,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 크리에이터 현황 -->
   <div class="page content" id="pg-creators">
     <div class="card">
-      <div class="card-h"><div class="card-t">연결된 크리에이터 14명</div></div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>크리에이터</th><th>채널</th><th>팔로워</th><th>이번 달 판매</th><th>수수료 지급</th><th>등급</th><th>전환율</th></tr></thead>
-          <tbody>
-            <tr><td class="td-b">뷰티제인</td><td class="td-m">인스타그램</td><td>12.4K</td><td>73건 · ₩890만</td><td>₩133만</td><td><span class="badge bb">Active</span></td><td>2.1%</td></tr>
-            <tr><td class="td-b">핏라이프김</td><td class="td-m">유튜브</td><td>8.2K</td><td>52건 · ₩642만</td><td>₩96만</td><td><span class="badge bg">Pro</span></td><td>1.8%</td></tr>
-            <tr><td class="td-b">건강한식탁</td><td class="td-m">블로그</td><td>5.1K</td><td>38건 · ₩480만</td><td>₩72만</td><td><span class="badge bb">Active</span></td><td>2.4%</td></tr>
-            <tr><td class="td-b">헬스맨</td><td class="td-m">인스타그램</td><td>22K</td><td>29건 · ₩395만</td><td>₩59만</td><td><span class="badge bg">Pro</span></td><td>0.4%</td></tr>
-          </tbody>
-        </table>
+      <div class="card-h"><div class="card-t">연결된 크리에이터</div></div>
+      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">📭</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 연결된 크리에이터가 없습니다</div>
+        <div style="font-size:13px">제품을 등록하면 크리에이터가 자동으로 매칭됩니다</div>
       </div>
     </div>
   </div>
@@ -358,17 +347,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 제품 관리 -->
   <div class="page content" id="pg-products">
     <div class="card">
-      <div class="card-h"><div class="card-t">등록 제품 4개</div><button class="btn-primary" onclick="location.href='product-register.html'">+ 새 제품 등록</button></div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>제품명</th><th>가격</th><th>수수료율</th><th>누적 판매</th><th>크리에이터</th><th>상태</th><th>관리</th></tr></thead>
-          <tbody>
-            <tr><td class="td-b">💊 단백질 쉐이크 바닐라</td><td>₩42,000</td><td>15%</td><td>152건</td><td>8명</td><td><span class="badge bg">판매중</span></td><td><button class="act-btn">수정</button><button class="act-btn r">중단</button></td></tr>
-            <tr><td class="td-b">🥗 그린 슈퍼푸드</td><td>₩38,000</td><td>12%</td><td>98건</td><td>6명</td><td><span class="badge bg">판매중</span></td><td><button class="act-btn">수정</button><button class="act-btn r">중단</button></td></tr>
-            <tr><td class="td-b">💪 BCAA 레몬맛</td><td>₩29,000</td><td>10%</td><td>48건</td><td>3명</td><td><span class="badge bg">판매중</span></td><td><button class="act-btn">수정</button><button class="act-btn r">중단</button></td></tr>
-            <tr><td class="td-b">🧴 마그네슘 수면 젤리</td><td>₩24,000</td><td>18%</td><td>—</td><td>—</td><td><span class="badge ba">승인 대기</span></td><td><button class="act-btn">상세</button></td></tr>
-          </tbody>
-        </table>
+      <div class="card-h"><div class="card-t">등록 제품</div><button class="btn-primary" onclick="location.href='product-register.html'">+ 새 제품 등록</button></div>
+      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">📦</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">등록된 제품이 없습니다</div>
+        <div style="font-size:13px">위 버튼으로 첫 제품을 등록하면 크리에이터 매칭이 시작됩니다</div>
       </div>
     </div>
   </div>
@@ -376,9 +359,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 정산 관리 -->
   <div class="page content" id="pg-settle">
     <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정 (이번 달)</div><div class="sc-ico" style="background:var(--blue-bg)">📅</div></div><div class="sc-val">₩3,544만</div><div class="sc-ch nt">배송 완료 후 7일</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 유예 잔액</div><div class="sc-ico" style="background:var(--amber-bg)">⏱️</div></div><div class="sc-val">₩840만</div><div class="sc-ch nt">유예 기간 중</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">리저브 적립액</div><div class="sc-ico" style="background:var(--green-bg)">🏦</div></div><div class="sc-val">₩42만</div><div class="sc-ch up">3개월 후 반환</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정 (이번 달)</div><div class="sc-ico" style="background:var(--blue-bg)">📅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">배송 완료 후 7일</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 유예 잔액</div><div class="sc-ico" style="background:var(--amber-bg)">⏱️</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">유예 기간 중</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">리저브 적립액</div><div class="sc-ico" style="background:var(--green-bg)">🏦</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">3개월 후 반환</div></div>
     </div>
     <div class="card">
       <div class="card-h"><div class="card-t">정산 내역</div></div>
@@ -386,9 +369,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>정산일</th><th>판매 건수</th><th>매출</th><th>수수료 차감</th><th>정산액</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="td-m">2026.07.31 (예정)</td><td>284건</td><td>₩4,280만</td><td>-₩736만</td><td class="td-b">₩3,544만</td><td><span class="badge ba">예정</span></td></tr>
-            <tr><td class="td-m">2026.06.30</td><td>231건</td><td>₩3,480만</td><td>-₩598만</td><td class="td-b">₩2,882만</td><td><span class="badge bg">완료</span></td></tr>
-            <tr><td class="td-m">2026.05.31</td><td>198건</td><td>₩2,970만</td><td>-₩511만</td><td class="td-b">₩2,459만</td><td><span class="badge bg">완료</span></td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 정산 내역이 없습니다 · 첫 판매 발생 후 표시됩니다</td></tr>
           </tbody>
         </table>
       </div>
@@ -398,9 +379,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 샘플 관리 페이지 -->
   <div class="page content" id="pg-sample">
     <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-top"><div class="sc-label">샘플 신청 대기</div><div class="sc-ico" style="background:var(--purple-bg)">📦</div></div><div class="sc-val">3건</div><div class="sc-ch" style="color:var(--amber)">승인 필요</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">발송 완료</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">12건</div><div class="sc-ch up">이번 달</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">리뷰 게시 확인</div><div class="sc-ico" style="background:var(--blue-bg)">⭐</div></div><div class="sc-val">8건</div><div class="sc-ch nt">평균 별점 4.6</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">샘플 신청 대기</div><div class="sc-ico" style="background:var(--purple-bg)">📦</div></div><div class="sc-val">0건</div><div class="sc-ch nt">승인 필요</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">발송 완료</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">0건</div><div class="sc-ch nt">이번 달</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">리뷰 게시 확인</div><div class="sc-ico" style="background:var(--blue-bg)">⭐</div></div><div class="sc-val">0건</div><div class="sc-ch nt">평균 별점 —</div></div>
     </div>
 
     <!-- 샘플 정책 설정 -->
@@ -452,42 +433,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>신청일</th><th>크리에이터</th><th>팔로워</th><th>제품</th><th>채널</th><th>리뷰 형식</th><th>상태</th><th>처리</th></tr></thead>
           <tbody>
-            <tr>
-              <td class="td-m">06.11</td>
-              <td class="td-b">뷰티제인</td>
-              <td>12.4K</td>
-              <td>단백질 쉐이크</td>
-              <td class="td-m">인스타그램</td>
-              <td class="td-m">피드+스토리</td>
-              <td><span class="badge ba">대기</span></td>
-              <td>
-                <button class="act-btn" onclick="approveSample(this)">승인</button>
-                <button class="act-btn r" onclick="rejectSample(this)">거절</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-m">06.11</td>
-              <td class="td-b">핏라이프</td>
-              <td>8.2K</td>
-              <td>단백질 쉐이크</td>
-              <td class="td-m">유튜브</td>
-              <td class="td-m">리뷰 영상</td>
-              <td><span class="badge ba">대기</span></td>
-              <td>
-                <button class="act-btn" onclick="approveSample(this)">승인</button>
-                <button class="act-btn r" onclick="rejectSample(this)">거절</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-m">06.10</td>
-              <td class="td-b">건강한식탁</td>
-              <td>5.1K</td>
-              <td>슈퍼푸드</td>
-              <td class="td-m">블로그</td>
-              <td class="td-m">상세 리뷰</td>
-              <td><span class="badge bg">발송 완료</span></td>
-              <td><button class="act-btn">리뷰 확인</button></td>
-            </tr>
+            <tr><td colspan="8" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 샘플 신청이 없습니다 · 크리에이터 연결 후 신청이 들어옵니다</td></tr>
           </tbody>
         </table>
       </div>
@@ -541,6 +487,74 @@ function doLogout(){
   location.href='login.html';
 }
 
+// ── 실제 제품 데이터 로드 ──
+function loadProducts() {
+  const user = JSON.parse(localStorage.getItem('vingly_user') || '{}');
+  const allProducts = JSON.parse(localStorage.getItem('vingly_products') || '[]');
+  // 현재 로그인한 셀러 제품만 필터
+  const products = allProducts.filter(p => p.brandEmail === user.email);
+
+  if (products.length === 0) return; // 빈 상태 유지
+
+  // ── 대시보드 탭: 제품별 판매 현황 테이블 ──
+  const dashTbody = document.querySelector('#pg-dashboard .tw table tbody');
+  if (dashTbody) {
+    dashTbody.innerHTML = products.map(p => `
+      <tr>
+        <td class="td-b">${p.name}</td>
+        <td>${p.commissionRate}%</td>
+        <td>${p.sales}건</td>
+        <td class="td-b">₩${p.revenue.toLocaleString()}</td>
+        <td>${p.creatorCount}명</td>
+        <td><span class="badge bg">판매중</span></td>
+      </tr>`).join('');
+  }
+
+  // ── 제품 관리 탭 ──
+  const prodSection = document.getElementById('pg-products');
+  if (prodSection) {
+    const header = prodSection.querySelector('.card-h .card-t');
+    if (header) header.textContent = `등록 제품 ${products.length}개`;
+    const emptyDiv = prodSection.querySelector('div[style*="text-align:center"]');
+    if (emptyDiv) emptyDiv.remove();
+    // 테이블이 없으면 새로 생성
+    if (!prodSection.querySelector('table')) {
+      const tw = document.createElement('div');
+      tw.className = 'tw';
+      tw.innerHTML = `<table>
+        <thead><tr><th>제품명</th><th>가격</th><th>수수료율</th><th>누적 판매</th><th>크리에이터</th><th>상태</th><th>관리</th></tr></thead>
+        <tbody></tbody></table>`;
+      prodSection.querySelector('.card').appendChild(tw);
+    }
+    const tbody = prodSection.querySelector('table tbody');
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td class="td-b">${p.name}</td>
+        <td>₩${p.price.toLocaleString()}</td>
+        <td>${p.commissionRate}%</td>
+        <td>${p.sales}건</td>
+        <td>${p.creatorCount}명</td>
+        <td><span class="badge bg">판매중</span></td>
+        <td><button class="act-btn">수정</button></td>
+      </tr>`).join('');
+  }
+
+  // ── stat 카드 업데이트 ──
+  const totalRevenue = products.reduce((s, p) => s + p.revenue, 0);
+  const totalSales   = products.reduce((s, p) => s + p.sales, 0);
+  const totalCreators = products.reduce((s, p) => s + p.creatorCount, 0);
+  const statVals = document.querySelectorAll('#pg-dashboard .sc-val');
+  if (statVals[0]) statVals[0].textContent = totalRevenue > 0 ? '₩' + totalRevenue.toLocaleString() : '₩0';
+  if (statVals[1]) statVals[1].textContent = totalCreators + '명';
+  if (statVals[2]) statVals[2].textContent = totalSales + '건';
+
+  // ── 첫 제품 등록 배너 숨기기 ──
+  const banner = document.querySelector('.onboard-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', loadProducts);
+
 // 바 차트 애니메이션
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -557,17 +571,9 @@ window.addEventListener('load', () => {
 <div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
   <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
   <div style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto">
-    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:#00B37E;flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">새 판매 발생</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">뷰티제인 크리에이터 · 단백질 쉐이크 1건</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">방금 전</div></div>
-    </div>
-    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:#1D4ED8;flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">정산 예정 알림</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">이번 달 정산이 6월 30일 처리됩니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">오늘</div></div>
-    </div>
-    <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:rgba(10,12,16,.2);flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5);margin-bottom:3px">Vingly 업데이트</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.4)">새 기능이 추가됐습니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">어제</div></div>
+    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
+      <div style="font-size:24px;margin-bottom:8px">🔔</div>
+      <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
     </div>
   </div>
 </div>

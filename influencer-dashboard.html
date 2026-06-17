@@ -265,22 +265,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="stat-grid">
       <div class="sc">
         <div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div>
-        <div class="sc-val" style="color:var(--green)">₩89만</div>
-        <div class="sc-ch up">↑ 34% 지난달 대비</div>
+        <div class="sc-val" style="color:var(--green)">₩0</div>
+        <div class="sc-ch nt">링크 생성 후 시작됩니다</div>
       </div>
       <div class="sc">
         <div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div>
-        <div class="sc-val">73건</div>
-        <div class="sc-ch up">↑ 이번 달 +12건</div>
+        <div class="sc-val">0건</div>
+        <div class="sc-ch nt">아직 판매 없음</div>
       </div>
       <div class="sc">
         <div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div>
-        <div class="sc-val">2,841</div>
-        <div class="sc-ch nt">전환율 2.57%</div>
+        <div class="sc-val">0</div>
+        <div class="sc-ch nt">전환율 —</div>
       </div>
       <div class="sc">
         <div class="sc-top"><div class="sc-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div>
-        <div class="sc-val" style="color:var(--green)">₩89만</div>
+        <div class="sc-val" style="color:var(--green)">₩0</div>
         <div class="sc-ch nt">자동 입금 예정</div>
       </div>
     </div>
@@ -297,7 +297,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             <div class="prod-ico">💊</div>
             <div class="prod-info">
               <div class="prod-name">단백질 쉐이크 바닐라 1kg</div>
-              <div class="prod-meta">헬시팜 · ₩42,000 · 이번 주 152건</div>
+              <div class="prod-meta">헬시팜 · ₩42,000 · 수수료 15%</div>
             </div>
             <div class="prod-earn">
               <div class="prod-rate">15%</div>
@@ -312,7 +312,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             <div class="prod-ico">🥗</div>
             <div class="prod-info">
               <div class="prod-name">그린 슈퍼푸드 파우더 300g</div>
-              <div class="prod-meta">헬시팜 · ₩38,000 · 이번 주 98건</div>
+              <div class="prod-meta">헬시팜 · ₩38,000 · 수수료 12%</div>
             </div>
             <div class="prod-earn">
               <div class="prod-rate">12%</div>
@@ -370,40 +370,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <!-- 내 링크 현황 -->
     <div class="card">
       <div class="card-h"><div class="card-t">내 활성 링크</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
-      <div>
-        <div class="link-item">
-          <div class="link-ico">💊</div>
-          <div class="link-info">
-            <div class="link-name">단백질 쉐이크 바닐라</div>
-            <div class="link-url">vingly.kr/j/jane-protein · 38건 판매</div>
-          </div>
-          <div class="link-stats">
-            <div class="link-earn">₩239,400</div>
-            <div class="link-meta">클릭 1,241 · 전환 3.1%</div>
-          </div>
-        </div>
-        <div class="link-item">
-          <div class="link-ico">🥗</div>
-          <div class="link-info">
-            <div class="link-name">그린 슈퍼푸드 파우더</div>
-            <div class="link-url">vingly.kr/j/jane-greens · 24건 판매</div>
-          </div>
-          <div class="link-stats">
-            <div class="link-earn">₩109,440</div>
-            <div class="link-meta">클릭 982 · 전환 2.4%</div>
-          </div>
-        </div>
-        <div class="link-item">
-          <div class="link-ico">💪</div>
-          <div class="link-info">
-            <div class="link-name">BCAA 레몬맛 500g</div>
-            <div class="link-url">vingly.kr/j/jane-bcaa · 11건 판매</div>
-          </div>
-          <div class="link-stats">
-            <div class="link-earn">₩31,900</div>
-            <div class="link-meta">클릭 618 · 전환 1.8%</div>
-          </div>
-        </div>
+      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:28px;margin-bottom:8px">🔗</div>
+        <div style="font-size:13px;font-weight:500">아직 생성된 링크가 없습니다</div>
+        <div style="font-size:12px;margin-top:4px">위 제품에서 링크를 생성하면 여기에 표시됩니다</div>
       </div>
     </div>
   </div>
@@ -411,23 +381,25 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 수익 현황 페이지 -->
   <div class="page content" id="pg-earn">
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩890,000</div><div class="sc-ch up">↑ 34%</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 운영 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩890,000</div><div class="sc-ch nt">월말 자동 입금</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩2,340,000</div><div class="sc-ch up">3개월 합계</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-        <div class="earn-row"><div class="er-l">단백질 쉐이크 (38건)<small>₩42,000 × 15%</small></div><div class="er-r g">₩239,400</div></div>
-        <div class="earn-row"><div class="er-l">슈퍼푸드 파우더 (24건)<small>₩38,000 × 12%</small></div><div class="er-r g">₩109,440</div></div>
-        <div class="earn-row"><div class="er-l">BCAA (11건)<small>₩29,000 × 10%</small></div><div class="er-r g">₩31,900</div></div>
+        <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+          <div style="font-size:28px;margin-bottom:8px">💸</div>
+          <div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div>
+          <div style="font-size:12px;margin-top:4px">링크를 공유하고 첫 판매를 시작하세요</div>
+        </div>
         <div class="earn-row"><div class="er-l">Vingly 수수료 차감<small>크리에이터 미징수 — 영구</small></div><div class="er-r g">₩0 영구</div></div>
-        <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩890,000</div></div>
+        <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩0</div></div>
       </div>
       <div class="card">
         <div class="card-h"><div class="card-t">정산 예정 일정</div></div>
-        <div class="earn-row"><div class="er-l">6월 30일 정산<small>이번 달 수익</small></div><div class="er-r g">₩890,000</div></div>
+        <div class="earn-row"><div class="er-l">이번 달 정산<small>판매 발생 시 표시</small></div><div class="er-r g">₩0</div></div>
         <div class="earn-row"><div class="er-l">정산 방식</div><div class="er-r">자동 입금</div></div>
         <div class="earn-row"><div class="er-l">Vingly 수수료 (전환 후)</div><div class="er-r g">₩0 영구<small>크리에이터 미징수</small></div></div>
         <div style="margin-top:14px;background:var(--green-bg);border-radius:9px;padding:12px;font:500 13px/1.55 'Pretendard',sans-serif;color:var(--green)">
@@ -444,14 +416,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <span class="gc-badge gc-b-curr">현재 등급</span>
         <div class="gc-ico" style="font-size:28px;margin-bottom:8px">⚡</div>
         <div class="gc-name">Active</div>
-        <div class="gc-cond">누적 73건 판매 완료</div>
+        <div class="gc-cond">누적 0건 판매 완료</div>
         <div class="prog-wrap">
           <div class="prog-top">
-            <span style="color:rgba(255,255,255,.6)">Pro까지</span>
-            <span style="color:#fff">73 / 50건</span>
+            <span style="color:rgba(255,255,255,.6)">Active까지</span>
+            <span style="color:#fff">0 / 10건</span>
           </div>
-          <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
-          <div class="prog-label" style="margin-top:5px">🎉 Pro 달성 조건 충족! 곧 승급 예정</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
+          <div class="prog-label" style="margin-top:5px">링크를 생성하고 첫 판매를 시작하세요!</div>
         </div>
       </div>
       <div class="grade-card grade-next">
@@ -491,16 +463,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 링크 관리 -->
   <div class="page content" id="pg-links">
     <div class="card">
-      <div class="card-h"><div class="card-t">내 전체 링크 3개</div><button class="btn-primary" onclick="location.href='product-explore.html'">+ 링크 생성</button></div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>판매</th><th>수익</th><th>전환율</th><th>상태</th></tr></thead>
-          <tbody>
-            <tr><td class="td-b">💊 단백질 쉐이크</td><td class="td-m">jane-protein</td><td>1,241</td><td>38건</td><td class="td-b" style="color:var(--green)">₩239,400</td><td>3.1%</td><td><span class="badge bg">활성</span></td></tr>
-            <tr><td class="td-b">🥗 슈퍼푸드</td><td class="td-m">jane-greens</td><td>982</td><td>24건</td><td class="td-b" style="color:var(--green)">₩109,440</td><td>2.4%</td><td><span class="badge bg">활성</span></td></tr>
-            <tr><td class="td-b">💪 BCAA</td><td class="td-m">jane-bcaa</td><td>618</td><td>11건</td><td class="td-b" style="color:var(--green)">₩31,900</td><td>1.8%</td><td><span class="badge bg">활성</span></td></tr>
-          </tbody>
-        </table>
+      <div class="card-h"><div class="card-t">내 전체 링크</div><button class="btn-primary" onclick="location.href='product-explore.html'">+ 링크 생성</button></div>
+      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">🔗</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 생성된 링크가 없습니다</div>
+        <div style="font-size:13px">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
       </div>
     </div>
   </div>
@@ -618,6 +585,39 @@ document.addEventListener('click', e => {
 });
 
 function doLogout(){ localStorage.removeItem('vingly_user'); location.href='login.html'; }
+
+// ── 실제 링크 데이터 로드 ──
+function loadLinks() {
+  const user = JSON.parse(localStorage.getItem("vingly_user") || "{}");
+  const allLinks = JSON.parse(localStorage.getItem("vingly_links") || "[]");
+  const links = allLinks.filter(l => l.creatorEmail === user.email);
+  if (links.length === 0) return;
+  const totalRevenue = links.reduce((s,l) => s+l.revenue, 0);
+  const totalSales   = links.reduce((s,l) => s+l.sales, 0);
+  const totalClicks  = links.reduce((s,l) => s+l.clicks, 0);
+  const sv = document.querySelectorAll("#pg-dashboard .sc-val");
+  if(sv[0]){sv[0].textContent="₩"+totalRevenue.toLocaleString();sv[0].style.color="var(--green)";}
+  if(sv[1]) sv[1].textContent=totalSales+"건";
+  if(sv[2]) sv[2].textContent=totalClicks.toLocaleString();
+  if(sv[3]){sv[3].textContent="₩"+totalRevenue.toLocaleString();sv[3].style.color="var(--green)";}
+  const dashLinkCard = document.querySelector("#pg-dashboard .card:last-child");
+  if(dashLinkCard){
+    const emptyDiv = dashLinkCard.querySelector("div[style*=text-align]");
+    if(emptyDiv) emptyDiv.innerHTML = links.slice(0,3).map(l=>`<div class="link-item"><div class="link-ico">🔗</div><div class="link-info"><div class="link-name">${l.productName}</div><div class="link-url">${l.url} · ${l.sales}건</div></div><div class="link-stats"><div class="link-earn">₩${l.revenue.toLocaleString()}</div><div class="link-meta">건당 ₩${l.earnPerSale.toLocaleString()}</div></div></div>`).join("");
+  }
+  const ls = document.getElementById("pg-links");
+  if(ls){
+    const h = ls.querySelector(".card-h .card-t"); if(h) h.textContent="내 전체 링크 "+links.length+"개";
+    const empty = ls.querySelector("div[style*=text-align]"); if(empty) empty.remove();
+    if(!ls.querySelector("table")){
+      const tw=document.createElement("div"); tw.className="tw";
+      tw.innerHTML=`<table><thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>판매</th><th>수익</th><th>건당</th><th>상태</th></tr></thead><tbody></tbody></table>`;
+      ls.querySelector(".card").appendChild(tw);
+    }
+    ls.querySelector("table tbody").innerHTML=links.map(l=>`<tr><td class="td-b">${l.productName}</td><td class="td-m" style="font-size:11px">${l.url}</td><td>${l.clicks}</td><td>${l.sales}건</td><td class="td-b" style="color:var(--green)">₩${l.revenue.toLocaleString()}</td><td>₩${l.earnPerSale.toLocaleString()}</td><td><span class="badge bg">활성</span></td></tr>`).join("");
+  }
+}
+document.addEventListener("DOMContentLoaded", loadLinks);
 
 // 수익 계산기
 function calcInfl() {
@@ -740,32 +740,16 @@ function copyShareUrl() {
   </div>
 </div>
 
-<!-- FOMO 판매 알림 -->
-<div id="fomoNotif" style="position:fixed;bottom:80px;left:20px;z-index:888;background:var(--white);border:1px solid var(--ink-14);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-width:260px;transform:translateX(-120%);transition:transform .4s cubic-bezier(.22,1,.36,1);pointer-events:none">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="width:36px;height:36px;border-radius:9px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💸</div>
-    <div>
-      <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--ink)" id="fomoName">뷰티제인</div>
-      <div style="font:500 11px/1.4 'Pretendard',sans-serif;color:var(--green);margin-top:3px" id="fomoMsg">방금 ₩4,500 수익 발생</div>
-    </div>
-  </div>
-</div>
+<!-- FOMO 판매 알림 (실 데이터 연동 전 비활성) -->
+<div id="fomoNotif" style="display:none"></div>
 
 <!-- 알림 패널 -->
 <div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
   <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
   <div style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto">
-    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:#00B37E;flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">새 판매 발생</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">뷰티제인 크리에이터 · 단백질 쉐이크 1건</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">방금 전</div></div>
-    </div>
-    <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:#1D4ED8;flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:#0A0C10;margin-bottom:3px">정산 예정 알림</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5)">이번 달 정산이 6월 30일 처리됩니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">오늘</div></div>
-    </div>
-    <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-start">
-      <div style="width:8px;height:8px;border-radius:50%;background:rgba(10,12,16,.2);flex-shrink:0;margin-top:5px"></div>
-      <div><div style="font:600 13px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.5);margin-bottom:3px">Vingly 업데이트</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:rgba(10,12,16,.4)">새 기능이 추가됐습니다</div><div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.3);margin-top:4px">어제</div></div>
+    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
+      <div style="font-size:24px;margin-bottom:8px">🔔</div>
+      <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
     </div>
   </div>
 </div>

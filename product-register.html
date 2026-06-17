@@ -666,6 +666,29 @@ async function submitProduct() {
     });
   } catch(e) { console.log('Sheets 저장:', e); }
 
+  // localStorage 저장 (대시보드 연동용)
+  const user = JSON.parse(localStorage.getItem("vingly_user") || "{}");
+  const productEntry = {
+    id: "p_" + Date.now(),
+    name: data.name,
+    price: Number(data.price),
+    category: data.category,
+    description: data.description,
+    commissionRate: Number(data.commissionRate),
+    stock: Number(data.stock),
+    tags: data.tags,
+    brandEmail: user.email || "",
+    brandName: user.name || "",
+    status: "active",
+    sales: 0,
+    revenue: 0,
+    creatorCount: 0,
+    registeredAt: data.registeredAt,
+  };
+  const existing = JSON.parse(localStorage.getItem("vingly_products") || "[]");
+  existing.push(productEntry);
+  localStorage.setItem("vingly_products", JSON.stringify(existing));
+
   // 성공 화면
   document.getElementById('reviewCard').style.display = 'none';
   document.getElementById('successWrap').classList.add('on');

@@ -241,20 +241,51 @@ body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--t);dis
 </div>
 
 <script>
-const products = [
-  {id:1,name:"단백질 쉐이크 바닐라 1kg",brand:"헬시팜",cat:"헬스·운동",price:42000,comm:15,emoji:"💊",color:"c1",tag:"hot",sales:152,linked:true,desc:"운동 후 빠른 단백질 보충을 위한 프리미엄 쉐이크. 유청단백질 25g, 설탕 0g. 바닐라 맛으로 부담없이 즐길 수 있습니다.",ship:"무료",days:"1~2일"},
-  {id:2,name:"그린 슈퍼푸드 파우더 300g",brand:"헬시팜",cat:"식품·건강",price:38000,comm:12,emoji:"🥗",color:"c2",tag:"",sales:98,linked:true,desc:"케일, 시금치, 브로콜리 등 10가지 채소를 동결건조한 슈퍼푸드 파우더. 하루 한 스푼으로 채소 섭취량 충족.",ship:"무료",days:"1~2일"},
-  {id:3,name:"BCAA 레몬맛 500g",brand:"헬시팜",cat:"헬스·운동",price:29000,comm:10,emoji:"💪",color:"c3",tag:"",sales:48,linked:true,desc:"운동 중 근육 손실 방지와 빠른 회복을 위한 BCAA. 레몬 맛으로 상큼하게 즐길 수 있습니다.",ship:"무료",days:"1~2일"},
-  {id:4,name:"마그네슘 수면 젤리",brand:"헬시팜",cat:"식품·건강",price:24000,comm:18,emoji:"🧴",color:"c2",tag:"new",sales:0,linked:false,desc:"수면 질 개선을 위한 마그네슘 젤리. 취침 30분 전 2개 섭취. 멜라토닌 무첨가, 어린이도 안전.",ship:"무료",days:"2~3일"},
-  {id:5,name:"유기농 스피루리나 정 180정",brand:"그린팜",cat:"식품·건강",price:35000,comm:20,emoji:"🌿",color:"c2",tag:"new",sales:0,linked:false,desc:"인증된 유기농 스피루리나. 단백질, 철분, 비타민 B12 풍부. 채식주의자에게 특히 추천.",ship:"3,000원",days:"2~3일"},
-  {id:6,name:"쿠션 러닝화 블랙 270mm",brand:"스포런",cat:"헬스·운동",price:89000,comm:12,emoji:"🏃",color:"c1",tag:"",sales:12,linked:false,desc:"초경량 쿠션 러닝화. 400g의 가벼운 무게로 장거리 달리기에 최적화. 미끄럼 방지 아웃솔.",ship:"무료",days:"1~2일"},
-  {id:7,name:"비타민D 고함량 2000IU",brand:"뉴트리진",cat:"식품·건강",price:28000,comm:15,emoji:"☀️",color:"c3",tag:"hot",sales:67,linked:false,desc:"햇볕 부족한 현대인을 위한 고함량 비타민D. 면역력 강화, 뼈 건강 지원. 1일 1정.",ship:"무료",days:"1~2일"},
-  {id:8,name:"쉐이커 보틀 700ml",brand:"헬시팜",cat:"헬스·운동",price:15000,comm:8,emoji:"🥤",color:"c1",tag:"",sales:34,linked:false,desc:"BPA Free 소재. 눈금 표시 있어 정확한 용량 계량 가능. 스테인리스 볼 포함.",ship:"3,000원",days:"1~2일"},
-  {id:9,name:"콜라겐 드링크 10병 세트",brand:"뷰티인",cat:"뷰티·스킨케어",price:45000,comm:22,emoji:"✨",color:"c4",tag:"new",sales:0,linked:false,desc:"저분자 콜라겐 5,000mg + 비타민C 함유. 피부 탄력과 수분 개선. 복숭아 맛.",ship:"무료",days:"1~2일"},
-  {id:10,name:"무선 폼롤러 진동 4단계",brand:"스포런",cat:"헬스·운동",price:68000,comm:14,emoji:"🔵",color:"c1",tag:"hot",sales:29,linked:false,desc:"4단계 진동 강도 조절. 1회 충전으로 3시간 사용. 근막 이완과 피로 회복에 효과적.",ship:"무료",days:"2~3일"},
-  {id:11,name:"요가 매트 TPE 6mm",brand:"그린팜",cat:"헬스·운동",price:32000,comm:11,emoji:"🧘",color:"c2",tag:"",sales:19,linked:false,desc:"친환경 TPE 소재. 미끄럼 방지 양면 패턴. 접이식으로 보관 용이. 1830×610mm.",ship:"무료",days:"2~3일"},
-  {id:12,name:"아보카도 오일 스킨 세럼",brand:"뷰티인",cat:"뷰티·스킨케어",price:38000,comm:18,emoji:"🌱",color:"c4",tag:"new",sales:0,linked:false,desc:"냉압착 아보카도 오일 추출 세럼. 건성·민감성 피부 수분 공급. 비건 인증.",ship:"무료",days:"1~2일"},
-];
+// localStorage에서 실제 등록 제품 로드
+function loadRealProducts() {
+  const stored = JSON.parse(localStorage.getItem('vingly_products') || '[]');
+  return stored.map((p, i) => ({
+    id: p.id || ('r_' + i),
+    name: p.name,
+    brand: p.brandName || '브랜드',
+    cat: categoryLabel(p.category),
+    price: p.price,
+    comm: p.commissionRate,
+    emoji: categoryEmoji(p.category),
+    color: 'c' + ((i % 4) + 1),
+    tag: i === 0 ? 'new' : '',
+    sales: p.sales || 0,
+    linked: false,
+    desc: p.description || '',
+    ship: '무료',
+    days: '2~3일',
+  }));
+}
+
+function categoryLabel(cat) {
+  const map = {
+    'health': '헬스·운동', '헬스·식품': '헬스·운동',
+    'beauty': '뷰티·스킨케어', '뷰티·스킨케어': '뷰티·스킨케어',
+    'fashion': '패션·의류', 'life': '생활·홈',
+    'digital': '디지털·전자', 'baby': '유아·육아',
+    'pet': '펫·동물', 'hobby': '취미·레저',
+  };
+  return map[cat] || cat || '기타';
+}
+
+function categoryEmoji(cat) {
+  const map = {
+    'health': '💊', '헬스·식품': '💊',
+    'beauty': '💄', '뷰티·스킨케어': '💄',
+    'fashion': '👗', 'life': '🏠',
+    'digital': '📱', 'baby': '🍼',
+    'pet': '🐾', 'hobby': '🎮',
+  };
+  return map[cat] || '📦';
+}
+
+const realProducts = loadRealProducts();
+const products = realProducts.length > 0 ? realProducts : [];
 
 let currentCat = '전체';
 let currentProduct = null;
@@ -262,6 +293,16 @@ let currentProduct = null;
 function render() {
   const grid = document.getElementById('prodGrid');
   const search = document.querySelector('.search-inp').value.toLowerCase();
+
+  if (products.length === 0) {
+    document.getElementById('prodCount').textContent = '0개';
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-ico">🌱</div>
+      <div class="empty-t">아직 등록된 제품이 없어요</div>
+      <div class="empty-d">셀러가 제품을 등록하면 바로 여기에 나타납니다<br>파일럿 기간 중 수수료 0% · 크리에이터도 수익 100% 수령</div>
+    </div>`;
+    return;
+  }
   const filtered = products.filter(p => {
     const catMatch = currentCat === '전체' || p.cat === currentCat;
     const searchMatch = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
@@ -335,12 +376,37 @@ function generateLink(id) {
   setTimeout(() => {
     const p = products.find(x => x.id === id);
     p.linked = true;
+    const user = JSON.parse(localStorage.getItem('vingly_user') || '{}');
+    const slug = (user.name || 'creator').replace(/\s/g,'').toLowerCase() + '-' + p.name.split(' ')[0].toLowerCase();
+    const linkUrl = `vingly.kr/j/${slug}`;
     document.getElementById('linkResult').classList.add('on');
-    document.getElementById('linkUrl').textContent = `vingly.kr/j/jane-${p.name.split(' ')[0].toLowerCase()}`;
+    document.getElementById('linkUrl').textContent = linkUrl;
     btn.textContent = '✓ 링크 생성 완료!';
     btn.style.background = 'var(--bg-g)';
     btn.style.color = 'var(--g)';
     btn.style.opacity = '1';
+
+    // localStorage에 링크 저장 (influencer-dashboard 연동)
+    const linkEntry = {
+      id: 'l_' + Date.now(),
+      productId: p.id,
+      productName: p.name,
+      brand: p.brand,
+      price: p.price,
+      commissionRate: p.comm,
+      earnPerSale: Math.round(p.price * p.comm / 100),
+      url: linkUrl,
+      clicks: 0,
+      sales: 0,
+      revenue: 0,
+      createdAt: new Date().toLocaleString('ko-KR'),
+      creatorEmail: user.email || '',
+    };
+    const links = JSON.parse(localStorage.getItem('vingly_links') || '[]');
+    const already = links.findIndex(l => l.productId === p.id && l.creatorEmail === user.email);
+    if (already >= 0) links[already] = linkEntry; else links.push(linkEntry);
+    localStorage.setItem('vingly_links', JSON.stringify(links));
+
     render();
   }, 800);
 }
