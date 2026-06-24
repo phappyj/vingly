@@ -360,6 +360,11 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   transform:translateY(100%);transition:transform .4s cubic-bezier(.22,1,.36,1);
 }
 .sticky-cta.visible{transform:translateY(0)}
+/* sticky-cta가 보일 때 footer 아래 여백 확보 */
+body.has-sticky-cta footer { padding-bottom: 90px; }
+@media(max-width:768px){
+  body.has-sticky-cta footer { padding-bottom: 130px; }
+}
 .sca-left{display:flex;flex-direction:column;gap:3px}
 .sca-title{font:700 14px/1 'Pretendard',sans-serif;color:#fff}
 .sca-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.68)}
@@ -1076,7 +1081,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 </section>
 
 <!-- ABOUT SECTION -->
-<section class="section" style="padding-bottom:100px">
+<section class="section" style="padding-bottom:140px">
   <div class="wrap">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center" class="reveal">
 
@@ -1295,12 +1300,14 @@ function closeDrawer() {
     const hero = document.querySelector('.hero');
     if(!cta) return;
     // 로그인 상태면 CTA 숨김
-    if(localStorage.getItem('vingly_user')) { cta.style.display='none'; return; }
+    if(sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user')) { cta.style.display='none'; return; }
     let shown = false;
     window.addEventListener('scroll', function() {
       const heroH = hero ? hero.offsetHeight : 600;
       if(window.scrollY > heroH * 0.6 && !shown){
-        cta.classList.add('visible'); shown = true;
+        cta.classList.add('visible');
+        document.body.classList.add('has-sticky-cta');
+        shown = true;
       }
     });
   });
