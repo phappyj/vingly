@@ -598,38 +598,62 @@ async function saveToSheets(data) {
 }
 
 function showSuccess(data) {
-  // 모든 스텝 숨기기
   ['s1','s2','s3','s4'].forEach(id=>g(id).classList.remove('on'));
   g('successScreen').classList.add('on');
-  // 네비 완료
   [1,2,3,4].forEach(n=>updateNav(n,'done'));
 
   if(data.role==='brand') {
     g('s_badge').className='s-badge sb-b';
-    g('s_badge').textContent='🏷️ 브랜드 등록 완료';
-    g('s_desc').innerHTML=`${data.name}님, Vingly 브랜드로 등록됐습니다.<br>담당자가 24시간 내 연락드립니다.`;
-    g('s_steps').innerHTML=
-      '<div class="ns-item"><span>1.</span><span>입력하신 이메일로 안내 메일이 발송됩니다.</span></div>'+
-      '<div class="ns-item"><span>2.</span><span>제품 등록 후 크리에이터 자동 매칭이 시작됩니다.</span></div>'+
-      '<div class="ns-item"><span>3.</span><span>대시보드에서 판매 현황을 실시간으로 확인하세요.</span></div>';
-    g('goBtn').textContent='브랜드 대시보드로 →';
+    g('s_badge').textContent='🏷️ 브랜드·셀러 얼리버드 등록 완료';
+    g('s_desc').innerHTML=`<strong>${data.name}</strong>님, 환영합니다!<br>파일럿 기간 동안 <strong style="color:#1D4ED8">수수료 혜택이 영구 적용</strong>됩니다.`;
+    g('s_steps').innerHTML=`
+      <div class="ns-item"><span>✅</span><span>가입 확인 메일이 <strong>${data.email}</strong>로 발송됩니다.</span></div>
+      <div class="ns-item"><span>📦</span><span>제품을 등록하면 크리에이터 자동 매칭이 시작됩니다.</span></div>
+      <div class="ns-item"><span>💸</span><span>파일럿 기간 중 Vingly 거래 수수료 <strong>0원</strong> — 정식 전환 후 얼리버드 1.5% 영구 고정.</span></div>
+      <div class="ns-item"><span>🔒</span><span>결제 시스템은 사업자 등록 완료 후 활성화됩니다. 그 전까지 제품·크리에이터 연결을 미리 준비하세요.</span></div>`;
+    g('goBtn').textContent='브랜드 대시보드로 가기 →';
+    g('goBtn').style.background='#1D4ED8';
+    // 보조 버튼 추가
+    g('successScreen').insertAdjacentHTML('beforeend', `
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button onclick="location.href='product-register.html'" style="padding:10px 20px;border-radius:10px;background:#EEF3FD;color:#1D4ED8;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">📦 제품 등록하러 가기</button>
+        <button onclick="shareVingly()" style="padding:10px 20px;border-radius:10px;background:#FEE500;color:#000;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">💬 카카오로 공유하기</button>
+      </div>`);
   } else {
     g('s_badge').className='s-badge sb-g';
     g('s_badge').textContent='⭐ 얼리버드 크리에이터 등록 완료';
-    g('s_desc').innerHTML=`${data.name}님, 얼리버드로 등록됐습니다.<br>수수료 100% 혜택이 적용됩니다.`;
-    g('s_steps').innerHTML=
-      '<div class="ns-item"><span>1.</span><span>얼리버드 확인 메일이 발송됩니다.</span></div>'+
-      '<div class="ns-item"><span>2.</span><span>제품 탐색에서 원하는 제품을 골라 링크를 생성하세요.</span></div>'+
-      '<div class="ns-item"><span>3.</span><span>링크를 내 채널에 공유하면 바로 판매 시작입니다.</span></div>';
-    g('goBtn').textContent='크리에이터 대시보드로 →';
+    g('s_desc').innerHTML=`<strong>${data.name}</strong>님, 환영합니다!<br>크리에이터 수수료 <strong style="color:#00B37E">0% 혜택이 영구 적용</strong>됩니다.`;
+    g('s_steps').innerHTML=`
+      <div class="ns-item"><span>✅</span><span>가입 확인 메일이 <strong>${data.email}</strong>로 발송됩니다.</span></div>
+      <div class="ns-item"><span>🛍️</span><span>제품 탐색에서 내 채널에 맞는 제품을 골라 링크를 생성하세요. <strong>30초</strong>면 됩니다.</span></div>
+      <div class="ns-item"><span>📱</span><span>링크를 SNS에 공유하면 판매 즉시 수익이 쌓입니다.</span></div>
+      <div class="ns-item"><span>💸</span><span>매월 말 등록 계좌로 자동 입금 — Vingly는 크리에이터 수익에서 <strong>수수료를 받지 않습니다.</strong></span></div>`;
+    g('goBtn').textContent='크리에이터 대시보드로 가기 →';
+    g('goBtn').style.background='#00B37E';
+    g('successScreen').insertAdjacentHTML('beforeend', `
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button onclick="showPage && showPage('products',null) || location.href='influencer-dashboard.html'" style="padding:10px 20px;border-radius:10px;background:#E6FBF4;color:#00B37E;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">🛍️ 제품 탐색 바로가기</button>
+        <button onclick="shareVingly()" style="padding:10px 20px;border-radius:10px;background:#FEE500;color:#000;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">💬 친구에게 공유하기</button>
+      </div>`);
   }
 }
 
 function goDashboard() {
-  const u = JSON.parse(localStorage.getItem('vingly_user')||'{}');
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const u = JSON.parse(raw || '{}');
   if(u.role==='brand')       location.href='brand-dashboard.html';
-  else if(u.role==='creator') location.href='influencer-dashboard.html';
+  else if(u.role==='influencer') location.href='influencer-dashboard.html';
   else location.href='index.html';
+}
+
+function shareVingly() {
+  const url = 'https://vingly.kr';
+  const msg = '팔로워 100명부터 링크 하나로 수익 만드는 Vingly 얼리버드 가입했어요! 지금 가입하면 수수료 혜택 영구 적용 🔥';
+  if(navigator.share) {
+    navigator.share({ title:'Vingly 얼리버드', text:msg, url }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(msg + '\n' + url).then(()=>alert('링크가 복사됐어요! SNS에 붙여넣어 공유해보세요 🎉')).catch(()=>{});
+  }
 }
 </script>
 
