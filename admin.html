@@ -146,6 +146,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .page{padding:14px 16px}
   .topbar{padding:0 16px}
 }
+/* SETTINGS */
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--br)}
+.sr-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.sr-sub{font-size:12px;color:var(--tm)}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--br);display:flex;align-items:center;padding:2px;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--gl)}
+.tog-dot{width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle.on .tog-dot{transform:translateX(20px)}
+.faq-item{background:var(--bg);border-radius:9px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative}
+.faq-del{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--tm)}
+.faq-del:hover{color:var(--r2)}
+.faq-q{width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--br);font-size:13px;font-weight:600;font-family:inherit;background:var(--sf);outline:none}
+.faq-a{width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--br);font-size:12px;color:var(--ts);font-family:inherit;background:var(--sf);resize:vertical;min-height:60px;outline:none}
+/* MEMBER MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal-box{background:var(--sf);border-radius:16px;padding:28px;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--tm)}
+.mfield{margin-bottom:12px}
+.mfield label{display:block;font-size:12px;color:var(--tm);margin-bottom:4px;font-weight:600}
+.mfield input,.mfield select{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit;background:var(--bg)}
+.mfield input:focus,.mfield select:focus{border-color:var(--b);outline:none;background:var(--sf)}
 </style>
 <link rel="stylesheet" href="vingly-common.css">
 <!-- Google Analytics -->
@@ -339,39 +362,128 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- SETTINGS -->
   <div class="page" id="pg-settings">
-    <div class="g2">
-      <div class="card">
-        <div class="card-h"><div class="card-t">⚙️ 플랫폼 설정</div></div>
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
-            <div><div style="font-size:13px;font-weight:600">파일럿 모드</div><div style="font-size:12px;color:var(--tm)">수수료 0%, 이용료 무료</div></div>
-            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
-            <div><div style="font-size:13px;font-weight:600">신규 가입 허용</div><div style="font-size:12px;color:var(--tm)">가입 신청 받기</div></div>
-            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br)">
-            <div><div style="font-size:13px;font-weight:600">자동 정산</div><div style="font-size:12px;color:var(--tm)">매월 말일 자동 실행</div></div>
-            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-            <div><div style="font-size:13px;font-weight:600">AI 자동 매칭</div><div style="font-size:12px;color:var(--tm)">제품-인플루언서 자동 연결</div></div>
-            <div style="width:44px;height:24px;border-radius:12px;background:var(--g);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="toggleSwitch(this)"><div style="width:20px;height:20px;border-radius:50%;background:#fff;margin-left:auto;transition:margin .2s"></div></div>
+
+    <!-- 관리자 보안 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-h"><div class="card-t">🔐 관리자 보안</div></div>
+      <div class="g2" style="gap:20px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">관리자 비밀번호 변경</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input class="linp" type="password" id="pw_current" placeholder="현재 비밀번호" style="margin:0">
+            <input class="linp" type="password" id="pw_new" placeholder="새 비밀번호 (8자 이상)" style="margin:0">
+            <input class="linp" type="password" id="pw_confirm" placeholder="새 비밀번호 확인" style="margin:0">
+            <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%" onclick="changeAdminPw()">비밀번호 변경</button>
+            <div id="pw_msg" style="font-size:12px;display:none"></div>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><div class="card-t">💰 수수료 정책</div></div>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">파일럿 수수료 (현재)</div><div style="font-size:18px;font-weight:700;color:var(--g)">0% (무료)</div></div>
-          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">전환 후 일반 수수료</div><div style="font-size:18px;font-weight:700;color:var(--b)">3%</div></div>
-          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">얼리버드 영구 수수료</div><div style="font-size:18px;font-weight:700;color:var(--b)">1.5%</div></div>
-          <div><div style="font-size:12px;color:var(--tm);margin-bottom:4px">수수료 전환 트리거</div><div style="font-size:14px;font-weight:600">판매자 1,000명 달성 시</div></div>
-          <div style="background:var(--bg);border-radius:8px;padding:10px;font-size:12px;color:var(--ts)">현재 0명 / 수동 전환도 가능</div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">관리자 아이디 변경</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:13px;color:var(--ts);background:var(--bg);padding:10px 12px;border-radius:8px">현재 아이디: <strong id="cur_admin_id">admin</strong></div>
+            <input class="linp" type="text" id="new_admin_id" placeholder="새 아이디" style="margin:0">
+            <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%" onclick="changeAdminId()">아이디 변경</button>
+            <div id="id_msg" style="font-size:12px;display:none"></div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 플랫폼 설정 -->
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-h"><div class="card-t">⚙️ 플랫폼 운영 설정</div></div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div class="setting-row">
+            <div><div class="sr-title">파일럿 모드</div><div class="sr-sub">수수료 0%, 이용료 무료</div></div>
+            <div class="toggle on" id="tog_pilot" onclick="toggleSetting(this,'pilot')"><div class="tog-dot"></div></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="sr-title">신규 가입 허용</div><div class="sr-sub">OFF 시 가입 페이지 차단</div></div>
+            <div class="toggle on" id="tog_signup" onclick="toggleSetting(this,'signup')"><div class="tog-dot"></div></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="sr-title">서비스 점검 모드</div><div class="sr-sub">ON 시 메인에 점검 배너 표시</div></div>
+            <div class="toggle" id="tog_maintenance" onclick="toggleSetting(this,'maintenance')"><div class="tog-dot"></div></div>
+          </div>
+          <div class="setting-row" style="border:none">
+            <div><div class="sr-title">결제 활성화</div><div class="sr-sub">사업자·통신판매업 신고 후 ON</div></div>
+            <div class="toggle" id="tog_payment" onclick="toggleSetting(this,'payment')"><div class="tog-dot"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">💰 수수료 정책 설정</div></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">일반 수수료율 (%)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="fee_normal" min="0" max="20" step="0.1" value="3" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">% (정식 전환 후 적용)</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">얼리버드 영구 수수료율 (%)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="fee_early" min="0" max="20" step="0.1" value="1.5" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">%</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">얼리버드 목표 인원</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="fee_target" min="100" max="10000" step="100" value="1000" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">명</span>
+            </div>
+          </div>
+          <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%;margin-top:4px" onclick="saveFeePolicy()">수수료 정책 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 사이트 콘텐츠 관리 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-h"><div class="card-t">📝 사이트 콘텐츠 관리</div><div style="font-size:12px;color:var(--tm)">저장 시 메인 페이지에 즉시 반영</div></div>
+      <div class="g2" style="gap:16px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">공지 배너 문구 (랜딩 상단)</div>
+            <input type="text" id="banner_text" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="예: 파일럿 오픈 중 · 얼리버드 무료 혜택">
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">얼리버드 배지 문구</div>
+            <input type="text" id="badge_text" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="예: ⚡ 얼리버드 · 수수료 0%">
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">점검 안내 문구</div>
+            <input type="text" id="maintenance_text" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="예: 서비스 점검 중입니다. 잠시 후 이용해주세요.">
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">크리에이터 수수료 안내 문구</div>
+            <input type="text" id="creator_fee_text" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="예: 크리에이터 수수료 0% 영구 적용">
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">브랜드 수수료 안내 문구</div>
+            <input type="text" id="brand_fee_text" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="예: 거래 수수료 1.5% (얼리버드 영구)">
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:5px">문의 이메일</div>
+            <input type="email" id="contact_email" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:13px;font-family:inherit" placeholder="vingly.official@gmail.com">
+          </div>
+        </div>
+      </div>
+      <button class="act-btn green" style="padding:10px 20px;font-size:13px;margin-top:14px" onclick="saveContent()">콘텐츠 저장</button>
+    </div>
+
+    <!-- FAQ 관리 -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">❓ FAQ 관리</div><button class="act-btn" style="padding:6px 14px;font-size:12px" onclick="addFaq()">+ 항목 추가</button></div>
+      <div id="faq_list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+      <div id="faq_empty" style="text-align:center;padding:20px;color:var(--tm);font-size:13px">FAQ 항목이 없습니다</div>
+    </div>
+
   </div>
 
   <!-- 신고·분쟁 처리 -->
@@ -394,6 +506,38 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- 회원 상세/수정 모달 -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>👤 회원 상세 · 수정</span>
+      <button class="modal-close" onclick="closeMemberModal()">✕</button>
+    </div>
+    <div class="mfield"><label>이름</label><input type="text" id="m_name"></div>
+    <div class="mfield"><label>이메일</label><input type="email" id="m_email"></div>
+    <div class="mfield"><label>역할</label>
+      <select id="m_role">
+        <option value="brand">브랜드·셀러</option>
+        <option value="influencer">인플루언서</option>
+      </select>
+    </div>
+    <div class="mfield"><label>비밀번호 재설정 (입력 시 변경)</label><input type="password" id="m_pw" placeholder="빈칸이면 변경 안 됨"></div>
+    <div class="mfield"><label>상태</label>
+      <select id="m_status">
+        <option value="active">정상</option>
+        <option value="suspended">정지</option>
+        <option value="deleted">탈퇴</option>
+      </select>
+    </div>
+    <input type="hidden" id="m_idx">
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="act-btn green" style="flex:1;padding:11px" onclick="saveMember()">저장</button>
+      <button class="act-btn red" style="padding:11px 16px" onclick="deleteMember()">삭제</button>
+      <button class="act-btn" style="padding:11px 16px" onclick="closeMemberModal()">취소</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // 관리자 인증 — 비밀번호는 코드에 노출하지 않고 해시로 비교
@@ -425,8 +569,9 @@ async function doLogin() {
     if (id === 'admin' && tempHash === defaultHash) {
       sessionStorage.setItem('vingly_admin', '1');
       document.getElementById('loginScreen').style.display = 'none';
-      showToast('⚠️ 초기 비밀번호입니다. 콘솔에서 setAdminPw("새비밀번호") 실행하세요.');
+      showToast('⚠️ 초기 비밀번호입니다. 시스템 설정에서 변경해주세요.');
       loadAdminData();
+      loadSettings();
       return;
     }
   } else {
@@ -436,6 +581,7 @@ async function doLogin() {
       document.getElementById('loginScreen').style.display = 'none';
       showToast('관리자로 로그인했습니다 ✓');
       loadAdminData();
+      loadSettings();
       return;
     }
   }
@@ -456,6 +602,7 @@ function logout() {
 if (sessionStorage.getItem('vingly_admin')) {
   document.getElementById('loginScreen').style.display = 'none';
   loadAdminData();
+  loadSettings();
 }
 
 // ── 실제 데이터 로드 ──
@@ -496,16 +643,17 @@ function loadAdminData() {
     if(emptyDiv) emptyDiv.remove();
     if(!membersSection.querySelector('table')) {
       const tw = document.createElement('div'); tw.className = 'tw';
-      tw.innerHTML = `<table><thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>가입일</th><th>상태</th></tr></thead><tbody></tbody></table>`;
+      tw.innerHTML = `<table><thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead><tbody></tbody></table>`;
       membersSection.querySelector('.card').appendChild(tw);
     }
-    membersSection.querySelector('table tbody').innerHTML = members.map(m => `
+    membersSection.querySelector('table tbody').innerHTML = members.map((m,i) => `
       <tr>
         <td class="td-b">${m.name}</td>
         <td><span class="badge ${m.role==='brand'?'bb2':'bg2'}">${m.role==='brand'?'브랜드':'인플루언서'}</span></td>
         <td class="td-m">${m.email}</td>
         <td class="td-m">${m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('ko-KR') : '-'}</td>
-        <td><span class="badge bg2">정상</span></td>
+        <td><span class="badge ${m.status==='suspended'?'ba2':m.status==='deleted'?'br':'bg2'}">${m.status==='suspended'?'정지':m.status==='deleted'?'탈퇴':'정상'}</span></td>
+        <td><button class="act-btn" onclick="openMemberModal(${i})">수정</button><button class="act-btn red" onclick="suspendMember(${i})">정지</button></td>
       </tr>`).join('');
   }
 }
@@ -537,12 +685,209 @@ function resolveAlert(btn, msg) {
   showToast(msg + ' ✓');
 }
 
-// 토글 스위치
-function toggleSwitch(el) {
-  const on = el.style.background === 'rgb(8, 92, 58)' || el.style.background === 'var(--g)';
-  el.style.background = on ? 'var(--br)' : 'var(--g)';
-  el.firstElementChild.style.marginLeft = on ? '0' : 'auto';
+// 토글 설정
+function toggleSetting(el, key) {
+  el.classList.toggle('on');
+  const settings = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
+  settings[key] = el.classList.contains('on');
+  localStorage.setItem('vingly_settings', JSON.stringify(settings));
+  showToast((el.classList.contains('on') ? '✅ ' : '⭕ ') + key + ' 변경됨');
 }
+
+// 설정 값 불러오기
+function loadSettings() {
+  const s = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
+  const keys = ['pilot','signup','maintenance','payment'];
+  keys.forEach(k => {
+    const el = document.getElementById('tog_' + k);
+    if(!el) return;
+    // 기본값: pilot=on, signup=on, 나머지=off
+    const def = (k === 'pilot' || k === 'signup');
+    if(s[k] === undefined ? def : s[k]) el.classList.add('on');
+    else el.classList.remove('on');
+  });
+  // 수수료 정책 불러오기
+  const fees = JSON.parse(localStorage.getItem('vingly_fees') || '{}');
+  if(fees.normal !== undefined) document.getElementById('fee_normal').value = fees.normal;
+  if(fees.early !== undefined)  document.getElementById('fee_early').value  = fees.early;
+  if(fees.target !== undefined) document.getElementById('fee_target').value = fees.target;
+  // 콘텐츠 불러오기
+  const content = JSON.parse(localStorage.getItem('vingly_content') || '{}');
+  ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && content[id]) el.value = content[id];
+  });
+  // FAQ 불러오기
+  renderFaq();
+  // 관리자 아이디
+  const adminId = localStorage.getItem('vingly_admin_id') || 'admin';
+  const cur = document.getElementById('cur_admin_id');
+  if(cur) cur.textContent = adminId;
+}
+
+// 수수료 정책 저장
+function saveFeePolicy() {
+  const fees = {
+    normal: document.getElementById('fee_normal').value,
+    early:  document.getElementById('fee_early').value,
+    target: document.getElementById('fee_target').value,
+  };
+  localStorage.setItem('vingly_fees', JSON.stringify(fees));
+  showToast('✅ 수수료 정책이 저장됐습니다');
+}
+
+// 콘텐츠 저장
+function saveContent() {
+  const content = {};
+  ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) content[id] = el.value;
+  });
+  localStorage.setItem('vingly_content', JSON.stringify(content));
+  showToast('✅ 콘텐츠가 저장됐습니다');
+}
+
+// 관리자 비밀번호 변경
+async function changeAdminPw() {
+  const cur  = document.getElementById('pw_current').value;
+  const nw   = document.getElementById('pw_new').value;
+  const conf = document.getElementById('pw_confirm').value;
+  const msg  = document.getElementById('pw_msg');
+  msg.style.display = 'block';
+
+  if(!cur || !nw || !conf) { msg.style.color = 'var(--r2)'; msg.textContent = '모든 항목을 입력해주세요'; return; }
+  if(nw.length < 8) { msg.style.color = 'var(--r2)'; msg.textContent = '새 비밀번호는 8자 이상이어야 합니다'; return; }
+  if(nw !== conf) { msg.style.color = 'var(--r2)'; msg.textContent = '새 비밀번호가 일치하지 않습니다'; return; }
+
+  const storedHash = localStorage.getItem('vingly_admin_hash');
+  const curHash = await hashPw(cur);
+  const defaultHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+  if(storedHash && curHash !== storedHash) { msg.style.color = 'var(--r2)'; msg.textContent = '현재 비밀번호가 올바르지 않습니다'; return; }
+  if(!storedHash && curHash !== defaultHash) { msg.style.color = 'var(--r2)'; msg.textContent = '현재 비밀번호가 올바르지 않습니다'; return; }
+
+  const newHash = await hashPw(nw);
+  localStorage.setItem('vingly_admin_hash', newHash);
+  msg.style.color = 'var(--gl)'; msg.textContent = '✅ 비밀번호가 변경됐습니다';
+  document.getElementById('pw_current').value = '';
+  document.getElementById('pw_new').value = '';
+  document.getElementById('pw_confirm').value = '';
+  showToast('✅ 관리자 비밀번호 변경 완료');
+}
+
+// 관리자 아이디 변경
+function changeAdminId() {
+  const nw  = document.getElementById('new_admin_id').value.trim();
+  const msg = document.getElementById('id_msg');
+  msg.style.display = 'block';
+  if(!nw || nw.length < 3) { msg.style.color = 'var(--r2)'; msg.textContent = '아이디는 3자 이상이어야 합니다'; return; }
+  localStorage.setItem('vingly_admin_id', nw);
+  document.getElementById('cur_admin_id').textContent = nw;
+  document.getElementById('new_admin_id').value = '';
+  msg.style.color = 'var(--gl)'; msg.textContent = '✅ 아이디가 변경됐습니다';
+  showToast('✅ 관리자 아이디 변경 완료');
+}
+
+// FAQ 렌더링
+function renderFaq() {
+  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
+  const list = document.getElementById('faq_list');
+  const empty = document.getElementById('faq_empty');
+  if(!list) return;
+  if(faqs.length === 0) { list.innerHTML = ''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display = 'none';
+  list.innerHTML = faqs.map((f,i) => `
+    <div class="faq-item">
+      <button class="faq-del" onclick="deleteFaq(${i})">✕</button>
+      <input class="faq-q" value="${f.q || ''}" placeholder="질문" onchange="updateFaq(${i},'q',this.value)">
+      <textarea class="faq-a" placeholder="답변" onchange="updateFaq(${i},'a',this.value)">${f.a || ''}</textarea>
+    </div>`).join('');
+}
+
+function addFaq() {
+  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
+  faqs.push({ q: '', a: '' });
+  localStorage.setItem('vingly_faq', JSON.stringify(faqs));
+  renderFaq();
+}
+
+function updateFaq(i, field, val) {
+  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
+  if(faqs[i]) { faqs[i][field] = val; localStorage.setItem('vingly_faq', JSON.stringify(faqs)); }
+}
+
+function deleteFaq(i) {
+  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
+  faqs.splice(i, 1);
+  localStorage.setItem('vingly_faq', JSON.stringify(faqs));
+  renderFaq();
+  showToast('FAQ 항목이 삭제됐습니다');
+}
+
+// 회원 모달
+function openMemberModal(idx) {
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  const m = members[idx];
+  if(!m) return;
+  document.getElementById('m_name').value   = m.name || '';
+  document.getElementById('m_email').value  = m.email || '';
+  document.getElementById('m_role').value   = m.role || 'influencer';
+  document.getElementById('m_status').value = m.status || 'active';
+  document.getElementById('m_pw').value     = '';
+  document.getElementById('m_idx').value    = idx;
+  document.getElementById('memberModal').classList.add('on');
+}
+
+function closeMemberModal() {
+  document.getElementById('memberModal').classList.remove('on');
+}
+
+function saveMember() {
+  const idx = parseInt(document.getElementById('m_idx').value);
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  if(!members[idx]) return;
+  members[idx].name   = document.getElementById('m_name').value;
+  members[idx].email  = document.getElementById('m_email').value;
+  members[idx].role   = document.getElementById('m_role').value;
+  members[idx].status = document.getElementById('m_status').value;
+  const newPw = document.getElementById('m_pw').value;
+  if(newPw) members[idx].pw = newPw;
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  closeMemberModal();
+  loadAdminData();
+  showToast('✅ 회원 정보가 수정됐습니다');
+}
+
+function deleteMember() {
+  if(!confirm('이 회원을 삭제하시겠습니까?')) return;
+  const idx = parseInt(document.getElementById('m_idx').value);
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  members.splice(idx, 1);
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  closeMemberModal();
+  loadAdminData();
+  showToast('✅ 회원이 삭제됐습니다');
+}
+
+function suspendMember(idx) {
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  if(!members[idx]) return;
+  members[idx].status = members[idx].status === 'suspended' ? 'active' : 'suspended';
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  loadAdminData();
+  showToast(members[idx].status === 'suspended' ? '⭕ 회원 정지 처리됨' : '✅ 회원 정지 해제됨');
+}
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('memberModal').addEventListener('click', function(e) {
+  if(e.target === this) closeMemberModal();
+});
+
+// settings 탭 열릴 때 값 불러오기
+const _origShowPage = showPage;
+window.showPage = function(id, btn) {
+  _origShowPage(id, btn);
+  if(id === 'settings') loadSettings();
+};
 
 // 토스트
 function showToast(msg) {
@@ -552,70 +897,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-</script>
-
-<script>
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL9g8rFh5TErh8s1oiLZwgxC1aKFFLK-ryGfsZWSiMLVEsk6TXw/exec';
-
-// Sheets에서 가입자 불러오기 (GET 요청)
-async function loadMembersFromSheets() {
-  const tbody = document.querySelector('#pg-members table tbody');
-  if(!tbody) return;
-  
-  // 로딩 표시
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">📊 가입자 데이터 불러오는 중...</td></tr>';
-  
-  try {
-    const res = await fetch(SHEETS_URL + '?action=getMembers');
-    const data = await res.json();
-    
-    if(data && data.members && data.members.length > 0) {
-      tbody.innerHTML = data.members.map((m, i) => `
-        <tr>
-          <td class="td-b">${m.name || '-'}</td>
-          <td><span class="badge ${m.role==='brand'?'bb2':'bg2'}">${m.role==='brand'?'브랜드':'인플루언서'}</span></td>
-          <td class="td-m">${m.email || '-'}</td>
-          <td class="td-m">${m.phone || '-'}</td>
-          <td class="td-m">${m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('ko-KR') : '-'}</td>
-          <td class="td-b">-</td>
-          <td><span class="badge bg2">정상</span></td>
-          <td><button class="act-btn">상세</button><button class="act-btn red">정지</button></td>
-        </tr>
-      `).join('');
-      
-      // 통계 업데이트
-      const total = data.members.length;
-      const brands = data.members.filter(m=>m.role==='brand').length;
-      const creators = total - brands;
-      
-      // 대시보드 숫자 업데이트
-      updateStat('총 회원수', total + '명');
-    } else {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">아직 가입자가 없습니다.</td></tr>';
-    }
-  } catch(e) {
-    // CORS 등 오류 시 기존 더미 데이터 유지
-    console.log('Sheets 연결:', e.message);
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--tm)">⚠️ 데이터 로드 실패 — Sheets 직접 확인하세요</td></tr>';
-  }
-}
-
-function updateStat(label, value) {
-  document.querySelectorAll('.sc-l').forEach(el => {
-    if(el.textContent.includes(label)) {
-      const valEl = el.nextElementSibling;
-      if(valEl) valEl.textContent = value;
-    }
-  });
-}
-
-// 회원 관리 탭 열릴 때 자동 로드
-const origShowPage = window.showPage;
-window.showPage = function(id, btn) {
-  origShowPage && origShowPage(id, btn);
-  if(id === 'members') loadMembersFromSheets();
-};
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin(); });
 </script>
 
 </body>
