@@ -180,13 +180,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="sb-role">공급자</div>
   </div>
   <nav class="sb-nav">
-    <button class="ni act" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
+    <button class="ni" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
     <button class="ni" onclick="showPage('products',this)"><span class="ni-ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('creators',this)"><span class="ni-ic">📱</span>크리에이터 현황</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ni-ic">💸</span>수익 및 비용</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ni-ic">🏦</span>정산 관리</button>
     <button class="ni" onclick="showPage('sample',this)"><span class="ni-ic">📦</span>샘플 관리</button>
     <div class="divr"></div>
+    <button class="ni" onclick="showPage('settings',this)"><span class="ni-ic">⚙️</span>내 설정</button>
     <a class="ni" href="product-register.html"><span class="ni-ic">➕</span>제품 등록</a>
     <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
   </nav>
@@ -304,8 +305,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 수익 및 비용 페이지 -->
   <div class="page content" id="pg-revenue">
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩4,280만</div><div class="sc-ch up">↑ 23%</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val">₩642만</div><div class="sc-ch nt">크리에이터 14명</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="rev-sales">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-commission">₩0</div><div class="sc-ch nt" id="rev-commission-sub">연결된 크리에이터 0명</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">2.2% 토스</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch g" style="color:var(--green)">파일럿 무료</div></div>
     </div>
@@ -438,7 +439,81 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </table>
       </div>
     </div>
-  </div>
+  </div><!-- /pg-sample -->
+
+  <!-- 내 설정 -->
+  <div class="page content" id="pg-settings">
+    <div style="max-width:680px">
+
+      <!-- 기본 정보 -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이름 / 브랜드명</label>
+            <input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명">
+          </div>
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label>
+            <input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="이메일">
+          </div>
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label>
+            <input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000">
+          </div>
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label>
+            <input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000">
+          </div>
+        </div>
+        <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">정보 저장</button>
+        <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
+      </div>
+
+      <!-- 비밀번호 변경 -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><div class="card-t">🔐 비밀번호 변경</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:360px">
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">현재 비밀번호</label>
+            <input type="password" id="set_pw_cur" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          </div>
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호</label>
+            <input type="password" id="set_pw_new" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          </div>
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호 확인</label>
+            <input type="password" id="set_pw_confirm" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          </div>
+          <div>
+            <button onclick="changePw()" style="padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">비밀번호 변경</button>
+            <span id="pw_msg" style="font-size:12px;margin-left:10px;display:none"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 설정 -->
+      <div class="card">
+        <div class="card-h"><div class="card-t">🔔 알림 설정</div></div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)">
+            <div><div style="font-size:13px;font-weight:600">새 판매 발생 알림</div><div style="font-size:12px;color:var(--ink-40)">크리에이터 링크로 판매 시 이메일</div></div>
+            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer;transition:background .2s" onclick="this.style.background=this.style.background===''||this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)';this.firstElementChild.style.transform=this.style.background==='rgb(0, 179, 126)'?'translateX(18px)':''"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)">
+            <div><div style="font-size:13px;font-weight:600">정산 완료 알림</div><div style="font-size:12px;color:var(--ink-40)">월 정산 처리 시 이메일</div></div>
+            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="this.style.background=this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)'"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+            <div><div style="font-size:13px;font-weight:600">크리에이터 샘플 신청 알림</div><div style="font-size:12px;color:var(--ink-40)">샘플 신청 들어올 때 이메일</div></div>
+            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="this.style.background=this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)'"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /pg-settings -->
 
 </main>
 
@@ -468,10 +543,73 @@ function showPage(id, btn) {
   document.getElementById('pg-'+id).classList.add('act');
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
   if(btn) btn.classList.add('act');
-  const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리'};
+  const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'};
   const t = titles[id] || '';
   document.getElementById('page-title').textContent = t;
   document.getElementById('mob-title').textContent = t;
+  if(id === 'settings') loadProfileSettings();
+}
+
+// ── 프로필 설정 로드 ──
+function loadProfileSettings() {
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const user = JSON.parse(raw || '{}');
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  const me = members.find(m => m.email === user.email) || user;
+  if(document.getElementById('set_name'))    document.getElementById('set_name').value    = me.name    || '';
+  if(document.getElementById('set_email'))   document.getElementById('set_email').value   = me.email   || '';
+  if(document.getElementById('set_phone'))   document.getElementById('set_phone').value   = me.phone   || '';
+  if(document.getElementById('set_bizno'))   document.getElementById('set_bizno').value   = me.bizno   || '';
+}
+
+// ── 프로필 저장 ──
+function saveProfile() {
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const user = JSON.parse(raw || '{}');
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  const idx = members.findIndex(m => m.email === user.email);
+  const updated = {
+    ...(idx >= 0 ? members[idx] : user),
+    name:  document.getElementById('set_name').value.trim(),
+    email: document.getElementById('set_email').value.trim(),
+    phone: document.getElementById('set_phone').value.trim(),
+    bizno: document.getElementById('set_bizno').value.trim(),
+  };
+  if(idx >= 0) members[idx] = updated; else members.push(updated);
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  // 세션 정보도 업데이트
+  const newSession = JSON.stringify({ ...user, name: updated.name, email: updated.email });
+  sessionStorage.setItem('vingly_user', newSession);
+  localStorage.setItem('vingly_user', newSession);
+  // 사이드바 이름 반영
+  document.getElementById('sb-name').textContent = updated.name || updated.email;
+  document.getElementById('sb-av').textContent   = (updated.name || 'U')[0];
+  const msg = document.getElementById('profile_msg');
+  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
+}
+
+// ── 비밀번호 변경 ──
+function changePw() {
+  const cur  = document.getElementById('set_pw_cur').value;
+  const nw   = document.getElementById('set_pw_new').value;
+  const conf = document.getElementById('set_pw_confirm').value;
+  const msg  = document.getElementById('pw_msg');
+  msg.style.display = 'inline';
+  if(!cur || !nw || !conf) { msg.style.color='var(--red)'; msg.textContent='모든 항목을 입력해주세요'; return; }
+  if(nw.length < 6) { msg.style.color='var(--red)'; msg.textContent='비밀번호는 6자 이상이어야 합니다'; return; }
+  if(nw !== conf)   { msg.style.color='var(--red)'; msg.textContent='새 비밀번호가 일치하지 않습니다'; return; }
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const user = JSON.parse(raw || '{}');
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  const idx = members.findIndex(m => m.email === user.email);
+  if(idx < 0 || members[idx].pw !== cur) { msg.style.color='var(--red)'; msg.textContent='현재 비밀번호가 올바르지 않습니다'; return; }
+  members[idx].pw = nw;
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  msg.style.color = 'var(--green)'; msg.textContent = '✅ 비밀번호가 변경됐습니다';
+  document.getElementById('set_pw_cur').value = '';
+  document.getElementById('set_pw_new').value = '';
+  document.getElementById('set_pw_confirm').value = '';
+  setTimeout(() => msg.style.display = 'none', 3000);
 }
 
 function approveSample(btn) {
