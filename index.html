@@ -1299,8 +1299,24 @@ function closeDrawer() {
     const cta = document.getElementById('stickyCta');
     const hero = document.querySelector('.hero');
     if(!cta) return;
-    // 로그인 상태면 CTA 숨김
-    if(sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user')) { cta.style.display='none'; return; }
+
+    // 유효한 로그인 세션인지 확인 (role이 있어야 진짜 로그인)
+    function isLoggedIn() {
+      try {
+        const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+        if(!raw) return false;
+        const u = JSON.parse(raw);
+        return !!(u && u.role && u.email);
+      } catch(e) {
+        // 깨진 데이터 자동 정리
+        sessionStorage.removeItem('vingly_user');
+        localStorage.removeItem('vingly_user');
+        return false;
+      }
+    }
+
+    if(isLoggedIn()) { cta.style.display='none'; return; }
+
     let shown = false;
     window.addEventListener('scroll', function() {
       const heroH = hero ? hero.offsetHeight : 600;
