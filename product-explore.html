@@ -74,8 +74,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--t);dis
 .search-inp{flex:1;min-width:200px;padding:11px 16px;border-radius:9px;border:1.5px solid var(--br);background:var(--bg);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
 .search-inp:focus{border-color:var(--g);background:var(--sf)}
 .sort-sel{padding:11px 14px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-family:inherit;outline:none;cursor:pointer;min-height:44px}
-.cat-scroll{display:flex;gap:8px;overflow-x:auto;pb:4px}
+.cat-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cat-scroll::-webkit-scrollbar{display:none}
+/* 제품 그리드 전환 안정화 */
+#prodGrid{transition:opacity .15s ease;min-height:200px}
 .cat-btn{padding:7px 16px;border-radius:100px;border:1.5px solid var(--br);background:var(--sf);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
 .cat-btn:hover{border-color:var(--g);color:var(--g)}
 .cat-btn.on{border-color:var(--g);background:var(--bg-g);color:var(--g);font-weight:700}
@@ -440,7 +442,14 @@ function selectCat(btn, cat) {
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   currentCat = cat;
-  render();
+  // 부드러운 필터링 — 스크롤 위치 유지
+  const grid = document.getElementById('prodGrid');
+  grid.style.opacity = '0.5';
+  grid.style.transition = 'opacity .15s';
+  setTimeout(() => {
+    render();
+    grid.style.opacity = '1';
+  }, 120);
 }
 
 function filterProducts() { render(); }

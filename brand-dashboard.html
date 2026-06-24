@@ -79,6 +79,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 /* CONTENT */
 .content{padding:24px 28px;flex:1}
 .page{display:none}
+.page.act{display:block;animation:pageShow .18s ease}
+@keyframes pageShow{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .page.act{display:block}
 
 /* ONBOARDING BANNER */
@@ -525,8 +527,32 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
       </div>
 
+      <!-- 회원 탈퇴 -->
+      <div class="card" style="border-color:var(--red-bg)">
+        <div class="card-h"><div class="card-t" style="color:var(--red)">⚠️ 회원 탈퇴</div></div>
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 등록된 제품, 수익 내역, 크리에이터 연결 정보가 모두 삭제됩니다. 정산 완료 후 탈퇴를 권장합니다.</div>
+        <button onclick="document.getElementById('withdrawModal').style.display='flex'" style="padding:10px 20px;border-radius:9px;background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bg);font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">회원 탈퇴하기</button>
+      </div>
+
     </div>
   </div><!-- /pg-settings -->
+
+  <!-- 회원 탈퇴 확인 모달 -->
+  <div id="withdrawModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:16px;padding:28px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+      <div style="font:700 16px/1 'Pretendard',sans-serif;margin-bottom:10px">⚠️ 회원 탈퇴</div>
+      <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.6);margin-bottom:16px">탈퇴 시 등록된 제품 및 모든 데이터가 삭제됩니다. 정산 미완료 건이 있는 경우 처리 후 탈퇴해주세요.</div>
+      <div style="margin-bottom:16px">
+        <label style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);display:block;margin-bottom:6px">확인을 위해 비밀번호를 입력하세요</label>
+        <input type="password" id="withdraw_pw" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(10,12,16,.14);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="현재 비밀번호">
+        <div id="withdraw_msg" style="font-size:12px;color:#991B1B;margin-top:6px;display:none"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="confirmWithdraw()" style="flex:1;padding:11px;border-radius:9px;background:#991B1B;color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">탈퇴하기</button>
+        <button onclick="document.getElementById('withdrawModal').style.display='none'" style="flex:1;padding:11px;border-radius:9px;background:rgba(10,12,16,.07);color:rgba(10,12,16,.7);border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+      </div>
+    </div>
+  </div>
 
 </main>
 
@@ -643,6 +669,29 @@ function doLogout(){
   sessionStorage.removeItem('vingly_user');
   localStorage.removeItem('vingly_user');
   location.replace('login.html');
+}
+
+// ── 회원 탈퇴 ──
+function confirmWithdraw() {
+  const pw  = document.getElementById('withdraw_pw').value;
+  const msg = document.getElementById('withdraw_msg');
+  if(!pw){ msg.style.display='block'; msg.textContent='비밀번호를 입력해주세요'; return; }
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const user = JSON.parse(raw || '{}');
+  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+  const idx = members.findIndex(m => m.email === user.email);
+  if(idx < 0 || members[idx].pw !== pw){ msg.style.display='block'; msg.textContent='비밀번호가 올바르지 않습니다'; return; }
+  // 회원 삭제
+  members.splice(idx, 1);
+  localStorage.setItem('vingly_members', JSON.stringify(members));
+  // 해당 셀러 제품도 삭제
+  const products = JSON.parse(localStorage.getItem('vingly_products') || '[]');
+  localStorage.setItem('vingly_products', JSON.stringify(products.filter(p => p.brandEmail !== user.email)));
+  // 세션 제거 후 메인으로
+  sessionStorage.removeItem('vingly_user');
+  localStorage.removeItem('vingly_user');
+  alert('탈퇴가 완료됐습니다. 이용해주셔서 감사합니다.');
+  location.replace('index.html');
 }
 
 // ── 실제 제품 데이터 로드 ──
