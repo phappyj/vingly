@@ -217,12 +217,20 @@
       <div class="section-desc">판매 대금 자동 수취 및 인플루언서 수수료 자동 지급을 위한 PG사 연동입니다.</div>
 
       <div id="tossConnect">
-        <div class="toss-card" onclick="connectToss()">
+        <!-- 결제 비활성 안내 배너 -->
+        <div style="background:#FEF9EC;border:1.5px solid #D97706;border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:18px;flex-shrink:0">🔒</span>
+          <div>
+            <div style="font:700 13px/1 'Pretendard',sans-serif;color:#92400E;margin-bottom:4px">사업자등록 및 통신판매업 신고 완료 후 활성화됩니다</div>
+            <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:#92400E">사업자등록증 발급 → 통신판매업 신고 → 이 페이지에서 연동 신청</div>
+          </div>
+        </div>
+        <div class="toss-card" onclick="connectToss()" style="opacity:.55;cursor:not-allowed;pointer-events:none">
           <div class="toss-logo">💳</div>
           <div class="toss-title">토스페이먼츠 연동하기</div>
           <div class="toss-badge">⚠️ 사업자등록 후 이용 가능</div>
           <div class="toss-desc">사업자등록 후 토스페이먼츠를 연동하면<br>판매 대금 자동 수취 + 인플루언서 수수료 자동 정산이 시작됩니다.<br>연동 수수료: 2.2% (VAT 포함)</div>
-          <button class="connect-btn">연동 신청하기 →</button>
+          <button class="connect-btn" disabled style="opacity:.5;cursor:not-allowed">연동 신청하기 (준비 중)</button>
         </div>
       </div>
 
@@ -342,10 +350,33 @@
 </div>
 
 <script>
+  function isPaymentEnabled() {
+    try {
+      const s = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
+      return s.payment === true;
+    } catch(e) { return false; }
+  }
+
   function connectToss() {
+    if(!isPaymentEnabled()) {
+      showToast('관리자 페이지에서 결제 활성화 후 이용 가능합니다');
+      return;
+    }
     document.getElementById('tossConnect').style.display = 'none';
     document.getElementById('tossConnected').classList.add('active');
   }
+
+  // BO 토글에 따라 연동 버튼 상태 초기화
+  (function(){
+    const card = document.querySelector('#tossConnect .toss-card');
+    const btn  = document.querySelector('#tossConnect .connect-btn');
+    const notice = document.querySelector('#tossConnect > div:first-child');
+    if(isPaymentEnabled()) {
+      if(card){ card.style.opacity='1'; card.style.cursor='pointer'; card.style.pointerEvents='auto'; }
+      if(btn) { btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer'; btn.textContent='연동 신청하기 →'; }
+      if(notice) notice.style.display='none';
+    }
+  })();
   function verifyAccount() {
     const btn = event.target;
     btn.textContent = '확인중...';
