@@ -76,6 +76,30 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .page{display:none}
 .page.act{display:block;animation:pageShow .18s ease}
 @keyframes pageShow{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* 내장 제품 탐색 */
+.exp-cat{padding:6px 14px;border-radius:100px;border:1.5px solid var(--ink-14);background:var(--white);font:500 12px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
+.exp-cat:hover{border-color:var(--green);color:var(--green)}
+.exp-cat.on{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:700}
+.exp-pc{background:var(--white);border:1px solid var(--ink-14);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.exp-pc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08)}
+.exp-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)}
+.exp-body{padding:12px}
+.exp-brand{font-size:11px;color:var(--ink-40);margin-bottom:3px}
+.exp-name{font:600 13px/1.35 'Pretendard',sans-serif;margin-bottom:8px}
+.exp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.exp-price{font:700 14px/1 'Pretendard',sans-serif}
+.exp-comm{font:700 11px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:3px 7px;border-radius:4px}
+.exp-btn{width:100%;padding:9px;border-radius:8px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
+.exp-btn.linked{background:var(--green-bg);color:var(--green)}
+/* 모달 내부 */
+.exp-m-thumb{height:130px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:14px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)}
+.exp-m-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.exp-m-badge{font:700 12px/1 'Pretendard',sans-serif;padding:5px 12px;border-radius:6px}
+.exp-link-box{background:var(--green-bg);border-radius:9px;padding:12px;margin-bottom:10px;display:none}
+.exp-link-box.on{display:block}
+.exp-link-url{font:700 12px/1 'Pretendard',sans-serif;color:var(--green);word-break:break-all;margin-bottom:8px}
+.exp-gen-btn{width:100%;padding:12px;border-radius:9px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
+.exp-copy-btn{width:100%;padding:9px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit}
 .page.act{display:block}
 
 /* ONBOARD */
@@ -233,7 +257,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button class="ni" onclick="showPage('grade',this)"><span class="ni-ic">⭐</span>내 등급</button>
     <div class="divr"></div>
     <button class="ni" onclick="showPage('settings',this)"><span class="ni-ic">⚙️</span>내 설정</button>
-    <a class="ni" href="product-explore.html"><span class="ni-ic">🔍</span>제품 탐색하기</a>
     <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
   </nav>
   <div class="sb-foot">
@@ -274,7 +297,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div class="ob-title">마음에 드는 제품을 골라 링크를 만들어보세요</div>
         <div class="ob-desc">30초면 내 전용 링크 완성 · 공유하면 바로 수익 시작</div>
       </div>
-      <button class="ob-btn" onclick="location.href='product-explore.html'">제품 탐색하기 →</button>
+      <button class="ob-btn" onclick="showPage('products', document.querySelector('.ni:nth-child(2)'))">제품 탐색하기 →</button>
     </div>
 
     <!-- 통계 -->
@@ -466,13 +489,48 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
   </div>
 
-  <!-- 제품 탐색 -->
+  <!-- 제품 탐색 (내장) -->
   <div class="page content" id="pg-products">
-    <div style="text-align:center;padding:48px 24px">
-      <div style="font-size:48px;margin-bottom:16px">🛍️</div>
-      <div style="font:800 22px/1 'Pretendard',sans-serif;margin-bottom:8px">제품 탐색</div>
-      <div style="font:400 14px/1.6 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:24px">전용 페이지에서 제품을 탐색하고 링크를 생성하세요</div>
-      <button class="btn-primary" onclick="location.href='product-explore.html'" style="margin:0 auto">제품 탐색하러 가기 →</button>
+
+    <!-- 검색 + 카테고리 -->
+    <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:14px;padding:16px 18px;margin-bottom:16px">
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <input id="exp-search" type="text" placeholder="🔍 제품명, 브랜드 검색..." oninput="expRender()"
+          style="flex:1;min-width:180px;padding:10px 14px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;transition:border-color .2s"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--ink-14)'">
+        <select onchange="expRender()"
+          style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;cursor:pointer" id="exp-sort">
+          <option>수수료 높은 순</option>
+          <option>최신 등록순</option>
+          <option>판매 많은 순</option>
+          <option>가격 낮은 순</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none" id="exp-cats">
+        <button class="exp-cat on" onclick="expSelectCat(this,'전체')">전체</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'헬스·운동')">💪 헬스·운동</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'식품·건강')">🥗 식품·건강</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'뷰티·스킨케어')">💄 뷰티</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'패션·의류')">👗 패션</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'생활·홈')">🏠 생활·홈</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'디지털·전자')">📱 디지털</button>
+      </div>
+    </div>
+
+    <!-- 제품 카운트 -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font:600 14px/1 'Pretendard',sans-serif">전체 제품 <span id="exp-count" style="color:var(--green)">0개</span></div>
+    </div>
+
+    <!-- 제품 그리드 -->
+    <div id="exp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:160px;transition:opacity .15s"></div>
+
+    <!-- 제품 상세 모달 -->
+    <div id="exp-ov" onclick="if(event.target===this)expCloseModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:18px;width:100%;max-width:480px;padding:28px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);max-height:88vh;overflow-y:auto">
+        <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px;color:var(--ink-40)">✕</button>
+        <div id="exp-modal-content"></div>
+      </div>
     </div>
   </div>
 
@@ -832,7 +890,146 @@ function confirmWithdraw() {
   location.replace('index.html');
 }
 
-// ── 실제 링크 데이터 로드 ──
+// ── 내장 제품 탐색 ──
+let expCat = '전체';
+let expProducts = [];
+let expCurrentProduct = null;
+
+function expLoadProducts() {
+  const stored = JSON.parse(localStorage.getItem('vingly_products') || '[]');
+  const catMap = {'health':'헬스·운동','헬스·식품':'헬스·운동','beauty':'뷰티·스킨케어','뷰티·스킨케어':'뷰티·스킨케어','fashion':'패션·의류','life':'생활·홈','digital':'디지털·전자','baby':'유아·육아','pet':'펫·동물','hobby':'취미·레저'};
+  const emoMap = {'health':'💊','헬스·식품':'💊','beauty':'💄','뷰티·스킨케어':'💄','fashion':'👗','life':'🏠','digital':'📱','baby':'🍼','pet':'🐾','hobby':'🎮'};
+  return stored.map((p,i) => ({
+    id: p.id || 'r_'+i, name: p.name, brand: p.brandName||'브랜드',
+    cat: catMap[p.category]||p.category||'기타', price: p.price,
+    comm: p.commissionRate, emoji: emoMap[p.category]||'📦',
+    sales: p.sales||0, linked: false, desc: p.description||'',
+  }));
+}
+
+function expRender() {
+  expProducts = expLoadProducts();
+  const grid = document.getElementById('exp-grid');
+  const search = (document.getElementById('exp-search')?.value||'').toLowerCase();
+  grid.style.opacity = '.5';
+  setTimeout(() => {
+    const filtered = expProducts.filter(p => {
+      const catOk = expCat === '전체' || p.cat === expCat;
+      const srchOk = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
+      return catOk && srchOk;
+    });
+    document.getElementById('exp-count').textContent = filtered.length + '개';
+    if(expProducts.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--ink-40)"><div style="font-size:40px;margin-bottom:12px">🌱</div><div style="font:600 14px/1 'Pretendard',sans-serif;margin-bottom:6px">아직 등록된 제품이 없어요</div><div style="font-size:12px">셀러가 제품을 등록하면 여기에 나타납니다</div></div>`;
+    } else if(!filtered.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-40)"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font:600 13px/1 'Pretendard',sans-serif">검색 결과가 없어요</div></div>`;
+    } else {
+      // 링크 생성 여부 확인
+      const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
+      const myLinks = JSON.parse(localStorage.getItem('vingly_links')||'[]').filter(l=>l.creatorEmail===user.email);
+      grid.innerHTML = filtered.map(p => {
+        const isLinked = myLinks.some(l=>l.productId===p.id);
+        return `<div class="exp-pc" onclick="expOpenProduct('${p.id}')">
+          <div class="exp-thumb">${p.emoji}</div>
+          <div class="exp-body">
+            <div class="exp-brand">${p.brand}</div>
+            <div class="exp-name">${p.name}</div>
+            <div class="exp-row">
+              <div class="exp-price">₩${Number(p.price).toLocaleString()}</div>
+              <div class="exp-comm">수수료 ${p.comm}%</div>
+            </div>
+            <button class="exp-btn ${isLinked?'linked':''}" onclick="event.stopPropagation();expOpenProduct('${p.id}')">
+              ${isLinked ? '✓ 링크 생성됨' : '🔗 링크 생성하기'}
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    grid.style.opacity = '1';
+  }, 100);
+}
+
+function expSelectCat(btn, cat) {
+  document.querySelectorAll('.exp-cat').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  expCat = cat;
+  expRender();
+}
+
+function expOpenProduct(id) {
+  expProducts = expLoadProducts();
+  const p = expProducts.find(x=>x.id===id);
+  if(!p) return;
+  expCurrentProduct = p;
+  const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
+  const myLinks = JSON.parse(localStorage.getItem('vingly_links')||'[]');
+  const existingLink = myLinks.find(l=>l.productId===p.id&&l.creatorEmail===user.email);
+  const earn = Math.round(p.price * p.comm / 100);
+  document.getElementById('exp-modal-content').innerHTML = `
+    <div class="exp-m-thumb">${p.emoji}</div>
+    <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:4px">${p.brand} · ${p.cat}</div>
+    <div style="font:700 18px/1.3 'Pretendard',sans-serif;margin-bottom:12px">${p.name}</div>
+    <div class="exp-m-row">
+      <span class="exp-m-badge" style="background:var(--green-bg);color:var(--green)">수수료 ${p.comm}%</span>
+      <span class="exp-m-badge" style="background:var(--ink-07);color:var(--ink)">₩${Number(p.price).toLocaleString()}</span>
+      <span class="exp-m-badge" style="background:var(--blue-bg);color:var(--blue)">건당 ₩${earn.toLocaleString()}</span>
+    </div>
+    ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);background:var(--ink-07);border-radius:9px;padding:12px;margin-bottom:14px">${p.desc}</div>` : ''}
+    <div class="exp-link-box ${existingLink?'on':''}" id="exp-link-box">
+      <div class="exp-link-url" id="exp-link-url">${existingLink?existingLink.url:''}</div>
+      <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
+    </div>
+    <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')">
+      ${existingLink ? '✓ 링크 재생성' : '🔗 내 전용 링크 생성하기'}
+    </button>`;
+  document.getElementById('exp-ov').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function expGenerateLink(id) {
+  const btn = document.getElementById('exp-gen-btn');
+  btn.textContent = '생성 중...'; btn.style.opacity='.7';
+  setTimeout(() => {
+    const p = expProducts.find(x=>x.id===id);
+    const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
+    const slug = (user.name||'creator').replace(/\s/g,'').toLowerCase()+'-'+p.name.split(' ')[0].toLowerCase();
+    const linkUrl = `vingly.kr/j/${slug}`;
+    const linkEntry = {
+      id:'l_'+Date.now(), productId:p.id, productName:p.name, brand:p.brand,
+      price:p.price, commissionRate:p.comm, earnPerSale:Math.round(p.price*p.comm/100),
+      url:linkUrl, clicks:0, sales:0, revenue:0,
+      createdAt:new Date().toLocaleString('ko-KR'), creatorEmail:user.email||'',
+    };
+    const links = JSON.parse(localStorage.getItem('vingly_links')||'[]');
+    const idx = links.findIndex(l=>l.productId===p.id&&l.creatorEmail===user.email);
+    if(idx>=0) links[idx]=linkEntry; else links.push(linkEntry);
+    localStorage.setItem('vingly_links', JSON.stringify(links));
+    document.getElementById('exp-link-url').textContent = linkUrl;
+    document.getElementById('exp-link-box').classList.add('on');
+    btn.textContent='✓ 생성 완료!'; btn.style.opacity='1';
+    btn.style.background='var(--green-bg)'; btn.style.color='var(--green)';
+    expRender();
+  }, 800);
+}
+
+function expCopyLink() {
+  const url = document.getElementById('exp-link-url').textContent;
+  navigator.clipboard.writeText('https://'+url).catch(()=>{});
+  const btn = document.querySelector('.exp-copy-btn');
+  if(btn){ btn.textContent='✅ 복사됐어요!'; setTimeout(()=>btn.textContent='📋 링크 복사',2000); }
+}
+
+function expCloseModal() {
+  document.getElementById('exp-ov').style.display='none';
+  document.body.style.overflow='';
+}
+
+// showPage 시 제품 탐색 탭 열리면 자동 로드
+const _origShowPage2 = showPage;
+window.showPage = function(id, btn) {
+  _origShowPage2(id, btn);
+  if(id==='products') expRender();
+};
 function loadLinks() {
   const user = JSON.parse(sessionStorage.getItem("vingly_user") || localStorage.getItem("vingly_user") || "{}");
   const allLinks = JSON.parse(localStorage.getItem("vingly_links") || "[]");
