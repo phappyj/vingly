@@ -547,12 +547,23 @@ function doSignup() {
     joinedAt:  new Date().toISOString(),
   };
 
-  // Google Sheets 저장 (URL 연동 후 활성화)
+  // Google Sheets 저장
   saveToSheets(data).then(() => {
-    sendWelcomeEmail(data);  // 환영 메일 발송
+    sendWelcomeEmail(data);
     btn.classList.remove('loading');
-    // 세션 저장
-    localStorage.setItem('vingly_user', JSON.stringify({ email:data.email, role:data.role, name:data.name }));
+
+    // vingly_members에 로그인용 저장 (pw 포함)
+    const pw = g('s2_pw') ? g('s2_pw').value : (data.email.split('@')[0] + '!V1');
+    const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+    const exists = members.findIndex(m => m.email.toLowerCase() === data.email.toLowerCase());
+    const memberEntry = { email: data.email, pw, role: data.role, name: data.name, joinedAt: data.joinedAt };
+    if (exists >= 0) members[exists] = memberEntry; else members.push(memberEntry);
+    localStorage.setItem('vingly_members', JSON.stringify(members));
+
+    // sessionStorage로 로그인 상태 유지 (탭 단위)
+    sessionStorage.setItem('vingly_user', JSON.stringify({ email: data.email, role: data.role, name: data.name }));
+    localStorage.setItem('vingly_user', JSON.stringify({ email: data.email, role: data.role, name: data.name }));
+
     showSuccess(data);
   });
 }

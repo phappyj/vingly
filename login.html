@@ -156,19 +156,19 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   </div>
   <div class="left-stats">
     <div class="stat-card">
-      <div class="sc-ico">👥</div>
+      <div class="sc-ico">🚀</div>
       <div>
-        <div class="sc-val">231명</div>
-        <div class="sc-lbl">얼리버드 참여 중</div>
-        <div class="sc-badge badge-green">1,000명 목표</div>
+        <div class="sc-val">파일럿 오픈</div>
+        <div class="sc-lbl">지금 얼리버드 모집 중</div>
+        <div class="sc-badge badge-green">수수료 0% 영구 혜택</div>
       </div>
     </div>
     <div class="stat-card">
-      <div class="sc-ico">💸</div>
+      <div class="sc-ico">🎁</div>
       <div>
-        <div class="sc-val">₩4,280만</div>
-        <div class="sc-lbl">파일럿 누적 거래액</div>
-        <div class="sc-badge badge-blue">광고비 0원</div>
+        <div class="sc-val">크리에이터 무료</div>
+        <div class="sc-lbl">플랫폼 수수료 없음</div>
+        <div class="sc-badge badge-blue">브랜드 1.5% 얼리버드</div>
       </div>
     </div>
   </div>
@@ -234,15 +234,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       <span class="btn-text">로그인</span>
     </button>
 
-    <!-- DEMO HINT -->
-    <div class="demo-hint">
-      <p>
-        <strong>데모 계정</strong><br>
-        브랜드: brand@vingly.kr / vingly2026<br>
-        크리에이터: creator@vingly.kr / vingly2026<br>
-        관리자: <a href="admin.html" style="color:var(--blue)">admin.html</a>에서 별도 로그인
-      </p>
-    </div>
 
     <div class="form-footer">
       <p>계정이 없으신가요? <a href="signup.html">회원가입</a></p>
@@ -251,12 +242,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 </div>
 
 <script>
-// 데모 계정
-const ACCOUNTS = {
-  'brand@vingly.kr':   { pw:'vingly2026', role:'brand',     name:'헬시팜 대표' },
-  'creator@vingly.kr': { pw:'vingly2026', role:'influencer', name:'뷰티제인' },
-};
-
 function clearErr(el) {
   el.classList.remove('err');
   const e = document.getElementById(el.id+'_err');
@@ -276,30 +261,40 @@ function togglePw() {
 }
 
 function doLogin() {
-  const email = document.getElementById('email').value.trim();
+  const email = document.getElementById('email').value.trim().toLowerCase();
   const pw    = document.getElementById('pw').value;
   let ok = true;
   if(!email){showErr('email','이메일을 입력해주세요');ok=false;}
   if(!pw)   {showErr('pw','비밀번호를 입력해주세요');ok=false;}
   if(!ok) return;
 
-  // 로딩
   const btn = document.getElementById('loginBtn');
   btn.classList.add('loading');
 
   setTimeout(() => {
     btn.classList.remove('loading');
-    const acc = ACCOUNTS[email];
-    if(!acc || acc.pw !== pw) {
+
+    // 실제 가입자 목록에서 인증
+    const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
+    const acc = members.find(m => m.email.toLowerCase() === email && m.pw === pw);
+
+    if (!acc) {
       document.getElementById('alertErr').classList.add('on');
       document.getElementById('alertErrMsg').textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
       return;
     }
-    // 로그인 성공 — 세션 저장
-    localStorage.setItem('vingly_user', JSON.stringify({ email, role:acc.role, name:acc.name }));
-    // 역할별 이동
-    if(acc.role==='brand')       location.href='brand-dashboard.html';
-    else if(acc.role==='influencer') location.href='influencer-dashboard.html';
+
+    // sessionStorage 사용 — 탭 닫으면 자동 로그아웃, 뒤로가기 버그 없음
+    sessionStorage.setItem('vingly_user', JSON.stringify({ email: acc.email, role: acc.role, name: acc.name }));
+    // localStorage는 "로그인 상태 유지" 체크 시에만 저장
+    if (document.getElementById('remember').checked) {
+      localStorage.setItem('vingly_user', JSON.stringify({ email: acc.email, role: acc.role, name: acc.name }));
+    } else {
+      localStorage.removeItem('vingly_user');
+    }
+
+    if(acc.role==='brand')       location.replace('brand-dashboard.html');
+    else if(acc.role==='influencer') location.replace('influencer-dashboard.html');
   }, 900);
 }
 
@@ -308,15 +303,20 @@ function socialLogin(provider) {
 }
 
 function showForgot() {
-  alert('비밀번호 찾기 이메일을 발송합니다.\n(이 기능은 실제 서비스 오픈 후 활성화됩니다)');
+  alert('비밀번호 찾기는 실제 서비스 오픈 후 활성화됩니다.\nvingly.official@gmail.com으로 문의해주세요.');
 }
 
-// 이미 로그인된 경우
-const sess = localStorage.getItem('vingly_user');
+// 자동 로그인 — sessionStorage 우선, 없으면 localStorage(로그인 유지) 확인
+const sess = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
 if(sess) {
-  const u = JSON.parse(sess);
-  if(u.role==='brand')       location.href='brand-dashboard.html';
-  else if(u.role==='influencer') location.href='influencer-dashboard.html';
+  try {
+    const u = JSON.parse(sess);
+    if(u.role==='brand')       location.replace('brand-dashboard.html');
+    else if(u.role==='influencer') location.replace('influencer-dashboard.html');
+  } catch(e) {
+    sessionStorage.removeItem('vingly_user');
+    localStorage.removeItem('vingly_user');
+  }
 }
 </script>
 </body>

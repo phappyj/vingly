@@ -443,18 +443,24 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </main>
 
 <script>
-// 로그인 보호
+// 로그인 보호 — sessionStorage 우선, 없으면 localStorage(로그인 유지) 확인
 (function(){
-  const u = localStorage.getItem('vingly_user');
-  if(!u){ location.href='login.html'; return; }
-  const user = JSON.parse(u);
-  if(user.role !== 'brand'){ location.href='login.html'; return; }
-  document.addEventListener('DOMContentLoaded', function(){
-    const n = user.name || user.email || '공급자';
-    document.getElementById('sb-name').textContent = n;
-    document.getElementById('sb-av').textContent = n[0];
-    // 제품 있으면 배너 숨기기 (데모: 항상 보임)
-  });
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  if(!raw){ location.replace('login.html'); return; }
+  try {
+    const user = JSON.parse(raw);
+    if(user.role !== 'brand'){ location.replace('login.html'); return; }
+    // sessionStorage에도 동기화
+    sessionStorage.setItem('vingly_user', raw);
+    document.addEventListener('DOMContentLoaded', function(){
+      const n = user.name || user.email || '공급자';
+      document.getElementById('sb-name').textContent = n;
+      document.getElementById('sb-av').textContent = n[0];
+    });
+  } catch(e){ location.replace('login.html'); }
+  // 뒤로가기로 재진입 방지
+  history.replaceState(null, '', location.href);
+  window.addEventListener('popstate', () => location.replace('login.html'));
 })();
 
 function showPage(id, btn) {
@@ -483,13 +489,15 @@ function rejectSample(btn) {
 }
 
 function doLogout(){
+  sessionStorage.removeItem('vingly_user');
   localStorage.removeItem('vingly_user');
-  location.href='login.html';
+  location.replace('login.html');
 }
 
 // ── 실제 제품 데이터 로드 ──
 function loadProducts() {
-  const user = JSON.parse(localStorage.getItem('vingly_user') || '{}');
+  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
+  const user = JSON.parse(raw || '{}');
   const allProducts = JSON.parse(localStorage.getItem('vingly_products') || '[]');
   // 현재 로그인한 셀러 제품만 필터
   const products = allProducts.filter(p => p.brandEmail === user.email);
