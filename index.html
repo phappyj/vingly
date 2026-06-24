@@ -306,48 +306,112 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
 /* ── MOBILE ── */
 @media(max-width:768px){
+  /* 전체 */
   .reveal{opacity:1!important;transform:none!important}
-  [class*="fee-3col"]{grid-template-columns:1fr!important}
-  [class*="fee-2col"]{grid-template-columns:1fr!important}
-  .nav{padding:0 20px}
+  .wrap{padding:0 16px}
+  .section{padding-top:56px;padding-bottom:56px}
+
+  /* NAV */
+  .nav{padding:0 16px;height:56px}
   .nav-links,.nav-act{display:none}
   .hb{display:flex}
-  .hero{padding:90px 20px 60px}
-  .hero-roles{grid-template-columns:1fr;max-width:100%}
-  .hero-proof{gap:16px}
+
+  /* HERO */
+  .hero{padding:80px 16px 52px}
+  .hero-h{font-size:clamp(28px,8vw,40px)!important;letter-spacing:-1px!important;line-height:1.15!important}
+  .hero-sub{font-size:15px!important;line-height:1.6!important}
+  .hero-roles{grid-template-columns:1fr;max-width:100%;gap:10px}
+  .hero-proof{gap:12px;flex-wrap:wrap;justify-content:center}
   .hp-div{display:none}
-  .wrap{padding:0 20px}
-  .section{padding-top:64px}
-  .ep.on,.fee-wrap,.std-grid,.safe-grid,.rev-grid,.grade-grid{grid-template-columns:1fr!important;gap:12px}
-  .grade-grid{grid-template-columns:1fr!important}
-  .calc-demo{grid-column:1}
-  .cta-final{padding:64px 20px}
-  .cta-inner{grid-template-columns:1fr;padding:36px 24px}
-  .cta-img-wrap{display:none}
-  footer{padding:32px 20px}
-  .foot-in{flex-direction:column;gap:12px}
-@media(max-width:600px){
-  .safety-grid{grid-template-columns:1fr!important}
-  .grade-grid{grid-template-columns:1fr!important}
-  .fee-3col{grid-template-columns:1fr!important;gap:12px!important}
-  .fee-2col{grid-template-columns:1fr!important;gap:12px!important}
-  .fee-timeline{flex-direction:column!important}
-  .fee-timeline-arrows{display:none!important}
-}
+  .hero-counter-wrap{padding:0 4px}
 
-  .about-grid{grid-template-columns:1fr!important;gap:32px!important}
+  /* SECTIONS */
+  .ep.on,.fee-wrap,.std-grid,.safe-grid,.rev-grid,.grade-grid,
+  .about-grid,[class*="fee-3col"],[class*="fee-2col"],
+  .fee-plan-3,.safety-grid{
+    grid-template-columns:1fr!important;gap:12px!important
+  }
+  .grade-grid{grid-template-columns:1fr!important}
   .about-nums{grid-template-columns:1fr 1fr!important}
-  /* 수수료 섹션 모바일 */
-  .fee-3col{grid-template-columns:1fr!important}
-  .fee-2col{grid-template-columns:1fr!important}
-  .fee-timeline{flex-direction:column!important;gap:12px!important}
-  .fee-timeline-arrows{display:none!important}
-  .fee-plan-3{grid-template-columns:1fr!important}
 
+  /* 수수료 타임라인 */
+  .fee-timeline{flex-direction:column!important;gap:10px!important}
+  .fee-timeline-arrows{display:none!important}
+
+  /* 카드 패딩 */
+  .card,.how-card,.feat,.trust-card,.safe-card,.grade-card{
+    padding:18px!important
+  }
+  .calc-demo{grid-column:1}
+
+  /* CTA 섹션 */
+  .cta-final{padding:48px 16px}
+  .cta-inner{grid-template-columns:1fr;padding:28px 20px;gap:24px}
+  .cta-img-wrap{display:none}
+  .cta-h{font-size:26px!important;letter-spacing:-.8px!important}
+  .cta-btn{max-width:100%!important}
+
+  /* FOOTER */
+  footer{padding:28px 16px}
+  .foot-in{flex-direction:column;gap:16px}
+  .foot-links{flex-wrap:wrap;gap:12px}
+
+  /* 히어로 역할 버튼 */
+  .role-btn{padding:16px!important}
+  .rb-ico{width:36px!important;height:36px!important;font-size:18px!important}
+
+  /* 섹션 타이틀 */
+  .sec-t,.section-title{font-size:clamp(22px,6vw,32px)!important;letter-spacing:-.8px!important}
+  .sec-sub{font-size:14px!important;line-height:1.65!important}
+
+  /* 비교 테이블 */
+  .compare-table,.cmp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .compare-table table{min-width:540px}
+
+  /* FAQ */
+  .faq-q{font-size:14px!important;padding:14px 16px!important}
+  .faq-a{padding:12px 16px!important;font-size:13px!important}
+
+  /* STICKY CTA 모바일 */
+  .sticky-cta{flex-direction:column;gap:8px;padding:10px 14px}
+  .sca-left{text-align:center}
+  .sca-title{font-size:13px!important}
+  .sca-sub{font-size:11px!important}
+  .sca-btns{width:100%;gap:8px}
+  .sca-b{flex:1;text-align:center;padding:11px 8px!important;font-size:12px!important}
+
+  /* 수익 계산기 */
+  .calc-grid{grid-template-columns:1fr!important}
+  .calc-result{margin-top:0!important}
+
+  /* stats ticker */
+  .stats-ticker{padding:10px 16px!important;gap:12px!important;flex-wrap:wrap;justify-content:center}
+  .st-item{font-size:12px!important}
+
+  /* 얼리버드 배지 */
+  .early-badge,.hero-live{font-size:11px!important;padding:4px 10px!important}
+
+  /* 등급 카드 */
+  .grade-card{min-width:unset!important}
+
+  /* body sticky 여백 */
+  body.has-sticky-cta footer{padding-bottom:130px}
 }
+
+@media(max-width:480px){
+  .hero-h{font-size:clamp(24px,7.5vw,34px)!important}
+  .hero-counter-wrap div[style*="font-size"]{font-size:clamp(36px,10vw,52px)!important}
+  .rb-title{font-size:14px!important}
+  .rb-desc{font-size:12px!important}
+  .rb-tag{font-size:10px!important}
+  .hc-num{letter-spacing:-2px}
+  .wrap{padding:0 12px}
+  .section{padding-top:44px;padding-bottom:44px}
+}
+
 @media(max-width:380px){
   .hero-h{letter-spacing:-.8px}
-  .hc-num{letter-spacing:-2px}
+  .sca-b{font-size:11px!important;padding:10px 6px!important}
 }
 
 /* STICKY CTA */
@@ -362,9 +426,6 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 .sticky-cta.visible{transform:translateY(0)}
 /* sticky-cta가 보일 때 footer 아래 여백 확보 */
 body.has-sticky-cta footer { padding-bottom: 90px; }
-@media(max-width:768px){
-  body.has-sticky-cta footer { padding-bottom: 130px; }
-}
 .sca-left{display:flex;flex-direction:column;gap:3px}
 .sca-title{font:700 14px/1 'Pretendard',sans-serif;color:#fff}
 .sca-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.68)}
@@ -374,11 +435,6 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
 .sca-creator:hover{background:#034732}
 .sca-brand{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
 .sca-brand:hover{background:rgba(255,255,255,.22)}
-@media(max-width:768px){
-  .sticky-cta{flex-direction:column;gap:10px;padding:12px 16px}
-  .sca-btns{width:100%;justify-content:stretch}
-  .sca-b{flex:1;text-align:center}
-}
 
 /* FOMO 지표 */
 .fomo-bar{
