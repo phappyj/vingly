@@ -909,20 +909,33 @@ let expCat = '전체';
 let expProducts = [];
 let expCurrentProduct = null;
 
-function expLoadProducts() {
-  const stored = JSON.parse(localStorage.getItem('vingly_products') || '[]');
-  const catMap = {'health':'헬스·운동','헬스·식품':'헬스·운동','beauty':'뷰티·스킨케어','뷰티·스킨케어':'뷰티·스킨케어','fashion':'패션·의류','life':'생활·홈','digital':'디지털·전자','baby':'유아·육아','pet':'펫·동물','hobby':'취미·레저'};
-  const emoMap = {'health':'💊','헬스·식품':'💊','beauty':'💄','뷰티·스킨케어':'💄','fashion':'👗','life':'🏠','digital':'📱','baby':'🍼','pet':'🐾','hobby':'🎮'};
-  return stored.map((p,i) => ({
-    id: p.id || 'r_'+i, name: p.name, brand: p.brandName||'브랜드',
-    cat: catMap[p.category]||p.category||'기타', price: p.price,
-    comm: p.commissionRate, emoji: emoMap[p.category]||'📦',
-    sales: p.sales||0, linked: false, desc: p.description||'',
+async function expLoadProducts() {
+  if (!window._supabase) return [];
+  const { data, error } = await window._supabase
+    .from('products')
+    .select('*, users!brand_user(company_name)')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  const emoMap = {
+    '뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗',
+    '헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'
+  };
+  return data.map(p => ({
+    id: p.id,
+    name: p.name,
+    brand: p.users?.company_name || '브랜드',
+    cat: p.category || '기타',
+    price: p.price,
+    comm: p.commission_rate,
+    emoji: emoMap[p.category] || '📦',
+    desc: p.description || '',
+    purchase_url: p.purchase_url || ''
   }));
 }
 
-function expRender() {
-  expProducts = expLoadProducts();
+async function expRender() {
+  expProducts = await expLoadProducts();
   const grid = document.getElementById('exp-grid');
   const search = (document.getElementById('exp-search')?.value||'').toLowerCase();
   grid.style.opacity = '.5';
@@ -1044,6 +1057,9 @@ window.showPage = function(id, btn) {
   _origShowPage2(id, btn);
   if(id==='products') expRender();
 };
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => expRender(), 1000);
+});
 function loadLinks() {
   const user = JSON.parse(sessionStorage.getItem("vingly_user") || localStorage.getItem("vingly_user") || "{}");
   const allLinks = JSON.parse(localStorage.getItem("vingly_links") || "[]");
