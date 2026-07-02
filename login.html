@@ -137,3 +137,112 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     </div>
 
     <div class="alert alert-err" id="alertErr"><span>⚠️</span><span id="alertErrMsg"></span></div>
+    <div class="alert alert-ok" id="alertOk"><span>✅</span><span id="alertOkMsg"></span></div>
+
+    <div class="fg">
+      <label class="fl">이메일</label>
+      <input class="fi" id="email" type="email" placeholder="이메일 입력" oninput="clearErr()">
+      <div class="ferr" id="email_err">이메일을 입력해주세요</div>
+    </div>
+    <div class="fg">
+      <label class="fl">비밀번호</label>
+      <div class="pw-wrap">
+        <input class="fi" id="pw" type="password" placeholder="비밀번호 입력" oninput="clearErr()" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="pw-toggle" onclick="togglePw()">👁</button>
+      </div>
+      <div class="ferr" id="pw_err">비밀번호를 입력해주세요</div>
+    </div>
+
+    <div class="form-options">
+      <label class="remember"><input type="checkbox" id="remember"><span>로그인 상태 유지</span></label>
+      <button class="forgot-link" onclick="showForgot()">비밀번호 찾기</button>
+    </div>
+
+    <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+      <div class="spinner"></div>
+      <span class="btn-text">로그인</span>
+    </button>
+
+    <div class="form-footer">
+      <p>계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const SUPABASE_URL = 'https://hzrhpdqrrzhnhnaelaie.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  function redirect(user) {
+    const role = user.user_metadata?.role
+    if (role === 'brand') location.replace('brand-dashboard.html')
+    else if (role === 'creator') location.replace('influencer-dashboard.html')
+    else if (role === 'admin') location.replace('admin.html')
+    else location.replace('index.html')
+  }
+
+  window.doLogin = async function() {
+    const email = document.getElementById('email').value.trim().toLowerCase()
+    const pw = document.getElementById('pw').value
+    let ok = true
+    if (!email) { showFieldErr('email', '이메일을 입력해주세요'); ok = false }
+    if (!pw) { showFieldErr('pw', '비밀번호를 입력해주세요'); ok = false }
+    if (!ok) return
+
+    const btn = document.getElementById('loginBtn')
+    btn.classList.add('loading')
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: pw })
+    btn.classList.remove('loading')
+
+    if (error) {
+      showAlert('err', '이메일 또는 비밀번호가 올바르지 않습니다.')
+      return
+    }
+
+    showAlert('ok', '로그인 성공! 이동 중...')
+    setTimeout(() => redirect(data.user), 500)
+  }
+
+  window.togglePw = function() {
+    const fi = document.getElementById('pw')
+    fi.type = fi.type === 'password' ? 'text' : 'password'
+  }
+
+  window.clearErr = function() {
+    document.getElementById('alertErr').classList.remove('on')
+    document.getElementById('alertOk').classList.remove('on')
+  }
+
+  window.showForgot = async function() {
+    const email = document.getElementById('email').value.trim()
+    if (!email) { showAlert('err', '이메일을 먼저 입력해주세요.'); return }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://vingly.kr/reset-password.html'
+    })
+    if (error) showAlert('err', '오류가 발생했습니다.')
+    else showAlert('ok', '비밀번호 재설정 이메일을 보냈습니다.')
+  }
+
+  function showFieldErr(id, msg) {
+    const el = document.getElementById(id)
+    el.classList.add('err')
+    const e = document.getElementById(id + '_err')
+    if (e) { e.textContent = msg; e.classList.add('on') }
+  }
+
+  function showAlert(type, msg) {
+    if (type === 'err') {
+      document.getElementById('alertErrMsg').textContent = msg
+      document.getElementById('alertErr').classList.add('on')
+    } else {
+      document.getElementById('alertOkMsg').textContent = msg
+      document.getElementById('alertOk').classList.add('on')
+    }
+  }
+</script>
+</body>
+</html>
