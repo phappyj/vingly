@@ -437,7 +437,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       email,
       password,
       options: {
-        data: { role, name }
+        data: { role, name, company_name: company, phone, category }
       }
     })
 
@@ -449,13 +449,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       return
     }
 
-    // users 테이블 추가 정보 업데이트
-    await supabase.from('users').update({
-      company_name: company,
-      phone,
-      category,
-      early_bird: true
-    }).eq('id', data.user.id)
+ 
 
     // Google Sheets 저장
     try {
