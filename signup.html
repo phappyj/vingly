@@ -89,13 +89,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .agree-item{display:flex;align-items:flex-start;gap:9px;cursor:pointer}
 .agree-item input{width:16px;height:16px;border-radius:4px;accent-color:var(--blue);flex-shrink:0;margin-top:2px}
 .agree-text{font-size:13px;color:var(--ink-60);line-height:1.5;font-weight:400}
-.agree-text a{color:var(--blue);text-decoration:none;font-weight:600}
 .agree-text.bold{color:var(--ink);font-weight:600}
 .btn-row{display:flex;gap:10px;margin-top:4px}
 .btn-back{flex:1;padding:13px;border-radius:10px;background:transparent;border:1.5px solid var(--ink-14);font:700 14px/1 'Pretendard',sans-serif;color:var(--ink-60);cursor:pointer;min-height:48px;transition:all .2s}
 .btn-back:hover{border-color:var(--ink-35);color:var(--ink)}
 .btn-next{flex:2;padding:13px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-next:hover{background:#1a1d24;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.btn-next:hover{background:#1a1d24;transform:translateY(-1px)}
 .btn-next:active{transform:scale(.97)}
 .btn-next.loading{opacity:.7;pointer-events:none}
 .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
@@ -114,8 +113,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ns-title{font-size:13px;font-weight:700;margin-bottom:10px}
 .ns-item{display:flex;gap:9px;font-size:13px;color:var(--ink-60);margin-bottom:7px;line-height:1.5;font-weight:400}
 .go-btn{width:100%;padding:14px;border-radius:11px;background:var(--ink);color:#fff;border:none;font:800 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:50px;transition:all .22s}
-.go-btn:hover{background:#1a1d24;transform:translateY(-1px)}
-.alert{padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;display:none;align-items:center;gap:8px}
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;display:none;align-items:center;gap:8px;line-height:1.5}
 .alert.on{display:flex}
 .alert-err{background:#FEF2F2;color:var(--red);border:1px solid rgba(220,38,38,.2)}
 .fsec{display:none}.fsec.on{display:block}
@@ -293,6 +291,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         <h2 class="step-h">약관에 동의해주세요</h2>
         <p class="step-sub">서비스 이용을 위해 동의가 필요합니다.</p>
       </div>
+      <div class="alert alert-err" id="alertErr4"><span>⚠️</span><span id="alertErrMsg4"></span></div>
       <div class="agree-list">
         <label class="agree-item">
           <input type="checkbox" id="agreeAll" onchange="toggleAll(this)">
@@ -331,30 +330,29 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         <div class="ns-title">다음 단계 안내</div>
         <div id="s_steps"></div>
       </div>
-      <button class="go-btn" id="goBtn">대시보드로 이동 →</button>
+      <button class="go-btn" id="goBtn">로그인하러 가기 →</button>
     </div>
   </div>
 </div>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-
-  const SUPABASE_URL = 'https://hzrhpdqrrzhnhnaelaie.supabase.co'
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
 
   let role = null
   let currentStep = 1
-
   const g = id => document.getElementById(id)
 
-  // URL 파라미터로 역할 자동 선택
   window.addEventListener('DOMContentLoaded', () => {
     const r = new URLSearchParams(location.search).get('role')
     if (r === 'creator' || r === 'brand') {
       selectRole(r)
       setTimeout(() => goStep(2), 100)
     }
+    g('goBtn').onclick = () => location.href = 'login.html'
   })
 
   window.selectRole = function(r) {
@@ -432,7 +430,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const company  = role === 'brand' ? g('b_brand').value.trim() : g('c_handle').value.trim()
     const category = role === 'brand' ? g('b_cat').value : g('c_ch').value
 
-    // Supabase Auth 가입
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -441,15 +438,17 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       }
     })
 
+    btn.classList.remove('loading')
+
     if (error) {
-      btn.classList.remove('loading')
-      showAlert(error.message.includes('already registered')
-        ? '이미 가입된 이메일입니다. 로그인 페이지로 이동해주세요.'
-        : '가입 중 오류가 발생했습니다: ' + error.message)
+      const isExisting = error.message.includes('already') || error.status === 422
+      const errMsg = isExisting
+        ? '이미 가입된 이메일입니다. 로그인 페이지에서 로그인해주세요.'
+        : '가입 중 오류가 발생했습니다: ' + error.message
+      g('alertErrMsg4').textContent = errMsg
+      g('alertErr4').classList.add('on')
       return
     }
-
- 
 
     // Google Sheets 저장
     try {
@@ -465,13 +464,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         to_email: email, email, user_name: name,
         user_role: role === 'brand' ? '브랜드·셀러' : '크리에이터',
         message: role === 'brand'
-          ? '브랜드 등록이 완료됐습니다. 제품을 등록하면 크리에이터 매칭이 시작됩니다.\nhttps://vingly.kr/login.html'
-          : '크리에이터 등록이 완료됐습니다. 제품을 탐색하고 링크를 생성해보세요.\nhttps://vingly.kr/login.html',
+          ? '브랜드 등록이 완료됐습니다.\nhttps://vingly.kr/login.html'
+          : '크리에이터 등록이 완료됐습니다.\nhttps://vingly.kr/login.html',
         title: 'Vingly 가입 완료'
       })
     } catch(e) { console.error('메일 발송 실패:', e) }
 
-    btn.classList.remove('loading')
     showSuccess({ role, name, email })
   }
 
@@ -486,28 +484,17 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       g('s_desc').innerHTML = `<strong>${data.name}</strong>님, 환영합니다!<br>파일럿 기간 동안 <strong style="color:#1D4ED8">수수료 혜택이 영구 적용</strong>됩니다.`
       g('s_steps').innerHTML = `
         <div class="ns-item"><span>✅</span><span>가입 확인 메일이 <strong>${data.email}</strong>로 발송됩니다.</span></div>
-        <div class="ns-item"><span>📧</span><span>이메일 인증 후 로그인이 가능합니다.</span></div>
-        <div class="ns-item"><span>📦</span><span>제품을 등록하면 크리에이터 자동 매칭이 시작됩니다.</span></div>`
-      g('goBtn').textContent = '로그인하러 가기 →'
+        <div class="ns-item"><span>📦</span><span>로그인 후 제품을 등록하면 크리에이터 매칭이 시작됩니다.</span></div>`
       g('goBtn').style.background = '#1D4ED8'
-      g('goBtn').onclick = () => location.href = 'login.html'
     } else {
       g('s_badge').className = 's-badge sb-g'
       g('s_badge').textContent = '⭐ 얼리버드 크리에이터 등록 완료'
       g('s_desc').innerHTML = `<strong>${data.name}</strong>님, 환영합니다!<br>크리에이터 수수료 <strong style="color:#00B37E">0% 혜택이 영구 적용</strong>됩니다.`
       g('s_steps').innerHTML = `
         <div class="ns-item"><span>✅</span><span>가입 확인 메일이 <strong>${data.email}</strong>로 발송됩니다.</span></div>
-        <div class="ns-item"><span>📧</span><span>이메일 인증 후 로그인이 가능합니다.</span></div>
-        <div class="ns-item"><span>🛍️</span><span>제품을 탐색하고 링크를 생성해보세요.</span></div>`
-      g('goBtn').textContent = '로그인하러 가기 →'
+        <div class="ns-item"><span>🛍️</span><span>로그인 후 제품을 탐색하고 링크를 생성해보세요.</span></div>`
       g('goBtn').style.background = '#00B37E'
-      g('goBtn').onclick = () => location.href = 'login.html'
     }
-  }
-
-  function showAlert(msg) {
-    g('alertErrMsg').textContent = msg
-    g('alertErr').classList.add('on')
   }
 
   window.clearFerr = function(el) {
@@ -515,6 +502,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const e = g(el.id + '_err')
     if (e) e.classList.remove('on')
     g('alertErr')?.classList.remove('on')
+    g('alertErr4')?.classList.remove('on')
   }
 
   function showFerr(id, msg) {
