@@ -336,6 +336,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <input id="p_url" type="url" placeholder="https://..." style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
       </div>
       <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 이미지</label>
+        <input type="file" id="p_image" accept="image/*" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <div id="p_image_preview" style="margin-top:8px;display:none">
+          <img id="p_image_preview_img" style="width:100%;height:160px;object-fit:cover;border-radius:9px;border:1px solid var(--ink-14)">
+        </div>
+        <div class="fhint" style="font-size:12px;color:var(--ink-40);margin-top:4px">JPG, PNG, WEBP · 최대 5MB</div>
+      </div>
+      <div>
         <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 설명</label>
         <textarea id="p_desc" placeholder="제품 특징, 타겟 고객 등 크리에이터에게 전달할 내용" rows="3" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
       </div>
@@ -414,8 +422,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const price = parseInt(document.getElementById('p_price').value)
     const category = document.getElementById('p_category').value
     const commission = parseFloat(document.getElementById('p_commission').value)
-    const url = document.getElementById('p_url').value.trim()
     const desc = document.getElementById('p_desc').value.trim()
+    const imageFile = document.getElementById('p_image').files[0]
     const errEl = document.getElementById('product_err')
 
     if (!name || !price || !category || !commission) {
@@ -424,8 +432,38 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
 
+    const btn = document.querySelector('#productModal button[onclick="saveProduct()"]')
+    btn.textContent = '저장 중...'
+    btn.style.opacity = '.7'
+    btn.style.pointerEvents = 'none'
+
     const user = window._vinglyUser
     if (!user) return
+
+    let image_url = null
+
+    // 이미지 업로드
+    if (imageFile) {
+      const ext = imageFile.name.split('.').pop()
+      const fileName = `${user.id}/${Date.now()}.${ext}`
+      const { data: uploadData, error: uploadError } = await window._supabase.storage
+        .from('products')
+        .upload(fileName, imageFile, { upsert: true })
+
+      if (uploadError) {
+        errEl.textContent = '이미지 업로드 실패: ' + uploadError.message
+        errEl.style.display = 'block'
+        btn.textContent = '등록하기'
+        btn.style.opacity = '1'
+        btn.style.pointerEvents = 'auto'
+        return
+      }
+
+      const { data: urlData } = window._supabase.storage
+        .from('products')
+        .getPublicUrl(fileName)
+      image_url = urlData.publicUrl
+    }
 
     const { error } = await window._supabase.from('products').insert({
       brand_user: user.id,
@@ -433,10 +471,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       price,
       category,
       commission_rate: commission,
-      purchase_url: url,
       description: desc,
+      image_url,
       status: 'active'
     })
+
+    btn.textContent = '등록하기'
+    btn.style.opacity = '1'
+    btn.style.pointerEvents = 'auto'
 
     if (error) {
       errEl.textContent = '저장 실패: ' + error.message
@@ -517,6 +559,20 @@ document.addEventListener('click', function(e) {
     panel.style.display = 'none'
   }
 })
+// 이미지 미리보기
+  document.addEventListener('change', function(e) {
+    if (e.target.id === 'p_image') {
+      const file = e.target.files[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (ev) => {
+          document.getElementById('p_image_preview_img').src = ev.target.result
+          document.getElementById('p_image_preview').style.display = 'block'
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+  })  
 </script>
 </body>
 </html>
