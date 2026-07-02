@@ -983,8 +983,8 @@ function expSelectCat(btn, cat) {
   expRender();
 }
 
-function expOpenProduct(id) {
-  expProducts = expLoadProducts();
+async function expOpenProduct(id) {
+  expProducts = await expLoadProducts();
   const p = expProducts.find(x=>x.id===id);
   if(!p) return;
   expCurrentProduct = p;
@@ -1013,30 +1013,45 @@ function expOpenProduct(id) {
   document.body.style.overflow = 'hidden';
 }
 
-function expGenerateLink(id) {
+async function expGenerateLink(id) {
   const btn = document.getElementById('exp-gen-btn');
   btn.textContent = '생성 중...'; btn.style.opacity='.7';
-  setTimeout(() => {
-    const p = expProducts.find(x=>x.id===id);
-    const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
-    const slug = (user.name||'creator').replace(/\s/g,'').toLowerCase()+'-'+p.name.split(' ')[0].toLowerCase();
-    const linkUrl = `vingly.kr/j/${slug}`;
-    const linkEntry = {
-      id:'l_'+Date.now(), productId:p.id, productName:p.name, brand:p.brand,
-      price:p.price, commissionRate:p.comm, earnPerSale:Math.round(p.price*p.comm/100),
-      url:linkUrl, clicks:0, sales:0, revenue:0,
-      createdAt:new Date().toLocaleString('ko-KR'), creatorEmail:user.email||'',
-    };
-    const links = JSON.parse(localStorage.getItem('vingly_links')||'[]');
-    const idx = links.findIndex(l=>l.productId===p.id&&l.creatorEmail===user.email);
-    if(idx>=0) links[idx]=linkEntry; else links.push(linkEntry);
-    localStorage.setItem('vingly_links', JSON.stringify(links));
-    document.getElementById('exp-link-url').textContent = linkUrl;
-    document.getElementById('exp-link-box').classList.add('on');
-    btn.textContent='✓ 생성 완료!'; btn.style.opacity='1';
-    btn.style.background='var(--green-bg)'; btn.style.color='var(--green)';
-    expRender();
-  }, 800);
+
+  const user = window._vinglyUser;
+  const p = expProducts.find(x=>x.id===id);
+  if (!user || !p) return;
+
+  const slug = (user.name||'creator').replace(/\s/g,'').toLowerCase()
+    + '-' + p.name.split(' ')[0].toLowerCase()
+    + '-' + Date.now().toString(36);
+
+  // 기존 링크 있으면 삭제 후 재생성
+  await window._supabase.from('links')
+    .delete()
+    .eq('creator', user.id)
+    .eq('product', id);
+
+  const { data: linkData, error } = await window._supabase.from('links').insert({
+    creator: user.id,
+    product: id,
+    slug,
+    click_count: 0,
+    conversion_count: 0,
+    status: 'active'
+  }).select().single();
+
+  if (error) {
+    btn.textContent = '생성 실패'; btn.style.opacity='1';
+    console.error(error);
+    return;
+  }
+
+  const linkUrl = `vingly.kr/j/${slug}`;
+  document.getElementById('exp-link-url').textContent = linkUrl;
+  document.getElementById('exp-link-box').classList.add('on');
+  btn.textContent='✓ 생성 완료!'; btn.style.opacity='1';
+  btn.style.background='var(--green-bg)'; btn.style.color='var(--green)';
+  await expRender();
 }
 
 function expCopyLink() {
