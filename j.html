@@ -39,7 +39,8 @@
   // URL에서 slug 추출: vingly.kr/j/slug-here
 // URL 파라미터에서 slug 추출 (404.html에서 리디렉트된 경우)
 const params = new URLSearchParams(location.search)
-const slug = params.get('slug') || location.pathname.replace('/j/', '').trim()
+const rawSlug = params.get('slug') || location.pathname.replace('/j/', '').trim()
+const slug = decodeURIComponent(rawSlug)
 
   if (!slug) {
     location.replace('index.html')
