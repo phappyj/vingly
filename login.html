@@ -192,13 +192,23 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   }
 
   async function redirect(user) {
-    const { data: profile } = await supabase
+    // 세션 안정화 대기
+    await new Promise(r => setTimeout(r, 500))
+    
+    const { data: profile, error } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (!profile) return
+    if (error || !profile) {
+      // role을 못 읽으면 메타데이터에서 fallback
+      const role = user.user_metadata?.role
+      if (role === 'brand') location.replace('brand-dashboard.html')
+      else if (role === 'creator') location.replace('influencer-dashboard.html')
+      else if (role === 'admin') location.replace('admin.html')
+      return
+    }
 
     if (profile.role === 'brand') location.replace('brand-dashboard.html')
     else if (profile.role === 'creator') location.replace('influencer-dashboard.html')
