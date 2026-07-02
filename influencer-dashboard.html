@@ -1017,7 +1017,8 @@ async function expGenerateLink(id) {
   const btn = document.getElementById('exp-gen-btn');
   btn.textContent = '생성 중...'; btn.style.opacity='.7';
 
-  const user = window._vinglyUser;
+  const { data: { session } } = await window._supabase.auth.getSession();
+const user = session ? { id: session.user.id, name: session.user.user_metadata?.name || 'creator' } : null;
   const p = expProducts.find(x=>x.id===id);
   if (!user || !p) return;
 
