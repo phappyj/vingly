@@ -4,7 +4,6 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK606P"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,22 +11,9 @@
   gtag('js', new Date());
   gtag('config', 'G-TH29BK606P');
 </script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 공급자 대시보드</title>
-<!-- SEO & OG -->
-<meta name="description" content="제품 등록, 크리에이터 매칭, 수익 현황을 한 곳에서 관리하세요.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vingly">
-<meta property="og:title" content="Vingly 공급자 대시보드">
-<meta property="og:description" content="제품 등록, 크리에이터 매칭, 수익 현황을 한 곳에서 관리하세요.">
-<meta property="og:image" content="https://vingly.kr/og-image.svg">
-<meta property="og:url" content="https://vingly.kr/brand-dashboard.html">
-<meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Vingly 공급자 대시보드">
-<meta name="twitter:image" content="https://vingly.kr/og-image.svg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -43,13 +29,10 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
-
-/* SIDEBAR */
 .sb{width:var(--sw);background:var(--white);border-right:1px solid var(--ink-14);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s}
 .sb-top{padding:18px 16px 14px;border-bottom:1px solid var(--ink-14)}
 .sb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:12px}
 .sb-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
-.sb-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .sb-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
 .sb-role{font:700 10px/1 'Pretendard',sans-serif;color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:3px}
 .sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
@@ -63,27 +46,17 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ua-av{width:32px;height:32px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;color:var(--blue);flex-shrink:0}
 .ua-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink)}
 .ua-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
-
-/* MAIN */
 .mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
-.tb-l{display:flex;align-items:center;gap:12px}
 .tb-title{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
 .tb-r{display:flex;align-items:center;gap:10px}
-.icon-btn{width:34px;height:34px;border-radius:9px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative;transition:all .2s}
-.icon-btn:hover{background:var(--ink-14)}
+.icon-btn{width:34px;height:34px;border-radius:9px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative}
 .ndot{width:7px;height:7px;background:#EF4444;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--white)}
-.logout-btn{padding:7px 14px;border-radius:8px;background:var(--red-bg);color:var(--red);border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s}
-.logout-btn:hover{background:rgba(153,27,27,.15)}
-
-/* CONTENT */
+.logout-btn{padding:7px 14px;border-radius:8px;background:var(--red-bg);color:var(--red);border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer}
 .content{padding:24px 28px;flex:1}
 .page{display:none}
 .page.act{display:block;animation:pageShow .18s ease}
 @keyframes pageShow{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.page.act{display:block}
-
-/* ONBOARDING BANNER */
 .onboard-banner{background:linear-gradient(135deg,var(--blue) 0%,#1034A6 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
 .ob-glow{position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
 .ob-l{position:relative;z-index:1}
@@ -91,80 +64,43 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ob-title{font:800 20px/1.2 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px;margin-bottom:6px}
 .ob-desc{font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.6)}
 .ob-btn{padding:12px 22px;border-radius:10px;background:#fff;color:var(--blue);font:700 14px/1 'Pretendard',sans-serif;border:none;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;position:relative;z-index:1}
-.ob-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
-
-/* STAT GRID */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.sc{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:16px 18px;transition:all .2s}
-.sc:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.sc{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:16px 18px}
 .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sc-label{font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 .sc-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
 .sc-val{font:800 26px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:5px}
 .sc-ch{font:600 12px/1 'Pretendard',sans-serif}
-.up{color:var(--green)}.dn{color:var(--red)}.nt{color:var(--ink-40)}
-
-/* 2COL */
+.nt{color:var(--ink-40)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
-
-/* CARD */
 .card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
 .card:last-child{margin-bottom:0}
 .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .card-t{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
-.card-a{font:600 12px/1 'Pretendard',sans-serif;color:var(--blue);cursor:pointer;text-decoration:none}
-
-/* TABLE */
+.card-a{font:600 12px/1 'Pretendard',sans-serif;color:var(--blue);cursor:pointer}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 thead th{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);text-align:left;padding:8px 12px;border-bottom:1px solid var(--ink-14);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 tbody td{font:400 13px/1 'Pretendard',sans-serif;padding:12px;border-bottom:1px solid var(--ink-07);color:var(--ink)}
 tbody tr:last-child td{border:none}
 tbody tr:hover td{background:rgba(0,0,0,.015)}
-.td-b{font-weight:700}
-.td-m{color:var(--ink-40)}
+.td-b{font-weight:700}.td-m{color:var(--ink-40)}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
 .bb{background:var(--blue-bg);color:var(--blue)}
-.ba{background:var(--purple-bg);color:var(--purple)}
 .br{background:var(--red-bg);color:var(--red)}
-
-/* BAR CHART */
-.bar-list{display:flex;flex-direction:column;gap:10px}
-.bar-row{display:flex;align-items:center;gap:10px}
-.bar-name{font:500 12px/1 'Pretendard',sans-serif;color:var(--ink-70);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-track{flex:1;height:7px;border-radius:4px;background:var(--ink-07);overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;background:var(--blue);transition:width .8s ease}
-.bar-val{font:700 12px/1 'Pretendard',sans-serif;color:var(--ink);width:70px;text-align:right;flex-shrink:0}
-
-/* PROGRESS */
-.prog-wrap{margin-bottom:12px}
-.prog-top{display:flex;justify-content:space-between;font:600 12px/1 'Pretendard',sans-serif;margin-bottom:6px}
-.prog-bar{height:6px;border-radius:3px;background:var(--ink-07);overflow:hidden}
-.prog-fill{height:100%;border-radius:3px;background:var(--blue)}
-
-/* 수익 흐름 */
 .flow-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
 .flow-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
 .fl-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
 .fl-l small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
 .fl-r{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
 .fl-r.g{color:var(--green)}.fl-r.r{color:var(--red)}
-.fl-r small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px;text-align:right}
-
-/* ACTION BTN */
 .act-btn{padding:5px 10px;border-radius:6px;font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;border:1px solid var(--ink-14);background:transparent;transition:all .15s;margin-right:4px}
-.act-btn:hover{border-color:var(--blue);color:var(--blue)}
-.act-btn.r:hover{border-color:var(--red);color:var(--red)}
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
-.btn-primary:hover{background:#1034A6}
-
-/* MOBILE */
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
-
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -177,173 +113,98 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .onboard-banner{flex-direction:column;align-items:flex-start}
 }
 </style>
-
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sb" id="sb">
   <div class="sb-top">
     <a class="sb-brand" href="index.html">
-      <div class="sb-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="28" height="28" rx="7" fill="#00B37E"/>
-  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
-</svg></div>
+      <div class="sb-gem">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+          <rect width="28" height="28" rx="7" fill="#00B37E"/>
+          <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <span class="sb-wm">Vingly</span>
     </a>
     <div class="sb-role">공급자</div>
   </div>
   <nav class="sb-nav">
-    <button class="ni" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
+    <button class="ni act" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
     <button class="ni" onclick="showPage('products',this)"><span class="ni-ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('creators',this)"><span class="ni-ic">📱</span>크리에이터 현황</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ni-ic">💸</span>수익 및 비용</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ni-ic">🏦</span>정산 관리</button>
-    <button class="ni" onclick="showPage('sample',this)"><span class="ni-ic">📦</span>샘플 관리</button>
+    <button class="ni" onclick="showPage('sample',this)"><span class="ni-ic">🎁</span>샘플 관리</button>
     <div class="divr"></div>
     <button class="ni" onclick="showPage('settings',this)"><span class="ni-ic">⚙️</span>내 설정</button>
-    <a class="ni" href="product-register.html"><span class="ni-ic">➕</span>제품 등록</a>
     <a class="ni" href="index.html"><span class="ni-ic">🏠</span>메인으로</a>
   </nav>
   <div class="sb-foot">
     <div class="ua">
-      <div class="ua-av" id="sb-av">헬</div>
-      <div><div class="ua-name" id="sb-name">헬시팜</div><div class="ua-role">공급자 · Active</div></div>
+      <div class="ua-av" id="sb-av">브</div>
+      <div><div class="ua-name" id="sb-name">브랜드</div><div class="ua-role">공급자 · Active</div></div>
     </div>
   </div>
 </aside>
 
-<!-- MOB TOP -->
 <div class="mob-top">
   <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
   <div style="font:800 17px/1 'Pretendard',sans-serif" id="mob-title">대시보드</div>
   <div style="width:30px"></div>
 </div>
 
-<!-- MAIN -->
 <main class="mn">
   <div class="topbar">
-    <div class="tb-l"><div class="tb-title" id="page-title">대시보드</div></div>
+    <div class="tb-title" id="page-title">대시보드</div>
     <div class="tb-r">
       <div class="icon-btn" onclick="toggleNotif()" style="cursor:pointer;position:relative">🔔<div class="ndot"></div></div>
       <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- 대시보드 -->
   <div class="page act content" id="pg-dashboard">
-
-    <!-- 온보딩 배너 (제품 없을 때) -->
     <div class="onboard-banner" id="onboard-banner">
       <div class="ob-glow"></div>
       <div class="ob-l">
         <div class="ob-tag">시작하기</div>
         <div class="ob-title">첫 제품을 등록하면 크리에이터 매칭이 시작됩니다</div>
-        <div class="ob-desc">5분이면 등록 완료 · AI가 적합한 크리에이터를 자동으로 연결합니다</div>
+        <div class="ob-desc">5분이면 등록 완료 · 크리에이터가 자동으로 연결됩니다</div>
       </div>
-      <button class="ob-btn" onclick="location.href='product-register.html'">제품 등록하기 →</button>
+      <button class="ob-btn" onclick="showPage('products',null)">제품 등록하기 →</button>
     </div>
-
-    <!-- 통계 -->
     <div class="stat-grid">
-      <div class="sc">
-        <div class="sc-top">
-          <div class="sc-label">이번 달 매출</div>
-          <div class="sc-ico" style="background:var(--blue-bg)">💰</div>
-        </div>
-        <div class="sc-val">₩0</div>
-        <div class="sc-ch nt">제품 등록 후 시작됩니다</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top">
-          <div class="sc-label">활동 크리에이터</div>
-          <div class="sc-ico" style="background:var(--green-bg)">📱</div>
-        </div>
-        <div class="sc-val">0명</div>
-        <div class="sc-ch nt">제품 등록 시 매칭 시작</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top">
-          <div class="sc-label">총 판매 건수</div>
-          <div class="sc-ico" style="background:var(--amber-bg)">🛒</div>
-        </div>
-        <div class="sc-val">0건</div>
-        <div class="sc-ch nt">아직 판매 없음</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top">
-          <div class="sc-label">정산 예정 (다음 달)</div>
-          <div class="sc-ico" style="background:var(--red-bg)">📋</div>
-        </div>
-        <div class="sc-val">₩0</div>
-        <div class="sc-ch nt">배송 완료 후 7일</div>
-      </div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">제품 등록 후 시작됩니다</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">활동 크리에이터</div><div class="sc-ico" style="background:var(--green-bg)">📱</div></div><div class="sc-val">0명</div><div class="sc-ch nt">제품 등록 시 매칭 시작</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch nt">아직 판매 없음</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">배송 완료 후 7일</div></div>
     </div>
-
-    <div class="g3">
-      <!-- 크리에이터별 실적 -->
-      <div class="card">
-        <div class="card-h"><div class="card-t">크리에이터별 판매 실적</div><a class="card-a" onclick="showPage('creators',null)">전체 보기</a></div>
-        <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
-          <div style="font-size:28px;margin-bottom:8px">📭</div>
-          <div style="font-size:13px;font-weight:500">아직 연결된 크리에이터가 없습니다</div>
-          <div style="font-size:12px;margin-top:4px">제품을 등록하면 크리에이터가 자동 매칭됩니다</div>
-        </div>
-      </div>
-
-      <!-- 이번 달 비용 요약 -->
-      <div class="card">
-        <div class="card-h"><div class="card-t">이번 달 비용 요약</div></div>
-        <div class="flow-row"><div class="fl-l">총 매출<small>구매자 결제 합계</small></div><div class="fl-r">₩0</div></div>
-        <div class="flow-row"><div class="fl-l">크리에이터 수수료<small>평균 15% 기준</small></div><div class="fl-r r">-₩0</div></div>
-        <div class="flow-row"><div class="fl-l">PG 결제 수수료<small>토스페이먼츠 2.2%</small></div><div class="fl-r r">-₩0</div></div>
-        <div class="flow-row"><div class="fl-l">Vingly 플랫폼<small>파일럿 기간</small></div><div class="fl-r g">₩0</div></div>
-        <div class="flow-row"><div class="fl-l" style="font-weight:700;color:var(--ink)">공급자 정산 예정액<small>원가 제외 전</small></div><div class="fl-r" style="font-size:18px;font-weight:800;letter-spacing:-.5px">₩0</div></div>
-      </div>
-    </div>
-
-    <!-- 제품별 현황 -->
     <div class="card">
-      <div class="card-h"><div class="card-t">제품별 판매 현황</div><button class="btn-primary" onclick="location.href='product-register.html'">+ 제품 등록</button></div>
+      <div class="card-h"><div class="card-t">제품별 판매 현황</div><button class="btn-primary" onclick="showPage('products',null)">+ 제품 등록</button></div>
       <div class="tw">
         <table>
           <thead><tr><th>제품명</th><th>수수료율</th><th>이번 달 판매</th><th>매출</th><th>크리에이터</th><th>상태</th></tr></thead>
-          <tbody>
-            <tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">등록된 제품이 없습니다 · 위 버튼으로 첫 제품을 등록하세요</td></tr>
-          </tbody>
+          <tbody><tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">등록된 제품이 없습니다</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- 수익 및 비용 페이지 -->
-  <div class="page content" id="pg-revenue">
-    <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="rev-sales">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-commission">₩0</div><div class="sc-ch nt" id="rev-commission-sub">연결된 크리에이터 0명</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">2.2% 토스</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch g" style="color:var(--green)">파일럿 무료</div></div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-        <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r">₩0</div></div>
-        <div class="flow-row"><div class="fl-l">크리에이터 수수료 (평균 15%)</div><div class="fl-r r">-₩0</div></div>
-        <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r">-₩0</div></div>
-        <div class="flow-row"><div class="fl-l">Vingly 거래 수수료 (1.8%)<small>파일럿 무료 → 정식 후 적용</small></div><div class="fl-r r">-₩0</div></div>
-        <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액 (원가 전)</div><div class="fl-r" style="font-size:18px;font-weight:800">₩0</div></div>
+  <!-- 제품 관리 -->
+  <div class="page content" id="pg-products">
+    <div class="card">
+      <div class="card-h"><div class="card-t">등록 제품</div><button class="btn-primary" onclick="openProductModal()">+ 새 제품 등록</button></div>
+      <div id="product-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">📦</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">등록된 제품이 없습니다</div>
+        <div style="font-size:13px">위 버튼으로 첫 제품을 등록하면 크리에이터 매칭이 시작됩니다</div>
       </div>
-      <div class="card">
-        <div class="card-h"><div class="card-t">수수료 전환 안내</div></div>
-        <div style="background:var(--blue-bg);border-radius:10px;padding:14px;margin-bottom:14px">
-          <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:6px">현재 상태 — 파일럿 운영 중</div>
-          <div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">Vingly 플랫폼 수수료 무료 · 1,000명 달성 후 30일 전 공지 후 전환</div>
-        </div>
-        <div class="flow-row"><div class="fl-l">현재 Vingly 거래 수수료</div><div class="fl-r g">₩0 (파일럿)</div></div>
-        <div class="flow-row"><div class="fl-l">정식 전환 후</div><div class="fl-r b">1.8% (얼리버드 1.5%)</div></div>
-        <div class="flow-row"><div class="fl-l">월 구독 (제품 수 기반)</div><div class="fl-r">₩9,900 / ₩29,000</div></div>
-        <div class="flow-row"><div class="fl-l">크리에이터 수수료 차감</div><div class="fl-r g">₩0 영구</div></div>
+      <div class="tw" id="product-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>제품명</th><th>가격</th><th>수수료율</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="product-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -360,117 +221,63 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
   </div>
 
-  <!-- 제품 관리 -->
-  <div class="page content" id="pg-products">
+  <!-- 수익 및 비용 -->
+  <div class="page content" id="pg-revenue">
+    <div class="stat-grid">
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">연결된 크리에이터 0명</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">2.2% 토스</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
+    </div>
     <div class="card">
-      <div class="card-h"><div class="card-t">등록 제품</div><button class="btn-primary" onclick="location.href='product-register.html'">+ 새 제품 등록</button></div>
-      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
-        <div style="font-size:36px;margin-bottom:10px">📦</div>
-        <div style="font-size:14px;font-weight:600;margin-bottom:6px">등록된 제품이 없습니다</div>
-        <div style="font-size:13px">위 버튼으로 첫 제품을 등록하면 크리에이터 매칭이 시작됩니다</div>
-      </div>
+      <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
+      <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r">₩0</div></div>
+      <div class="flow-row"><div class="fl-l">크리에이터 수수료</div><div class="fl-r r">-₩0</div></div>
+      <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r">-₩0</div></div>
+      <div class="flow-row"><div class="fl-l">Vingly 거래 수수료<small>파일럿 무료 → 정식 후 1.5% 얼리버드</small></div><div class="fl-r g">₩0</div></div>
+      <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액</div><div class="fl-r" style="font-size:18px;font-weight:800">₩0</div></div>
     </div>
   </div>
 
   <!-- 정산 관리 -->
   <div class="page content" id="pg-settle">
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정 (이번 달)</div><div class="sc-ico" style="background:var(--blue-bg)">📅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">배송 완료 후 7일</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 유예 잔액</div><div class="sc-ico" style="background:var(--amber-bg)">⏱️</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">유예 기간 중</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">리저브 적립액</div><div class="sc-ico" style="background:var(--green-bg)">🏦</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">3개월 후 반환</div></div>
-    </div>
     <div class="card">
       <div class="card-h"><div class="card-t">정산 내역</div></div>
       <div class="tw">
         <table>
           <thead><tr><th>정산일</th><th>판매 건수</th><th>매출</th><th>수수료 차감</th><th>정산액</th><th>상태</th></tr></thead>
-          <tbody>
-            <tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 정산 내역이 없습니다 · 첫 판매 발생 후 표시됩니다</td></tr>
-          </tbody>
+          <tbody><tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 정산 내역이 없습니다</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- 샘플 관리 페이지 -->
+  <!-- 샘플 관리 -->
   <div class="page content" id="pg-sample">
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-top"><div class="sc-label">샘플 신청 대기</div><div class="sc-ico" style="background:var(--purple-bg)">📦</div></div><div class="sc-val">0건</div><div class="sc-ch nt">승인 필요</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">발송 완료</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">0건</div><div class="sc-ch nt">이번 달</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">리뷰 게시 확인</div><div class="sc-ico" style="background:var(--blue-bg)">⭐</div></div><div class="sc-val">0건</div><div class="sc-ch nt">평균 별점 —</div></div>
-    </div>
-
-    <!-- 샘플 정책 설정 -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-h"><div class="card-t">📋 샘플 정책 설정</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">샘플 제공 여부</label>
-          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
-            <option>제공 가능 (크리에이터 신청 허용)</option>
-            <option>비공개 (별도 협의)</option>
-            <option>제공 안함</option>
-          </select>
-        </div>
-        <div>
-          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">월 샘플 제공 한도</label>
-          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
-            <option>월 5개</option>
-            <option>월 10개</option>
-            <option>월 20개</option>
-            <option>무제한</option>
-          </select>
-        </div>
-        <div>
-          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">최소 팔로워 조건</label>
-          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
-            <option>조건 없음 (100명 이상)</option>
-            <option>1,000명 이상</option>
-            <option>5,000명 이상</option>
-            <option>10,000명 이상</option>
-          </select>
-        </div>
-        <div>
-          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">리뷰 기한</label>
-          <select class="fi" style="width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
-            <option>수령 후 14일 이내</option>
-            <option>수령 후 7일 이내</option>
-            <option>수령 후 30일 이내</option>
-          </select>
-        </div>
-      </div>
-      <button onclick="alert('샘플 정책이 저장됐습니다.')" style="margin-top:14px;padding:10px 22px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정책 저장</button>
-    </div>
-
-    <!-- 샘플 신청 목록 -->
     <div class="card">
       <div class="card-h"><div class="card-t">샘플 신청 목록</div></div>
       <div class="tw">
         <table>
-          <thead><tr><th>신청일</th><th>크리에이터</th><th>팔로워</th><th>제품</th><th>채널</th><th>리뷰 형식</th><th>상태</th><th>처리</th></tr></thead>
-          <tbody>
-            <tr><td colspan="8" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 샘플 신청이 없습니다 · 크리에이터 연결 후 신청이 들어옵니다</td></tr>
-          </tbody>
+          <thead><tr><th>신청일</th><th>크리에이터</th><th>제품</th><th>상태</th><th>처리</th></tr></thead>
+          <tbody><tr><td colspan="5" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 샘플 신청이 없습니다</td></tr></tbody>
         </table>
       </div>
     </div>
-  </div><!-- /pg-sample -->
+  </div>
 
   <!-- 내 설정 -->
   <div class="page content" id="pg-settings">
     <div style="max-width:680px">
-
-      <!-- 기본 정보 -->
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이름 / 브랜드명</label>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명</label>
             <input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명">
           </div>
           <div>
             <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label>
-            <input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="이메일">
+            <input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="이메일" readonly>
           </div>
           <div>
             <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label>
@@ -481,329 +288,235 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             <input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000">
           </div>
         </div>
-        <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">정보 저장</button>
+        <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
       </div>
-
-      <!-- 비밀번호 변경 -->
-      <div class="card" style="margin-bottom:14px">
-        <div class="card-h"><div class="card-t">🔐 비밀번호 변경</div></div>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:360px">
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">현재 비밀번호</label>
-            <input type="password" id="set_pw_cur" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호</label>
-            <input type="password" id="set_pw_new" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호 확인</label>
-            <input type="password" id="set_pw_confirm" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <button onclick="changePw()" style="padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">비밀번호 변경</button>
-            <span id="pw_msg" style="font-size:12px;margin-left:10px;display:none"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 알림 설정 -->
-      <div class="card">
-        <div class="card-h"><div class="card-t">🔔 알림 설정</div></div>
-        <div style="display:flex;flex-direction:column;gap:2px">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)">
-            <div><div style="font-size:13px;font-weight:600">새 판매 발생 알림</div><div style="font-size:12px;color:var(--ink-40)">크리에이터 링크로 판매 시 이메일</div></div>
-            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer;transition:background .2s" onclick="this.style.background=this.style.background===''||this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)';this.firstElementChild.style.transform=this.style.background==='rgb(0, 179, 126)'?'translateX(18px)':''"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)">
-            <div><div style="font-size:13px;font-weight:600">정산 완료 알림</div><div style="font-size:12px;color:var(--ink-40)">월 정산 처리 시 이메일</div></div>
-            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="this.style.background=this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)'"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-            <div><div style="font-size:13px;font-weight:600">크리에이터 샘플 신청 알림</div><div style="font-size:12px;color:var(--ink-40)">샘플 신청 들어올 때 이메일</div></div>
-            <div style="width:40px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;padding:2px;cursor:pointer" onclick="this.style.background=this.style.background==='rgb(0, 179, 126)'?'var(--ink-14)':'var(--green)'"><div style="width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 회원 탈퇴 -->
       <div class="card" style="border-color:var(--red-bg)">
         <div class="card-h"><div class="card-t" style="color:var(--red)">⚠️ 회원 탈퇴</div></div>
-        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 등록된 제품, 수익 내역, 크리에이터 연결 정보가 모두 삭제됩니다. 정산 완료 후 탈퇴를 권장합니다.</div>
-        <button onclick="document.getElementById('withdrawModal').style.display='flex'" style="padding:10px 20px;border-radius:9px;background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bg);font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">회원 탈퇴하기</button>
-      </div>
-
-    </div>
-  </div><!-- /pg-settings -->
-
-  <!-- 회원 탈퇴 확인 모달 -->
-  <div id="withdrawModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);align-items:center;justify-content:center">
-    <div style="background:#fff;border-radius:16px;padding:28px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="font:700 16px/1 'Pretendard',sans-serif;margin-bottom:10px">⚠️ 회원 탈퇴</div>
-      <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.6);margin-bottom:16px">탈퇴 시 등록된 제품 및 모든 데이터가 삭제됩니다. 정산 미완료 건이 있는 경우 처리 후 탈퇴해주세요.</div>
-      <div style="margin-bottom:16px">
-        <label style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);display:block;margin-bottom:6px">확인을 위해 비밀번호를 입력하세요</label>
-        <input type="password" id="withdraw_pw" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(10,12,16,.14);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="현재 비밀번호">
-        <div id="withdraw_msg" style="font-size:12px;color:#991B1B;margin-top:6px;display:none"></div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="confirmWithdraw()" style="flex:1;padding:11px;border-radius:9px;background:#991B1B;color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">탈퇴하기</button>
-        <button onclick="document.getElementById('withdrawModal').style.display='none'" style="flex:1;padding:11px;border-radius:9px;background:rgba(10,12,16,.07);color:rgba(10,12,16,.7);border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 등록된 제품, 수익 내역, 크리에이터 연결 정보가 모두 삭제됩니다.</div>
+        <button onclick="doLogout()" style="padding:10px 20px;border-radius:9px;background:var(--red-bg);color:var(--red);border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">로그아웃 후 탈퇴 문의</button>
       </div>
     </div>
   </div>
-
 </main>
 
-<script>
-// 로그인 보호 — sessionStorage 우선, 없으면 localStorage(로그인 유지) 확인
-(function(){
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  if(!raw){ location.replace('login.html'); return; }
-  try {
-    const user = JSON.parse(raw);
-    if(user.role !== 'brand'){ location.replace('login.html'); return; }
-    // sessionStorage에도 동기화
-    sessionStorage.setItem('vingly_user', raw);
-    document.addEventListener('DOMContentLoaded', function(){
-      const n = user.name || user.email || '공급자';
-      document.getElementById('sb-name').textContent = n;
-      document.getElementById('sb-av').textContent = n[0];
-    });
-  } catch(e){ location.replace('login.html'); }
-  // 뒤로가기로 재진입 방지
-  history.replaceState(null, '', location.href);
-  window.addEventListener('popstate', () => location.replace('login.html'));
-})();
-
-function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
-  document.getElementById('pg-'+id).classList.add('act');
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
-  if(btn) btn.classList.add('act');
-  const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'};
-  const t = titles[id] || '';
-  document.getElementById('page-title').textContent = t;
-  document.getElementById('mob-title').textContent = t;
-  if(id === 'settings') loadProfileSettings();
-}
-
-// ── 프로필 설정 로드 ──
-function loadProfileSettings() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const me = members.find(m => m.email === user.email) || user;
-  if(document.getElementById('set_name'))    document.getElementById('set_name').value    = me.name    || '';
-  if(document.getElementById('set_email'))   document.getElementById('set_email').value   = me.email   || '';
-  if(document.getElementById('set_phone'))   document.getElementById('set_phone').value   = me.phone   || '';
-  if(document.getElementById('set_bizno'))   document.getElementById('set_bizno').value   = me.bizno   || '';
-}
-
-// ── 프로필 저장 ──
-function saveProfile() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  const updated = {
-    ...(idx >= 0 ? members[idx] : user),
-    name:  document.getElementById('set_name').value.trim(),
-    email: document.getElementById('set_email').value.trim(),
-    phone: document.getElementById('set_phone').value.trim(),
-    bizno: document.getElementById('set_bizno').value.trim(),
-  };
-  if(idx >= 0) members[idx] = updated; else members.push(updated);
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  // 세션 정보도 업데이트
-  const newSession = JSON.stringify({ ...user, name: updated.name, email: updated.email });
-  sessionStorage.setItem('vingly_user', newSession);
-  localStorage.setItem('vingly_user', newSession);
-  // 사이드바 이름 반영
-  document.getElementById('sb-name').textContent = updated.name || updated.email;
-  document.getElementById('sb-av').textContent   = (updated.name || 'U')[0];
-  const msg = document.getElementById('profile_msg');
-  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
-}
-
-// ── 비밀번호 변경 ──
-function changePw() {
-  const cur  = document.getElementById('set_pw_cur').value;
-  const nw   = document.getElementById('set_pw_new').value;
-  const conf = document.getElementById('set_pw_confirm').value;
-  const msg  = document.getElementById('pw_msg');
-  msg.style.display = 'inline';
-  if(!cur || !nw || !conf) { msg.style.color='var(--red)'; msg.textContent='모든 항목을 입력해주세요'; return; }
-  if(nw.length < 6) { msg.style.color='var(--red)'; msg.textContent='비밀번호는 6자 이상이어야 합니다'; return; }
-  if(nw !== conf)   { msg.style.color='var(--red)'; msg.textContent='새 비밀번호가 일치하지 않습니다'; return; }
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  if(idx < 0 || members[idx].pw !== cur) { msg.style.color='var(--red)'; msg.textContent='현재 비밀번호가 올바르지 않습니다'; return; }
-  members[idx].pw = nw;
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  msg.style.color = 'var(--green)'; msg.textContent = '✅ 비밀번호가 변경됐습니다';
-  document.getElementById('set_pw_cur').value = '';
-  document.getElementById('set_pw_new').value = '';
-  document.getElementById('set_pw_confirm').value = '';
-  setTimeout(() => msg.style.display = 'none', 3000);
-}
-
-function approveSample(btn) {
-  const row = btn.closest('tr');
-  const badge = row.querySelector('.badge');
-  if(badge){ badge.className='badge bg'; badge.textContent='승인됨'; }
-  btn.parentElement.innerHTML = '<span style="font-size:12px;color:var(--green)">발송 준비 중</span>';
-  alert('샘플 승인됐습니다. 배송지 정보를 확인해 발송해주세요.');
-}
-function rejectSample(btn) {
-  const row = btn.closest('tr');
-  const badge = row.querySelector('.badge');
-  if(badge){ badge.className='badge br'; badge.textContent='거절됨'; }
-  btn.parentElement.innerHTML = '<span style="font-size:12px;color:var(--red)">거절됨</span>';
-}
-
-function doLogout(){
-  sessionStorage.removeItem('vingly_user');
-  localStorage.removeItem('vingly_user');
-  location.replace('login.html');
-}
-
-// ── 회원 탈퇴 ──
-function confirmWithdraw() {
-  const pw  = document.getElementById('withdraw_pw').value;
-  const msg = document.getElementById('withdraw_msg');
-  if(!pw){ msg.style.display='block'; msg.textContent='비밀번호를 입력해주세요'; return; }
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  if(idx < 0 || members[idx].pw !== pw){ msg.style.display='block'; msg.textContent='비밀번호가 올바르지 않습니다'; return; }
-  // 회원 삭제
-  members.splice(idx, 1);
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  // 해당 셀러 제품도 삭제
-  const products = JSON.parse(localStorage.getItem('vingly_products') || '[]');
-  localStorage.setItem('vingly_products', JSON.stringify(products.filter(p => p.brandEmail !== user.email)));
-  // 세션 제거 후 메인으로
-  sessionStorage.removeItem('vingly_user');
-  localStorage.removeItem('vingly_user');
-  alert('탈퇴가 완료됐습니다. 이용해주셔서 감사합니다.');
-  location.replace('index.html');
-}
-
-// ── 실제 제품 데이터 로드 ──
-function loadProducts() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const allProducts = JSON.parse(localStorage.getItem('vingly_products') || '[]');
-  // 현재 로그인한 셀러 제품만 필터
-  const products = allProducts.filter(p => p.brandEmail === user.email);
-
-  if (products.length === 0) return; // 빈 상태 유지
-
-  // ── 대시보드 탭: 제품별 판매 현황 테이블 ──
-  const dashTbody = document.querySelector('#pg-dashboard .tw table tbody');
-  if (dashTbody) {
-    dashTbody.innerHTML = products.map(p => `
-      <tr>
-        <td class="td-b">${p.name}</td>
-        <td>${p.commissionRate}%</td>
-        <td>${p.sales}건</td>
-        <td class="td-b">₩${p.revenue.toLocaleString()}</td>
-        <td>${p.creatorCount}명</td>
-        <td><span class="badge bg">판매중</span></td>
-      </tr>`).join('');
-  }
-
-  // ── 제품 관리 탭 ──
-  const prodSection = document.getElementById('pg-products');
-  if (prodSection) {
-    const header = prodSection.querySelector('.card-h .card-t');
-    if (header) header.textContent = `등록 제품 ${products.length}개`;
-    const emptyDiv = prodSection.querySelector('div[style*="text-align:center"]');
-    if (emptyDiv) emptyDiv.remove();
-    // 테이블이 없으면 새로 생성
-    if (!prodSection.querySelector('table')) {
-      const tw = document.createElement('div');
-      tw.className = 'tw';
-      tw.innerHTML = `<table>
-        <thead><tr><th>제품명</th><th>가격</th><th>수수료율</th><th>누적 판매</th><th>크리에이터</th><th>상태</th><th>관리</th></tr></thead>
-        <tbody></tbody></table>`;
-      prodSection.querySelector('.card').appendChild(tw);
-    }
-    const tbody = prodSection.querySelector('table tbody');
-    tbody.innerHTML = products.map(p => `
-      <tr>
-        <td class="td-b">${p.name}</td>
-        <td>₩${p.price.toLocaleString()}</td>
-        <td>${p.commissionRate}%</td>
-        <td>${p.sales}건</td>
-        <td>${p.creatorCount}명</td>
-        <td><span class="badge bg">판매중</span></td>
-        <td><button class="act-btn">수정</button></td>
-      </tr>`).join('');
-  }
-
-  // ── stat 카드 업데이트 ──
-  const totalRevenue = products.reduce((s, p) => s + p.revenue, 0);
-  const totalSales   = products.reduce((s, p) => s + p.sales, 0);
-  const totalCreators = products.reduce((s, p) => s + p.creatorCount, 0);
-  const statVals = document.querySelectorAll('#pg-dashboard .sc-val');
-  if (statVals[0]) statVals[0].textContent = totalRevenue > 0 ? '₩' + totalRevenue.toLocaleString() : '₩0';
-  if (statVals[1]) statVals[1].textContent = totalCreators + '명';
-  if (statVals[2]) statVals[2].textContent = totalSales + '건';
-
-  // ── 첫 제품 등록 배너 숨기기 ──
-  const banner = document.querySelector('.onboard-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-document.addEventListener('DOMContentLoaded', loadProducts);
-
-// 바 차트 애니메이션
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.querySelectorAll('.bar-fill').forEach(bar => {
-      const w = bar.style.width;
-      bar.style.width = '0';
-      setTimeout(() => { bar.style.width = w; }, 100);
-    });
-  }, 300);
-});
-</script>
-
-<!-- 알림 패널 -->
-<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
-  <div style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto">
-    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
-      <div style="font-size:24px;margin-bottom:8px">🔔</div>
-      <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
+<!-- 제품 등록 모달 -->
+<div id="productModal" onclick="if(event.target===this)closeProductModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:520px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeProductModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
+    <div style="font:800 20px/1 'Pretendard',sans-serif;margin-bottom:20px">📦 제품 등록</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품명 *</label>
+        <input id="p_name" type="text" placeholder="제품명 입력" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">판매가 (원) *</label>
+        <input id="p_price" type="number" placeholder="예: 35000" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">카테고리 *</label>
+        <select id="p_category" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          <option value="">선택</option>
+          <option>뷰티 · 스킨케어</option>
+          <option>패션 · 의류</option>
+          <option>식품 · 건강</option>
+          <option>헬스 · 운동</option>
+          <option>생활 · 홈</option>
+          <option>디지털 · 전자</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터 수수료율 (%) *</label>
+        <input id="p_commission" type="number" placeholder="예: 15" min="1" max="50" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 구매 URL</label>
+        <input id="p_url" type="url" placeholder="https://..." style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 설명</label>
+        <textarea id="p_desc" placeholder="제품 특징, 타겟 고객 등 크리에이터에게 전달할 내용" rows="3" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
+      </div>
+      <div id="product_err" style="font:600 13px/1 'Pretendard',sans-serif;color:var(--red);display:none"></div>
+      <button onclick="saveProduct()" style="width:100%;padding:13px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px">등록하기</button>
     </div>
   </div>
 </div>
 
-<script>
-/* ── 벨 알림 ── */
-function toggleNotif() {
-  const el = document.getElementById('notifPanel');
-  if(!el) return;
-  const isOpen = el.style.display === 'block';
-  el.style.display = isOpen ? 'none' : 'block';
-  // 읽음 처리
-  const dot = document.querySelector('.ndot');
-  if(dot && !isOpen) dot.style.display = 'none';
-}
-document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel');
-  const btn = document.querySelector('.icon-btn');
-  if(panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
-    panel.style.display = 'none';
+<!-- 알림 패널 -->
+<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
+  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
+    <div style="font-size:24px;margin-bottom:8px">🔔</div>
+    <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
+
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    location.replace('login.html')
+  } else {
+    const user = session.user
+    const role = user.user_metadata?.role
+    if (role !== 'brand') {
+      location.replace('login.html')
+    } else {
+      const name = user.user_metadata?.company_name || user.user_metadata?.name || user.email || '브랜드'
+      document.addEventListener('DOMContentLoaded', () => {
+        const sbName = document.getElementById('sb-name')
+        const sbAv = document.getElementById('sb-av')
+        if (sbName) sbName.textContent = name
+        if (sbAv) sbAv.textContent = name[0]
+        loadProducts(supabase, user.id)
+      })
+      window._supabase = supabase
+      window._vinglyUser = { id: user.id, email: user.email, name, role }
+    }
   }
-});
+
+  async function loadProducts(supabase, userId) {
+    const { data: products } = await supabase
+      .from('products')
+      .select('*')
+      .eq('brand_user', userId)
+      .order('created_at', { ascending: false })
+
+    if (!products || products.length === 0) return
+
+    document.getElementById('product-empty').style.display = 'none'
+    document.getElementById('product-table-wrap').style.display = 'block'
+    document.getElementById('onboard-banner').style.display = 'none'
+
+    const tbody = document.getElementById('product-tbody')
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td class="td-b">${p.name}</td>
+        <td>₩${Number(p.price).toLocaleString()}</td>
+        <td>${p.commission_rate}%</td>
+        <td><span class="badge bg">${p.status === 'active' ? '판매중' : '비활성'}</span></td>
+        <td><button class="act-btn" onclick="deleteProduct('${p.id}')">삭제</button></td>
+      </tr>`).join('')
+
+    window._products = products
+  }
+
+  window.saveProduct = async function() {
+    const name = document.getElementById('p_name').value.trim()
+    const price = parseInt(document.getElementById('p_price').value)
+    const category = document.getElementById('p_category').value
+    const commission = parseFloat(document.getElementById('p_commission').value)
+    const url = document.getElementById('p_url').value.trim()
+    const desc = document.getElementById('p_desc').value.trim()
+    const errEl = document.getElementById('product_err')
+
+    if (!name || !price || !category || !commission) {
+      errEl.textContent = '필수 항목을 모두 입력해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const user = window._vinglyUser
+    if (!user) return
+
+    const { error } = await window._supabase.from('products').insert({
+      brand_user: user.id,
+      name,
+      price,
+      category,
+      commission_rate: commission,
+      purchase_url: url,
+      description: desc,
+      status: 'active'
+    })
+
+    if (error) {
+      errEl.textContent = '저장 실패: ' + error.message
+      errEl.style.display = 'block'
+      return
+    }
+
+    closeProductModal()
+    await loadProducts(window._supabase, user.id)
+  }
+
+  window.deleteProduct = async function(id) {
+    if (!confirm('이 제품을 삭제하시겠습니까?')) return
+    await window._supabase.from('products').delete().eq('id', id)
+    await loadProducts(window._supabase, window._vinglyUser.id)
+  }
+
+  window.doLogout = async function() {
+    if (window._supabase) await window._supabase.auth.signOut()
+    location.replace('login.html')
+  }
+</script>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'))
+  document.getElementById('pg-'+id).classList.add('act')
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'))
+  if (btn) btn.classList.add('act')
+  const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
+  const t = titles[id] || ''
+  document.getElementById('page-title').textContent = t
+  document.getElementById('mob-title').textContent = t
+  if (id === 'settings') loadProfileSettings()
+}
+
+function loadProfileSettings() {
+  const user = window._vinglyUser || {}
+  const el = document.getElementById('set_name')
+  const em = document.getElementById('set_email')
+  if (el) el.value = user.name || ''
+  if (em) em.value = user.email || ''
+}
+
+function saveProfile() {
+  const msg = document.getElementById('profile_msg')
+  msg.style.display = 'inline'
+  setTimeout(() => msg.style.display = 'none', 2500)
+}
+
+function openProductModal() {
+  document.getElementById('productModal').style.display = 'flex'
+  document.getElementById('product_err').style.display = 'none'
+  document.getElementById('p_name').value = ''
+  document.getElementById('p_price').value = ''
+  document.getElementById('p_category').value = ''
+  document.getElementById('p_commission').value = ''
+  document.getElementById('p_url').value = ''
+  document.getElementById('p_desc').value = ''
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').style.display = 'none'
+}
+
+function toggleNotif() {
+  const el = document.getElementById('notifPanel')
+  if (!el) return
+  el.style.display = el.style.display === 'block' ? 'none' : 'block'
+  const dot = document.querySelector('.ndot')
+  if (dot) dot.style.display = 'none'
+}
+
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notifPanel')
+  const btn = document.querySelector('.icon-btn')
+  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
+    panel.style.display = 'none'
+  }
+})
 </script>
 </body>
 </html>
