@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingly — 링크 이동 중...</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+<style>
+  body{font-family:'Pretendard',sans-serif;background:#F4F3EF;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+  .box{text-align:center;padding:40px 20px}
+  .logo{width:48px;height:48px;border-radius:12px;background:#00B37E;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+  .title{font-size:18px;font-weight:700;color:#0A0C10;margin-bottom:8px}
+  .sub{font-size:14px;color:rgba(10,12,16,.5)}
+  .spinner{width:32px;height:32px;border:3px solid rgba(0,179,126,.2);border-top-color:#00B37E;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto 0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+      <rect width="28" height="28" rx="7" fill="#00B37E"/>
+      <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="title">제품 페이지로 이동 중...</div>
+  <div class="sub">잠시만 기다려주세요</div>
+  <div class="spinner"></div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
+
+  // URL에서 slug 추출: vingly.kr/j/slug-here
+  const path = location.pathname  // /j/slug-here
+  const slug = path.replace('/j/', '').replace('j.html', '').trim()
+
+  if (!slug) {
+    location.replace('index.html')
+  } else {
+    // 1. slug로 링크 찾기
+    const { data: link, error } = await supabase
+      .from('links')
+      .select('*, products(name, purchase_url)')
+      .eq('slug', slug)
+      .eq('status', 'active')
+      .single()
+
+    if (error || !link) {
+      // 링크 없으면 메인으로
+      document.querySelector('.title').textContent = '유효하지 않은 링크입니다'
+      document.querySelector('.sub').textContent = '3초 후 메인 페이지로 이동합니다'
+      document.querySelector('.spinner').style.display = 'none'
+      setTimeout(() => location.replace('index.html'), 3000)
+    } else {
+      // 2. 클릭 수 +1
+      await supabase
+        .from('links')
+        .update({ click_count: (link.click_count || 0) + 1 })
+        .eq('id', link.id)
+
+      // 3. 제품 구매 URL로 이동
+      const dest = link.products?.purchase_url || 'index.html'
+      if (dest && dest.startsWith('http')) {
+        location.replace(dest)
+      } else {
+        location.replace('index.html')
+      }
+    }
+  }
+</script>
+</body>
+</html>
