@@ -4,7 +4,6 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK606P"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,22 +11,10 @@
   gtag('js', new Date());
   gtag('config', 'G-TH29BK606P');
 </script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 크리에이터 대시보드</title>
-<!-- SEO & OG -->
 <meta name="description" content="내 링크 성과, 수익 현황, 등급 관리를 한 곳에서 확인하세요.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vingly">
-<meta property="og:title" content="Vingly 크리에이터 대시보드">
-<meta property="og:description" content="내 링크 성과, 수익 현황, 등급 관리를 한 곳에서 확인하세요.">
-<meta property="og:image" content="https://vingly.kr/og-image.svg">
-<meta property="og:url" content="https://vingly.kr/influencer-dashboard.html">
-<meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Vingly 크리에이터 대시보드">
-<meta name="twitter:image" content="https://vingly.kr/og-image.svg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -43,12 +30,10 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
-
 .sb{width:var(--sw);background:var(--white);border-right:1px solid var(--ink-14);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s}
 .sb-top{padding:18px 16px 14px;border-bottom:1px solid var(--ink-14)}
 .sb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:12px}
 .sb-gem{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center}
-.sb-gem svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .sb-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
 .sb-role{font:700 10px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:3px}
 .sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
@@ -62,8 +47,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ua-av{width:32px;height:32px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font:700 12px/1 'Pretendard',sans-serif;color:var(--green);flex-shrink:0}
 .ua-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink)}
 .ua-role{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
-.eb-badge{display:inline-flex;align-items:center;gap:4px;font:700 10px/1 'Pretendard',sans-serif;padding:2px 7px;border-radius:3px;background:var(--purple-bg);color:var(--purple);margin-top:4px}
-
 .mn{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
 .tb-title{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
@@ -71,18 +54,17 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .icon-btn{width:34px;height:34px;border-radius:9px;background:var(--ink-07);border:1px solid var(--ink-14);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative}
 .ndot{width:7px;height:7px;background:#EF4444;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--white)}
 .logout-btn{padding:7px 14px;border-radius:8px;background:var(--red-bg);color:var(--red);border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer}
-
 .content{padding:24px 28px;flex:1}
 .page{display:none}
 .page.act{display:block;animation:pageShow .18s ease}
 @keyframes pageShow{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-/* 내장 제품 탐색 */
 .exp-cat{padding:6px 14px;border-radius:100px;border:1.5px solid var(--ink-14);background:var(--white);font:500 12px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
 .exp-cat:hover{border-color:var(--green);color:var(--green)}
 .exp-cat.on{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:700}
 .exp-pc{background:var(--white);border:1px solid var(--ink-14);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
 .exp-pc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08)}
-.exp-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)}
+.exp-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
+.exp-thumb img{width:100%;height:100%;object-fit:cover}
 .exp-body{padding:12px}
 .exp-brand{font-size:11px;color:var(--ink-40);margin-bottom:3px}
 .exp-name{font:600 13px/1.35 'Pretendard',sans-serif;margin-bottom:8px}
@@ -91,8 +73,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-comm{font:700 11px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:3px 7px;border-radius:4px}
 .exp-btn{width:100%;padding:9px;border-radius:8px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-btn.linked{background:var(--green-bg);color:var(--green)}
-/* 모달 내부 */
-.exp-m-thumb{height:130px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:14px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)}
+.exp-m-thumb{height:200px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:14px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
+.exp-m-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 .exp-m-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .exp-m-badge{font:700 12px/1 'Pretendard',sans-serif;padding:5px 12px;border-radius:6px}
 .exp-link-box{background:var(--green-bg);border-radius:9px;padding:12px;margin-bottom:10px;display:none}
@@ -100,9 +82,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-link-url{font:700 12px/1 'Pretendard',sans-serif;color:var(--green);word-break:break-all;margin-bottom:8px}
 .exp-gen-btn{width:100%;padding:12px;border-radius:9px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-copy-btn{width:100%;padding:9px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit}
-.page.act{display:block}
-
-/* ONBOARD */
 .onboard{background:linear-gradient(135deg,var(--green) 0%,#034732 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
 .ob-glow{position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
 .ob-content{position:relative;z-index:1}
@@ -110,9 +89,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .ob-title{font:800 20px/1.2 'Pretendard',sans-serif;color:#fff;letter-spacing:-.5px;margin-bottom:6px}
 .ob-desc{font:400 13px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.6)}
 .ob-btn{padding:12px 22px;border-radius:10px;background:#fff;color:var(--green);font:700 14px/1 'Pretendard',sans-serif;border:none;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;position:relative;z-index:1}
-.ob-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
-
-/* STATS */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .sc{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:16px 18px}
 .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -120,8 +96,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .sc-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
 .sc-val{font:800 26px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:5px}
 .sc-ch{font:600 12px/1 'Pretendard',sans-serif}
-.up{color:var(--green)}.nt{color:var(--ink-40)}
-
+.nt{color:var(--ink-40)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
 .card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
@@ -129,8 +104,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .card-t{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
 .card-a{font:600 12px/1 'Pretendard',sans-serif;color:var(--green);cursor:pointer}
-
-/* 수익 계산기 */
 .calc-card{background:var(--ink);border-radius:var(--r);padding:22px}
 .calc-title{font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
 .calc-row{margin-bottom:14px}
@@ -142,33 +115,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .cr-lbl{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:5px}
 .cr-num{font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px}
 .cr-sub{font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:5px}
-
-/* 인기 제품 */
-.prod-grid{display:grid;grid-template-columns:1fr;gap:10px}
-.prod-item{background:var(--ink-07);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;border:1px solid var(--ink-14)}
-.prod-item:hover{background:var(--green-bg);border-color:rgba(4,108,78,.2)}
-.prod-ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--white)}
-.prod-info{flex:1;min-width:0}
-.prod-name{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prod-meta{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
-.prod-earn{text-align:right;flex-shrink:0}
-.prod-rate{font:800 15px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:3px}
-.prod-per{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
-.gen-btn{padding:6px 12px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s}
-.gen-btn:hover{background:#034732}
-
-/* 링크 현황 */
-.link-item{padding:12px 0;border-bottom:1px solid var(--ink-07);display:flex;align-items:center;gap:12px}
-.link-item:last-child{border:none}
-.link-ico{font-size:20px;flex-shrink:0}
-.link-info{flex:1;min-width:0}
-.link-name{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:3px}
-.link-url{font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.link-stats{text-align:right;flex-shrink:0}
-.link-earn{font:800 14px/1 'Pretendard',sans-serif;color:var(--green)}
-.link-meta{font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
-
-/* 등급 */
 .grade-card{border-radius:12px;padding:16px 20px;position:relative;overflow:hidden}
 .grade-current{background:var(--ink);color:#fff}
 .grade-next{background:var(--ink-07);border:1px solid var(--ink-14)}
@@ -192,16 +138,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .prog-label{font:400 11px/1 'Pretendard',sans-serif}
 .grade-current .prog-label{color:rgba(255,255,255,.4)}
 .grade-next .prog-label{color:var(--ink-40)}
-
-/* 수익 명세 */
 .earn-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
 .earn-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
 .er-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
 .er-l small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
 .er-r{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
 .er-r.g{color:var(--green)}
-
-/* TABLE */
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 thead th{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);text-align:left;padding:8px 12px;border-bottom:1px solid var(--ink-14);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
@@ -211,16 +153,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .td-b{font-weight:700}.td-m{color:var(--ink-40)}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
-.bb{background:var(--blue-bg);color:var(--blue)}
-.ba{background:var(--purple-bg);color:var(--purple)}
-
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
-.btn-primary:hover{background:#034732}
-
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
-
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -233,18 +169,18 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .onboard{flex-direction:column;align-items:flex-start}
 }
 </style>
-
 </head>
 <body>
 
 <aside class="sb" id="sb">
   <div class="sb-top">
     <a class="sb-brand" href="index.html">
-      <div class="sb-gem"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="28" height="28" rx="7" fill="#00B37E"/>
-  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
-</svg></div>
+      <div class="sb-gem">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+          <rect width="28" height="28" rx="7" fill="#00B37E"/>
+          <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <span class="sb-wm">Vingly</span>
     </a>
     <div class="sb-role">크리에이터</div>
@@ -261,11 +197,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </nav>
   <div class="sb-foot">
     <div class="ua">
-      <div class="ua-av" id="sb-av">뷰</div>
+      <div class="ua-av" id="sb-av">크</div>
       <div>
-        <div class="ua-name" id="sb-name">뷰티제인</div>
-        <div class="ua-role">Active · 인스타그램</div>
-        <div class="eb-badge">⭐ 얼리버드</div>
+        <div class="ua-name" id="sb-name">크리에이터</div>
+        <div class="ua-role">Active · 얼리버드</div>
       </div>
     </div>
   </div>
@@ -288,8 +223,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- 대시보드 -->
   <div class="page act content" id="pg-dashboard">
-
-    <!-- 온보딩 배너 -->
     <div class="onboard">
       <div class="ob-glow"></div>
       <div class="ob-content">
@@ -299,88 +232,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <button class="ob-btn" onclick="showPage('products', document.querySelector('.ni:nth-child(2)'))">제품 탐색하기 →</button>
     </div>
-
-    <!-- 통계 -->
     <div class="stat-grid">
-      <div class="sc">
-        <div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div>
-        <div class="sc-val" style="color:var(--green)">₩0</div>
-        <div class="sc-ch nt">링크 생성 후 시작됩니다</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div>
-        <div class="sc-val">0건</div>
-        <div class="sc-ch nt">아직 판매 없음</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div>
-        <div class="sc-val">0</div>
-        <div class="sc-ch nt">전환율 —</div>
-      </div>
-      <div class="sc">
-        <div class="sc-top"><div class="sc-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div>
-        <div class="sc-val" style="color:var(--green)">₩0</div>
-        <div class="sc-ch nt">자동 입금 예정</div>
-      </div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작됩니다</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch nt">아직 판매 없음</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div><div class="sc-val" id="dash-clicks">0</div><div class="sc-ch nt">전환율 —</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">자동 입금 예정</div></div>
     </div>
-
     <div class="g3">
-      <!-- 인기 제품 + 링크 생성 -->
       <div class="card">
-        <div class="card-h">
-          <div class="card-t">🔥 지금 인기 제품 Top 5</div>
-          <a class="card-a" onclick="showPage('products',null)">전체 보기</a>
+        <div class="card-h"><div class="card-t">🔥 내 링크 현황</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
+        <div id="dash-links-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+          <div style="font-size:28px;margin-bottom:8px">🔗</div>
+          <div style="font-size:13px;font-weight:500">아직 생성된 링크가 없습니다</div>
+          <div style="font-size:12px;margin-top:4px">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
         </div>
-        <div class="prod-grid">
-          <div class="prod-item">
-            <div class="prod-ico">💊</div>
-            <div class="prod-info">
-              <div class="prod-name">단백질 쉐이크 바닐라 1kg</div>
-              <div class="prod-meta">헬시팜 · ₩42,000 · 수수료 15%</div>
-            </div>
-            <div class="prod-earn">
-              <div class="prod-rate">15%</div>
-              <div class="prod-per">건당 ₩6,300</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:5px">
-      <button class="gen-btn" onclick="genLink('단백질 쉐이크', 42000, 15)">링크 생성</button>
-      <button onclick="requestSample('단백질 쉐이크')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
-    </div>
-          </div>
-          <div class="prod-item">
-            <div class="prod-ico">🥗</div>
-            <div class="prod-info">
-              <div class="prod-name">그린 슈퍼푸드 파우더 300g</div>
-              <div class="prod-meta">헬시팜 · ₩38,000 · 수수료 12%</div>
-            </div>
-            <div class="prod-earn">
-              <div class="prod-rate">12%</div>
-              <div class="prod-per">건당 ₩4,560</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:5px">
-      <button class="gen-btn" onclick="genLink('슈퍼푸드', 38000, 12)">링크 생성</button>
-      <button onclick="requestSample('슈퍼푸드')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
-    </div>
-          </div>
-          <div class="prod-item">
-            <div class="prod-ico">🧴</div>
-            <div class="prod-info">
-              <div class="prod-name">마그네슘 수면 젤리 NEW</div>
-              <div class="prod-meta">헬시팜 · ₩24,000 · 수수료 18%</div>
-            </div>
-            <div class="prod-earn">
-              <div class="prod-rate">18%</div>
-              <div class="prod-per">건당 ₩4,320</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:5px">
-      <button class="gen-btn" onclick="genLink('마그네슘', 24000, 18)">링크 생성</button>
-      <button onclick="requestSample('마그네슘')" style="padding:5px 10px;border-radius:7px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s">샘플 신청</button>
-    </div>
-          </div>
-        </div>
+        <div id="dash-links-list"></div>
       </div>
-
-      <!-- 예상 수익 계산기 -->
       <div class="calc-card">
         <div class="calc-title">내 예상 월 수익</div>
         <div class="calc-row">
@@ -405,19 +272,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
       </div>
     </div>
-
-    <!-- 내 링크 현황 -->
-    <div class="card">
-      <div class="card-h"><div class="card-t">내 활성 링크</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
-      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
-        <div style="font-size:28px;margin-bottom:8px">🔗</div>
-        <div style="font-size:13px;font-weight:500">아직 생성된 링크가 없습니다</div>
-        <div style="font-size:12px;margin-top:4px">위 제품에서 링크를 생성하면 여기에 표시됩니다</div>
-      </div>
-    </div>
   </div>
 
-  <!-- 수익 현황 페이지 -->
+  <!-- 수익 현황 -->
   <div class="page content" id="pg-earn">
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작</div></div>
@@ -425,42 +282,27 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
     </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-        <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
-          <div style="font-size:28px;margin-bottom:8px">💸</div>
-          <div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div>
-          <div style="font-size:12px;margin-top:4px">링크를 공유하고 첫 판매를 시작하세요</div>
-        </div>
-        <div class="earn-row"><div class="er-l">Vingly 수수료 차감<small>크리에이터 미징수 — 영구</small></div><div class="er-r g">₩0 영구</div></div>
-        <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩0</div></div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
+      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:28px;margin-bottom:8px">💸</div>
+        <div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div>
       </div>
-      <div class="card">
-        <div class="card-h"><div class="card-t">정산 예정 일정</div></div>
-        <div class="earn-row"><div class="er-l">이번 달 정산<small>판매 발생 시 표시</small></div><div class="er-r g">₩0</div></div>
-        <div class="earn-row"><div class="er-l">정산 방식</div><div class="er-r">자동 입금</div></div>
-        <div class="earn-row"><div class="er-l">Vingly 수수료 (전환 후)</div><div class="er-r g">₩0 영구<small>크리에이터 미징수</small></div></div>
-        <div style="margin-top:14px;background:var(--green-bg);border-radius:9px;padding:12px;font:500 13px/1.55 'Pretendard',sans-serif;color:var(--green)">
-          ⭐ Vingly는 크리에이터 수익에서 수수료를 받지 않습니다. 공급자 설정 수수료 전액 수령 — 영구.
-        </div>
-      </div>
+      <div class="earn-row"><div class="er-l">Vingly 수수료 차감<small>크리에이터 미징수 — 영구</small></div><div class="er-r g">₩0 영구</div></div>
+      <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩0</div></div>
     </div>
   </div>
 
-  <!-- 등급 페이지 -->
+  <!-- 등급 -->
   <div class="page content" id="pg-grade">
     <div class="g2">
       <div class="grade-card grade-current">
         <span class="gc-badge gc-b-curr">현재 등급</span>
-        <div class="gc-ico" style="font-size:28px;margin-bottom:8px">⚡</div>
+        <div style="font-size:28px;margin-bottom:8px">⚡</div>
         <div class="gc-name">Active</div>
         <div class="gc-cond">누적 0건 판매 완료</div>
         <div class="prog-wrap">
-          <div class="prog-top">
-            <span style="color:rgba(255,255,255,.6)">Active까지</span>
-            <span style="color:#fff">0 / 10건</span>
-          </div>
+          <div class="prog-top"><span style="color:rgba(255,255,255,.6)">Active까지</span><span style="color:#fff">0 / 10건</span></div>
           <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
           <div class="prog-label" style="margin-top:5px">링크를 생성하고 첫 판매를 시작하세요!</div>
         </div>
@@ -489,43 +331,33 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
   </div>
 
-  <!-- 제품 탐색 (내장) -->
+  <!-- 제품 탐색 -->
   <div class="page content" id="pg-products">
-
-    <!-- 검색 + 카테고리 -->
     <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:14px;padding:16px 18px;margin-bottom:16px">
       <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
         <input id="exp-search" type="text" placeholder="🔍 제품명, 브랜드 검색..." oninput="expRender()"
-          style="flex:1;min-width:180px;padding:10px 14px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;transition:border-color .2s"
+          style="flex:1;min-width:180px;padding:10px 14px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none"
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--ink-14)'">
-        <select onchange="expRender()"
-          style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;cursor:pointer" id="exp-sort">
+        <select onchange="expRender()" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;cursor:pointer" id="exp-sort">
           <option>수수료 높은 순</option>
           <option>최신 등록순</option>
-          <option>판매 많은 순</option>
           <option>가격 낮은 순</option>
         </select>
       </div>
-      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none" id="exp-cats">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
         <button class="exp-cat on" onclick="expSelectCat(this,'전체')">전체</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'헬스·운동')">💪 헬스·운동</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'식품·건강')">🥗 식품·건강</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'뷰티·스킨케어')">💄 뷰티</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'패션·의류')">👗 패션</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'생활·홈')">🏠 생활·홈</button>
-        <button class="exp-cat" onclick="expSelectCat(this,'디지털·전자')">📱 디지털</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'헬스 · 운동')">💪 헬스·운동</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'식품 · 건강')">🥗 식품·건강</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'뷰티 · 스킨케어')">💄 뷰티</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'패션 · 의류')">👗 패션</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'생활 · 홈')">🏠 생활·홈</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'디지털 · 전자')">📱 디지털</button>
       </div>
     </div>
-
-    <!-- 제품 카운트 -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div style="font:600 14px/1 'Pretendard',sans-serif">전체 제품 <span id="exp-count" style="color:var(--green)">0개</span></div>
     </div>
-
-    <!-- 제품 그리드 -->
     <div id="exp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:160px;transition:opacity .15s"></div>
-
-    <!-- 제품 상세 모달 -->
     <div id="exp-ov" onclick="if(event.target===this)expCloseModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
       <div style="background:#fff;border-radius:18px;width:100%;max-width:480px;padding:28px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);max-height:88vh;overflow-y:auto">
         <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px;color:var(--ink-40)">✕</button>
@@ -537,11 +369,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 링크 관리 -->
   <div class="page content" id="pg-links">
     <div class="card">
-      <div class="card-h"><div class="card-t">내 전체 링크</div><button class="btn-primary" onclick="location.href='product-explore.html'">+ 링크 생성</button></div>
-      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+      <div class="card-h"><div class="card-t">내 전체 링크</div><button class="btn-primary" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">+ 링크 생성</button></div>
+      <div id="links-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">🔗</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 생성된 링크가 없습니다</div>
         <div style="font-size:13px">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
+      </div>
+      <div class="tw" id="links-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>상태</th></tr></thead>
+          <tbody id="links-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -549,169 +387,68 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 내 설정 -->
   <div class="page content" id="pg-settings">
     <div style="max-width:680px">
-
-      <!-- 기본 정보 -->
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">활동명</label>
-            <input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="활동명">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label>
-            <input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="이메일">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label>
-            <input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">주요 SNS 채널 (URL)</label>
-            <input type="text" id="set_channel" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="https://instagram.com/...">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">팔로워 수 (대략)</label>
-            <input type="number" id="set_followers" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="1000">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">주요 콘텐츠 분야</label>
-            <select id="set_category" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-              <option value="">선택</option>
-              <option>뷰티·패션</option>
-              <option>헬스·운동</option>
-              <option>음식·요리</option>
-              <option>여행·라이프</option>
-              <option>육아·가족</option>
-              <option>디지털·IT</option>
-              <option>기타</option>
-            </select>
-          </div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">활동명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="활동명"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">주요 SNS 채널 (URL)</label><input type="text" id="set_channel" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="https://instagram.com/..."></div>
         </div>
         <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
       </div>
-
-      <!-- 정산 계좌 -->
       <div class="card" style="margin-bottom:14px">
-        <div class="card-h"><div class="card-t">🏦 정산 계좌</div><div style="font-size:12px;color:var(--ink-40)">수익 입금 계좌</div></div>
+        <div class="card-h"><div class="card-t">🏦 정산 계좌</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">은행</label>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">은행</label>
             <select id="set_bank" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-              <option value="">은행 선택</option>
-              <option>카카오뱅크</option><option>토스뱅크</option><option>국민은행</option>
-              <option>신한은행</option><option>우리은행</option><option>하나은행</option>
-              <option>농협은행</option><option>기업은행</option>
-            </select>
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">계좌번호</label>
-            <input type="text" id="set_account" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="계좌번호 입력">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">예금주</label>
-            <input type="text" id="set_account_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="예금주명">
-          </div>
+              <option value="">은행 선택</option><option>카카오뱅크</option><option>토스뱅크</option><option>국민은행</option><option>신한은행</option><option>우리은행</option><option>하나은행</option><option>농협은행</option>
+            </select></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">계좌번호</label><input type="text" id="set_account" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="계좌번호 입력"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">예금주</label><input type="text" id="set_account_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="예금주명"></div>
         </div>
         <button onclick="saveBankInfo()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">계좌 저장</button>
         <span id="bank_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
       </div>
-
-      <!-- 비밀번호 변경 -->
-      <div class="card">
-        <div class="card-h"><div class="card-t">🔐 비밀번호 변경</div></div>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:360px">
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">현재 비밀번호</label>
-            <input type="password" id="set_pw_cur" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호</label>
-            <input type="password" id="set_pw_new" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">새 비밀번호 확인</label>
-            <input type="password" id="set_pw_confirm" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          </div>
-          <div>
-            <button onclick="changePw()" style="padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">비밀번호 변경</button>
-            <span id="pw_msg" style="font-size:12px;margin-left:10px;display:none"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 회원 탈퇴 -->
-      <div class="card" style="border-color:#FEF2F2;margin-top:0">
+      <div class="card" style="border-color:#FEF2F2">
         <div class="card-h"><div class="card-t" style="color:#991B1B">⚠️ 회원 탈퇴</div></div>
-        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 생성된 링크, 수익 내역, 모든 데이터가 삭제됩니다. 정산 미완료 수익이 있는 경우 처리 후 탈퇴해주세요.</div>
-        <button onclick="document.getElementById('withdrawModal').style.display='flex'" style="padding:10px 20px;border-radius:9px;background:#FEF2F2;color:#991B1B;border:1.5px solid #FEF2F2;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">회원 탈퇴하기</button>
-      </div>
-
-    </div>
-  </div><!-- /pg-settings -->
-
-  <!-- 회원 탈퇴 확인 모달 -->
-  <div id="withdrawModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);align-items:center;justify-content:center">
-    <div style="background:#fff;border-radius:16px;padding:28px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="font:700 16px/1 'Pretendard',sans-serif;margin-bottom:10px">⚠️ 회원 탈퇴</div>
-      <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.6);margin-bottom:16px">탈퇴 시 링크, 수익 내역, 모든 데이터가 삭제됩니다.</div>
-      <div style="margin-bottom:16px">
-        <label style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);display:block;margin-bottom:6px">확인을 위해 비밀번호를 입력하세요</label>
-        <input type="password" id="withdraw_pw" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(10,12,16,.14);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="현재 비밀번호">
-        <div id="withdraw_msg" style="font-size:12px;color:#991B1B;margin-top:6px;display:none"></div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="confirmWithdraw()" style="flex:1;padding:11px;border-radius:9px;background:#991B1B;color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">탈퇴하기</button>
-        <button onclick="document.getElementById('withdrawModal').style.display='none'" style="flex:1;padding:11px;border-radius:9px;background:rgba(10,12,16,.07);color:rgba(10,12,16,.7);border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 생성된 링크, 수익 내역, 모든 데이터가 삭제됩니다.</div>
+        <button onclick="doLogout()" style="padding:10px 20px;border-radius:9px;background:#FEF2F2;color:#991B1B;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">로그아웃 후 탈퇴 문의</button>
       </div>
     </div>
   </div>
-
-<!-- 링크 생성 토스트 -->
+</main>
 
 <!-- SNS 공유 모달 -->
 <div id="shareModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
-  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;animation:slideUp .28s ease">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div>
-        <div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="shareTitle">제품명</div>
-        <div style="font:500 12px/1 'Pretendard',sans-serif;color:var(--green);margin-top:4px" id="shareEarn"></div>
-      </div>
+      <div><div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="shareTitle">제품명</div></div>
       <button onclick="closeShareModal()" style="width:30px;height:30px;border-radius:50%;background:var(--ink-07);border:none;font-size:14px;cursor:pointer">✕</button>
     </div>
-    <!-- URL 복사 -->
     <div style="display:flex;gap:8px;margin-bottom:20px">
       <input id="shareUrl" readonly style="flex:1;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 12px/1 'Pretendard',sans-serif;color:var(--ink);outline:none">
       <button onclick="copyShareUrl()" style="padding:10px 16px;border-radius:9px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">복사</button>
     </div>
-    <!-- SNS 버튼 -->
-    <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">SNS에 공유하기</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-      <a id="shareKakao" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#FEE500;border-radius:12px;text-decoration:none;transition:all .2s">
-        <span style="font-size:22px">💬</span>
-        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#000">카카오톡</span>
-      </a>
-      <a id="shareTwitter" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E7F5FE;border-radius:12px;text-decoration:none;transition:all .2s">
-        <span style="font-size:22px">🐦</span>
-        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#1DA1F2">X (트위터)</span>
-      </a>
-      <a id="shareLineBtn" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E8F5E0;border-radius:12px;text-decoration:none;transition:all .2s">
-        <span style="font-size:22px">💚</span>
-        <span style="font:700 12px/1 'Pretendard',sans-serif;color:#06C755">라인</span>
-      </a>
-    </div>
-    <div style="margin-top:12px;font:500 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);text-align:center">
-      📌 인스타그램·유튜브·블로그는 링크 복사 후 직접 붙여넣기 하세요
+      <a id="shareKakao" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#FEE500;border-radius:12px;text-decoration:none"><span style="font-size:22px">💬</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#000">카카오톡</span></a>
+      <a id="shareTwitter" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E7F5FE;border-radius:12px;text-decoration:none"><span style="font-size:22px">🐦</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#1DA1F2">X (트위터)</span></a>
+      <a id="shareLineBtn" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E8F5E0;border-radius:12px;text-decoration:none"><span style="font-size:22px">💚</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#06C755">라인</span></a>
     </div>
   </div>
 </div>
-<style>
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-#shareModal.on{display:flex}
-</style>
 
-<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)"></div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
+
+<!-- 알림 패널 -->
+<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
+  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
+    <div style="font-size:24px;margin-bottom:8px">🔔</div>
+    <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
+  </div>
+</div>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
@@ -719,6 +456,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     'https://hzrhpdqrrzhnhnaelaie.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
   )
+
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
     location.replace('login.html')
@@ -734,533 +472,289 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         const sbAv = document.getElementById('sb-av')
         if (sbName) sbName.textContent = name
         if (sbAv) sbAv.textContent = name[0]
+        loadMyLinks()
       })
       window._supabase = supabase
-      window._vinglyUser = { email: user.email, name, role }
+      window._vinglyUser = { id: user.id, email: user.email, name, role }
     }
+  }
+
+  // 내 링크 목록 로드
+  async function loadMyLinks() {
+    const user = window._vinglyUser
+    if (!user) return
+    const { data: links } = await supabase
+      .from('links')
+      .select('*, products(name, image_url, price, commission_rate)')
+      .eq('creator', user.id)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+
+    if (!links || links.length === 0) return
+
+    // 대시보드 링크 현황
+    document.getElementById('dash-links-empty').style.display = 'none'
+    const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
+    document.getElementById('dash-clicks').textContent = totalClicks.toLocaleString()
+    document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
+        <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:16px">
+          ${l.products?.image_url ? `<img src="${l.products.image_url}" style="width:100%;height:100%;object-fit:cover">` : '📦'}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:600 13px/1 'Pretendard',sans-serif;margin-bottom:3px">${l.products?.name || '제품'}</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40)">클릭 ${l.click_count || 0}회</div>
+        </div>
+        <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green)">수수료 ${l.products?.commission_rate || 0}%</div>
+      </div>`).join('')
+
+    // 링크 관리 테이블
+    document.getElementById('links-empty').style.display = 'none'
+    document.getElementById('links-table-wrap').style.display = 'block'
+    document.getElementById('links-tbody').innerHTML = links.map(l => `
+      <tr>
+        <td class="td-b">${l.products?.name || '제품'}</td>
+        <td style="font-size:11px;color:var(--ink-40)">vingly.kr/j/${l.slug}</td>
+        <td>${l.click_count || 0}</td>
+        <td><span class="badge bg">활성</span></td>
+      </tr>`).join('')
+
+    window._myLinks = links
+  }
+
+  // 제품 탐색
+  let expCat = '전체'
+  let expProducts = []
+
+  async function expLoadProducts() {
+    if (!window._supabase) return []
+    const { data, error } = await window._supabase
+      .from('products')
+      .select('*, users!brand_user(company_name)')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+    if (error || !data) return []
+    const emoMap = {
+      '뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗',
+      '헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'
+    }
+    return data.map(p => ({
+      id: p.id, name: p.name,
+      brand: p.users?.company_name || '브랜드',
+      cat: p.category || '기타',
+      price: p.price, comm: p.commission_rate,
+      emoji: emoMap[p.category] || '📦',
+      desc: p.description || '',
+      image_url: p.image_url || null
+    }))
+  }
+
+  window.expRender = async function() {
+    expProducts = await expLoadProducts()
+    const grid = document.getElementById('exp-grid')
+    const search = (document.getElementById('exp-search')?.value || '').toLowerCase()
+    grid.style.opacity = '.5'
+    setTimeout(() => {
+      const filtered = expProducts.filter(p => {
+        const catOk = expCat === '전체' || p.cat === expCat
+        const srchOk = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search)
+        return catOk && srchOk
+      })
+      document.getElementById('exp-count').textContent = filtered.length + '개'
+      if (!filtered.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--ink-40)"><div style="font-size:40px;margin-bottom:12px">🌱</div><div style="font:600 14px/1 'Pretendard',sans-serif">아직 등록된 제품이 없어요</div></div>`
+      } else {
+        const myLinkProductIds = (window._myLinks || []).map(l => l.product)
+        grid.innerHTML = filtered.map(p => {
+          const isLinked = myLinkProductIds.includes(p.id)
+          const thumb = p.image_url
+            ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover">`
+            : p.emoji
+          return `<div class="exp-pc" onclick="expOpenProduct('${p.id}')">
+            <div class="exp-thumb">${thumb}</div>
+            <div class="exp-body">
+              <div class="exp-brand">${p.brand}</div>
+              <div class="exp-name">${p.name}</div>
+              <div class="exp-row">
+                <div class="exp-price">₩${Number(p.price).toLocaleString()}</div>
+                <div class="exp-comm">수수료 ${p.comm}%</div>
+              </div>
+              <button class="exp-btn ${isLinked ? 'linked' : ''}" onclick="event.stopPropagation();expOpenProduct('${p.id}')">
+                ${isLinked ? '✓ 링크 생성됨' : '🔗 링크 생성하기'}
+              </button>
+            </div>
+          </div>`
+        }).join('')
+      }
+      grid.style.opacity = '1'
+    }, 100)
+  }
+
+  window.expSelectCat = function(btn, cat) {
+    document.querySelectorAll('.exp-cat').forEach(b => b.classList.remove('on'))
+    btn.classList.add('on')
+    expCat = cat
+    expRender()
+  }
+
+  window.expOpenProduct = async function(id) {
+    expProducts = await expLoadProducts()
+    const p = expProducts.find(x => x.id === id)
+    if (!p) return
+    const myLink = (window._myLinks || []).find(l => l.product === id)
+    const earn = Math.round(p.price * p.comm / 100)
+    const thumb = p.image_url
+      ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`
+      : p.emoji
+    document.getElementById('exp-modal-content').innerHTML = `
+      <div class="exp-m-thumb">${thumb}</div>
+      <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:4px">${p.brand} · ${p.cat}</div>
+      <div style="font:700 18px/1.3 'Pretendard',sans-serif;margin-bottom:12px">${p.name}</div>
+      <div class="exp-m-row">
+        <span class="exp-m-badge" style="background:var(--green-bg);color:var(--green)">수수료 ${p.comm}%</span>
+        <span class="exp-m-badge" style="background:var(--ink-07);color:var(--ink)">₩${Number(p.price).toLocaleString()}</span>
+        <span class="exp-m-badge" style="background:var(--blue-bg);color:var(--blue)">건당 ₩${earn.toLocaleString()}</span>
+      </div>
+      ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);background:var(--ink-07);border-radius:9px;padding:12px;margin-bottom:14px">${p.desc}</div>` : ''}
+      <div class="exp-link-box ${myLink ? 'on' : ''}" id="exp-link-box">
+        <div class="exp-link-url" id="exp-link-url">${myLink ? 'vingly.kr/j/' + myLink.slug : ''}</div>
+        <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
+      </div>
+      <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')">
+        ${myLink ? '✓ 링크 재생성' : '🔗 내 전용 링크 생성하기'}
+      </button>`
+    document.getElementById('exp-ov').style.display = 'flex'
+    document.body.style.overflow = 'hidden'
+  }
+
+  window.expGenerateLink = async function(id) {
+    const btn = document.getElementById('exp-gen-btn')
+    btn.textContent = '생성 중...'; btn.style.opacity = '.7'
+
+    const { data: { session } } = await window._supabase.auth.getSession()
+    const user = session ? { id: session.user.id, name: session.user.user_metadata?.name || 'creator' } : null
+    const p = expProducts.find(x => x.id === id)
+    if (!user || !p) return
+
+    const slug = (user.name || 'creator').replace(/\s/g, '').toLowerCase()
+      + '-' + p.name.split(' ')[0].toLowerCase()
+      + '-' + Date.now().toString(36)
+
+    await window._supabase.from('links').delete().eq('creator', user.id).eq('product', id)
+
+    const { error } = await window._supabase.from('links').insert({
+      creator: user.id, product: id, slug,
+      click_count: 0, conversion_count: 0, status: 'active'
+    })
+
+    if (error) {
+      btn.textContent = '생성 실패'; btn.style.opacity = '1'
+      console.error(error); return
+    }
+
+    const linkUrl = `vingly.kr/j/${slug}`
+    document.getElementById('exp-link-url').textContent = linkUrl
+    document.getElementById('exp-link-box').classList.add('on')
+    btn.textContent = '✓ 생성 완료!'; btn.style.opacity = '1'
+    btn.style.background = 'var(--green-bg)'; btn.style.color = 'var(--green)'
+    await loadMyLinks()
+    await expRender()
+  }
+
+  window.expCopyLink = function() {
+    const url = document.getElementById('exp-link-url').textContent
+    navigator.clipboard.writeText('https://' + url).catch(() => {})
+    const btn = document.querySelector('.exp-copy-btn')
+    if (btn) { btn.textContent = '✅ 복사됐어요!'; setTimeout(() => btn.textContent = '📋 링크 복사', 2000) }
+  }
+
+  window.expCloseModal = function() {
+    document.getElementById('exp-ov').style.display = 'none'
+    document.body.style.overflow = ''
+  }
+
+  window.doLogout = async function() {
+    if (window._supabase) await window._supabase.auth.signOut()
+    location.replace('login.html')
+  }
+
+  window.saveProfile = function() {
+    const msg = document.getElementById('profile_msg')
+    msg.style.display = 'inline'
+    setTimeout(() => msg.style.display = 'none', 2500)
+  }
+
+  window.saveBankInfo = function() {
+    const msg = document.getElementById('bank_msg')
+    msg.style.display = 'inline'
+    setTimeout(() => msg.style.display = 'none', 2500)
   }
 </script>
+
 <script>
-
-
 function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
-  document.getElementById('pg-'+id).classList.add('act');
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
-  if(btn) btn.classList.add('act');
-  const t = {dashboard:'대시보드',products:'제품 탐색',links:'내 링크 관리',earn:'수익 현황',grade:'내 등급',settings:'내 설정'}[id]||'';
-  document.getElementById('page-title').textContent = t;
-  document.getElementById('mob-title').textContent = t;
-  if(id === 'settings') loadProfileSettings();
-}
-
-// ── 프로필 설정 로드 ──
-function loadProfileSettings() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const me = members.find(m => m.email === user.email) || user;
-  const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-  setVal('set_name',         me.name);
-  setVal('set_email',        me.email);
-  setVal('set_phone',        me.phone);
-  setVal('set_channel',      me.channel);
-  setVal('set_followers',    me.followers);
-  setVal('set_category',     me.category);
-  setVal('set_bank',         me.bank);
-  setVal('set_account',      me.account);
-  setVal('set_account_name', me.accountName);
-}
-
-// ── 프로필 저장 ──
-function saveProfile() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  const updated = {
-    ...(idx >= 0 ? members[idx] : user),
-    name:      document.getElementById('set_name').value.trim(),
-    email:     document.getElementById('set_email').value.trim(),
-    phone:     document.getElementById('set_phone').value.trim(),
-    channel:   document.getElementById('set_channel').value.trim(),
-    followers: document.getElementById('set_followers').value,
-    category:  document.getElementById('set_category').value,
-  };
-  if(idx >= 0) members[idx] = updated; else members.push(updated);
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  const newSession = JSON.stringify({ ...user, name: updated.name, email: updated.email });
-  sessionStorage.setItem('vingly_user', newSession);
-  localStorage.setItem('vingly_user', newSession);
-  document.getElementById('sb-name').textContent = updated.name || updated.email;
-  document.getElementById('sb-av').textContent   = (updated.name || 'U')[0];
-  const msg = document.getElementById('profile_msg');
-  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
-}
-
-// ── 계좌 저장 ──
-function saveBankInfo() {
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  const extra = {
-    bank:        document.getElementById('set_bank').value,
-    account:     document.getElementById('set_account').value.trim(),
-    accountName: document.getElementById('set_account_name').value.trim(),
-  };
-  if(idx >= 0) Object.assign(members[idx], extra);
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  const msg = document.getElementById('bank_msg');
-  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
-}
-
-// ── 비밀번호 변경 ──
-function changePw() {
-  const cur  = document.getElementById('set_pw_cur').value;
-  const nw   = document.getElementById('set_pw_new').value;
-  const conf = document.getElementById('set_pw_confirm').value;
-  const msg  = document.getElementById('pw_msg');
-  msg.style.display = 'inline';
-  if(!cur || !nw || !conf) { msg.style.color='#991B1B'; msg.textContent='모든 항목을 입력해주세요'; return; }
-  if(nw.length < 6) { msg.style.color='#991B1B'; msg.textContent='비밀번호는 6자 이상이어야 합니다'; return; }
-  if(nw !== conf)   { msg.style.color='#991B1B'; msg.textContent='새 비밀번호가 일치하지 않습니다'; return; }
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  if(idx < 0 || members[idx].pw !== cur) { msg.style.color='#991B1B'; msg.textContent='현재 비밀번호가 올바르지 않습니다'; return; }
-  members[idx].pw = nw;
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  msg.style.color = '#00B37E'; msg.textContent = '✅ 비밀번호가 변경됐습니다';
-  ['set_pw_cur','set_pw_new','set_pw_confirm'].forEach(id => document.getElementById(id).value = '');
-  setTimeout(() => msg.style.display = 'none', 3000);
-}
-
-/* FOMO 판매 알림 */
-(function(){
-  const names = ['뷰티제인','핏라이프','건강식탁','헬스맨','다이어트퀸','런닝메이트'];
-  const products = ['단백질 쉐이크','슈퍼푸드','BCAA','마그네슘 젤리','비타민C'];
-  const earns = ['₩4,500','₩6,300','₩3,780','₩4,320','₩2,900'];
-  let idx = 0;
-  function showFomo() {
-    const el = document.getElementById('fomoNotif');
-    if(!el) return;
-    document.getElementById('fomoName').textContent = names[idx % names.length];
-    document.getElementById('fomoMsg').textContent = `${products[idx % products.length]} 판매 → ${earns[idx % earns.length]} 수익`;
-    idx++;
-    el.style.transform = 'translateX(0)';
-    setTimeout(() => { el.style.transform = 'translateX(-120%)'; }, 3500);
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'))
+  document.getElementById('pg-' + id).classList.add('act')
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'))
+  if (btn) btn.classList.add('act')
+  const t = {dashboard:'대시보드',products:'제품 탐색',links:'내 링크 관리',earn:'수익 현황',grade:'내 등급',settings:'내 설정'}[id] || ''
+  document.getElementById('page-title').textContent = t
+  document.getElementById('mob-title').textContent = t
+  if (id === 'settings') {
+    const user = window._vinglyUser || {}
+    const el = document.getElementById('set_name')
+    const em = document.getElementById('set_email')
+    if (el) el.value = user.name || ''
+    if (em) em.value = user.email || ''
   }
-  setTimeout(showFomo, 4000);
-  setInterval(showFomo, 12000);
-})();
-
-/* ── 샘플 신청 ── */
-function requestSample(name) {
-  document.getElementById('sampleProductName').textContent = name;
-  document.getElementById('sampleModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function closeSampleModal() {
-  document.getElementById('sampleModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
-function submitSample() {
-  const addr = document.getElementById('sampleAddr').value.trim();
-  const ch = document.getElementById('sampleChannel').value.trim();
-  if(!addr || !ch) { alert('주소와 채널 URL을 입력해주세요.'); return; }
-  closeSampleModal();
-  showToast('📦 샘플 신청이 접수됐습니다! 브랜드 승인 후 배송됩니다.');
-}
-document.addEventListener('click', e => {
-  const m = document.getElementById('sampleModal');
-  if(m && e.target === m) closeSampleModal();
-});
-async function doLogout(){
-  if(window._supabase) await window._supabase.auth.signOut()
-  location.replace('login.html')
+  if (id === 'products') expRender()
 }
 
-
-// ── 회원 탈퇴 ──
-function confirmWithdraw() {
-  const pw  = document.getElementById('withdraw_pw').value;
-  const msg = document.getElementById('withdraw_msg');
-  if(!pw){ msg.style.display='block'; msg.textContent='비밀번호를 입력해주세요'; return; }
-  const raw = sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user');
-  const user = JSON.parse(raw || '{}');
-  const members = JSON.parse(localStorage.getItem('vingly_members') || '[]');
-  const idx = members.findIndex(m => m.email === user.email);
-  if(idx < 0 || members[idx].pw !== pw){ msg.style.display='block'; msg.textContent='비밀번호가 올바르지 않습니다'; return; }
-  members.splice(idx, 1);
-  localStorage.setItem('vingly_members', JSON.stringify(members));
-  // 해당 크리에이터 링크도 삭제
-  const links = JSON.parse(localStorage.getItem('vingly_links') || '[]');
-  localStorage.setItem('vingly_links', JSON.stringify(links.filter(l => l.creatorEmail !== user.email)));
-  sessionStorage.removeItem('vingly_user');
-  localStorage.removeItem('vingly_user');
-  alert('탈퇴가 완료됐습니다. 이용해주셔서 감사합니다.');
-  location.replace('index.html');
-}
-
-// ── 내장 제품 탐색 ──
-let expCat = '전체';
-let expProducts = [];
-let expCurrentProduct = null;
-
-async function expLoadProducts() {
-  if (!window._supabase) return [];
-  const { data, error } = await window._supabase
-    .from('products')
-    .select('*, users!brand_user(company_name)')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
-  if (error || !data) return [];
-  const emoMap = {
-    '뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗',
-    '헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'
-  };
-  return data.map(p => ({
-    id: p.id,
-    name: p.name,
-    brand: p.users?.company_name || '브랜드',
-    cat: p.category || '기타',
-    price: p.price,
-    comm: p.commission_rate,
-    emoji: emoMap[p.category] || '📦',
-    desc: p.description || '',
-    purchase_url: p.purchase_url || ''
-  }));
-}
-
-async function expRender() {
-  expProducts = await expLoadProducts();
-  const grid = document.getElementById('exp-grid');
-  const search = (document.getElementById('exp-search')?.value||'').toLowerCase();
-  grid.style.opacity = '.5';
-  setTimeout(() => {
-    const filtered = expProducts.filter(p => {
-      const catOk = expCat === '전체' || p.cat === expCat;
-      const srchOk = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
-      return catOk && srchOk;
-    });
-    document.getElementById('exp-count').textContent = filtered.length + '개';
-    if(expProducts.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--ink-40)"><div style="font-size:40px;margin-bottom:12px">🌱</div><div style="font:600 14px/1 'Pretendard',sans-serif;margin-bottom:6px">아직 등록된 제품이 없어요</div><div style="font-size:12px">셀러가 제품을 등록하면 여기에 나타납니다</div></div>`;
-    } else if(!filtered.length) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-40)"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font:600 13px/1 'Pretendard',sans-serif">검색 결과가 없어요</div></div>`;
-    } else {
-      // 링크 생성 여부 확인
-      const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
-      const myLinks = JSON.parse(localStorage.getItem('vingly_links')||'[]').filter(l=>l.creatorEmail===user.email);
-      grid.innerHTML = filtered.map(p => {
-        const isLinked = myLinks.some(l=>l.productId===p.id);
-        return `<div class="exp-pc" onclick="expOpenProduct('${p.id}')">
-          <div class="exp-thumb">${p.emoji}</div>
-          <div class="exp-body">
-            <div class="exp-brand">${p.brand}</div>
-            <div class="exp-name">${p.name}</div>
-            <div class="exp-row">
-              <div class="exp-price">₩${Number(p.price).toLocaleString()}</div>
-              <div class="exp-comm">수수료 ${p.comm}%</div>
-            </div>
-            <button class="exp-btn ${isLinked?'linked':''}" onclick="event.stopPropagation();expOpenProduct('${p.id}')">
-              ${isLinked ? '✓ 링크 생성됨' : '🔗 링크 생성하기'}
-            </button>
-          </div>
-        </div>`;
-      }).join('');
-    }
-    grid.style.opacity = '1';
-  }, 100);
-}
-
-function expSelectCat(btn, cat) {
-  document.querySelectorAll('.exp-cat').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  expCat = cat;
-  expRender();
-}
-
-async function expOpenProduct(id) {
-  expProducts = await expLoadProducts();
-  const p = expProducts.find(x=>x.id===id);
-  if(!p) return;
-  expCurrentProduct = p;
-  const user = JSON.parse(sessionStorage.getItem('vingly_user')||localStorage.getItem('vingly_user')||'{}');
-  const myLinks = JSON.parse(localStorage.getItem('vingly_links')||'[]');
-  const existingLink = myLinks.find(l=>l.productId===p.id&&l.creatorEmail===user.email);
-  const earn = Math.round(p.price * p.comm / 100);
-  document.getElementById('exp-modal-content').innerHTML = `
-    <div class="exp-m-thumb">${p.emoji}</div>
-    <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:4px">${p.brand} · ${p.cat}</div>
-    <div style="font:700 18px/1.3 'Pretendard',sans-serif;margin-bottom:12px">${p.name}</div>
-    <div class="exp-m-row">
-      <span class="exp-m-badge" style="background:var(--green-bg);color:var(--green)">수수료 ${p.comm}%</span>
-      <span class="exp-m-badge" style="background:var(--ink-07);color:var(--ink)">₩${Number(p.price).toLocaleString()}</span>
-      <span class="exp-m-badge" style="background:var(--blue-bg);color:var(--blue)">건당 ₩${earn.toLocaleString()}</span>
-    </div>
-    ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);background:var(--ink-07);border-radius:9px;padding:12px;margin-bottom:14px">${p.desc}</div>` : ''}
-    <div class="exp-link-box ${existingLink?'on':''}" id="exp-link-box">
-      <div class="exp-link-url" id="exp-link-url">${existingLink?existingLink.url:''}</div>
-      <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
-    </div>
-    <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')">
-      ${existingLink ? '✓ 링크 재생성' : '🔗 내 전용 링크 생성하기'}
-    </button>`;
-  document.getElementById('exp-ov').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-async function expGenerateLink(id) {
-  const btn = document.getElementById('exp-gen-btn');
-  btn.textContent = '생성 중...'; btn.style.opacity='.7';
-
-  const { data: { session } } = await window._supabase.auth.getSession();
-const user = session ? { id: session.user.id, name: session.user.user_metadata?.name || 'creator' } : null;
-  const p = expProducts.find(x=>x.id===id);
-  if (!user || !p) return;
-
-  const slug = (user.name||'creator').replace(/\s/g,'').toLowerCase()
-    + '-' + p.name.split(' ')[0].toLowerCase()
-    + '-' + Date.now().toString(36);
-
-  // 기존 링크 있으면 삭제 후 재생성
-  await window._supabase.from('links')
-    .delete()
-    .eq('creator', user.id)
-    .eq('product', id);
-
-  const { data: linkData, error } = await window._supabase.from('links').insert({
-    creator: user.id,
-    product: id,
-    slug,
-    click_count: 0,
-    conversion_count: 0,
-    status: 'active'
-  }).select().single();
-
-  if (error) {
-    btn.textContent = '생성 실패'; btn.style.opacity='1';
-    console.error(error);
-    return;
-  }
-
-  const linkUrl = `vingly.kr/j/${slug}`;
-  document.getElementById('exp-link-url').textContent = linkUrl;
-  document.getElementById('exp-link-box').classList.add('on');
-  btn.textContent='✓ 생성 완료!'; btn.style.opacity='1';
-  btn.style.background='var(--green-bg)'; btn.style.color='var(--green)';
-  await expRender();
-}
-
-function expCopyLink() {
-  const url = document.getElementById('exp-link-url').textContent;
-  navigator.clipboard.writeText('https://'+url).catch(()=>{});
-  const btn = document.querySelector('.exp-copy-btn');
-  if(btn){ btn.textContent='✅ 복사됐어요!'; setTimeout(()=>btn.textContent='📋 링크 복사',2000); }
-}
-
-function expCloseModal() {
-  document.getElementById('exp-ov').style.display='none';
-  document.body.style.overflow='';
-}
-
-// showPage 시 제품 탐색 탭 열리면 자동 로드
-const _origShowPage2 = showPage;
-window.showPage = function(id, btn) {
-  _origShowPage2(id, btn);
-  if(id==='products') expRender();
-};
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => expRender(), 1000);
-});
-function loadLinks() {
-  const user = JSON.parse(sessionStorage.getItem("vingly_user") || localStorage.getItem("vingly_user") || "{}");
-  const allLinks = JSON.parse(localStorage.getItem("vingly_links") || "[]");
-  const links = allLinks.filter(l => l.creatorEmail === user.email);
-  if (links.length === 0) return;
-  const totalRevenue = links.reduce((s,l) => s+l.revenue, 0);
-  const totalSales   = links.reduce((s,l) => s+l.sales, 0);
-  const totalClicks  = links.reduce((s,l) => s+l.clicks, 0);
-  const sv = document.querySelectorAll("#pg-dashboard .sc-val");
-  if(sv[0]){sv[0].textContent="₩"+totalRevenue.toLocaleString();sv[0].style.color="var(--green)";}
-  if(sv[1]) sv[1].textContent=totalSales+"건";
-  if(sv[2]) sv[2].textContent=totalClicks.toLocaleString();
-  if(sv[3]){sv[3].textContent="₩"+totalRevenue.toLocaleString();sv[3].style.color="var(--green)";}
-  const dashLinkCard = document.querySelector("#pg-dashboard .card:last-child");
-  if(dashLinkCard){
-    const emptyDiv = dashLinkCard.querySelector("div[style*=text-align]");
-    if(emptyDiv) emptyDiv.innerHTML = links.slice(0,3).map(l=>`<div class="link-item"><div class="link-ico">🔗</div><div class="link-info"><div class="link-name">${l.productName}</div><div class="link-url">${l.url} · ${l.sales}건</div></div><div class="link-stats"><div class="link-earn">₩${l.revenue.toLocaleString()}</div><div class="link-meta">건당 ₩${l.earnPerSale.toLocaleString()}</div></div></div>`).join("");
-  }
-  const ls = document.getElementById("pg-links");
-  if(ls){
-    const h = ls.querySelector(".card-h .card-t"); if(h) h.textContent="내 전체 링크 "+links.length+"개";
-    const empty = ls.querySelector("div[style*=text-align]"); if(empty) empty.remove();
-    if(!ls.querySelector("table")){
-      const tw=document.createElement("div"); tw.className="tw";
-      tw.innerHTML=`<table><thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>판매</th><th>수익</th><th>건당</th><th>상태</th></tr></thead><tbody></tbody></table>`;
-      ls.querySelector(".card").appendChild(tw);
-    }
-    ls.querySelector("table tbody").innerHTML=links.map(l=>`<tr><td class="td-b">${l.productName}</td><td class="td-m" style="font-size:11px">${l.url}</td><td>${l.clicks}</td><td>${l.sales}건</td><td class="td-b" style="color:var(--green)">₩${l.revenue.toLocaleString()}</td><td>₩${l.earnPerSale.toLocaleString()}</td><td><span class="badge bg">활성</span></td></tr>`).join("");
-  }
-}
-document.addEventListener("DOMContentLoaded", loadLinks);
-
-// 수익 계산기
 function calcInfl() {
-  const f = parseInt(document.getElementById('c-followers').value);
-  const p = parseInt(document.getElementById('c-posts').value);
-  const pr = parseInt(document.getElementById('c-price').value);
-  document.getElementById('cv-followers').textContent = f.toLocaleString()+'명';
-  document.getElementById('cv-posts').textContent = '월 '+p+'회';
-  document.getElementById('cv-price').textContent = '₩'+pr.toLocaleString();
-  const ctr = f < 10000 ? 0.005 : f < 50000 ? 0.003 : 0.0015;
-  const sales = Math.floor(f * ctr * p);
-  const earn = Math.floor(sales * pr * 0.14);
-  document.getElementById('c-result').textContent = '₩'+earn.toLocaleString();
-  document.getElementById('c-sub').textContent = `팔로워 ${f.toLocaleString()}명 · 전환율 ${(ctr*100).toFixed(1)}% · 평균 14% 수수료`;
+  const f = parseInt(document.getElementById('c-followers').value)
+  const p = parseInt(document.getElementById('c-posts').value)
+  const pr = parseInt(document.getElementById('c-price').value)
+  document.getElementById('cv-followers').textContent = f.toLocaleString() + '명'
+  document.getElementById('cv-posts').textContent = '월 ' + p + '회'
+  document.getElementById('cv-price').textContent = '₩' + pr.toLocaleString()
+  const ctr = f < 10000 ? 0.005 : f < 50000 ? 0.003 : 0.0015
+  const earn = Math.floor(f * ctr * p * pr * 0.14)
+  document.getElementById('c-result').textContent = '₩' + earn.toLocaleString()
+  document.getElementById('c-sub').textContent = `팔로워 ${f.toLocaleString()}명 · 전환율 ${(ctr*100).toFixed(1)}% · 평균 14% 수수료`
 }
-calcInfl();
-
-// 링크 생성
-function genLink(name, price, rate) {
-  const user = JSON.parse(sessionStorage.getItem('vingly_user') || localStorage.getItem('vingly_user') || '{}');
-  const handle = (user.name || 'creator').toLowerCase().replace(/\s/g,'-');
-  const slug = name.replace(/\s/g,'-').replace(/[^a-zA-Z0-9가-힣-]/g,'');
-  const url = `https://vingly.kr/product-detail.html?ref=${encodeURIComponent(user.name||'creator')}&name=${encodeURIComponent(name)}&pid=${slug}`;
-
-  // 클립보드 복사
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => {
-      showToast('🔗 링크가 복사됐습니다! SNS에 바로 붙여넣기 하세요');
-    }).catch(() => {
-      fallbackCopy(url);
-    });
-  } else {
-    fallbackCopy(url);
-  }
-
-  // 공유 모달 열기
-  showShareModal(name, url, price, rate);
-}
-
-function fallbackCopy(text) {
-  const el = document.createElement('textarea');
-  el.value = text; el.style.position = 'fixed'; el.style.opacity = '0';
-  document.body.appendChild(el); el.select();
-  document.execCommand('copy'); document.body.removeChild(el);
-  showToast('🔗 링크가 복사됐습니다!');
-}
+calcInfl()
 
 function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.style.transform = 'translateY(0)';
-  toast.style.opacity = '1';
-  setTimeout(()=>{ toast.style.transform='translateY(80px)'; toast.style.opacity='0'; }, 3000);
-}
-
-function showShareModal(name, url, price, rate) {
-  const earn = price && rate ? `₩${Math.floor(price*rate/100).toLocaleString()}` : '';
-  const text = `[Vingly] ${name} 추천${earn ? ' — 구매 시 '+earn+' 할인' : ''}`;
-  document.getElementById('shareUrl').value = url;
-  document.getElementById('shareTitle').textContent = name;
-  document.getElementById('shareEarn').textContent = earn ? `판매 시 ${earn} 수익` : '';
-  // 카카오 공유 링크
-  document.getElementById('shareKakao').href = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-  document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-  document.getElementById('shareLineBtn').href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`;
-  document.getElementById('shareModal').classList.add('on');
-}
-
-function closeShareModal() {
-  document.getElementById('shareModal').classList.remove('on');
+  const toast = document.getElementById('toast')
+  toast.textContent = msg
+  toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
+  setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, 3000)
 }
 
 function copyShareUrl() {
-  const url = document.getElementById('shareUrl').value;
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(()=> showToast('✅ 복사됐습니다!'));
-  }
+  const url = document.getElementById('shareUrl').value
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => showToast('✅ 복사됐습니다!'))
 }
-</script>
 
-<!-- 샘플 신청 모달 -->
-<div id="sampleModal" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
-  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;animation:slideUp .28s ease">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div>
-        <div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="sampleProductName">제품명</div>
-        <div style="font:500 12px/1 'Pretendard',sans-serif;color:var(--purple);margin-top:5px">샘플 신청 — 무료 체험 후 리뷰 작성</div>
-      </div>
-      <button onclick="closeSampleModal()" style="width:30px;height:30px;border-radius:50%;background:var(--ink-07);border:none;font-size:14px;cursor:pointer">✕</button>
-    </div>
+function closeShareModal() {
+  document.getElementById('shareModal').style.display = 'none'
+}
 
-    <div style="background:var(--purple-bg);border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid rgba(124,58,237,.15)">
-      <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--purple);margin-bottom:5px">샘플 제도란?</div>
-      <div style="font:400 12px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">브랜드·셀러가 제공하는 무료 체험 제품입니다. 받은 후 솔직한 리뷰 콘텐츠를 제작하면 됩니다. 리뷰 후 판매 링크를 공유하면 수익도 함께 발생합니다.</div>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">배송 받을 주소</label>
-        <input id="sampleAddr" placeholder="주소를 입력해주세요" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;font-family:inherit">
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">채널 URL <span style="font-weight:400;color:var(--ink-40)">(인스타·유튜브·블로그)</span></label>
-        <input id="sampleChannel" placeholder="https://instagram.com/your_handle" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;font-family:inherit">
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">리뷰 예정 콘텐츠 형식</label>
-        <select id="sampleType" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;outline:none;cursor:pointer;font-family:inherit">
-          <option>인스타그램 피드 + 스토리</option>
-          <option>유튜브 리뷰 영상</option>
-          <option>틱톡 쇼츠</option>
-          <option>블로그 상세 리뷰</option>
-          <option>기타</option>
-        </select>
-      </div>
-    </div>
-
-    <button onclick="submitSample()" style="width:100%;padding:13px;border-radius:10px;background:var(--purple);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px;font-family:inherit">샘플 신청하기</button>
-    <div style="margin-top:10px;font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);text-align:center">브랜드·셀러 승인 후 배송됩니다 · 리뷰 미작성 시 샘플비 청구될 수 있습니다</div>
-  </div>
-</div>
-
-<!-- FOMO 판매 알림 (실 데이터 연동 전 비활성) -->
-<div id="fomoNotif" style="display:none"></div>
-
-<!-- 알림 패널 -->
-<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
-  <div style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto">
-    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
-      <div style="font-size:24px;margin-bottom:8px">🔔</div>
-      <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ── 벨 알림 ── */
 function toggleNotif() {
-  const el = document.getElementById('notifPanel');
-  if(!el) return;
-  const isOpen = el.style.display === 'block';
-  el.style.display = isOpen ? 'none' : 'block';
-  // 읽음 처리
-  const dot = document.querySelector('.ndot');
-  if(dot && !isOpen) dot.style.display = 'none';
+  const el = document.getElementById('notifPanel')
+  if (!el) return
+  el.style.display = el.style.display === 'block' ? 'none' : 'block'
+  const dot = document.querySelector('.ndot')
+  if (dot) dot.style.display = 'none'
 }
+
 document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel');
-  const btn = document.querySelector('.icon-btn');
-  if(panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
-    panel.style.display = 'none';
+  const panel = document.getElementById('notifPanel')
+  const btn = document.querySelector('.icon-btn')
+  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
+    panel.style.display = 'none'
   }
-});
+})
 </script>
 </body>
 </html>
