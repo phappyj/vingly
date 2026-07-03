@@ -23,7 +23,7 @@
   --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
   --canvas:#F4F3EF;--white:#fff;
   --blue:#1D4ED8;--blue-bg:#EEF3FD;
-  --green:#00B37E;--green-bg:#E6FBF4;--green-dim:rgba(4,108,78,.12);
+  --green:#00B37E;--green-bg:#E6FBF4;
   --amber:#92400E;--amber-bg:#FFFBEB;
   --red:#991B1B;--red-bg:#FEF2F2;
   --sw:240px;--r:12px;
@@ -63,7 +63,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-cat.on{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:700}
 .exp-pc{background:var(--white);border:1px solid var(--ink-14);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
 .exp-pc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08)}
-.exp-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
+.exp-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
 .exp-thumb img{width:100%;height:100%;object-fit:cover}
 .exp-body{padding:12px}
 .exp-brand{font-size:11px;color:var(--ink-40);margin-bottom:3px}
@@ -73,14 +73,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-comm{font:700 11px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:3px 7px;border-radius:4px}
 .exp-btn{width:100%;padding:9px;border-radius:8px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-btn.linked{background:var(--green-bg);color:var(--green)}
-.exp-m-thumb{height:200px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:14px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
-.exp-m-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px}
-.exp-m-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.exp-m-badge{font:700 12px/1 'Pretendard',sans-serif;padding:5px 12px;border-radius:6px}
 .exp-link-box{background:var(--green-bg);border-radius:9px;padding:12px;margin-bottom:10px;display:none}
 .exp-link-box.on{display:block}
 .exp-link-url{font:700 12px/1 'Pretendard',sans-serif;color:var(--green);word-break:break-all;margin-bottom:8px}
-.exp-gen-btn{width:100%;padding:12px;border-radius:9px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
+.exp-gen-btn{width:100%;padding:13px;border-radius:9px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-copy-btn{width:100%;padding:9px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit}
 .onboard{background:linear-gradient(135deg,var(--green) 0%,#034732 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
 .ob-glow{position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
@@ -359,8 +355,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
     <div id="exp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:160px;transition:opacity .15s"></div>
     <div id="exp-ov" onclick="if(event.target===this)expCloseModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
-      <div style="background:#fff;border-radius:18px;width:100%;max-width:480px;padding:28px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);max-height:88vh;overflow-y:auto">
-        <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px;color:var(--ink-40)">✕</button>
+      <div style="background:#fff;border-radius:18px;width:100%;max-width:500px;padding:24px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto">
+        <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px;color:var(--ink-40);z-index:1">✕</button>
         <div id="exp-modal-content"></div>
       </div>
     </div>
@@ -393,7 +389,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">활동명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="활동명"></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
-          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">주요 SNS 채널 (URL)</label><input type="text" id="set_channel" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="https://instagram.com/..."></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">주요 SNS 채널</label><input type="text" id="set_channel" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="https://instagram.com/..."></div>
         </div>
         <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
@@ -420,28 +416,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </div>
 </main>
 
-<!-- SNS 공유 모달 -->
-<div id="shareModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,12,16,.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;padding:0">
-  <div style="background:var(--white);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div><div style="font:800 16px/1 'Pretendard',sans-serif;color:var(--ink)" id="shareTitle">제품명</div></div>
-      <button onclick="closeShareModal()" style="width:30px;height:30px;border-radius:50%;background:var(--ink-07);border:none;font-size:14px;cursor:pointer">✕</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:20px">
-      <input id="shareUrl" readonly style="flex:1;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 12px/1 'Pretendard',sans-serif;color:var(--ink);outline:none">
-      <button onclick="copyShareUrl()" style="padding:10px 16px;border-radius:9px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">복사</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-      <a id="shareKakao" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#FEE500;border-radius:12px;text-decoration:none"><span style="font-size:22px">💬</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#000">카카오톡</span></a>
-      <a id="shareTwitter" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E7F5FE;border-radius:12px;text-decoration:none"><span style="font-size:22px">🐦</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#1DA1F2">X (트위터)</span></a>
-      <a id="shareLineBtn" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:#E8F5E0;border-radius:12px;text-decoration:none"><span style="font-size:22px">💚</span><span style="font:700 12px/1 'Pretendard',sans-serif;color:#06C755">라인</span></a>
-    </div>
-  </div>
-</div>
-
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
-<!-- 알림 패널 -->
 <div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
   <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
   <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
@@ -479,36 +455,36 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
-  // 내 링크 목록 로드
   async function loadMyLinks() {
     const user = window._vinglyUser
     if (!user) return
     const { data: links } = await supabase
       .from('links')
-      .select('*, products(name, image_url, price, commission_rate)')
+      .select('*, products(name, image_url, images, price, commission_rate)')
       .eq('creator', user.id)
       .eq('status', 'active')
       .order('created_at', { ascending: false })
 
     if (!links || links.length === 0) return
 
-    // 대시보드 링크 현황
     document.getElementById('dash-links-empty').style.display = 'none'
     const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
     document.getElementById('dash-clicks').textContent = totalClicks.toLocaleString()
-    document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
+    document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => {
+      const imgs = l.products?.images || []
+      const thumb = imgs[0] || l.products?.image_url
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
         <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:16px">
-          ${l.products?.image_url ? `<img src="${l.products.image_url}" style="width:100%;height:100%;object-fit:cover">` : '📦'}
+          ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover">` : '📦'}
         </div>
         <div style="flex:1;min-width:0">
           <div style="font:600 13px/1 'Pretendard',sans-serif;margin-bottom:3px">${l.products?.name || '제품'}</div>
           <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40)">클릭 ${l.click_count || 0}회</div>
         </div>
         <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green)">수수료 ${l.products?.commission_rate || 0}%</div>
-      </div>`).join('')
+      </div>`
+    }).join('')
 
-    // 링크 관리 테이블
     document.getElementById('links-empty').style.display = 'none'
     document.getElementById('links-table-wrap').style.display = 'block'
     document.getElementById('links-tbody').innerHTML = links.map(l => `
@@ -522,7 +498,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     window._myLinks = links
   }
 
-  // 제품 탐색
   let expCat = '전체'
   let expProducts = []
 
@@ -545,7 +520,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       price: p.price, comm: p.commission_rate,
       emoji: emoMap[p.category] || '📦',
       desc: p.description || '',
-      image_url: p.image_url || null
+      image_url: p.image_url || null,
+      images: p.images || [],
+      key_points: p.key_points || [],
+      target_audience: p.target_audience || '',
+      creator_message: p.creator_message || ''
     }))
   }
 
@@ -567,11 +546,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         const myLinkProductIds = (window._myLinks || []).map(l => l.product)
         grid.innerHTML = filtered.map(p => {
           const isLinked = myLinkProductIds.includes(p.id)
-          const thumb = p.image_url
-            ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover">`
-            : p.emoji
+          const imgs = p.images && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : [])
+          const thumb = imgs[0]
           return `<div class="exp-pc" onclick="expOpenProduct('${p.id}')">
-            <div class="exp-thumb">${thumb}</div>
+            <div class="exp-thumb">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover">` : p.emoji}</div>
             <div class="exp-body">
               <div class="exp-brand">${p.brand}</div>
               <div class="exp-name">${p.name}</div>
@@ -603,26 +581,97 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (!p) return
     const myLink = (window._myLinks || []).find(l => l.product === id)
     const earn = Math.round(p.price * p.comm / 100)
-    const thumb = p.image_url
-      ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`
-      : p.emoji
-    document.getElementById('exp-modal-content').innerHTML = `
-      <div class="exp-m-thumb">${thumb}</div>
-      <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:4px">${p.brand} · ${p.cat}</div>
-      <div style="font:700 18px/1.3 'Pretendard',sans-serif;margin-bottom:12px">${p.name}</div>
-      <div class="exp-m-row">
-        <span class="exp-m-badge" style="background:var(--green-bg);color:var(--green)">수수료 ${p.comm}%</span>
-        <span class="exp-m-badge" style="background:var(--ink-07);color:var(--ink)">₩${Number(p.price).toLocaleString()}</span>
-        <span class="exp-m-badge" style="background:var(--blue-bg);color:var(--blue)">건당 ₩${earn.toLocaleString()}</span>
+
+    const images = p.images && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : [])
+    window._modalImages = images
+    window._currentModalImg = 0
+
+    const sliderHtml = images.length > 0
+      ? `<div style="position:relative;height:240px;border-radius:12px;overflow:hidden;margin-bottom:16px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)">
+          <img id="modal-img-main" src="${images[0]}" style="width:100%;height:100%;object-fit:cover">
+          ${images.length > 1 ? `
+            <button onclick="modalImgPrev()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">‹</button>
+            <button onclick="modalImgNext()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">›</button>
+            <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px">
+              ${images.map((_, i) => `<div id="dot-${i}" style="width:7px;height:7px;border-radius:50%;background:${i === 0 ? '#fff' : 'rgba(255,255,255,.45)'}"></div>`).join('')}
+            </div>` : ''}
+        </div>`
+      : `<div style="height:180px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:16px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)">${p.emoji}</div>`
+
+    const kpHtml = p.key_points && p.key_points.length > 0
+      ? `<div style="background:var(--green-bg);border-radius:10px;padding:14px;margin-bottom:14px">
+          <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:10px">✨ 핵심 포인트</div>
+          ${p.key_points.map(kp => `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="color:var(--green);flex-shrink:0;font-weight:700">✓</span><span style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">${kp}</span></div>`).join('')}
+        </div>` : ''
+
+    const targetHtml = p.target_audience
+      ? `<div style="display:flex;align-items:center;gap:8px;background:var(--blue-bg);border-radius:9px;padding:10px 12px;margin-bottom:14px">
+          <span>🎯</span>
+          <div><div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:3px">추천 타겟</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-70)">${p.target_audience}</div></div>
+        </div>` : ''
+
+    const creatorMsgHtml = p.creator_message
+      ? `<div style="background:var(--amber-bg);border-radius:9px;padding:12px;margin-bottom:14px;border-left:3px solid #D97706">
+          <div style="font:700 11px/1 'Pretendard',sans-serif;color:#92400E;margin-bottom:6px">💬 브랜드 메시지</div>
+          <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">${p.creator_message}</div>
+        </div>` : ''
+
+    const calcHtml = `<div style="background:var(--ink);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="font:700 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:12px;letter-spacing:.06em">💰 예상 수익 계산</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
+          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${earn.toLocaleString()}</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">건당</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
+          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${(earn*10).toLocaleString()}</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">10건</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
+          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${(earn*50).toLocaleString()}</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">50건</div>
+        </div>
       </div>
-      ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);background:var(--ink-07);border-radius:9px;padding:12px;margin-bottom:14px">${p.desc}</div>` : ''}
+    </div>`
+
+    document.getElementById('exp-modal-content').innerHTML = `
+      ${sliderHtml}
+      <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:5px">${p.brand} · ${p.cat}</div>
+      <div style="font:800 20px/1.3 'Pretendard',sans-serif;margin-bottom:10px;letter-spacing:-.5px">${p.name}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span style="background:var(--green-bg);color:var(--green);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">수수료 ${p.comm}%</span>
+        <span style="background:var(--ink-07);color:var(--ink);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">₩${Number(p.price).toLocaleString()}</span>
+        <span style="background:var(--blue-bg);color:var(--blue);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">건당 ₩${earn.toLocaleString()}</span>
+      </div>
+      ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:14px;line-height:1.7">${p.desc}</div>` : ''}
+      ${kpHtml}${targetHtml}${creatorMsgHtml}${calcHtml}
       <div class="exp-link-box ${myLink ? 'on' : ''}" id="exp-link-box">
+        <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:6px">✅ 내 링크</div>
         <div class="exp-link-url" id="exp-link-url">${myLink ? 'vingly.kr/j/' + myLink.slug : ''}</div>
         <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
       </div>
       <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')">
-        ${myLink ? '✓ 링크 재생성' : '🔗 내 전용 링크 생성하기'}
+        ${myLink ? '🔄 링크 재생성' : '🔗 내 전용 링크 생성하기'}
       </button>`
+
+    window.modalImgNext = function() {
+      window._currentModalImg = (window._currentModalImg + 1) % window._modalImages.length
+      updateModalImg()
+    }
+    window.modalImgPrev = function() {
+      window._currentModalImg = (window._currentModalImg - 1 + window._modalImages.length) % window._modalImages.length
+      updateModalImg()
+    }
+    function updateModalImg() {
+      const i = window._currentModalImg
+      const imgEl = document.getElementById('modal-img-main')
+      if (imgEl) imgEl.src = window._modalImages[i]
+      window._modalImages.forEach((_, idx) => {
+        const dot = document.getElementById(`dot-${idx}`)
+        if (dot) dot.style.background = idx === i ? '#fff' : 'rgba(255,255,255,.45)'
+      })
+    }
+
     document.getElementById('exp-ov').style.display = 'flex'
     document.body.style.overflow = 'hidden'
   }
@@ -729,15 +778,6 @@ function showToast(msg) {
   toast.textContent = msg
   toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
   setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, 3000)
-}
-
-function copyShareUrl() {
-  const url = document.getElementById('shareUrl').value
-  if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => showToast('✅ 복사됐습니다!'))
-}
-
-function closeShareModal() {
-  document.getElementById('shareModal').style.display = 'none'
 }
 
 function toggleNotif() {
