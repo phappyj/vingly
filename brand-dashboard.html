@@ -443,6 +443,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     let image_url = null
 
     // 이미지 업로드
+    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+      errEl.textContent = '이미지 크기는 5MB 이하여야 합니다.'
+      errEl.style.display = 'block'
+      btn.textContent = '등록하기'
+      btn.style.opacity = '1'
+      btn.style.pointerEvents = 'auto'
+      return
+    }
     if (imageFile) {
       const ext = imageFile.name.split('.').pop()
       const fileName = `${user.id}/${Date.now()}.${ext}`
