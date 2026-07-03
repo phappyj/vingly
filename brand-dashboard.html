@@ -73,7 +73,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .sc-ch{font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 .card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
 .card:last-child{margin-bottom:0}
-.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .card-t{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
@@ -84,6 +84,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .td-b{font-weight:700}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
+.bam{background:var(--amber-bg);color:var(--amber)}
 .flow-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
 .flow-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
 .fl-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
@@ -111,6 +112,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .kp-add{padding:8px 14px;border-radius:8px;border:1.5px dashed var(--ink-14);background:transparent;font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;font-family:inherit;transition:all .2s;width:100%}
 .kp-add:hover{border-color:var(--green);color:var(--green)}
 .sec-title{font:700 12px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;padding-top:4px}
+.settle-filter{display:flex;align-items:center;gap:8px}
+.settle-filter input[type=month]{padding:8px 12px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none}
+.settle-summary{font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px;text-align:right}
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -246,8 +250,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <div class="page content" id="pg-settle">
     <div class="card">
-      <div class="card-h"><div class="card-t">정산 내역</div></div>
-      <div class="tw"><table><thead><tr><th>정산일</th><th>판매 건수</th><th>매출</th><th>수수료 차감</th><th>정산액</th><th>상태</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 정산 내역이 없습니다</td></tr></tbody></table></div>
+      <div class="card-h">
+        <div class="card-t">정산 내역</div>
+        <div class="settle-filter">
+          <input type="month" id="settle_month">
+          <button class="act-btn" onclick="loadSettlements()">조회</button>
+          <button class="btn-primary" style="padding:8px 16px;font-size:12px;min-height:34px" onclick="downloadSettlementCSV()">CSV 다운로드</button>
+        </div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>정산일</th><th>크리에이터</th><th>금액</th><th>상태</th></tr></thead>
+          <tbody id="settle-tbody"><tr><td colspan="4" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">기간을 선택하고 조회해주세요</td></tr></tbody>
+        </table>
+      </div>
+      <div class="settle-summary" id="settle-summary"></div>
     </div>
   </div>
 
@@ -402,6 +419,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         if (sbName) sbName.textContent = name
         if (sbAv) sbAv.textContent = name[0]
         loadProducts()
+        const settleMonth = document.getElementById('settle_month')
+        if (settleMonth) {
+          const now = new Date()
+          settleMonth.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+        }
       })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand' }
@@ -586,6 +608,97 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (window._supabase) await window._supabase.auth.signOut()
     location.replace('login.html')
   }
+
+  /* ===== 정산 관리 (CSV 다운로드) ===== */
+  const SETTLE_STATUS_LABEL = { pending: '대기중', processing: '처리중', completed: '정산완료', paid: '정산완료', failed: '실패' }
+  let _settlements = []
+
+  function settleStatusLabel(s) { return SETTLE_STATUS_LABEL[s] || s || '-' }
+  function settleStatusClass(s) { return (s === 'completed' || s === 'paid') ? 'bg' : 'bam' }
+
+  function getMonthRange(yearMonth) {
+    const [y, m] = yearMonth.split('-').map(Number)
+    const start = new Date(Date.UTC(y, m - 1, 1)).toISOString()
+    const end = new Date(Date.UTC(y, m, 1)).toISOString()
+    return { start, end }
+  }
+
+  function renderSettlements(rows) {
+    const tbody = document.getElementById('settle-tbody')
+    const summary = document.getElementById('settle-summary')
+    if (!rows || rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">해당 기간 정산 내역이 없습니다</td></tr>`
+      summary.textContent = ''
+      return
+    }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${new Date(r.created_at).toLocaleDateString('ko-KR')}</td>
+        <td class="td-b">${r.creator_name}</td>
+        <td>₩${Number(r.amount).toLocaleString()}</td>
+        <td><span class="badge ${settleStatusClass(r.status)}">${settleStatusLabel(r.status)}</span></td>
+      </tr>`).join('')
+    const total = rows.reduce((sum, r) => sum + Number(r.amount || 0), 0)
+    summary.textContent = `총 ${rows.length}건 · ₩${total.toLocaleString()}`
+  }
+
+  window.loadSettlements = async function() {
+    const user = window._vinglyUser
+    if (!user) return
+    const monthInput = document.getElementById('settle_month').value
+    if (!monthInput) { alert('조회할 월을 선택해주세요.'); return }
+
+    const { start, end } = getMonthRange(monthInput)
+
+    const { data: settlements, error } = await supabase
+      .from('settlements')
+      .select('id, brand, creator, amount, status, created_at')
+      .eq('brand', user.id)
+      .gte('created_at', start)
+      .lt('created_at', end)
+      .order('created_at', { ascending: false })
+
+    if (error) { alert('정산 내역을 불러오지 못했습니다: ' + error.message); return }
+
+    let rows = settlements || []
+    if (rows.length > 0) {
+      const creatorIds = [...new Set(rows.map(s => s.creator))]
+      const { data: creators } = await supabase.from('users').select('*').in('id', creatorIds)
+      const nameMap = {}
+      ;(creators || []).forEach(c => {
+        nameMap[c.id] = c.name || c.full_name || c.company_name || c.email || c.id
+      })
+      rows = rows.map(s => ({ ...s, creator_name: nameMap[s.creator] || s.creator }))
+    }
+
+    _settlements = rows
+    renderSettlements(rows)
+  }
+
+  window.downloadSettlementCSV = function() {
+    const monthInput = document.getElementById('settle_month').value
+    if (!monthInput) { alert('다운로드할 월을 선택해주세요.'); return }
+    if (!_settlements || _settlements.length === 0) { alert('다운로드할 정산 내역이 없습니다. 먼저 조회해주세요.'); return }
+
+    const header = ['정산일', '크리에이터', '금액', '상태']
+    const lines = _settlements.map(r => [
+      new Date(r.created_at).toLocaleDateString('ko-KR'),
+      r.creator_name,
+      r.amount,
+      settleStatusLabel(r.status)
+    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+
+    const csv = '\uFEFF' + [header.join(','), ...lines].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `vingly_정산내역_${monthInput}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 </script>
 
 <script>
@@ -601,6 +714,9 @@ function showPage(id, btn) {
     const user = window._vinglyUser || {}
     const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
     if (el) el.value = user.name || ''; if (em) em.value = user.email || ''
+  }
+  if (id === 'settle' && typeof window.loadSettlements === 'function') {
+    window.loadSettlements()
   }
 }
 function saveProfile() {
