@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 처리중 — Vingly</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#00B37E;--blue:#1D4ED8;--ink:#0A0C10;--canvas:#F9F8F4;--red:#991B1B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.spinner{width:40px;height:40px;border:3px solid rgba(29,78,216,.15);border-top-color:var(--blue);border-radius:50%;margin:0 auto 20px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
+.icon.ok{background:#E6FBF4}
+.icon.err{background:#FEF2F2}
+h1{font-size:18px;font-weight:800;margin-bottom:8px}
+p{font-size:13px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
+.btn{display:inline-block;padding:12px 24px;border-radius:10px;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="spinner"></div>
+  <h1>결제를 확인하고 있어요</h1>
+  <p>잠시만 기다려주세요.</p>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
+
+  const params = new URLSearchParams(location.search)
+  const paymentKey = params.get('paymentKey')
+  const orderId = params.get('orderId')
+  const amount = params.get('amount')
+
+  const card = document.getElementById('card')
+
+  function showError(msg) {
+    card.innerHTML = `
+      <div class="icon err">✕</div>
+      <h1>결제 승인에 실패했어요</h1>
+      <p>${msg}</p>
+      <a class="btn" href="index.html">홈으로 돌아가기</a>`
+  }
+
+  function showSuccess() {
+    card.innerHTML = `
+      <div class="icon ok">✓</div>
+      <h1>결제가 완료됐어요</h1>
+      <p>주문이 정상적으로 접수됐습니다.</p>
+      <a class="btn" href="index.html">홈으로 돌아가기</a>`
+  }
+
+  if (!paymentKey || !orderId || !amount) {
+    showError('결제 정보를 확인할 수 없습니다.')
+  } else {
+    try {
+      // ⚠️ TODO: 사업자 등록 완료 후 여기에 실제 Toss 시크릿 키 연동 필요
+      // 시크릿 키는 절대 프론트엔드에 노출하면 안 되므로,
+      // Supabase Edge Function을 만들어서 그 안에서 Toss 결제승인 API(POST /v1/payments/confirm)를 호출해야 함.
+      // 지금은 구조만 잡아둔 상태 — Edge Function 엔드포인트가 준비되면 아래 fetch URL만 교체하면 됨.
+
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/confirm-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) })
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        showError(err.message || '결제 승인 중 오류가 발생했습니다.')
+      } else {
+        showSuccess()
+      }
+    } catch (e) {
+      showError('네트워크 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+</script>
+</body>
+</html>
