@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 실패 — Vingly</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1D4ED8;--ink:#0A0C10;--canvas:#F9F8F4;--red:#991B1B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.icon{width:56px;height:56px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
+h1{font-size:18px;font-weight:800;margin-bottom:8px}
+p{font-size:13px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
+.btn{display:inline-block;padding:12px 24px;border-radius:10px;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">✕</div>
+  <h1 id="title">결제가 취소됐어요</h1>
+  <p id="msg">결제가 진행되지 않았습니다. 다시 시도해주세요.</p>
+  <a class="btn" href="index.html">홈으로 돌아가기</a>
+</div>
+<script>
+  const params = new URLSearchParams(location.search)
+  const message = params.get('message')
+  const code = params.get('code')
+  if (message) {
+    document.getElementById('msg').textContent = decodeURIComponent(message) + (code ? ` (코드: ${code})` : '')
+  }
+</script>
+</body>
+</html>
