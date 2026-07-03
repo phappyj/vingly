@@ -1,401 +1,415 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK606P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TH29BK606P');
-</script>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vingly — 제품 상세</title>
-<meta property="og:title" content="Vingly 추천 제품">
-<meta property="og:description" content="크리에이터가 직접 추천하는 제품입니다.">
-<meta property="og:image" content="https://vingly.kr/og-image.png">
+<title>제품 상세 — Vingly</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0A0C10;--ink-70:rgba(10,12,16,.70);--ink-40:rgba(10,12,16,.40);
+  --ink:#0A0C10;--ink-70:rgba(10,12,16,.7);--ink-40:rgba(10,12,16,.4);
   --ink-14:rgba(10,12,16,.14);--ink-07:rgba(10,12,16,.07);
-  --canvas:#F9F8F4;--white:#fff;
+  --canvas:#F4F3EF;--white:#fff;
   --green:#00B37E;--green-bg:#E6FBF4;
   --blue:#1D4ED8;--blue-bg:#EEF3FD;
-  --amber:#D97706;--amber-bg:#FFFBEB;
-  --red:#991B1B;--red-bg:#FEF2F2;
-  --r-s:10px;--r-m:16px;--r-l:24px;
+  --amber:#92400E;--amber-bg:#FFFBEB;
+  --red:#DC2626;--red-bg:#FEF2F2;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased}
+body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
 
-/* NAV */
-.nav{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
-.nav-gem{width:28px;height:28px;border-radius:7px;background:#00B37E;display:flex;align-items:center;justify-content:center}
-.nav-gem svg{width:28px;height:28px}
-.nav-wm{font:800 16px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
-.nav-right{font:500 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+/* 네비 */
+.nav{background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-gem{width:28px;height:28px;border-radius:7px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.nav-name{font:800 17px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.3px}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nav-btn{padding:7px 16px;border-radius:8px;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;border:none;transition:all .2s}
+.nav-login{background:var(--ink-07);color:var(--ink-70)}
+.nav-signup{background:var(--green);color:#fff}
 
-/* 크리에이터 추천 배너 */
-.creator-banner{background:var(--ink);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.cb-left{display:flex;align-items:center;gap:10px}
-.cb-av{width:32px;height:32px;border-radius:50%;background:#00B37E;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);flex-shrink:0}
-.cb-text{font:500 13px/1.4 'Pretendard',sans-serif;color:rgba(255,255,255,.8)}
-.cb-text strong{color:#00E5A0;font-weight:700}
-.cb-badge{font:700 11px/1 'Pretendard',sans-serif;padding:4px 10px;border-radius:100px;background:rgba(0,229,160,.15);color:#00E5A0;border:1px solid rgba(0,229,160,.25);white-space:nowrap;flex-shrink:0}
+/* 로딩 */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px}
+.spinner{width:36px;height:36px;border:3px solid var(--ink-07);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* LAYOUT */
-.container{max-width:480px;margin:0 auto;padding:20px 16px 120px}
+/* 메인 레이아웃 */
+.container{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
 
 /* 이미지 */
-.product-img{width:100%;aspect-ratio:1;border-radius:var(--r-l);overflow:hidden;background:var(--white);border:1px solid var(--ink-14);margin-bottom:16px;position:relative}
-.product-img img{width:100%;height:100%;object-fit:cover;display:block}
-.img-badge{position:absolute;top:12px;left:12px;font:700 11px/1 'Pretendard',sans-serif;padding:4px 10px;border-radius:100px;background:rgba(10,12,16,.7);backdrop-filter:blur(8px);color:#fff}
+.img-area{}
+.img-main{width:100%;aspect-ratio:1;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);position:relative;margin-bottom:10px}
+.img-main img{width:100%;height:100%;object-fit:contain;background:#f8f8f8}
+.img-main .img-prev,.img-main .img-next{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.img-main .img-prev{left:10px}
+.img-main .img-next{right:10px}
+.img-main .img-prev:hover,.img-main .img-next:hover{background:rgba(0,0,0,.6)}
+.img-dots{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+.img-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-14);cursor:pointer;transition:all .2s}
+.img-dot.on{background:var(--green);width:20px;border-radius:4px}
+.img-thumbs{display:flex;gap:8px}
+.img-thumb{width:64px;height:64px;border-radius:10px;overflow:hidden;border:2px solid var(--ink-14);cursor:pointer;flex-shrink:0;transition:all .2s;background:#f8f8f8}
+.img-thumb img{width:100%;height:100%;object-fit:contain}
+.img-thumb.on{border-color:var(--green)}
 
 /* 제품 정보 */
-.product-brand{font:600 12px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:6px;letter-spacing:.03em}
-.product-name{font:800 22px/1.2 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px;margin-bottom:8px}
-.product-price{display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
-.price-main{font:900 28px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-1px}
-.price-unit{font:500 14px/1 'Pretendard',sans-serif;color:var(--ink-40)}
-.price-original{font:400 14px/1 'Pretendard',sans-serif;color:var(--ink-40);text-decoration:line-through}
-.price-discount{font:700 14px/1 'Pretendard',sans-serif;color:var(--red)}
+.info-area{}
+.info-brand{font:400 12px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:6px}
+.info-name{font:800 26px/1.2 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:14px}
+.info-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.badge{display:inline-flex;align-items:center;font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:7px}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.info-price{font:800 32px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-1px;margin-bottom:6px}
+.info-price-sub{font:400 13px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:20px}
+.info-desc{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:20px;padding:14px;background:var(--ink-07);border-radius:10px}
 
-/* 수수료 배지 */
-.commission-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid rgba(0,179,126,.2);border-radius:8px;padding:7px 12px;margin-bottom:16px}
-.cb-icon{font-size:14px}
-.cb-label{font:600 12px/1 'Pretendard',sans-serif;color:var(--green)}
+/* 핵심 포인트 */
+.kp-box{background:var(--green-bg);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.kp-title{font:700 12px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:10px;letter-spacing:.04em}
+.kp-item{display:flex;gap:8px;margin-bottom:7px}
+.kp-item:last-child{margin-bottom:0}
+.kp-check{color:var(--green);font-weight:700;flex-shrink:0}
+.kp-text{font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)}
 
-/* 구분선 */
-.divider{height:1px;background:var(--ink-14);margin:16px 0}
+/* 구매 영역 */
+.buy-box{background:var(--white);border:1.5px solid var(--ink-14);border-radius:14px;padding:18px;margin-bottom:14px}
+.buy-qty{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.buy-qty-label{font:600 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1.5px solid var(--ink-14);border-radius:9px;overflow:hidden}
+.qty-btn{width:36px;height:36px;border:none;background:var(--ink-07);font:700 18px/1 'Pretendard',sans-serif;cursor:pointer;color:var(--ink);transition:all .15s}
+.qty-btn:hover{background:var(--ink-14)}
+.qty-num{width:44px;text-align:center;font:700 14px/1 'Pretendard',sans-serif;color:var(--ink);border:none;background:var(--white);pointer-events:none}
+.buy-total{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--ink-07)}
+.buy-total-label{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-40)}
+.buy-total-price{font:800 22px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px}
 
-/* 제품 설명 */
-.section-title{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:10px}
-.product-desc{font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70);white-space:pre-line}
+.buy-btn{width:100%;padding:16px;border-radius:12px;background:var(--green);color:#fff;border:none;font:800 16px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .22s;margin-bottom:10px;min-height:54px}
+.buy-btn:hover{background:#009e6e;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,179,126,.3)}
+.buy-btn:active{transform:scale(.97)}
+.buy-btn.disabled{background:var(--ink-14);color:var(--ink-40);cursor:not-allowed;transform:none;box-shadow:none}
+.buy-btn-sub{width:100%;padding:12px;border-radius:10px;background:var(--ink-07);color:var(--ink-70);border:1.5px solid var(--ink-14);font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s}
+.buy-btn-sub:hover{border-color:var(--ink-40)}
 
-/* 태그 */
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.tag{font:500 12px/1 'Pretendard',sans-serif;padding:5px 10px;border-radius:100px;background:var(--ink-07);color:var(--ink-70)}
+/* 크리에이터 배지 */
+.creator-badge{background:linear-gradient(135deg,var(--ink) 0%,#1a1d24 100%);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.cb-ico{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font:700 14px/1 'Pretendard',sans-serif;color:var(--ink);flex-shrink:0}
+.cb-info{flex:1}
+.cb-label{font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:3px}
+.cb-name{font:700 13px/1 'Pretendard',sans-serif;color:#fff}
+.cb-comm{font:700 12px/1 'Pretendard',sans-serif;color:#00E5A0;background:rgba(0,229,160,.1);padding:4px 10px;border-radius:100px;flex-shrink:0}
 
-/* 안전 배지 */
-.safety-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.sb{display:flex;align-items:center;gap:5px;font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40)}
-.sb-ico{font-size:12px}
+/* 안전 결제 */
+.safe-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.safe-badge{display:flex;align-items:center;gap:5px;font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);background:var(--ink-07);padding:5px 10px;border-radius:6px}
 
-/* 쇼츠 영상 */
-.video-section{margin:16px 0}
-.video-wrap{aspect-ratio:9/16;max-height:320px;border-radius:var(--r-m);overflow:hidden;background:var(--ink);position:relative}
-.video-wrap video{width:100%;height:100%;object-fit:cover}
-.video-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,12,16,.3);cursor:pointer;transition:all .2s}
-.video-play:hover{background:rgba(10,12,16,.1)}
-.play-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;font-size:22px}
+/* 상세 섹션 */
+.detail-section{margin-top:32px}
+.ds-title{font:700 16px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--ink-14)}
 
-/* 하단 CTA */
-.bottom-cta{position:fixed;bottom:0;left:0;right:0;background:rgba(249,248,244,.95);backdrop-filter:blur(16px);border-top:1px solid var(--ink-14);padding:12px 16px;z-index:200}
-.cta-inner{max-width:480px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.cta-price{flex:1}
-.cta-price-main{font:800 20px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.5px}
-.cta-price-sub{font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px}
-.cta-btn{padding:14px 28px;border-radius:12px;background:var(--green);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s;min-height:50px;white-space:nowrap}
-.cta-btn:hover{background:#009A6B}
-.cta-btn:active{transform:scale(.97)}
+/* 404 */
+.not-found{text-align:center;padding:80px 20px}
+.nf-ico{font-size:52px;margin-bottom:16px}
+.nf-title{font:800 22px/1 'Pretendard',sans-serif;margin-bottom:8px}
+.nf-sub{font:400 14px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:24px}
 
-/* 공유 버튼 */
-.share-row{display:flex;gap:8px;margin-top:16px}
-.share-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--ink-14);background:var(--white);font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-70);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s}
-.share-btn:hover{border-color:var(--ink-40)}
+/* 푸터 */
+.footer{background:var(--white);border-top:1px solid var(--ink-14);padding:20px;text-align:center;font:400 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:40px}
+.footer a{color:var(--ink-40);text-decoration:none}
 
-/* 판매자 정보 */
-.seller-card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-m);padding:14px;margin-top:16px;display:flex;align-items:center;gap:12px}
-.seller-av{width:40px;height:40px;border-radius:10px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font:700 16px/1 'Pretendard',sans-serif;color:var(--blue);flex-shrink:0}
-.seller-info{flex:1}
-.seller-name{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:3px}
-.seller-sub{font:400 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
-.seller-badge{font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px;background:var(--green-bg);color:var(--green)}
-
-/* 토스트 */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:100px;font:600 13px/1 'Pretendard',sans-serif;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-
-@media(max-width:480px){
-  .container{padding:16px 14px 120px}
-  .product-name{font-size:20px}
-  .price-main{font-size:24px}
+@media(max-width:768px){
+  .container{padding:16px 16px 80px}
+  .product-grid{grid-template-columns:1fr;gap:20px}
+  .info-price{font-size:26px}
+  .info-name{font-size:22px}
+  /* 모바일 하단 고정 구매 버튼 */
+  .mobile-buy{display:block;position:fixed;bottom:0;left:0;right:0;padding:12px 16px 20px;background:var(--white);border-top:1px solid var(--ink-14);z-index:40}
+  .buy-box{display:none}
 }
+@media(min-width:769px){.mobile-buy{display:none}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav">
-  <a class="nav-brand" href="index.html">
+  <a class="nav-logo" href="index.html">
     <div class="nav-gem">
-      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
         <rect width="28" height="28" rx="7" fill="#00B37E"/>
         <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
       </svg>
     </div>
-    <span class="nav-wm">Vingly</span>
+    <span class="nav-name">Vingly</span>
   </a>
-  <div class="nav-right" id="navRef"></div>
+  <div class="nav-r">
+    <button class="nav-btn nav-login" onclick="location.href='login.html'">로그인</button>
+    <button class="nav-btn nav-signup" onclick="location.href='signup.html'">무료 가입</button>
+  </div>
 </nav>
 
-<!-- 크리에이터 추천 배너 -->
-<div class="creator-banner" id="creatorBanner" style="display:none">
-  <div class="cb-left">
-    <div class="cb-av" id="creatorAv">V</div>
-    <div class="cb-text"><strong id="creatorName">크리에이터</strong>님이 추천한 제품입니다</div>
-  </div>
-  <span class="cb-badge">추천 제품</span>
-</div>
-
-<div class="container">
-
-  <!-- 제품 이미지 -->
-  <div class="product-img">
-    <img id="productImg" src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&q=80&auto=format&fit=crop" alt="제품 이미지">
-    <div class="img-badge" id="categoryBadge">헬스·식품</div>
-  </div>
-
-  <!-- 제품 정보 -->
-  <div class="product-brand" id="productBrand">헬시팜</div>
-  <div class="product-name" id="productName">단백질 쉐이크 바닐라맛 1kg</div>
-  <div class="product-price">
-    <span class="price-main" id="productPrice">₩38,000</span>
-    <span class="price-unit">원</span>
-    <span class="price-original" id="productOriginal" style="display:none">₩45,000</span>
-    <span class="price-discount" id="productDiscount" style="display:none">16% 할인</span>
-  </div>
-
-  <!-- 크리에이터 수수료 배지 -->
-  <div class="commission-badge">
-    <span class="cb-icon">💸</span>
-    <span class="cb-label" id="commissionLabel">이 제품 구매 시 크리에이터에게 15% 수수료 지급</span>
-  </div>
-
-  <!-- 판매자 정보 -->
-  <div class="seller-card">
-    <div class="seller-av" id="sellerAv">헬</div>
-    <div class="seller-info">
-      <div class="seller-name" id="sellerName">헬시팜</div>
-      <div class="seller-sub" id="sellerSub">건강식품 전문 브랜드</div>
-    </div>
-    <span class="seller-badge">인증 셀러</span>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 제품 설명 -->
-  <div class="section-title">제품 소개</div>
-  <div class="product-desc" id="productDesc">고품질 단백질 함유로 운동 후 빠른 회복을 돕습니다.
-
-• 단백질 함량: 1회 제공량 당 25g
-• 칼로리: 130kcal
-• 맛: 바닐라 크림
-• 용량: 1kg (약 33회 제공)
-• 보관: 직사광선 피해 서늘한 곳 보관</div>
-
-  <!-- 태그 -->
-  <div class="tags" id="productTags">
-    <span class="tag">#단백질</span>
-    <span class="tag">#헬스</span>
-    <span class="tag">#다이어트</span>
-    <span class="tag">#운동보조제</span>
-  </div>
-
-  <!-- 안전 배지 -->
-  <div class="safety-row">
-    <div class="sb"><span class="sb-ico">✅</span>Vingly 인증 셀러</div>
-    <div class="sb"><span class="sb-ico">🔒</span>안전 거래 보장</div>
-    <div class="sb"><span class="sb-ico">📦</span>셀러 직접 배송</div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 배송 안내 -->
-  <div class="section-title">배송 안내</div>
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <div style="display:flex;justify-content:space-between;font-size:13px">
-      <span style="color:var(--ink-40)">배송 방법</span>
-      <span style="font-weight:500" id="deliveryMethod">일반 택배 (2~3일)</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:13px">
-      <span style="color:var(--ink-40)">배송비</span>
-      <span style="font-weight:500;color:var(--green)" id="shippingFee">무료</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:13px">
-      <span style="color:var(--ink-40)">구매처</span>
-      <span style="font-weight:500" id="storeName">셀러 공식 스토어</span>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 공유 -->
-  <div class="section-title">이 제품 공유하기</div>
-  <div class="share-row">
-    <button class="share-btn" onclick="shareKakao()">💬 카카오</button>
-    <button class="share-btn" onclick="shareLink()">🔗 링크 복사</button>
-    <button class="share-btn" onclick="shareLine()">💚 라인</button>
-  </div>
-
-  <!-- Vingly 안내 -->
-  <div style="margin-top:20px;background:var(--ink-07);border-radius:var(--r-m);padding:13px 14px">
-    <div style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink);margin-bottom:5px">Vingly 추천 제품이란?</div>
-    <div style="font:400 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40)">크리에이터가 직접 선택한 제품입니다. 이 링크로 구매하면 크리에이터에게 수수료가 지급됩니다. 구매자에게 추가 비용은 없습니다.</div>
-  </div>
-
-</div>
-
-<!-- 하단 구매 CTA -->
-<div class="bottom-cta">
-  <div class="cta-inner">
-    <div class="cta-price">
-      <div class="cta-price-main" id="ctaPrice">₩38,000</div>
-      <div class="cta-price-sub" id="ctaPriceSub">결제 시스템 준비 중 · 정식 오픈 후 구매 가능</div>
-    </div>
-    <button class="cta-btn" id="buyBtn" onclick="goToBuy()">🔒 결제 준비 중</button>
+<div id="app">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="font:500 14px/1 'Pretendard',sans-serif;color:var(--ink-40)">제품 정보를 불러오는 중...</div>
   </div>
 </div>
 
-<!-- 결제 준비 중 안내 -->
-<div id="paymentNotice" style="max-width:480px;margin:0 auto;padding:12px 20px 24px">
-  <div style="background:#FEF9EC;border:1.5px solid #D97706;border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:8px">
-    <span style="font-size:16px;flex-shrink:0">🔒</span>
-    <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:#92400E">
-      <strong>결제 시스템 준비 중입니다.</strong><br>
-      사업자등록 및 통신판매업 신고 완료 후 정식 오픈 예정입니다.<br>
-      지금 가입하면 얼리버드 혜택이 영구 적용됩니다.
-    </div>
-  </div>
+<!-- 모바일 하단 고정 구매 버튼 -->
+<div class="mobile-buy" id="mobile-buy" style="display:none">
+  <button class="buy-btn disabled" id="mobile-buy-btn">구매하기 (준비 중)</button>
 </div>
 
-<!-- 토스트 -->
-<div class="toast" id="toast"></div>
+<footer class="footer">
+  <div style="margin-bottom:6px">
+    <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="support.html">고객지원</a>
+  </div>
+  <div>Vingly · 통신판매중개업자 · 사업자등록 진행 중</div>
+  <div style="margin-top:4px">© 2026 Vingly. All rights reserved.</div>
+</footer>
 
-<script>
-// ── URL 파라미터 파싱 ──
-const params = new URLSearchParams(location.search);
-const ref = params.get('ref') || '';      // 크리에이터 ID
-const pid = params.get('pid') || '';      // 제품 ID
-const src = params.get('src') || '';      // 유입 채널
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
 
-// ── 크리에이터 배너 표시 ──
-if(ref) {
-  const banner = document.getElementById('creatorBanner');
-  const nameEl = document.getElementById('creatorName');
-  const avEl = document.getElementById('creatorAv');
-  banner.style.display = 'flex';
-  nameEl.textContent = decodeURIComponent(ref);
-  avEl.textContent = decodeURIComponent(ref)[0];
-  document.getElementById('navRef').textContent = ref + '님 추천';
-}
+  // URL 파라미터에서 제품 ID와 크리에이터 ref 추출
+  const params = new URLSearchParams(location.search)
+  const productId = params.get('id')
+  const creatorRef = params.get('ref') || getCookie('vingly_ref')
 
-// ── 제품 데이터 (나중에 DB 연동으로 교체) ──
-// 현재는 URL 파라미터로 기본 정보 받거나 샘플 데이터 표시
-const productData = {
-  name: params.get('name') ? decodeURIComponent(params.get('name')) : '단백질 쉐이크 바닐라맛 1kg',
-  brand: params.get('brand') ? decodeURIComponent(params.get('brand')) : '헬시팜',
-  price: params.get('price') || '38000',
-  commission: params.get('rate') || '15',
-  buyUrl: params.get('url') ? decodeURIComponent(params.get('url')) : '#',
-  category: params.get('cat') ? decodeURIComponent(params.get('cat')) : '헬스·식품',
-  desc: params.get('desc') ? decodeURIComponent(params.get('desc')) : '',
-  img: params.get('img') ? decodeURIComponent(params.get('img')) : '',
-  shipping: params.get('ship') || '무료',
-  store: params.get('store') ? decodeURIComponent(params.get('store')) : '셀러 공식 스토어',
-};
+  // ref 쿠키 저장 (30일)
+  if (params.get('ref')) setCookie('vingly_ref', params.get('ref'), 30)
 
-// ── 화면에 데이터 적용 ──
-document.title = `${productData.name} — Vingly 추천`;
-document.querySelector('meta[property="og:title"]').content = productData.name + ' — Vingly 추천';
+  let qty = 1
+  let product = null
+  let currentImgIdx = 0
 
-document.getElementById('productName').textContent = productData.name;
-document.getElementById('productBrand').textContent = productData.brand;
-document.getElementById('productPrice').textContent = '₩' + parseInt(productData.price).toLocaleString();
-document.getElementById('ctaPrice').textContent = '₩' + parseInt(productData.price).toLocaleString();
-document.getElementById('categoryBadge').textContent = productData.category;
-document.getElementById('commissionLabel').textContent = `이 제품 구매 시 크리에이터에게 ${productData.commission}% 수수료 지급`;
-document.getElementById('deliveryMethod').textContent = productData.shipping === '0' ? '무료배송' : '일반 택배 (2~3일)';
-document.getElementById('shippingFee').textContent = productData.shipping === '0' ? '무료' : '₩' + parseInt(productData.shipping || 0).toLocaleString();
-document.getElementById('storeName').textContent = productData.store;
-document.getElementById('sellerName').textContent = productData.brand;
-document.getElementById('sellerAv').textContent = productData.brand[0];
-
-if(productData.desc) document.getElementById('productDesc').textContent = productData.desc;
-if(productData.img) document.getElementById('productImg').src = productData.img;
-
-// ── BO 결제 활성화 여부 확인 ──
-function isPaymentEnabled() {
-  try {
-    const s = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
-    return s.payment === true;
-  } catch(e) { return false; }
-}
-
-// ── 결제 버튼 상태 초기화 ──
-(function() {
-  const btn = document.getElementById('buyBtn');
-  const sub = document.getElementById('ctaPriceSub');
-  const notice = document.getElementById('paymentNotice');
-  if(isPaymentEnabled()) {
-    btn.textContent = '구매하러 가기 →';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
-    btn.style.background = '';
-    if(sub) sub.textContent = '무료배송 · 셀러 스토어에서 구매';
-    if(notice) notice.style.display = 'none';
+  if (!productId) {
+    showNotFound()
   } else {
-    btn.textContent = '🔒 결제 준비 중';
-    btn.disabled = true;
-    btn.style.opacity = '.55';
-    btn.style.cursor = 'not-allowed';
-    btn.style.background = '#9CA3AF';
+    loadProduct(productId)
   }
-})();
 
-// ── 구매 이동 ──
-function goToBuy() {
-  if(!isPaymentEnabled()) {
-    showToast('결제 시스템 준비 중입니다. 정식 오픈 후 이용 가능합니다.');
-    return;
+  async function loadProduct(id) {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, users!brand_user(company_name)')
+      .eq('id', id)
+      .eq('status', 'active')
+      .single()
+
+    document.getElementById('loading').style.display = 'none'
+
+    if (error || !data) { showNotFound(); return }
+
+    product = data
+    const images = data.images && data.images.length > 0 ? data.images : (data.image_url ? [data.image_url] : [])
+    const brand = data.users?.company_name || '브랜드'
+    const kps = data.key_points || []
+    const earn = Math.round(data.price * data.commission_rate / 100)
+
+    // 크리에이터 정보 (ref로 조회)
+    let creatorName = null
+    if (creatorRef) {
+      const { data: linkData } = await supabase
+        .from('links')
+        .select('*, users!creator(name)')
+        .eq('id', creatorRef)
+        .single()
+      if (linkData) creatorName = linkData.users?.name || '크리에이터'
+    }
+
+    // 페이지 타이틀
+    document.title = `${data.name} — Vingly`
+
+    const app = document.getElementById('app')
+    app.innerHTML = `
+      <div class="container">
+        <div class="product-grid">
+          <!-- 이미지 영역 -->
+          <div class="img-area">
+            <div class="img-main" id="img-main-wrap">
+              ${images.length > 0
+                ? `<img id="img-main" src="${images[0]}" alt="${data.name}">`
+                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:72px">📦</div>`}
+              ${images.length > 1 ? `
+                <button class="img-prev" onclick="changeImg(-1)">‹</button>
+                <button class="img-next" onclick="changeImg(1)">›</button>` : ''}
+            </div>
+            ${images.length > 1 ? `
+              <div class="img-dots" id="img-dots">
+                ${images.map((_, i) => `<div class="img-dot ${i===0?'on':''}" onclick="setImg(${i})"></div>`).join('')}
+              </div>
+              <div class="img-thumbs">
+                ${images.map((src, i) => `<div class="img-thumb ${i===0?'on':''}" onclick="setImg(${i})"><img src="${src}" alt="이미지 ${i+1}"></div>`).join('')}
+              </div>` : ''}
+          </div>
+
+          <!-- 정보 영역 -->
+          <div class="info-area">
+            <div class="info-brand">${brand}</div>
+            <div class="info-name">${data.name}</div>
+            <div class="info-badges">
+              <span class="badge badge-green">수수료 ${data.commission_rate}%</span>
+              <span class="badge badge-blue">${data.category || '기타'}</span>
+            </div>
+            <div class="info-price">₩${Number(data.price).toLocaleString()}</div>
+            <div class="info-price-sub">부가세 포함 · 배송비 별도</div>
+
+            ${data.description ? `<div class="info-desc">${data.description}</div>` : ''}
+
+            ${kps.length > 0 ? `
+              <div class="kp-box">
+                <div class="kp-title">✨ 핵심 포인트</div>
+                ${kps.map(kp => `<div class="kp-item"><span class="kp-check">✓</span><span class="kp-text">${kp}</span></div>`).join('')}
+              </div>` : ''}
+
+            ${data.target_audience ? `
+              <div style="display:flex;gap:10px;background:var(--blue-bg);border-radius:9px;padding:11px 14px;margin-bottom:14px;align-items:flex-start">
+                <span style="font-size:15px;flex-shrink:0">🎯</span>
+                <div><div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:4px">추천 대상</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">${data.target_audience}</div></div>
+              </div>` : ''}
+
+            ${creatorName ? `
+              <div class="creator-badge">
+                <div class="cb-ico">${creatorName[0]}</div>
+                <div class="cb-info">
+                  <div class="cb-label">이 링크를 공유한 크리에이터</div>
+                  <div class="cb-name">${creatorName}</div>
+                </div>
+                <div class="cb-comm">수수료 ${data.commission_rate}%</div>
+              </div>` : ''}
+
+            <!-- 구매 박스 (PC) -->
+            <div class="buy-box">
+              <div class="buy-qty">
+                <span class="buy-qty-label">수량</span>
+                <div class="qty-ctrl">
+                  <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                  <span class="qty-num" id="qty-num">1</span>
+                  <button class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+              </div>
+              <div class="buy-total">
+                <span class="buy-total-label">총 결제금액</span>
+                <span class="buy-total-price" id="total-price">₩${Number(data.price).toLocaleString()}</span>
+              </div>
+            </div>
+
+            <button class="buy-btn disabled" id="buy-btn" onclick="doBuy()">
+              🛒 구매하기 (결제 연동 준비 중)
+            </button>
+            <button class="buy-btn-sub" onclick="shareLink()">🔗 이 제품 공유하기</button>
+
+            <div class="safe-badges">
+              <span class="safe-badge">🔒 안전 결제</span>
+              <span class="safe-badge">📦 판매자 직접 배송</span>
+              <span class="safe-badge">↩️ 7일 이내 반품</span>
+              <span class="safe-badge">🏦 구매 안전 보장</span>
+            </div>
+          </div>
+        </div>
+
+        ${data.creator_message ? `
+          <div class="detail-section">
+            <div class="ds-title">브랜드 안내사항</div>
+            <div style="background:var(--amber-bg);border-radius:10px;padding:16px;border-left:3px solid #D97706;font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70)">${data.creator_message}</div>
+          </div>` : ''}
+
+        <div class="detail-section">
+          <div class="ds-title">크리에이터와 함께하는 Vingly</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
+              <div style="font-size:24px;margin-bottom:8px">💸</div>
+              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">크리에이터 수수료 0%</div>
+              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">판매 수익 전액 수령</div>
+            </div>
+            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
+              <div style="font-size:24px;margin-bottom:8px">🔗</div>
+              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">링크 하나로 시작</div>
+              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">팔로워 100명부터 가능</div>
+            </div>
+            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
+              <div style="font-size:24px;margin-bottom:8px">📅</div>
+              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">월말 자동 정산</div>
+              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">신청 없이 자동 입금</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:16px">
+            <button onclick="location.href='signup.html?role=creator'" style="padding:12px 28px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 시작하기 →</button>
+          </div>
+        </div>
+      </div>`
+
+    // 모바일 하단 버튼 표시
+    document.getElementById('mobile-buy').style.display = 'block'
+
+    // 이미지 배열 저장
+    window._productImages = images
   }
-  const url = productData.buyUrl;
-  if(!url || url === '#') { showToast('구매 링크가 준비 중입니다'); return; }
-  console.log(`[Vingly] 구매 클릭: ref=${ref}, pid=${pid}, product=${productData.name}`);
-  window.open(url, '_blank');
-}
 
-// ── 공유 ──
-function shareLink() {
-  const url = location.href;
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => showToast('🔗 링크가 복사됐습니다!'));
+  window.changeImg = function(dir) {
+    const imgs = window._productImages || []
+    if (imgs.length <= 1) return
+    currentImgIdx = (currentImgIdx + dir + imgs.length) % imgs.length
+    setImg(currentImgIdx)
   }
-}
-function shareKakao() {
-  const url = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(location.href)}`;
-  window.open(url, '_blank', 'width=400,height=500');
-}
-function shareLine() {
-  window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(location.href)}`, '_blank');
-}
 
-// ── 토스트 ──
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 2500);
-}
+  window.setImg = function(idx) {
+    currentImgIdx = idx
+    const imgs = window._productImages || []
+    const mainImg = document.getElementById('img-main')
+    if (mainImg) mainImg.src = imgs[idx]
+    document.querySelectorAll('.img-dot').forEach((d, i) => d.classList.toggle('on', i === idx))
+    document.querySelectorAll('.img-thumb').forEach((t, i) => t.classList.toggle('on', i === idx))
+  }
 
-// ── 방문 로깅 (나중에 실제 추적으로 교체) ──
-console.log(`[Vingly] 방문: ref=${ref}, pid=${pid}, src=${src}`);
+  window.changeQty = function(dir) {
+    qty = Math.max(1, Math.min(99, qty + dir))
+    document.getElementById('qty-num').textContent = qty
+    if (product) {
+      document.getElementById('total-price').textContent = '₩' + (product.price * qty).toLocaleString()
+    }
+  }
+
+  window.doBuy = function() {
+    alert('결제 시스템 연동 준비 중입니다.\n사업자 등록 완료 후 토스페이먼츠 결제가 활성화됩니다.')
+  }
+
+  window.shareLink = function() {
+    const url = location.href
+    if (navigator.share) {
+      navigator.share({ title: product?.name, url })
+    } else {
+      navigator.clipboard.writeText(url).then(() => alert('링크가 복사됐습니다!'))
+    }
+  }
+
+  function showNotFound() {
+    document.getElementById('loading').style.display = 'none'
+    document.getElementById('app').innerHTML = `
+      <div class="not-found">
+        <div class="nf-ico">😕</div>
+        <div class="nf-title">제품을 찾을 수 없습니다</div>
+        <div class="nf-sub">링크가 만료됐거나 제품이 삭제됐을 수 있습니다.</div>
+        <button onclick="location.href='index.html'" style="padding:12px 28px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">메인으로 이동</button>
+      </div>`
+  }
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    return match ? decodeURIComponent(match[2]) : null
+  }
+
+  function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString()
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires};path=/`
+  }
 </script>
 </body>
 </html>
