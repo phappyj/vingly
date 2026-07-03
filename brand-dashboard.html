@@ -72,6 +72,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .sc-val{font:800 26px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:5px}
 .sc-ch{font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40)}
 .card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.card:last-child{margin-bottom:0}
 .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .card-t{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
 .tw{overflow-x:auto}
@@ -91,14 +92,28 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .fl-r.g{color:var(--green)}.fl-r.r{color:var(--red)}
 .act-btn{padding:5px 10px;border-radius:6px;font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;border:1px solid var(--ink-14);background:transparent;transition:all .15s;margin-right:4px}
 .act-btn:hover{border-color:var(--blue);color:var(--blue)}
-.act-btn.r{border-color:var(--red-bg)}
 .act-btn.r:hover{border-color:var(--red);color:var(--red)}
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
-.prod-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.prod-thumb img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+
+/* 이미지 업로드 그리드 */
+.img-upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.img-slot{aspect-ratio:1;border-radius:10px;border:2px dashed var(--ink-14);background:var(--ink-07);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all .2s}
+.img-slot:hover{border-color:var(--blue);background:var(--blue-bg)}
+.img-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.img-slot .del-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;cursor:pointer;font-size:10px;display:none;align-items:center;justify-content:center;z-index:2}
+.img-slot:hover .del-btn{display:flex}
+.img-slot-label{font:600 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:6px}
+
+/* key points */
+.kp-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.kp-input{flex:1;padding:9px 12px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none}
+.kp-del{width:28px;height:28px;border-radius:6px;background:var(--red-bg);color:var(--red);border:none;cursor:pointer;font-size:14px;flex-shrink:0}
+.kp-add{padding:8px 14px;border-radius:8px;border:1.5px dashed var(--ink-14);background:transparent;font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;font-family:inherit;transition:all .2s;width:100%}
+.kp-add:hover{border-color:var(--green);color:var(--green)}
+
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -268,22 +283,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명</label>
-            <input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label>
-            <input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="이메일" readonly>
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label>
-            <input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000">
-          </div>
-          <div>
-            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label>
-            <input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000">
-          </div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label><input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000"></div>
         </div>
         <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
@@ -299,54 +302,98 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
 <!-- 제품 등록/수정 모달 -->
 <div id="productModal" onclick="if(event.target===this)closeProductModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
-  <div style="background:#fff;border-radius:18px;width:100%;max-width:520px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:600px;padding:28px;position:relative;max-height:92vh;overflow-y:auto">
     <button onclick="closeProductModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
-    <div id="modal-title" style="font:800 20px/1 'Pretendard',sans-serif;margin-bottom:20px">📦 제품 등록</div>
-    <div style="display:flex;flex-direction:column;gap:14px">
+    <div id="modal-title" style="font:800 20px/1 'Pretendard',sans-serif;margin-bottom:24px">📦 제품 등록</div>
+
+    <!-- 섹션 1: 기본 정보 -->
+    <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">기본 정보</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
       <div>
         <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품명 *</label>
         <input id="p_name" type="text" placeholder="제품명 입력" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
       </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">판매가 (원) *</label>
-        <input id="p_price" type="number" placeholder="예: 35000" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">재고 수량</label>
-        <input id="p_stock" type="number" placeholder="예: 100" min="0" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">카테고리 *</label>
-        <select id="p_category" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-          <option value="">선택</option>
-          <option>뷰티 · 스킨케어</option>
-          <option>패션 · 의류</option>
-          <option>식품 · 건강</option>
-          <option>헬스 · 운동</option>
-          <option>생활 · 홈</option>
-          <option>디지털 · 전자</option>
-          <option>기타</option>
-        </select>
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터 수수료율 (%) *</label>
-        <input id="p_commission" type="number" placeholder="예: 15" min="1" max="50" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-      </div>
-      <div>
-        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 이미지</label>
-        <input type="file" id="p_image" accept="image/*" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-        <div id="p_image_preview" style="margin-top:8px;display:none">
-          <img id="p_image_preview_img" style="width:100%;height:160px;object-fit:cover;border-radius:9px;border:1px solid var(--ink-14)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">판매가 (원) *</label>
+          <input id="p_price" type="number" placeholder="예: 35000" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
         </div>
-        <div style="font-size:12px;color:var(--ink-40);margin-top:4px">JPG, PNG, WEBP · 최대 5MB</div>
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">재고 수량</label>
+          <input id="p_stock" type="number" placeholder="예: 100" min="0" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">카테고리 *</label>
+          <select id="p_category" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+            <option value="">선택</option>
+            <option>뷰티 · 스킨케어</option>
+            <option>패션 · 의류</option>
+            <option>식품 · 건강</option>
+            <option>헬스 · 운동</option>
+            <option>생활 · 홈</option>
+            <option>디지털 · 전자</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div>
+          <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터 수수료율 (%) *</label>
+          <input id="p_commission" type="number" placeholder="예: 15" min="1" max="50" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        </div>
       </div>
       <div>
         <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">제품 설명</label>
-        <textarea id="p_desc" placeholder="제품 특징, 타겟 고객 등 크리에이터에게 전달할 내용" rows="3" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
+        <textarea id="p_desc" placeholder="제품의 특징과 효능을 자세히 입력해주세요" rows="3" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
       </div>
-      <div id="product_err" style="font:600 13px/1 'Pretendard',sans-serif;color:var(--red);display:none"></div>
-      <button id="saveBtn" onclick="saveProduct()" style="width:100%;padding:13px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;min-height:48px">등록하기</button>
     </div>
+
+    <!-- 섹션 2: 이미지 -->
+    <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">제품 이미지 (최대 3장)</div>
+    <div class="img-upload-grid" style="margin-bottom:24px">
+      <div class="img-slot" id="slot-0" onclick="document.getElementById('img-input-0').click()">
+        <span style="font-size:24px">📷</span>
+        <span class="img-slot-label">대표 이미지</span>
+        <button class="del-btn" onclick="event.stopPropagation();removeImage(0)">✕</button>
+        <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="handleImageUpload(0,this)">
+      </div>
+      <div class="img-slot" id="slot-1" onclick="document.getElementById('img-input-1').click()">
+        <span style="font-size:24px">📷</span>
+        <span class="img-slot-label">추가 이미지 1</span>
+        <button class="del-btn" onclick="event.stopPropagation();removeImage(1)">✕</button>
+        <input type="file" id="img-input-1" accept="image/*" style="display:none" onchange="handleImageUpload(1,this)">
+      </div>
+      <div class="img-slot" id="slot-2" onclick="document.getElementById('img-input-2').click()">
+        <span style="font-size:24px">📷</span>
+        <span class="img-slot-label">추가 이미지 2</span>
+        <button class="del-btn" onclick="event.stopPropagation();removeImage(2)">✕</button>
+        <input type="file" id="img-input-2" accept="image/*" style="display:none" onchange="handleImageUpload(2,this)">
+      </div>
+    </div>
+
+    <!-- 섹션 3: 크리에이터용 정보 -->
+    <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--ink-40);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">크리에이터 홍보 가이드</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">핵심 판매 포인트 <span style="font-weight:400;color:var(--ink-40)">(크리에이터가 소개할 내용)</span></label>
+        <div id="kp-list">
+          <div class="kp-row"><input class="kp-input" placeholder="예: 무방부제, 천연 성분 100%" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>
+          <div class="kp-row"><input class="kp-input" placeholder="예: 피부과 테스트 완료" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>
+        </div>
+        <button class="kp-add" onclick="addKP()">+ 포인트 추가</button>
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">타겟 고객</label>
+        <input id="p_target" type="text" placeholder="예: 20~30대 피부 고민 있는 여성, 운동하는 직장인" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터에게 한마디</label>
+        <textarea id="p_creator_msg" placeholder="예: 사용 전후 사진을 보여주시면 효과가 좋습니다. 할인코드 VINGLY10을 함께 안내해 주세요!" rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
+      </div>
+    </div>
+
+    <div id="product_err" style="font:600 13px/1 'Pretendard',sans-serif;color:var(--red);display:none;margin-bottom:12px"></div>
+    <button id="saveBtn" onclick="saveProduct()" style="width:100%;padding:14px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:50px">등록하기</button>
   </div>
 </div>
 
@@ -389,6 +436,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   let editingProductId = null
+  let uploadedImages = [null, null, null] // 슬롯별 URL
 
   async function loadProducts() {
     const user = window._vinglyUser
@@ -411,11 +459,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('onboard-banner').style.display = 'none'
 
     const tbody = document.getElementById('product-tbody')
-    tbody.innerHTML = products.map(p => `
-      <tr>
+    tbody.innerHTML = products.map(p => {
+      const imgs = p.images || []
+      const thumb = imgs[0] || p.image_url
+      return `<tr>
         <td>
-          ${p.image_url
-            ? `<img src="${p.image_url}" style="width:48px;height:48px;border-radius:8px;object-fit:cover">`
+          ${thumb
+            ? `<img src="${thumb}" style="width:48px;height:48px;border-radius:8px;object-fit:cover">`
             : `<div style="width:48px;height:48px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>`}
         </td>
         <td class="td-b">${p.name}</td>
@@ -426,25 +476,26 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <button class="act-btn" onclick="editProduct('${p.id}')">수정</button>
           <button class="act-btn r" onclick="deleteProduct('${p.id}')">삭제</button>
         </td>
-      </tr>`).join('')
+      </tr>`
+    }).join('')
 
-    // 대시보드 테이블도 업데이트
+    // 대시보드
     const dashTbody = document.getElementById('dash-tbody')
     if (dashTbody) {
-      dashTbody.innerHTML = products.map(p => `
-        <tr>
-          <td>
-            ${p.image_url
-              ? `<img src="${p.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover">`
-              : `<div style="width:36px;height:36px;border-radius:6px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>`}
-          </td>
+      dashTbody.innerHTML = products.map(p => {
+        const imgs = p.images || []
+        const thumb = imgs[0] || p.image_url
+        return `<tr>
+          <td>${thumb ? `<img src="${thumb}" style="width:36px;height:36px;border-radius:6px;object-fit:cover">` : `<div style="width:36px;height:36px;border-radius:6px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>`}</td>
           <td class="td-b">${p.name}</td>
           <td>₩${Number(p.price).toLocaleString()}</td>
           <td>${p.commission_rate}%</td>
           <td><span class="badge bg">판매중</span></td>
-        </tr>`).join('')
+        </tr>`
+      }).join('')
     }
 
+    document.getElementById('onboard-banner').style.display = 'none'
     window._products = products
   }
 
@@ -452,6 +503,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const p = (window._products || []).find(x => x.id === id)
     if (!p) return
     editingProductId = id
+    uploadedImages = [...(p.images || [null, null, null])]
+    while (uploadedImages.length < 3) uploadedImages.push(null)
+
     document.getElementById('modal-title').textContent = '📦 제품 수정'
     document.getElementById('saveBtn').textContent = '수정 저장'
     document.getElementById('p_name').value = p.name
@@ -460,10 +514,33 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('p_category').value = p.category
     document.getElementById('p_commission').value = p.commission_rate
     document.getElementById('p_desc').value = p.description || ''
-    if (p.image_url) {
-      document.getElementById('p_image_preview_img').src = p.image_url
-      document.getElementById('p_image_preview').style.display = 'block'
-    }
+    document.getElementById('p_target').value = p.target_audience || ''
+    document.getElementById('p_creator_msg').value = p.creator_message || ''
+
+    // 이미지 슬롯
+    uploadedImages.forEach((url, i) => {
+      const slot = document.getElementById(`slot-${i}`)
+      const existing = slot.querySelector('img.preview')
+      if (existing) existing.remove()
+      if (url) {
+        const img = document.createElement('img')
+        img.src = url; img.className = 'preview'
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover'
+        slot.appendChild(img)
+      }
+    })
+
+    // 핵심 포인트
+    const kpList = document.getElementById('kp-list')
+    kpList.innerHTML = ''
+    const kps = p.key_points || ['', '']
+    kps.forEach(kp => {
+      const row = document.createElement('div')
+      row.className = 'kp-row'
+      row.innerHTML = `<input class="kp-input" placeholder="핵심 포인트 입력" maxlength="50" value="${kp}"><button class="kp-del" onclick="removeKP(this)">✕</button>`
+      kpList.appendChild(row)
+    })
+
     document.getElementById('productModal').style.display = 'flex'
   }
 
@@ -474,7 +551,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const category = document.getElementById('p_category').value
     const commission = parseFloat(document.getElementById('p_commission').value)
     const desc = document.getElementById('p_desc').value.trim()
-    const imageFile = document.getElementById('p_image').files[0]
+    const target = document.getElementById('p_target').value.trim()
+    const creatorMsg = document.getElementById('p_creator_msg').value.trim()
+    const kps = [...document.querySelectorAll('.kp-input')].map(i => i.value.trim()).filter(Boolean)
     const errEl = document.getElementById('product_err')
 
     if (!name || !price || !category || !commission) {
@@ -483,62 +562,60 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
 
-    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
-      errEl.textContent = '이미지 크기는 5MB 이하여야 합니다.'
-      errEl.style.display = 'block'
-      return
-    }
-
     const btn = document.getElementById('saveBtn')
-    btn.textContent = '저장 중...'
-    btn.style.opacity = '.7'
-    btn.style.pointerEvents = 'none'
+    btn.textContent = '저장 중...'; btn.style.opacity = '.7'; btn.style.pointerEvents = 'none'
 
     const user = window._vinglyUser
     if (!user) return
 
-    let image_url = null
-
-    if (imageFile) {
-      const ext = imageFile.name.split('.').pop()
-      const fileName = `${user.id}/${Date.now()}.${ext}`
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('products')
-        .upload(fileName, imageFile, { upsert: true })
-
-      if (uploadError) {
-        errEl.textContent = '이미지 업로드 실패: ' + uploadError.message
-        errEl.style.display = 'block'
-        btn.textContent = editingProductId ? '수정 저장' : '등록하기'
-        btn.style.opacity = '1'
-        btn.style.pointerEvents = 'auto'
-        return
+    // 새 이미지 업로드 (파일 input에서)
+    for (let i = 0; i < 3; i++) {
+      const input = document.getElementById(`img-input-${i}`)
+      const file = input.files[0]
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          errEl.textContent = `이미지 ${i+1}의 크기는 5MB 이하여야 합니다.`
+          errEl.style.display = 'block'
+          btn.textContent = editingProductId ? '수정 저장' : '등록하기'
+          btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
+          return
+        }
+        const ext = file.name.split('.').pop()
+        const fileName = `${user.id}/${Date.now()}_${i}.${ext}`
+        const { error: uploadError } = await supabase.storage.from('products').upload(fileName, file, { upsert: true })
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage.from('products').getPublicUrl(fileName)
+          uploadedImages[i] = urlData.publicUrl
+        }
       }
+    }
 
-      const { data: urlData } = supabase.storage.from('products').getPublicUrl(fileName)
-      image_url = urlData.publicUrl
+    const images = uploadedImages.filter(Boolean)
+    const image_url = images[0] || null
+
+    const productData = {
+      name, price, stock, category,
+      commission_rate: commission,
+      description: desc,
+      target_audience: target,
+      creator_message: creatorMsg,
+      key_points: kps,
+      images,
+      image_url,
+      status: 'active'
     }
 
     let error
-
     if (editingProductId) {
-      // 수정
-      const updateData = { name, price, stock, category, commission_rate: commission, description: desc }
-      if (image_url) updateData.image_url = image_url
-      const res = await supabase.from('products').update(updateData).eq('id', editingProductId)
+      const res = await supabase.from('products').update(productData).eq('id', editingProductId)
       error = res.error
     } else {
-      // 신규 등록
-      const res = await supabase.from('products').insert({
-        brand_user: user.id, name, price, stock, category,
-        commission_rate: commission, description: desc, image_url, status: 'active'
-      })
+      const res = await supabase.from('products').insert({ ...productData, brand_user: user.id })
       error = res.error
     }
 
     btn.textContent = editingProductId ? '수정 저장' : '등록하기'
-    btn.style.opacity = '1'
-    btn.style.pointerEvents = 'auto'
+    btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
 
     if (error) {
       errEl.textContent = '저장 실패: ' + error.message
@@ -556,25 +633,37 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     await loadProducts()
   }
 
+  window.handleImageUpload = function(idx, input) {
+    const file = input.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const slot = document.getElementById(`slot-${idx}`)
+      let img = slot.querySelector('img.preview')
+      if (!img) {
+        img = document.createElement('img')
+        img.className = 'preview'
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover'
+        slot.appendChild(img)
+      }
+      img.src = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+
+  window.removeImage = function(idx) {
+    const slot = document.getElementById(`slot-${idx}`)
+    const img = slot.querySelector('img.preview')
+    if (img) img.remove()
+    const input = document.getElementById(`img-input-${idx}`)
+    input.value = ''
+    uploadedImages[idx] = null
+  }
+
   window.doLogout = async function() {
     if (window._supabase) await window._supabase.auth.signOut()
     location.replace('login.html')
   }
-
-  // 이미지 미리보기
-  document.addEventListener('change', function(e) {
-    if (e.target.id === 'p_image') {
-      const file = e.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (ev) => {
-          document.getElementById('p_image_preview_img').src = ev.target.result
-          document.getElementById('p_image_preview').style.display = 'block'
-        }
-        reader.readAsDataURL(file)
-      }
-    }
-  })
 </script>
 
 <script>
@@ -584,18 +673,15 @@ function showPage(id, btn) {
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'))
   if (btn) btn.classList.add('act')
   const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
-  const t = titles[id] || ''
-  document.getElementById('page-title').textContent = t
-  document.getElementById('mob-title').textContent = t
-  if (id === 'settings') loadProfileSettings()
-}
-
-function loadProfileSettings() {
-  const user = window._vinglyUser || {}
-  const el = document.getElementById('set_name')
-  const em = document.getElementById('set_email')
-  if (el) el.value = user.name || ''
-  if (em) em.value = user.email || ''
+  document.getElementById('page-title').textContent = titles[id] || ''
+  document.getElementById('mob-title').textContent = titles[id] || ''
+  if (id === 'settings') {
+    const user = window._vinglyUser || {}
+    const el = document.getElementById('set_name')
+    const em = document.getElementById('set_email')
+    if (el) el.value = user.name || ''
+    if (em) em.value = user.email || ''
+  }
 }
 
 function saveProfile() {
@@ -606,23 +692,46 @@ function saveProfile() {
 
 function openProductModal() {
   window.editingProductId = null
+  window.uploadedImages = [null, null, null]
   document.getElementById('modal-title').textContent = '📦 제품 등록'
   document.getElementById('saveBtn').textContent = '등록하기'
   document.getElementById('product_err').style.display = 'none'
-  document.getElementById('p_name').value = ''
-  document.getElementById('p_price').value = ''
-  document.getElementById('p_stock').value = ''
-  document.getElementById('p_category').value = ''
-  document.getElementById('p_commission').value = ''
-  document.getElementById('p_desc').value = ''
-  document.getElementById('p_image').value = ''
-  document.getElementById('p_image_preview').style.display = 'none'
+  ;['p_name','p_price','p_stock','p_category','p_commission','p_desc','p_target','p_creator_msg'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el) el.value = ''
+  })
+  ;[0,1,2].forEach(i => {
+    const slot = document.getElementById(`slot-${i}`)
+    const img = slot?.querySelector('img.preview')
+    if (img) img.remove()
+    const input = document.getElementById(`img-input-${i}`)
+    if (input) input.value = ''
+  })
+  const kpList = document.getElementById('kp-list')
+  kpList.innerHTML = `
+    <div class="kp-row"><input class="kp-input" placeholder="예: 무방부제, 천연 성분 100%" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>
+    <div class="kp-row"><input class="kp-input" placeholder="예: 피부과 테스트 완료" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>`
   document.getElementById('productModal').style.display = 'flex'
 }
 
 function closeProductModal() {
   document.getElementById('productModal').style.display = 'none'
   window.editingProductId = null
+}
+
+function addKP() {
+  const list = document.getElementById('kp-list')
+  if (list.children.length >= 5) return
+  const row = document.createElement('div')
+  row.className = 'kp-row'
+  row.innerHTML = `<input class="kp-input" placeholder="핵심 포인트 입력" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button>`
+  list.appendChild(row)
+}
+
+function removeKP(btn) {
+  const list = document.getElementById('kp-list')
+  if (list.children.length <= 1) return
+  btn.closest('.kp-row').remove()
 }
 
 function toggleNotif() {
