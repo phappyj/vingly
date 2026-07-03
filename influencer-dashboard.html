@@ -14,7 +14,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vingly — 크리에이터 대시보드</title>
-<meta name="description" content="내 링크 성과, 수익 현황, 등급 관리를 한 곳에서 확인하세요.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -64,7 +63,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-pc{background:var(--white);border:1px solid var(--ink-14);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
 .exp-pc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08)}
 .exp-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden}
-.exp-thumb img{width:100%;height:100%;object-fit:cover}
+.exp-thumb img{width:100%;height:100%;object-fit:contain;background:#f8f8f8}
 .exp-body{padding:12px}
 .exp-brand{font-size:11px;color:var(--ink-40);margin-bottom:3px}
 .exp-name{font:600 13px/1.35 'Pretendard',sans-serif;margin-bottom:8px}
@@ -73,9 +72,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .exp-comm{font:700 11px/1 'Pretendard',sans-serif;color:var(--green);background:var(--green-bg);padding:3px 7px;border-radius:4px}
 .exp-btn{width:100%;padding:9px;border-radius:8px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-btn.linked{background:var(--green-bg);color:var(--green)}
-.exp-link-box{background:var(--green-bg);border-radius:9px;padding:12px;margin-bottom:10px;display:none}
+.exp-link-box{background:var(--green-bg);border:1px solid rgba(0,179,126,.2);border-radius:9px;padding:12px;margin-bottom:10px;display:none}
 .exp-link-box.on{display:block}
-.exp-link-url{font:700 12px/1 'Pretendard',sans-serif;color:var(--green);word-break:break-all;margin-bottom:8px}
+.exp-link-url{font:600 12px/1.4 'Pretendard',sans-serif;color:var(--green);word-break:break-all;margin-bottom:8px}
 .exp-gen-btn{width:100%;padding:13px;border-radius:9px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;transition:all .2s}
 .exp-copy-btn{width:100%;padding:9px;border-radius:7px;background:var(--green);color:#fff;border:none;font:700 12px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit}
 .onboard{background:linear-gradient(135deg,var(--green) 0%,#034732 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
@@ -93,7 +92,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .sc-val{font:800 26px/1 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.8px;margin-bottom:5px}
 .sc-ch{font:600 12px/1 'Pretendard',sans-serif}
 .nt{color:var(--ink-40)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
 .card{background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r);padding:18px;margin-bottom:14px}
 .card:last-child{margin-bottom:0}
@@ -104,14 +102,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .calc-title{font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
 .calc-row{margin-bottom:14px}
 .calc-lbl{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:5px}
-.calc-input{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.70);cursor:pointer;outline:none}
+.calc-input{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.3);cursor:pointer;outline:none}
 .calc-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .calc-val{font:700 12px/1 'Pretendard',sans-serif;color:#fff;margin-top:4px}
 .calc-result{background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:10px;padding:14px;margin-top:16px}
 .cr-lbl{font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:5px}
 .cr-num{font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px}
 .cr-sub{font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:5px}
-.grade-card{border-radius:12px;padding:16px 20px;position:relative;overflow:hidden}
+.grade-card{border-radius:12px;padding:16px 20px}
 .grade-current{background:var(--ink);color:#fff}
 .grade-next{background:var(--ink-07);border:1px solid var(--ink-14)}
 .gc-badge{font:700 10px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:100px;margin-bottom:8px;display:inline-block}
@@ -123,36 +121,31 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .gc-cond{font:500 12px/1 'Pretendard',sans-serif;margin-bottom:12px}
 .grade-current .gc-cond{color:rgba(255,255,255,.5)}
 .grade-next .gc-cond{color:var(--ink-40)}
-.prog-wrap{margin-bottom:4px}
-.prog-top{display:flex;justify-content:space-between;font:600 12px/1 'Pretendard',sans-serif;margin-bottom:6px}
-.prog-bar{height:5px;border-radius:3px;overflow:hidden}
-.grade-current .prog-bar{background:rgba(255,255,255,.1)}
-.grade-next .prog-bar{background:var(--ink-07)}
-.prog-fill{height:100%;border-radius:3px}
-.grade-current .prog-fill{background:#6EE7B7}
-.grade-next .prog-fill{background:var(--blue)}
-.prog-label{font:400 11px/1 'Pretendard',sans-serif}
-.grade-current .prog-label{color:rgba(255,255,255,.4)}
-.grade-next .prog-label{color:var(--ink-40)}
-.earn-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
-.earn-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
-.er-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
-.er-l small{display:block;font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px}
-.er-r{font:700 14px/1 'Pretendard',sans-serif;color:var(--ink)}
-.er-r.g{color:var(--green)}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 thead th{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);text-align:left;padding:8px 12px;border-bottom:1px solid var(--ink-14);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 tbody td{font:400 13px/1 'Pretendard',sans-serif;padding:12px;border-bottom:1px solid var(--ink-07);color:var(--ink)}
 tbody tr:last-child td{border:none}
 tbody tr:hover td{background:rgba(0,0,0,.015)}
-.td-b{font-weight:700}.td-m{color:var(--ink-40)}
+.td-b{font-weight:700}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
+/* 수익 계산기 슬라이더 */
+.earn-calc{background:var(--ink);border-radius:12px;padding:18px;margin-bottom:14px}
+.earn-calc-title{font:700 13px/1 'Pretendard',sans-serif;color:#fff;margin-bottom:4px}
+.earn-calc-sub{font:400 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:16px}
+.earn-slider-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.earn-slider-lbl{font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);min-width:60px}
+.earn-slider{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.2);cursor:pointer;outline:none}
+.earn-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#00E5A0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.earn-slider-val{font:700 13px/1 'Pretendard',sans-serif;color:#00E5A0;min-width:48px;text-align:right}
+.earn-result{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:16px;margin-top:14px;text-align:center}
+.earn-result-num{font:900 36px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1.5px;margin-bottom:6px}
+.earn-result-sub{font:400 12px/1.5 'Pretendard',sans-serif;color:rgba(255,255,255,.4)}
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -160,7 +153,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .topbar{display:none}
   .mob-top{display:flex}
   .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .g2,.g3{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
   .content{padding:14px 16px}
   .onboard{flex-direction:column;align-items:flex-start}
 }
@@ -194,10 +187,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="sb-foot">
     <div class="ua">
       <div class="ua-av" id="sb-av">크</div>
-      <div>
-        <div class="ua-name" id="sb-name">크리에이터</div>
-        <div class="ua-role">Active · 얼리버드</div>
-      </div>
+      <div><div class="ua-name" id="sb-name">크리에이터</div><div class="ua-role">Active · 얼리버드</div></div>
     </div>
   </div>
 </aside>
@@ -226,7 +216,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div class="ob-title">마음에 드는 제품을 골라 링크를 만들어보세요</div>
         <div class="ob-desc">30초면 내 전용 링크 완성 · 공유하면 바로 수익 시작</div>
       </div>
-      <button class="ob-btn" onclick="showPage('products', document.querySelector('.ni:nth-child(2)'))">제품 탐색하기 →</button>
+      <button class="ob-btn" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">제품 탐색하기 →</button>
     </div>
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작됩니다</div></div>
@@ -240,7 +230,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div id="dash-links-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
           <div style="font-size:28px;margin-bottom:8px">🔗</div>
           <div style="font-size:13px;font-weight:500">아직 생성된 링크가 없습니다</div>
-          <div style="font-size:12px;margin-top:4px">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
+          <div style="font-size:12px;margin-top:4px;color:var(--ink-40)">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
         </div>
         <div id="dash-links-list"></div>
       </div>
@@ -274,34 +264,24 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-earn">
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 운영 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
     </div>
     <div class="card">
-      <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
-        <div style="font-size:28px;margin-bottom:8px">💸</div>
-        <div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div>
-      </div>
-      <div class="earn-row"><div class="er-l">Vingly 수수료 차감<small>크리에이터 미징수 — 영구</small></div><div class="er-r g">₩0 영구</div></div>
-      <div class="earn-row"><div class="er-l" style="font-weight:700;color:var(--ink)">이번 달 총 수령액</div><div class="er-r" style="font-size:20px;font-weight:800;color:var(--green)">₩0</div></div>
+      <div class="card-h"><div class="card-t">수익 명세</div></div>
+      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)"><div style="font-size:28px;margin-bottom:8px">💸</div><div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div></div>
     </div>
   </div>
 
   <!-- 등급 -->
   <div class="page content" id="pg-grade">
-    <div class="g2">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="grade-card grade-current">
         <span class="gc-badge gc-b-curr">현재 등급</span>
         <div style="font-size:28px;margin-bottom:8px">⚡</div>
         <div class="gc-name">Active</div>
         <div class="gc-cond">누적 0건 판매 완료</div>
-        <div class="prog-wrap">
-          <div class="prog-top"><span style="color:rgba(255,255,255,.6)">Active까지</span><span style="color:#fff">0 / 10건</span></div>
-          <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
-          <div class="prog-label" style="margin-top:5px">링크를 생성하고 첫 판매를 시작하세요!</div>
-        </div>
       </div>
       <div class="grade-card grade-next">
         <span class="gc-badge gc-b-next">다음 등급</span>
@@ -312,11 +292,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <li>→ 프리미엄 제품 전용 접근</li>
           <li>→ 수수료 전환 후 -1%p 추가 할인</li>
           <li>→ 전담 매니저 배정</li>
-          <li>→ 단독 할인코드 발급</li>
         </ul>
       </div>
     </div>
-    <div class="card" style="margin-top:14px">
+    <div class="card">
       <div class="card-h"><div class="card-t">전체 등급 로드맵</div></div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
         <div style="padding:14px;border-radius:10px;background:var(--ink-07);text-align:center"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
@@ -354,9 +333,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div style="font:600 14px/1 'Pretendard',sans-serif">전체 제품 <span id="exp-count" style="color:var(--green)">0개</span></div>
     </div>
     <div id="exp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:160px;transition:opacity .15s"></div>
-    <div id="exp-ov" onclick="if(event.target===this)expCloseModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
-      <div style="background:#fff;border-radius:18px;width:100%;max-width:500px;padding:24px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto">
-        <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px;color:var(--ink-40);z-index:1">✕</button>
+
+    <!-- 제품 상세 모달 -->
+    <div id="exp-ov" onclick="if(event.target===this)expCloseModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:20px;width:100%;max-width:520px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.2);max-height:92vh;overflow-y:auto">
+        <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.08);border:none;cursor:pointer;font-size:14px;color:var(--ink-40);z-index:1">✕</button>
         <div id="exp-modal-content"></div>
       </div>
     </div>
@@ -419,11 +400,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
 <div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;color:#0A0C10">알림</div>
-  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)">
-    <div style="font-size:24px;margin-bottom:8px">🔔</div>
-    <div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div>
-  </div>
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif">알림</div>
+  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div></div>
 </div>
 
 <script type="module">
@@ -434,14 +412,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   )
 
   const { data: { session } } = await supabase.auth.getSession()
-  if (!session) {
-    location.replace('login.html')
-  } else {
+  if (!session) { location.replace('login.html') }
+  else {
     const user = session.user
-    const role = user.user_metadata?.role
-    if (role !== 'creator') {
-      location.replace('login.html')
-    } else {
+    if (user.user_metadata?.role !== 'creator') { location.replace('login.html') }
+    else {
       const name = user.user_metadata?.name || user.email || '크리에이터'
       document.addEventListener('DOMContentLoaded', () => {
         const sbName = document.getElementById('sb-name')
@@ -451,7 +426,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadMyLinks()
       })
       window._supabase = supabase
-      window._vinglyUser = { id: user.id, email: user.email, name, role }
+      window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
     }
   }
 
@@ -461,8 +436,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const { data: links } = await supabase
       .from('links')
       .select('*, products(name, image_url, images, price, commission_rate)')
-      .eq('creator', user.id)
-      .eq('status', 'active')
+      .eq('creator', user.id).eq('status', 'active')
       .order('created_at', { ascending: false })
 
     if (!links || links.length === 0) return
@@ -470,15 +444,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('dash-links-empty').style.display = 'none'
     const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
     document.getElementById('dash-clicks').textContent = totalClicks.toLocaleString()
+
     document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => {
       const imgs = l.products?.images || []
       const thumb = imgs[0] || l.products?.image_url
       return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
-        <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:16px">
-          ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover">` : '📦'}
+        <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--green-bg);display:flex;align-items:center;justify-content:center">
+          ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:contain;background:#f8f8f8">` : '📦'}
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font:600 13px/1 'Pretendard',sans-serif;margin-bottom:3px">${l.products?.name || '제품'}</div>
+          <div style="font:600 13px/1 'Pretendard',sans-serif;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.products?.name || '제품'}</div>
           <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40)">클릭 ${l.click_count || 0}회</div>
         </div>
         <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green)">수수료 ${l.products?.commission_rate || 0}%</div>
@@ -509,15 +484,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .eq('status', 'active')
       .order('created_at', { ascending: false })
     if (error || !data) return []
-    const emoMap = {
-      '뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗',
-      '헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'
-    }
+    const emoMap = {'뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗','헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'}
     return data.map(p => ({
       id: p.id, name: p.name,
       brand: p.users?.company_name || '브랜드',
-      cat: p.category || '기타',
-      price: p.price, comm: p.commission_rate,
+      cat: p.category || '기타', price: p.price, comm: p.commission_rate,
       emoji: emoMap[p.category] || '📦',
       desc: p.description || '',
       image_url: p.image_url || null,
@@ -549,7 +520,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           const imgs = p.images && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : [])
           const thumb = imgs[0]
           return `<div class="exp-pc" onclick="expOpenProduct('${p.id}')">
-            <div class="exp-thumb">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover">` : p.emoji}</div>
+            <div class="exp-thumb">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:contain;background:#f8f8f8">` : p.emoji}</div>
             <div class="exp-body">
               <div class="exp-brand">${p.brand}</div>
               <div class="exp-name">${p.name}</div>
@@ -570,9 +541,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   window.expSelectCat = function(btn, cat) {
     document.querySelectorAll('.exp-cat').forEach(b => b.classList.remove('on'))
-    btn.classList.add('on')
-    expCat = cat
-    expRender()
+    btn.classList.add('on'); expCat = cat; expRender()
   }
 
   window.expOpenProduct = async function(id) {
@@ -586,73 +555,83 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     window._modalImages = images
     window._currentModalImg = 0
 
+    // 이미지 슬라이더
     const sliderHtml = images.length > 0
-      ? `<div style="position:relative;height:240px;border-radius:12px;overflow:hidden;margin-bottom:16px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)">
-          <img id="modal-img-main" src="${images[0]}" style="width:100%;height:100%;object-fit:cover">
+      ? `<div style="position:relative;height:260px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8);overflow:hidden">
+          <img id="modal-img-main" src="${images[0]}" style="width:100%;height:100%;object-fit:contain;background:#f8f8f8">
           ${images.length > 1 ? `
-            <button onclick="modalImgPrev()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">‹</button>
-            <button onclick="modalImgNext()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">›</button>
+            <button onclick="modalImgPrev()" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">‹</button>
+            <button onclick="modalImgNext()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:1">›</button>
             <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px">
-              ${images.map((_, i) => `<div id="dot-${i}" style="width:7px;height:7px;border-radius:50%;background:${i === 0 ? '#fff' : 'rgba(255,255,255,.45)'}"></div>`).join('')}
+              ${images.map((_, i) => `<div id="dot-${i}" style="width:7px;height:7px;border-radius:50%;background:${i===0?'#fff':'rgba(255,255,255,.4)'}"></div>`).join('')}
             </div>` : ''}
         </div>`
-      : `<div style="height:180px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:16px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)">${p.emoji}</div>`
+      : `<div style="height:200px;display:flex;align-items:center;justify-content:center;font-size:64px;background:linear-gradient(135deg,var(--green-bg),#d0f5e8)">${p.emoji}</div>`
 
+    // 핵심 포인트
     const kpHtml = p.key_points && p.key_points.length > 0
-      ? `<div style="background:var(--green-bg);border-radius:10px;padding:14px;margin-bottom:14px">
-          <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:10px">✨ 핵심 포인트</div>
-          ${p.key_points.map(kp => `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="color:var(--green);flex-shrink:0;font-weight:700">✓</span><span style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">${kp}</span></div>`).join('')}
+      ? `<div style="background:var(--green-bg);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font:700 12px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:10px;letter-spacing:.04em">✨ 핵심 포인트</div>
+          ${p.key_points.map(kp => `<div style="display:flex;gap:8px;margin-bottom:7px;last-child:margin-bottom:0"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span><span style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">${kp}</span></div>`).join('')}
         </div>` : ''
 
     const targetHtml = p.target_audience
-      ? `<div style="display:flex;align-items:center;gap:8px;background:var(--blue-bg);border-radius:9px;padding:10px 12px;margin-bottom:14px">
-          <span>🎯</span>
-          <div><div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:3px">추천 타겟</div><div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-70)">${p.target_audience}</div></div>
+      ? `<div style="display:flex;gap:10px;background:var(--blue-bg);border-radius:9px;padding:11px 14px;margin-bottom:14px;align-items:flex-start">
+          <span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span>
+          <div><div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--blue);margin-bottom:4px">추천 타겟 고객</div><div style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-70)">${p.target_audience}</div></div>
         </div>` : ''
 
-    const creatorMsgHtml = p.creator_message
-      ? `<div style="background:var(--amber-bg);border-radius:9px;padding:12px;margin-bottom:14px;border-left:3px solid #D97706">
+    const msgHtml = p.creator_message
+      ? `<div style="background:var(--amber-bg);border-radius:9px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #D97706">
           <div style="font:700 11px/1 'Pretendard',sans-serif;color:#92400E;margin-bottom:6px">💬 브랜드 메시지</div>
           <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">${p.creator_message}</div>
         </div>` : ''
 
-    const calcHtml = `<div style="background:var(--ink);border-radius:10px;padding:16px;margin-bottom:14px">
-      <div style="font:700 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-bottom:12px;letter-spacing:.06em">💰 예상 수익 계산</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
-        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
-          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${earn.toLocaleString()}</div>
-          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">건당</div>
-        </div>
-        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
-          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${(earn*10).toLocaleString()}</div>
-          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">10건</div>
-        </div>
-        <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
-          <div style="font:800 18px/1 'Pretendard',sans-serif;color:#00E5A0;margin-bottom:4px">₩${(earn*50).toLocaleString()}</div>
-          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4)">50건</div>
-        </div>
+    // 수익 계산기 (슬라이더)
+    const calcHtml = `<div class="earn-calc">
+      <div class="earn-calc-title">💰 내 예상 수익 계산해보기</div>
+      <div class="earn-calc-sub">판매 수량을 직접 조절해보세요</div>
+      <div class="earn-slider-row">
+        <span class="earn-slider-lbl">예상 판매</span>
+        <input class="earn-slider" type="range" min="1" max="200" value="10" id="earn-qty-slider" oninput="updateEarnCalc(${earn})">
+        <span class="earn-slider-val" id="earn-qty-val">10건</span>
+      </div>
+      <div class="earn-result">
+        <div class="earn-result-num" id="earn-result-num">₩${(earn*10).toLocaleString()}</div>
+        <div class="earn-result-sub" id="earn-result-sub">건당 ₩${earn.toLocaleString()} × 10건 = 예상 수익<br>수수료 ${p.comm}% · Vingly 차감 없음 (파일럿)</div>
       </div>
     </div>`
 
     document.getElementById('exp-modal-content').innerHTML = `
       ${sliderHtml}
-      <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:5px">${p.brand} · ${p.cat}</div>
-      <div style="font:800 20px/1.3 'Pretendard',sans-serif;margin-bottom:10px;letter-spacing:-.5px">${p.name}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-        <span style="background:var(--green-bg);color:var(--green);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">수수료 ${p.comm}%</span>
-        <span style="background:var(--ink-07);color:var(--ink);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">₩${Number(p.price).toLocaleString()}</span>
-        <span style="background:var(--blue-bg);color:var(--blue);font:700 12px/1 'Pretendard',sans-serif;padding:6px 12px;border-radius:6px">건당 ₩${earn.toLocaleString()}</span>
-      </div>
-      ${p.desc ? `<div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:14px;line-height:1.7">${p.desc}</div>` : ''}
-      ${kpHtml}${targetHtml}${creatorMsgHtml}${calcHtml}
-      <div class="exp-link-box ${myLink ? 'on' : ''}" id="exp-link-box">
-        <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:6px">✅ 내 링크</div>
-        <div class="exp-link-url" id="exp-link-url">${myLink ? 'vingly.kr/j/' + myLink.slug : ''}</div>
-        <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
-      </div>
-      <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')">
-        ${myLink ? '🔄 링크 재생성' : '🔗 내 전용 링크 생성하기'}
-      </button>`
+      <div style="padding:20px 20px 0">
+        <div style="font:400 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:5px">${p.brand} · ${p.cat}</div>
+        <div style="font:800 22px/1.2 'Pretendard',sans-serif;margin-bottom:12px;letter-spacing:-.6px">${p.name}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <span style="background:var(--green-bg);color:var(--green);font:700 13px/1 'Pretendard',sans-serif;padding:7px 14px;border-radius:7px">수수료 ${p.comm}%</span>
+          <span style="background:var(--ink-07);color:var(--ink);font:700 13px/1 'Pretendard',sans-serif;padding:7px 14px;border-radius:7px">₩${Number(p.price).toLocaleString()}</span>
+          <span style="background:var(--blue-bg);color:var(--blue);font:700 13px/1 'Pretendard',sans-serif;padding:7px 14px;border-radius:7px">건당 ₩${earn.toLocaleString()}</span>
+        </div>
+        ${p.desc ? `<div style="font:400 13px/1.75 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:16px">${p.desc}</div>` : ''}
+        ${kpHtml}${targetHtml}${msgHtml}${calcHtml}
+        <div style="height:14px"></div>
+        <div class="exp-link-box ${myLink ? 'on' : ''}" id="exp-link-box">
+          <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:7px">✅ 내 링크</div>
+          <div class="exp-link-url" id="exp-link-url">${myLink ? 'vingly.kr/j/' + myLink.slug : ''}</div>
+          <button class="exp-copy-btn" onclick="expCopyLink()">📋 링크 복사</button>
+        </div>
+        <button class="exp-gen-btn" id="exp-gen-btn" onclick="expGenerateLink('${id}')" style="margin-bottom:20px">
+          ${myLink ? '🔄 링크 재생성' : '🔗 내 전용 링크 생성하기'}
+        </button>
+      </div>`
+
+    window.updateEarnCalc = function(earnPerUnit) {
+      const qty = parseInt(document.getElementById('earn-qty-slider').value)
+      const total = earnPerUnit * qty
+      document.getElementById('earn-qty-val').textContent = qty + '건'
+      document.getElementById('earn-result-num').textContent = '₩' + total.toLocaleString()
+      document.getElementById('earn-result-sub').textContent = `건당 ₩${earnPerUnit.toLocaleString()} × ${qty}건 = 예상 수익\n수수료 ${p.comm}% · Vingly 차감 없음 (파일럿)`
+    }
 
     window.modalImgNext = function() {
       window._currentModalImg = (window._currentModalImg + 1) % window._modalImages.length
@@ -668,7 +647,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       if (imgEl) imgEl.src = window._modalImages[i]
       window._modalImages.forEach((_, idx) => {
         const dot = document.getElementById(`dot-${idx}`)
-        if (dot) dot.style.background = idx === i ? '#fff' : 'rgba(255,255,255,.45)'
+        if (dot) dot.style.background = idx === i ? '#fff' : 'rgba(255,255,255,.4)'
       })
     }
 
@@ -696,18 +675,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       click_count: 0, conversion_count: 0, status: 'active'
     })
 
-    if (error) {
-      btn.textContent = '생성 실패'; btn.style.opacity = '1'
-      console.error(error); return
-    }
+    if (error) { btn.textContent = '생성 실패'; btn.style.opacity = '1'; console.error(error); return }
 
     const linkUrl = `vingly.kr/j/${slug}`
     document.getElementById('exp-link-url').textContent = linkUrl
     document.getElementById('exp-link-box').classList.add('on')
     btn.textContent = '✓ 생성 완료!'; btn.style.opacity = '1'
     btn.style.background = 'var(--green-bg)'; btn.style.color = 'var(--green)'
-    await loadMyLinks()
-    await expRender()
+    await loadMyLinks(); await expRender()
   }
 
   window.expCopyLink = function() {
@@ -728,14 +703,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   window.saveProfile = function() {
-    const msg = document.getElementById('profile_msg')
-    msg.style.display = 'inline'
+    const msg = document.getElementById('profile_msg'); msg.style.display = 'inline'
     setTimeout(() => msg.style.display = 'none', 2500)
   }
 
   window.saveBankInfo = function() {
-    const msg = document.getElementById('bank_msg')
-    msg.style.display = 'inline'
+    const msg = document.getElementById('bank_msg'); msg.style.display = 'inline'
     setTimeout(() => msg.style.display = 'none', 2500)
   }
 </script>
@@ -751,10 +724,8 @@ function showPage(id, btn) {
   document.getElementById('mob-title').textContent = t
   if (id === 'settings') {
     const user = window._vinglyUser || {}
-    const el = document.getElementById('set_name')
-    const em = document.getElementById('set_email')
-    if (el) el.value = user.name || ''
-    if (em) em.value = user.email || ''
+    const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
+    if (el) el.value = user.name || ''; if (em) em.value = user.email || ''
   }
   if (id === 'products') expRender()
 }
@@ -775,25 +746,19 @@ calcInfl()
 
 function showToast(msg) {
   const toast = document.getElementById('toast')
-  toast.textContent = msg
-  toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
+  toast.textContent = msg; toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
   setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, 3000)
 }
 
 function toggleNotif() {
-  const el = document.getElementById('notifPanel')
-  if (!el) return
+  const el = document.getElementById('notifPanel'); if (!el) return
   el.style.display = el.style.display === 'block' ? 'none' : 'block'
-  const dot = document.querySelector('.ndot')
-  if (dot) dot.style.display = 'none'
+  const dot = document.querySelector('.ndot'); if (dot) dot.style.display = 'none'
 }
 
 document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel')
-  const btn = document.querySelector('.icon-btn')
-  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) {
-    panel.style.display = 'none'
-  }
+  const panel = document.getElementById('notifPanel'); const btn = document.querySelector('.icon-btn')
+  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) panel.style.display = 'none'
 })
 </script>
 </body>
