@@ -7,6 +7,8 @@
 <title>제품 상세 — Vingly</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Toss Payments SDK -->
+<script src="https://js.tosspayments.com/v1"></script>
 <style>
 :root{
   --ink:#0A0C10;--ink-70:rgba(10,12,16,.7);--ink-40:rgba(10,12,16,.4);
@@ -120,6 +122,20 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .footer{background:var(--white);border-top:1px solid var(--ink-14);padding:20px;text-align:center;font:400 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:40px}
 .footer a{color:var(--ink-40);text-decoration:none}
 
+/* 구매자 정보 모달 */
+.buyer-modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
+.buyer-modal-overlay.open{display:flex}
+.buyer-modal{background:#fff;border-radius:18px;width:100%;max-width:440px;padding:26px;position:relative;max-height:90vh;overflow-y:auto}
+.buyer-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px}
+.buyer-modal-title{font:800 18px/1 'Pretendard',sans-serif;margin-bottom:18px}
+.buyer-field{margin-bottom:14px}
+.buyer-field label{font:700 12px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
+.buyer-field input,.buyer-field textarea{width:100%;padding:11px 13px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none}
+.buyer-field textarea{resize:vertical;font-family:inherit}
+.buyer-err{font:600 12px/1.5 'Pretendard',sans-serif;color:var(--red);display:none;margin-bottom:12px}
+.buyer-summary{background:var(--ink-07);border-radius:10px;padding:12px 14px;margin-bottom:16px;font:500 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)}
+.buyer-summary b{color:var(--ink)}
+
 @media(max-width:768px){
   .container{padding:16px 16px 80px}
   .product-grid{grid-template-columns:1fr;gap:20px}
@@ -159,7 +175,41 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 
 <!-- 모바일 하단 고정 구매 버튼 -->
 <div class="mobile-buy" id="mobile-buy" style="display:none">
-  <button class="buy-btn disabled" id="mobile-buy-btn">구매하기 (준비 중)</button>
+  <button class="buy-btn disabled" id="mobile-buy-btn">구매하기</button>
+</div>
+
+<!-- 구매자 정보 입력 모달 -->
+<div class="buyer-modal-overlay" id="buyerModalOverlay" onclick="if(event.target===this)closeBuyerModal()">
+  <div class="buyer-modal">
+    <button class="buyer-modal-close" onclick="closeBuyerModal()">✕</button>
+    <div class="buyer-modal-title">배송 정보 입력</div>
+
+    <div class="buyer-summary" id="buyer-summary"></div>
+
+    <div class="buyer-field">
+      <label>받는 분 성함 *</label>
+      <input type="text" id="buyer_name" placeholder="홍길동">
+    </div>
+    <div class="buyer-field">
+      <label>연락처 *</label>
+      <input type="tel" id="buyer_phone" placeholder="010-0000-0000">
+    </div>
+    <div class="buyer-field">
+      <label>이메일 (주문 확인용)</label>
+      <input type="email" id="buyer_email" placeholder="example@email.com">
+    </div>
+    <div class="buyer-field">
+      <label>배송지 주소 *</label>
+      <input type="text" id="buyer_address" placeholder="도로명 주소, 상세주소 포함">
+    </div>
+    <div class="buyer-field">
+      <label>배송 메모</label>
+      <textarea id="buyer_memo" rows="2" placeholder="예: 부재 시 경비실에 맡겨주세요"></textarea>
+    </div>
+
+    <div class="buyer-err" id="buyer_err"></div>
+    <button class="buy-btn" id="buyer-submit-btn" onclick="submitBuyerInfoAndPay()">토스페이먼츠로 결제하기</button>
+  </div>
 </div>
 
 <footer class="footer">
@@ -177,6 +227,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
   )
 
+  // ⚠️ TODO: Toss Payments 개발자센터에서 테스트 클라이언트 키 발급받아서 교체
+  // (사업자 등록 없이도 테스트 키는 즉시 발급 가능. 라이브 키는 사업자 등록 완료 후 교체)
+  const TOSS_CLIENT_KEY = 'test_ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
   // URL 파라미터에서 제품 ID와 크리에이터 ref 추출
   const params = new URLSearchParams(location.search)
   const productId = params.get('id')
@@ -188,6 +242,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   let qty = 1
   let product = null
   let currentImgIdx = 0
+  let linkData = null // 크리에이터 링크 전체 데이터 (creator id 포함)
 
   if (!productId) {
     showNotFound()
@@ -211,17 +266,19 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const images = data.images && data.images.length > 0 ? data.images : (data.image_url ? [data.image_url] : [])
     const brand = data.users?.company_name || '브랜드'
     const kps = data.key_points || []
-    const earn = Math.round(data.price * data.commission_rate / 100)
 
     // 크리에이터 정보 (ref로 조회)
     let creatorName = null
     if (creatorRef) {
-      const { data: linkData } = await supabase
+      const { data: ld } = await supabase
         .from('links')
         .select('*, users!creator(name)')
         .eq('id', creatorRef)
         .single()
-      if (linkData) creatorName = linkData.users?.name || '크리에이터'
+      if (ld) {
+        linkData = ld
+        creatorName = ld.users?.name || '크리에이터'
+      }
     }
 
     // 페이지 타이틀
@@ -283,7 +340,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
                   <div class="cb-name">${creatorName}</div>
                 </div>
                 <div class="cb-comm">수수료 ${data.commission_rate}%</div>
-              </div>` : ''}
+              </div>` : `
+              <div style="background:var(--amber-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font:500 13px/1.5 'Pretendard',sans-serif;color:#92400E">
+                ⚠️ 이 상품은 크리에이터 링크를 통해서만 구매할 수 있습니다.
+              </div>`}
 
             <!-- 구매 박스 (PC) -->
             <div class="buy-box">
@@ -301,8 +361,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
               </div>
             </div>
 
-            <button class="buy-btn disabled" id="buy-btn" onclick="doBuy()">
-              🛒 구매하기 (결제 연동 준비 중)
+            <button class="buy-btn ${creatorName ? '' : 'disabled'}" id="buy-btn" onclick="openBuyerModal()">
+              🛒 구매하기
             </button>
             <button class="buy-btn-sub" onclick="shareLink()">🔗 이 제품 공유하기</button>
 
@@ -347,6 +407,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       </div>`
 
     // 모바일 하단 버튼 표시
+    const mobileBtn = document.getElementById('mobile-buy-btn')
+    mobileBtn.classList.toggle('disabled', !creatorName)
+    mobileBtn.onclick = () => openBuyerModal()
     document.getElementById('mobile-buy').style.display = 'block'
 
     // 이미지 배열 저장
@@ -377,16 +440,106 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     }
   }
 
-  window.doBuy = function() {
-    alert('결제 시스템 연동 준비 중입니다.\n사업자 등록 완료 후 토스페이먼츠 결제가 활성화됩니다.')
-  }
-
   window.shareLink = function() {
     const url = location.href
     if (navigator.share) {
       navigator.share({ title: product?.name, url })
     } else {
       navigator.clipboard.writeText(url).then(() => alert('링크가 복사됐습니다!'))
+    }
+  }
+
+  /* ===== 구매자 정보 모달 + Toss 결제 ===== */
+  window.openBuyerModal = function() {
+    if (!product) return
+    if (!linkData) {
+      alert('이 상품은 크리에이터 링크를 통해서만 구매할 수 있습니다.')
+      return
+    }
+    const total = product.price * qty
+    document.getElementById('buyer-summary').innerHTML =
+      `<b>${product.name}</b> · 수량 ${qty}개 · 총 <b>₩${total.toLocaleString()}</b>`
+    document.getElementById('buyer_err').style.display = 'none'
+    document.getElementById('buyerModalOverlay').classList.add('open')
+  }
+
+  window.closeBuyerModal = function() {
+    document.getElementById('buyerModalOverlay').classList.remove('open')
+  }
+
+  window.submitBuyerInfoAndPay = async function() {
+    const name = document.getElementById('buyer_name').value.trim()
+    const phone = document.getElementById('buyer_phone').value.trim()
+    const email = document.getElementById('buyer_email').value.trim()
+    const address = document.getElementById('buyer_address').value.trim()
+    const memo = document.getElementById('buyer_memo').value.trim()
+    const errEl = document.getElementById('buyer_err')
+
+    if (!name || !phone || !address) {
+      errEl.textContent = '이름, 연락처, 배송지 주소는 필수입니다.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (!linkData || !product) {
+      errEl.textContent = '주문 정보를 확인할 수 없습니다. 새로고침 후 다시 시도해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const btn = document.getElementById('buyer-submit-btn')
+    btn.textContent = '주문 생성 중...'
+    btn.style.opacity = '.7'
+    btn.style.pointerEvents = 'none'
+
+    const amount = product.price * qty
+    const commissionAmount = Math.round(amount * (product.commission_rate || 0) / 100)
+    const tossOrderId = `vingly_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+    // 결제 전, orders 테이블에 pending 상태로 미리 기록
+    // (Toss 결제승인 웹훅/success.html에서 이 toss_order_id로 찾아 status를 paid로 업데이트)
+    const { error: insertErr } = await supabase.from('orders').insert({
+      toss_order_id: tossOrderId,
+      product: product.id,
+      brand: product.brand_user,
+      creator: linkData.creator,
+      link: linkData.id,
+      amount,
+      creator_fee: commissionAmount,
+      status: 'pending',
+      buyer_name: name,
+      buyer_phone: phone,
+      buyer_email: email || null,
+      shipping_address: address,
+      shipping_memo: memo || null
+    })
+
+    if (insertErr) {
+      errEl.textContent = '주문 생성 실패: ' + insertErr.message
+      errEl.style.display = 'block'
+      btn.textContent = '토스페이먼츠로 결제하기'
+      btn.style.opacity = '1'
+      btn.style.pointerEvents = 'auto'
+      return
+    }
+
+    // Toss Payments 결제창 호출
+    try {
+      const tossPayments = TossPayments(TOSS_CLIENT_KEY)
+      await tossPayments.requestPayment('카드', {
+        amount,
+        orderId: tossOrderId,
+        orderName: qty > 1 ? `${product.name} 외 ${qty - 1}건` : product.name,
+        customerName: name,
+        customerEmail: email || undefined,
+        successUrl: `${location.origin}/success.html`,
+        failUrl: `${location.origin}/fail.html`
+      })
+      // 성공 시 Toss가 successUrl로 리다이렉트하므로 이 아래 코드는 실행되지 않음
+    } catch (e) {
+      // 사용자가 결제창을 닫거나 실패한 경우
+      btn.textContent = '토스페이먼츠로 결제하기'
+      btn.style.opacity = '1'
+      btn.style.pointerEvents = 'auto'
     }
   }
 
