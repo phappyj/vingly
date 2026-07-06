@@ -134,6 +134,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
+.sb-backdrop{display:none;position:fixed;inset:0;background:rgba(10,12,16,.44);z-index:49}
 /* 수익 계산기 슬라이더 */
 .earn-calc{background:var(--ink);border-radius:12px;padding:18px;margin-bottom:14px}
 .earn-calc-title{font:700 13px/1 'Pretendard',sans-serif;color:#fff;margin-bottom:4px}
@@ -152,10 +153,31 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .mn{margin-left:0}
   .topbar{display:none}
   .mob-top{display:flex}
+  .sb-backdrop.show{display:block}
   .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
   .g3{grid-template-columns:1fr}
   .content{padding:14px 16px}
   .onboard{flex-direction:column;align-items:flex-start}
+
+  /* 가독성 상향 */
+  .sc-label{font-size:12.5px}
+  .sc-val{font-size:22px}
+  .sc-ch{font-size:12px}
+  .card-t{font-size:14.5px}
+  .ob-title{font-size:17px}
+  .ob-desc{font-size:13px}
+  thead th{font-size:11.5px}
+  tbody td{font-size:13.5px}
+  .badge{font-size:11.5px}
+  .gc-name{font-size:20px}
+  .gc-cond{font-size:12.5px}
+  .earn-result-num{font-size:30px}
+  .cr-num{font-size:26px}
+  .exp-name{font-size:13.5px}
+  .exp-price{font-size:14.5px}
+}
+@media(max-width:420px){
+  .stat-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -193,10 +215,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </aside>
 
 <div class="mob-top">
-  <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+  <button class="hb" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
   <div style="font:800 17px/1 'Pretendard',sans-serif" id="mob-title">대시보드</div>
   <div style="width:30px"></div>
 </div>
+<div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
 
 <main class="mn">
   <div class="topbar">
@@ -714,6 +737,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </script>
 
 <script>
+function toggleSidebar() {
+  document.getElementById('sb').classList.toggle('open')
+  document.getElementById('sbBackdrop').classList.toggle('show')
+}
+function closeSidebar() {
+  document.getElementById('sb').classList.remove('open')
+  document.getElementById('sbBackdrop').classList.remove('show')
+}
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('act'))
   document.getElementById('pg-' + id).classList.add('act')
@@ -722,6 +753,7 @@ function showPage(id, btn) {
   const t = {dashboard:'대시보드',products:'제품 탐색',links:'내 링크 관리',earn:'수익 현황',grade:'내 등급',settings:'내 설정'}[id] || ''
   document.getElementById('page-title').textContent = t
   document.getElementById('mob-title').textContent = t
+  closeSidebar()
   if (id === 'settings') {
     const user = window._vinglyUser || {}
     const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
