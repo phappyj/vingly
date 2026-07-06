@@ -344,16 +344,21 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   /* HERO */
   .hero{padding:80px 16px 52px}
   .hero-h{font-size:clamp(28px,8vw,40px)!important;letter-spacing:-1px!important;line-height:1.15!important}
-  .hero-sub{font-size:15px!important;line-height:1.6!important}
+  .hero-sub{font-size:16px!important;line-height:1.65!important}
   .hero-roles{grid-template-columns:1fr;max-width:100%;gap:10px}
   .hero-proof{gap:12px;flex-wrap:wrap;justify-content:center}
   .hp-div{display:none}
   .hero-counter-wrap{padding:0 4px}
+  .hp-lbl{font-size:12.5px!important}
+  .rb-title{font-size:15px!important}
+  .rb-desc{font-size:12.5px!important;line-height:1.5!important}
+  .rb-tag{font-size:11px!important}
+  .hc-sub{font-size:14px!important}
 
   /* SECTIONS */
   .ep.on,.fee-wrap,.std-grid,.safe-grid,.rev-grid,.grade-grid,
   .about-grid,[class*="fee-3col"],[class*="fee-2col"],
-  .fee-plan-3,.safety-grid{
+  .fee-plan-3,.safety-grid,.recruit-grid{
     grid-template-columns:1fr!important;gap:12px!important
   }
   .grade-grid{grid-template-columns:1fr!important}
@@ -373,13 +378,18 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
   .cta-final{padding:48px 16px}
   .cta-inner{grid-template-columns:1fr;padding:28px 20px;gap:24px}
   .cta-img-wrap{display:none}
-  .cta-h{font-size:26px!important;letter-spacing:-.8px!important}
+  .cta-h{font-size:27px!important;letter-spacing:-.8px!important}
+  .cta-p{font-size:14.5px!important;line-height:1.65!important}
+  .cp{font-size:14px!important}
+  .cta-counter{font-size:12.5px!important}
   .cta-btn{max-width:100%!important}
 
   /* FOOTER */
   footer{padding:28px 16px}
   .foot-in{flex-direction:column;gap:16px}
   .foot-links{flex-wrap:wrap;gap:12px}
+  .foot-links a{font-size:14px!important}
+  .foot-copy{font-size:12.5px!important}
 
   /* 히어로 역할 버튼 */
   .role-btn{padding:16px!important}
@@ -387,48 +397,104 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
   /* 섹션 타이틀 */
   .sec-t,.section-title{font-size:clamp(22px,6vw,32px)!important;letter-spacing:-.8px!important}
-  .sec-sub{font-size:14px!important;line-height:1.65!important}
+  .sec-sub{font-size:15px!important;line-height:1.7!important}
+  .sb{font-size:16px!important;line-height:1.7!important}
+  .ey{font-size:12px!important}
 
   /* 비교 테이블 */
   .compare-table,.cmp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   .compare-table table{min-width:540px}
 
   /* FAQ */
-  .faq-q{font-size:14px!important;padding:14px 16px!important}
-  .faq-a{padding:12px 16px!important;font-size:13px!important}
+  .faq-q{font-size:15.5px!important;padding:14px 16px!important}
+  .fq-t{font-size:15.5px!important}
+  .faq-a{padding:12px 16px!important;font-size:14.5px!important;line-height:1.7!important}
 
   /* STICKY CTA 모바일 */
   .sticky-cta{flex-direction:column;gap:8px;padding:10px 14px}
   .sca-left{text-align:center}
-  .sca-title{font-size:13px!important}
-  .sca-sub{font-size:11px!important}
+  .sca-title{font-size:14.5px!important}
+  .sca-sub{font-size:12.5px!important}
   .sca-btns{width:100%;gap:8px}
-  .sca-b{flex:1;text-align:center;padding:11px 8px!important;font-size:12px!important}
+  .sca-b{flex:1;text-align:center;padding:11px 8px!important;font-size:13.5px!important}
 
   /* 수익 계산기 */
   .calc-grid{grid-template-columns:1fr!important}
   .calc-result{margin-top:0!important}
+  .ec-label{font-size:12px!important}
+  .ec-row-label{font-size:13.5px!important}
+  .ec-val{font-size:14.5px!important}
+  .ec-result-label{font-size:13.5px!important}
+  .ec-result-sub{font-size:13.5px!important;line-height:1.55!important}
 
   /* stats ticker */
   .stats-ticker{padding:10px 16px!important;gap:12px!important;flex-wrap:wrap;justify-content:center}
-  .st-item{font-size:12px!important}
+  .st-item{font-size:13px!important}
 
   /* 얼리버드 배지 */
-  .early-badge,.hero-live{font-size:11px!important;padding:4px 10px!important}
+  .early-badge,.hero-live{font-size:12.5px!important;padding:5px 12px!important}
 
   /* 등급 카드 */
   .grade-card{min-width:unset!important}
+  .gc-cond{font-size:13.5px!important;line-height:1.5!important}
+  .gc-perks li{font-size:13.5px!important;line-height:1.55!important}
+  .gc-badge{font-size:11px!important}
+  .gc-name{font-size:19px!important}
+
+  /* 수익 흐름 / 입점 기준 / 안전장치 / 후기 본문 */
+  .ef-t{font-size:14.5px!important}
+  .ef-d{font-size:13.5px!important;line-height:1.6!important}
+  .ef-badge{font-size:12px!important}
+  .std-d{font-size:14.5px!important;line-height:1.7!important}
+  .std-tag{font-size:12px!important}
+  .safe-d{font-size:14.5px!important;line-height:1.7!important}
+  .safe-flow{font-size:13.5px!important;line-height:1.6!important}
+  .rev-text{font-size:14.5px!important;line-height:1.7!important}
+  .rev-name{font-size:14px!important}
+  .rev-role{font-size:12.5px!important}
+  .rev-earn-unit{font-size:13px!important}
+
+  /* 수수료 카드 */
+  .fee-sub{font-size:13px!important}
+  .fee-lbl{font-size:14.5px!important}
+  .fee-lbl small{font-size:12.5px!important}
+  .fee-amt{font-size:15px!important}
+  .fee-amt small{font-size:12.5px!important}
+  .fee-total-l{font-size:14.5px!important}
+  .cd-title{font-size:13px!important}
+  .cd-l{font-size:11.5px!important}
+  .pt-lbl{font-size:13px!important}
 
   /* body sticky 여백 */
   body.has-sticky-cta footer{padding-bottom:130px}
+
+  /* 인라인으로 박혀있던 10~13px 텍스트 전반 상향 (수익구조·계산기·정산 예시 섹션) */
+  [style*="font:700 10px/1 'Pretendard'"],
+  [style*="font:500 10px/1 'Pretendard'"]{font-size:12px!important}
+
+  [style*="11px/1 'Pretendard'"],
+  [style*="11px/1.4 'Pretendard'"],
+  [style*="11px/1.8 'Pretendard'"]{font-size:12.5px!important}
+
+  [style*="12px/1 'Pretendard'"],
+  [style*="12px/1.4 'Pretendard'"],
+  [style*="12px/1.5 'Pretendard'"],
+  [style*="12px/1.55 'Pretendard'"],
+  [style*="12px/1.6 'Pretendard'"]{font-size:13.5px!important}
+
+  [style*="13px/1 'Pretendard'"],
+  [style*="13px/1.4 'Pretendard'"],
+  [style*="13px/1.5 'Pretendard'"],
+  [style*="13px/1.6 'Pretendard'"],
+  [style*="13px/1.65 'Pretendard'"]{font-size:14.5px!important}
 }
 
 @media(max-width:480px){
   .hero-h{font-size:clamp(24px,7.5vw,34px)!important}
   .hero-counter-wrap div[style*="font-size"]{font-size:clamp(36px,10vw,52px)!important}
-  .rb-title{font-size:14px!important}
-  .rb-desc{font-size:12px!important}
-  .rb-tag{font-size:10px!important}
+  .rb-title{font-size:14.5px!important}
+  .rb-desc{font-size:12.5px!important}
+  .rb-tag{font-size:11px!important}
   .hc-num{letter-spacing:-2px}
   .wrap{padding:0 12px}
   .section{padding-top:44px;padding-bottom:44px}
@@ -436,7 +502,7 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 
 @media(max-width:380px){
   .hero-h{letter-spacing:-.8px}
-  .sca-b{font-size:11px!important;padding:10px 6px!important}
+  .sca-b{font-size:12.5px!important;padding:10px 6px!important}
 }
 
 /* STICKY CTA */
@@ -1093,7 +1159,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
     <h2 class="st">첫 번째 후기를<br>남겨주실 분을 찾습니다</h2>
     <p class="sb">Vingly는 지금 파일럿 서비스를 오픈했습니다. 직접 사용해보고 솔직한 후기를 남겨주세요.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px">
+    <div class="recruit-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px">
 
       <!-- 크리에이터 모집 -->
       <div style="background:var(--white);border:1.5px dashed rgba(0,179,126,.4);border-radius:var(--r-l);padding:28px;text-align:center;transition:all .2s" class="reveal">
