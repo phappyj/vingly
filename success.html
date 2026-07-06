@@ -61,14 +61,19 @@ p{font-size:13px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
     showError('결제 정보를 확인할 수 없습니다.')
   } else {
     try {
-      // ⚠️ TODO: 사업자 등록 완료 후 여기에 실제 Toss 시크릿 키 연동 필요
-      // 시크릿 키는 절대 프론트엔드에 노출하면 안 되므로,
-      // Supabase Edge Function을 만들어서 그 안에서 Toss 결제승인 API(POST /v1/payments/confirm)를 호출해야 함.
-      // 지금은 구조만 잡아둔 상태 — Edge Function 엔드포인트가 준비되면 아래 fetch URL만 교체하면 됨.
+      // Supabase Edge Function(confirm-payment)에서 Toss 결제승인 API를 서버사이드로 호출하고
+      // orders 테이블 상태를 paid로 갱신한다. 시크릿 키는 Edge Function 환경변수에만 존재하며
+      // 프론트엔드에는 절대 노출되지 않는다.
+
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
 
       const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/confirm-payment', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
         body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) })
       })
 
