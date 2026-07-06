@@ -79,7 +79,8 @@ p{font-size:13px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        showError(err.message || '결제 승인 중 오류가 발생했습니다.')
+        const debugStr = err.debug ? ' [debug: ' + JSON.stringify(err.debug) + ']' : ''
+        showError((err.message || '결제 승인 중 오류가 발생했습니다.') + debugStr)
       } else {
         showSuccess()
       }
