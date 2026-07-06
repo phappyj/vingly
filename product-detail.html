@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Toss Payments SDK -->
 <script src="https://js.tosspayments.com/v1"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style>
 :root{
   --ink:#0A0C10;--ink-70:rgba(10,12,16,.7);--ink-40:rgba(10,12,16,.4);
@@ -245,7 +246,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     </div>
     <div class="buyer-field">
       <label>배송지 주소 *</label>
-      <input type="text" id="buyer_address" placeholder="도로명 주소, 상세주소 포함">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" id="buyer_zonecode" placeholder="우편번호" readonly style="flex:0 0 100px;background:var(--ink-07);color:var(--ink-70)">
+        <button type="button" onclick="execDaumPostcode()" style="flex-shrink:0;padding:0 16px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">🔍 주소 검색</button>
+      </div>
+      <input type="text" id="buyer_address" placeholder="주소 검색을 눌러주세요" readonly style="margin-bottom:8px;background:var(--ink-07);color:var(--ink-70)">
+      <input type="text" id="buyer_address_detail" placeholder="상세주소 (동/호수 등)">
     </div>
     <div class="buyer-field">
       <label>배송 메모</label>
@@ -514,6 +520,16 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     document.getElementById('buyerModalOverlay').classList.add('open')
   }
 
+  window.execDaumPostcode = function() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        document.getElementById('buyer_zonecode').value = data.zonecode
+        document.getElementById('buyer_address').value = data.roadAddress || data.jibunAddress
+        document.getElementById('buyer_address_detail').focus()
+      }
+    }).open()
+  }
+
   window.closeBuyerModal = function() {
     document.getElementById('buyerModalOverlay').classList.remove('open')
   }
@@ -522,12 +538,20 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const name = document.getElementById('buyer_name').value.trim()
     const phone = document.getElementById('buyer_phone').value.trim()
     const email = document.getElementById('buyer_email').value.trim()
-    const address = document.getElementById('buyer_address').value.trim()
+    const zonecode = document.getElementById('buyer_zonecode').value.trim()
+    const roadAddress = document.getElementById('buyer_address').value.trim()
+    const addressDetail = document.getElementById('buyer_address_detail').value.trim()
+    const address = roadAddress ? `[${zonecode}] ${roadAddress} ${addressDetail}`.trim() : ''
     const memo = document.getElementById('buyer_memo').value.trim()
     const errEl = document.getElementById('buyer_err')
 
-    if (!name || !phone || !address) {
-      errEl.textContent = '이름, 연락처, 배송지 주소는 필수입니다.'
+    if (!name || !phone || !roadAddress) {
+      errEl.textContent = '이름, 연락처, 배송지 주소(검색)는 필수입니다.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (!addressDetail) {
+      errEl.textContent = '상세주소(동/호수 등)를 입력해주세요.'
       errEl.style.display = 'block'
       return
     }
