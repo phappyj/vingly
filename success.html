@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결제 완료 — Vingly</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>window.addEventListener('load', function() { emailjs.init('ni95sDX1JNQCe4_tI'); });</script>
 <style>
 :root{--green:#00B37E;--blue:#1D4ED8;--ink:#0A0C10;--canvas:#F9F8F4;--red:#991B1B}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -50,7 +52,7 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
       <a class="btn" href="index.html">홈으로 돌아가기</a>`
   }
 
-  function showSuccess(order) {
+  function showSuccess(order, alreadyPaid) {
     const rows = []
     if (order?.orderId) rows.push(['주문번호', order.orderId])
     if (order?.productName) rows.push(['상품명', order.productName])
@@ -78,6 +80,37 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
       ${receiptHtml}
       ${emailNote}
       <a class="btn" href="index.html">홈으로 돌아가기</a>`
+
+    // 새로고침 등으로 이미 승인된 주문을 다시 보여주는 경우가 아닐 때만 메일 발송 (중복 발송 방지)
+    // emailjs 스크립트 로드 실패 등으로 이 블록에서 오류가 나도 위에서 이미 그려진 결제완료 화면에는 영향 없어야 함
+    if (!alreadyPaid && order?.buyerEmail) {
+      try {
+        const msgLines = [
+          `${order.buyerName || '고객'}님, Vingly에서 주문해주셔서 감사합니다.`,
+          '',
+          `주문번호: ${order.orderId || '-'}`,
+          `상품명: ${order.productName || '-'}`,
+          `결제금액: ₩${Number(order.amount || 0).toLocaleString()}`,
+          `배송지: ${order.shippingAddress || '-'}`,
+          '',
+          '배송 관련 문의는 구매하신 채널의 크리에이터 링크 또는 vingly.official@gmail.com 으로 연락해주세요.'
+        ]
+        if (typeof emailjs !== 'undefined') {
+          emailjs.send('service_jrejejn', 'template_pz9kl97', {
+            to_email: order.buyerEmail,
+            email: order.buyerEmail,
+            user_name: order.buyerName || '고객',
+            user_role: '구매자',
+            message: msgLines.join('\n'),
+            title: 'Vingly 주문 확인'
+          }).catch(e => console.error('주문 확인 메일 발송 실패:', e))
+        } else {
+          console.error('emailjs 스크립트가 로드되지 않아 주문 확인 메일을 보내지 못했습니다.')
+        }
+      } catch (e) {
+        console.error('주문 확인 메일 발송 중 오류:', e)
+      }
+    }
   }
 
   if (!paymentKey || !orderId || !amount) {
@@ -104,7 +137,11 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
       if (!res.ok) {
         showError(data.message || '결제 승인 중 오류가 발생했습니다.')
       } else {
-        showSuccess(data.order)
+        try {
+          showSuccess(data.order, data.alreadyPaid)
+        } catch (renderErr) {
+          console.error('결제완료 화면 렌더링 중 오류(결제 자체는 성공):', renderErr)
+        }
       }
     } catch (e) {
       showError('네트워크 오류가 발생했습니다. 다시 시도해주세요.')
