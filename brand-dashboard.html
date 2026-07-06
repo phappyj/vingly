@@ -98,6 +98,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
+.sb-backdrop{display:none;position:fixed;inset:0;background:rgba(10,12,16,.44);z-index:49}
 .img-upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
 .img-slot{aspect-ratio:1;border-radius:10px;border:2px dashed var(--ink-14);background:var(--ink-07);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all .2s}
 .img-slot:hover{border-color:var(--blue);background:var(--blue-bg)}
@@ -121,9 +122,26 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .mn{margin-left:0}
   .topbar{display:none}
   .mob-top{display:flex}
+  .sb-backdrop.show{display:block}
   .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
   .content{padding:14px 16px}
   .onboard-banner{flex-direction:column;align-items:flex-start}
+
+  /* 가독성 상향 */
+  .sc-label{font-size:12.5px}
+  .sc-val{font-size:22px}
+  .sc-ch{font-size:12px}
+  .card-t{font-size:14.5px}
+  .ob-title{font-size:17px}
+  .ob-desc{font-size:13px}
+  thead th{font-size:11.5px}
+  tbody td{font-size:13.5px}
+  .fl-l{font-size:13.5px}
+  .fl-r{font-size:14.5px}
+  .badge{font-size:11.5px}
+}
+@media(max-width:420px){
+  .stat-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -162,10 +180,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </aside>
 
 <div class="mob-top">
-  <button class="hb" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+  <button class="hb" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
   <div style="font:800 17px/1 'Pretendard',sans-serif" id="mob-title">대시보드</div>
   <div style="width:30px"></div>
 </div>
+<div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
 
 <main class="mn">
   <div class="topbar">
@@ -702,6 +721,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </script>
 
 <script>
+function toggleSidebar() {
+  document.getElementById('sb').classList.toggle('open')
+  document.getElementById('sbBackdrop').classList.toggle('show')
+}
+function closeSidebar() {
+  document.getElementById('sb').classList.remove('open')
+  document.getElementById('sbBackdrop').classList.remove('show')
+}
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('act'))
   document.getElementById('pg-'+id).classList.add('act')
@@ -710,6 +737,7 @@ function showPage(id, btn) {
   const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
   document.getElementById('page-title').textContent = titles[id] || ''
   document.getElementById('mob-title').textContent = titles[id] || ''
+  closeSidebar()
   if (id === 'settings') {
     const user = window._vinglyUser || {}
     const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
