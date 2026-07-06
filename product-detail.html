@@ -96,6 +96,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .buy-btn-sub{width:100%;padding:12px;border-radius:10px;background:var(--ink-07);color:var(--ink-70);border:1.5px solid var(--ink-14);font:700 14px/1 'Pretendard',sans-serif;cursor:pointer;transition:all .2s}
 .buy-btn-sub:hover{border-color:var(--ink-40)}
 
+/* 모바일 하단 고정 구매바 내부 */
+.mobile-buy{display:none}
+.mb-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.mb-info{min-width:0}
+.mb-name{font:600 12.5px/1.3 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+.mb-price{font:800 19px/1.2 'Pretendard',sans-serif;color:var(--ink);letter-spacing:-.4px;margin-top:2px}
+.mb-qty{flex-shrink:0}
+
 /* 크리에이터 배지 */
 .creator-badge{background:linear-gradient(135deg,var(--ink) 0%,#1a1d24 100%);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
 .cb-ico{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font:700 14px/1 'Pretendard',sans-serif;color:var(--ink);flex-shrink:0}
@@ -129,23 +137,49 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .buyer-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px}
 .buyer-modal-title{font:800 18px/1 'Pretendard',sans-serif;margin-bottom:18px}
 .buyer-field{margin-bottom:14px}
-.buyer-field label{font:700 12px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
-.buyer-field input,.buyer-field textarea{width:100%;padding:11px 13px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none}
+.buyer-field label{font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px}
+.buyer-field input,.buyer-field textarea{width:100%;padding:12px 13px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 16px/1.3 'Pretendard',sans-serif;font-family:inherit;outline:none}
+.buyer-field input:focus,.buyer-field textarea:focus{border-color:var(--green);background:var(--white)}
 .buyer-field textarea{resize:vertical;font-family:inherit}
-.buyer-err{font:600 12px/1.5 'Pretendard',sans-serif;color:var(--red);display:none;margin-bottom:12px}
-.buyer-summary{background:var(--ink-07);border-radius:10px;padding:12px 14px;margin-bottom:16px;font:500 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)}
+.buyer-err{font:600 13px/1.5 'Pretendard',sans-serif;color:var(--red);display:none;margin-bottom:12px}
+.buyer-summary{background:var(--ink-07);border-radius:10px;padding:12px 14px;margin-bottom:16px;font:500 14px/1.6 'Pretendard',sans-serif;color:var(--ink-70)}
 .buyer-summary b{color:var(--ink)}
 
 @media(max-width:768px){
-  .container{padding:16px 16px 80px}
+  .container{padding:16px 16px 96px}
   .product-grid{grid-template-columns:1fr;gap:20px}
-  .info-price{font-size:26px}
+  .info-price{font-size:28px}
   .info-name{font-size:22px}
-  /* 모바일 하단 고정 구매 버튼 */
-  .mobile-buy{display:block;position:fixed;bottom:0;left:0;right:0;padding:12px 16px 20px;background:var(--white);border-top:1px solid var(--ink-14);z-index:40}
+  .info-brand{font-size:13.5px}
+  .badge{font-size:12.5px;padding:6px 11px}
+  .info-price-sub{font-size:13.5px}
+  .info-desc{font-size:14.5px;line-height:1.7}
+  .kp-title{font-size:12.5px}
+  .kp-text{font-size:14px;line-height:1.6}
+  .cb-label{font-size:12px}
+  .cb-name{font-size:14.5px}
+  .cb-comm{font-size:12.5px}
+  .safe-badge{font-size:12.5px;padding:6px 11px}
+  .buy-qty-label{font-size:14px}
+  .qty-btn{width:40px;height:40px;font-size:19px}
+  .qty-num{width:46px;font-size:15px}
+  .buy-total-label{font-size:13.5px}
+  .buy-total-price{font-size:23px}
+  .buy-btn-sub{font-size:14.5px}
+  .ds-title{font-size:15.5px}
+
+  /* 모바일 하단 고정 구매 바 */
+  .mobile-buy.ready{display:block;position:fixed;bottom:0;left:0;right:0;padding:12px 16px calc(16px + env(safe-area-inset-bottom));background:var(--white);border-top:1px solid var(--ink-14);z-index:40;box-shadow:0 -6px 20px rgba(0,0,0,.06)}
   .buy-box{display:none}
+
+  /* 본문에 박힌 10~13px 인라인 텍스트 전반 상향 */
+  [style*="11px/1 'Pretendard'"]{font-size:12.5px!important}
+  [style*="12px/1 'Pretendard'"],
+  [style*="12px/1.5 'Pretendard'"],
+  [style*="12px/1.6 'Pretendard'"]{font-size:13.5px!important}
+  [style*="13px/1 'Pretendard'"],
+  [style*="13px/1.5 'Pretendard'"]{font-size:14.5px!important}
 }
-@media(min-width:769px){.mobile-buy{display:none}}
 </style>
 </head>
 <body>
@@ -174,8 +208,19 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 </div>
 
 <!-- 모바일 하단 고정 구매 버튼 -->
-<div class="mobile-buy" id="mobile-buy" style="display:none">
-  <button class="buy-btn disabled" id="mobile-buy-btn">구매하기</button>
+<div class="mobile-buy" id="mobile-buy">
+  <div class="mb-row">
+    <div class="mb-info">
+      <div class="mb-name" id="mb-name"></div>
+      <div class="mb-price" id="mb-price"></div>
+    </div>
+    <div class="qty-ctrl mb-qty">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <span class="qty-num" id="qty-num-mobile">1</span>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+  </div>
+  <button class="buy-btn disabled" id="mobile-buy-btn">🛒 구매하기</button>
 </div>
 
 <!-- 구매자 정보 입력 모달 -->
@@ -410,7 +455,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const mobileBtn = document.getElementById('mobile-buy-btn')
     mobileBtn.classList.toggle('disabled', !creatorName)
     mobileBtn.onclick = () => openBuyerModal()
-    document.getElementById('mobile-buy').style.display = 'block'
+    document.getElementById('mb-name').textContent = data.name
+    document.getElementById('mb-price').textContent = '₩' + Number(data.price).toLocaleString()
+    document.getElementById('mobile-buy').classList.add('ready')
 
     // 이미지 배열 저장
     window._productImages = images
@@ -435,8 +482,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   window.changeQty = function(dir) {
     qty = Math.max(1, Math.min(99, qty + dir))
     document.getElementById('qty-num').textContent = qty
+    const mobileQtyEl = document.getElementById('qty-num-mobile')
+    if (mobileQtyEl) mobileQtyEl.textContent = qty
     if (product) {
       document.getElementById('total-price').textContent = '₩' + (product.price * qty).toLocaleString()
+      const mbPrice = document.getElementById('mb-price')
+      if (mbPrice) mbPrice.textContent = '₩' + (product.price * qty).toLocaleString()
     }
   }
 
