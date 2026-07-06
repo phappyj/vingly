@@ -272,12 +272,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     if (creatorRef) {
       const { data: ld } = await supabase
         .from('links')
-        .select('*, users!creator(name)')
+        .select('*, users!creator(company_name)')
         .eq('id', creatorRef)
         .single()
       if (ld) {
         linkData = ld
-        creatorName = ld.users?.name || '크리에이터'
+        creatorName = ld.users?.company_name || '크리에이터'
       }
     }
 
