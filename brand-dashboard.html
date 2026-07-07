@@ -638,12 +638,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const statusLabel = { pending: '접수됨', reviewing: '확인중', resolved: '처리완료', dismissed: '기각' }
     const reasonLabel = { '상품 미배송': '📦 미배송', '상품 불량': '⚠️ 상품불량', '설명과 다름': '❓ 설명 상이', '환불 요청': '💸 환불요청', '기타': '기타' }
 
-    document.getElementById('brand-report-tbody').innerHTML = allReports.map(r => `
+    document.getElementById('brand-report-tbody').innerHTML = allReports.map(r => {
+      const desc = r.description || ''
+      const descShort = desc.length > 40 ? desc.slice(0, 40) + '…' : desc
+      return `
       <tr>
         <td>${r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '-'}</td>
         <td>${orderRefMap[r.order_id] || '-'}</td>
         <td class="td-b">${reasonLabel[r.reason] || r.reason}</td>
-        <td style="max-width:220px;white-space:normal">${r.description || '-'}</td>
+        <td style="max-width:220px;white-space:normal" title="${desc.replace(/"/g,'&quot;')}">${descShort || '-'}</td>
         <td>${r.reporter_phone || '-'}</td>
         <td><span class="badge ${r.status === 'pending' || r.status === 'reviewing' ? 'bam' : 'bg'}">${statusLabel[r.status] || r.status}</span></td>
         <td>
@@ -651,8 +654,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             ? `<button class="act-btn green" onclick="resolveReport('${r.id}')">처리완료로 표시</button>`
             : '-'}
         </td>
-      </tr>`).join('')
-  }
+      </tr>`
+    }).join('')
 
   window.resolveReport = async function(reportId) {
     const { data, error } = await supabase

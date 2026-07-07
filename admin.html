@@ -776,22 +776,29 @@ function renderReports(reports, orderRefMap) {
 
   const statusLabel = { pending: '접수됨', reviewing: '확인중', resolved: '처리완료', dismissed: '기각' }
   const reasonLabel = { '상품 미배송': '📦 미배송', '상품 불량': '⚠️ 상품불량', '설명과 다름': '❓ 설명 상이', '환불 요청': '💸 환불요청', '기타': '기타' }
+  const ONE_DAY = 24 * 60 * 60 * 1000
 
-  document.getElementById('report-tbody').innerHTML = reports.map(r => `
-    <tr>
-      <td class="td-m">${r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+  document.getElementById('report-tbody').innerHTML = reports.map(r => {
+    const desc = r.description || ''
+    const descShort = desc.length > 40 ? desc.slice(0, 40) + '…' : desc
+    const isOpen = r.status === 'pending' || r.status === 'reviewing'
+    const isOverdue = isOpen && r.created_at && (Date.now() - new Date(r.created_at).getTime() > ONE_DAY)
+    return `
+    <tr${isOverdue ? ' style="background:#FEF2F2"' : ''}>
+      <td class="td-m">${r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '-'}${isOverdue ? '<br><span style="color:var(--r2);font-weight:700;font-size:11px">⏰ 지연됨</span>' : ''}</td>
       <td class="td-m">${orderRefMap[r.order_id] || '-'}</td>
       <td class="td-b">${reasonLabel[r.reason] || r.reason}</td>
-      <td class="td-m" style="max-width:220px;white-space:normal">${r.description || '-'}</td>
+      <td class="td-m" style="max-width:220px;white-space:normal" title="${desc.replace(/"/g,'&quot;')}">${descShort || '-'}</td>
       <td class="td-m">${r.reporter_phone || '-'}</td>
-      <td><span class="badge ${r.status === 'pending' || r.status === 'reviewing' ? 'ba2' : 'bg2'}">${statusLabel[r.status] || r.status}</span></td>
+      <td><span class="badge ${isOpen ? 'ba2' : 'bg2'}">${statusLabel[r.status] || r.status}</span></td>
       <td>
-        ${(r.status === 'pending' || r.status === 'reviewing')
+        ${isOpen
           ? `<button class="act-btn green" onclick="setReportStatus('${r.id}','resolved')">처리완료</button>
              <button class="act-btn red" onclick="setReportStatus('${r.id}','dismissed')">기각</button>`
           : '-'}
       </td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
 }
 
 window.setReportStatus = async function(reportId, status) {
