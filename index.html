@@ -548,6 +548,9 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
 </head>
 <body>
 
+<!-- 점검 안내 배너 — 관리자가 켜면 표시됨 -->
+<div id="maintenance-banner" style="display:none;background:#FEF2F2;color:#991B1B;text-align:center;padding:10px 16px;font:600 13px/1.5 'Pretendard',sans-serif"></div>
+
 <!-- NAV -->
 <nav class="nav" id="nav">
   <a class="nav-brand" href="#">
@@ -595,7 +598,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
   <div class="h-orb h-orb-2"></div>
   <div class="h-orb h-orb-3"></div>
 
-  <div class="hero-live"><div class="live-dot"></div>파일럿 오픈 중 · 크리에이터 수수료 0% · 브랜드 1.8%</div>
+  <div class="hero-live"><div class="live-dot"></div><span id="hero-live-text">파일럿 오픈 중 · 크리에이터 수수료 0% · 브랜드 1.8%</span></div>
 
   <!-- 살아있는 수익 카운터 -->
   <div class="hero-counter-wrap">
@@ -1204,7 +1207,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
   <div class="wrap">
     <div class="ey">자주 묻는 질문</div>
     <h2 class="st">궁금한 점을 확인하세요</h2>
-    <div class="faq-inner">
+    <div class="faq-inner" id="faq-inner">
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">Vingly 수수료 구조가 어떻게 되나요?</span><div class="fq-ic">+</div></div>
         <div class="faq-a">크리에이터는 Vingly에 수수료를 내지 않습니다. 브랜드·셀러가 설정한 수수료 전액이 그대로 크리에이터 통장으로 들어옵니다. 파일럿 1,000명 달성 후 브랜드·셀러에게 거래 수수료 1.8%가 적용되며, 얼리버드는 1.5% 영구 고정입니다. 크리에이터는 전환 전후 모두 ₩0입니다.</div>
@@ -1523,6 +1526,55 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
     <button class="sca-b sca-brand" onclick="location.href='signup.html?role=brand'">🏷️ 브랜드·셀러로 시작</button>
   </div>
 </div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
+
+  try {
+    const { data } = await supabase.from('app_settings').select('key,value')
+    const settings = {}
+    ;(data || []).forEach(r => { settings[r.key] = r.value })
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 공지 배너 문구
+      const bannerEl = document.getElementById('hero-live-text')
+      if (bannerEl && settings.banner_text) bannerEl.textContent = settings.banner_text
+
+      // 점검 모드
+      if (settings.toggle_maintenance === 'true') {
+        const mBanner = document.getElementById('maintenance-banner')
+        if (mBanner) {
+          mBanner.textContent = '🔧 ' + (settings.maintenance_text || '서비스 점검 중입니다. 잠시 후 이용해주세요.')
+          mBanner.style.display = 'block'
+        }
+      }
+
+      // 관리자가 추가한 FAQ 항목 (기존 FAQ 뒤에 추가됨)
+      const faqInner = document.getElementById('faq-inner')
+      if (faqInner && settings.faq) {
+        try {
+          const items = JSON.parse(settings.faq)
+          items.forEach(item => {
+            if (!item.q && !item.a) return
+            const div = document.createElement('div')
+            div.className = 'faq-item'
+            div.setAttribute('onclick', 'toggleFaq(this)')
+            div.innerHTML = `
+              <div class="faq-q"><span class="fq-t">${item.q || ''}</span><div class="fq-ic">+</div></div>
+              <div class="faq-a">${item.a || ''}</div>`
+            faqInner.appendChild(div)
+          })
+        } catch (e) { /* ignore malformed faq json */ }
+      }
+    })
+  } catch (e) {
+    console.error('설정 불러오기 실패:', e)
+  }
+</script>
 
 </body>
 </html>

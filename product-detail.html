@@ -282,6 +282,16 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   // (사업자 등록 없이도 테스트 키는 즉시 발급 가능. 라이브 키는 사업자 등록 완료 후 교체)
   const TOSS_CLIENT_KEY = 'test_ck_P9BRQmyarY5zBDxebkqLrJ07KzLN'
 
+  // 관리자 설정에서 "결제 활성화"를 명시적으로 끈 경우에만 결제를 막음
+  // (아직 한 번도 설정 안 했으면 안전하게 결제 허용 상태로 둠 — 기존 테스트 결제 흐름 보호)
+  let paymentDisabled = false
+  try {
+    const { data } = await supabase.from('app_settings').select('key,value').eq('key', 'toggle_payment')
+    const row = (data || [])[0]
+    if (row && row.value === 'false') paymentDisabled = true
+  } catch (e) { /* 조회 실패 시 안전하게 결제 허용 유지 */ }
+  window._paymentDisabled = paymentDisabled
+
   // URL 파라미터에서 제품 ID와 크리에이터 ref 추출
   const params = new URLSearchParams(location.search)
   const productId = params.get('id')
@@ -509,6 +519,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   /* ===== 구매자 정보 모달 + Toss 결제 ===== */
   window.openBuyerModal = function() {
     if (!product) return
+    if (window._paymentDisabled) {
+      alert('현재 결제 준비 중입니다. 잠시 후 다시 시도해주세요.')
+      return
+    }
     if (!linkData) {
       alert('이 상품은 크리에이터 링크를 통해서만 구매할 수 있습니다.')
       return

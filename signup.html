@@ -342,6 +342,27 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
   )
 
+  // 관리자가 "신규 가입 허용"을 끈 경우 가입 폼 대신 안내 문구를 보여줌
+  try {
+    const { data } = await supabase.from('app_settings').select('key,value').eq('key', 'toggle_signup')
+    const row = (data || [])[0]
+    if (row && row.value === 'false') {
+      document.querySelector('.container').innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;padding:20px">
+          <div style="text-align:center;max-width:400px">
+            <div style="font-size:40px;margin-bottom:16px">🚧</div>
+            <div style="font:800 20px/1.4 'Pretendard',sans-serif;margin-bottom:8px">현재 신규 가입을 받고 있지 않아요</div>
+            <div style="font:400 14px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.55);margin-bottom:20px">잠시 후 다시 시도해주시거나, 문의사항이 있으시면 연락해주세요.</div>
+            <a href="index.html" style="display:inline-block;padding:12px 24px;border-radius:10px;background:#1D4ED8;color:#fff;text-decoration:none;font-weight:700;font-size:14px">홈으로 돌아가기</a>
+          </div>
+        </div>`
+      throw new Error('signup disabled')
+    }
+  } catch (e) {
+    if (e.message === 'signup disabled') throw e
+    console.error('가입 설정 확인 실패:', e)
+  }
+
   let role = null
   let currentStep = 1
   const g = id => document.getElementById(id)
