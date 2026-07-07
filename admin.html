@@ -329,10 +329,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- ALERTS -->
   <div class="page" id="pg-alerts">
     <div class="card">
-      <div class="card-h"><div class="card-t">🚨 신고 · 분쟁 처리</div><div style="font-size:12px;font-weight:700;color:var(--r2)">미처리 0건</div></div>
-      <div style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+      <div class="card-h"><div class="card-t">🚨 신고 · 분쟁 처리</div><div style="font-size:12px;font-weight:700;color:var(--r2)" id="report-pending-count">미처리 0건</div></div>
+      <div id="report-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">✅</div>
         <div style="font-size:14px;font-weight:600">처리 대기 신고가 없습니다</div>
+      </div>
+      <div class="tw" id="report-wrap" style="display:none">
+        <table>
+          <thead><tr><th>신고일</th><th>주문번호</th><th>사유</th><th>상세내용</th><th>신고자 연락처</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="report-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -556,11 +562,22 @@ async function loadAdminData() {
   const { data: products } = await supabase.from('products').select('*').order('created_at', { ascending: false })
   const { data: orders }   = await supabase.from('orders').select('amount,status,created_at').in('status', ['confirmed','settled'])
   const { data: settlements } = await supabase.from('settlements').select('*').order('created_at', { ascending: false })
+  const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
 
   const allMembers = members || []
   const allProducts = products || []
   const allOrders = orders || []
   const allSettlements = settlements || []
+  const allReports = reports || []
+
+  let orderRefMap = {}
+  if (allReports.length) {
+    const orderIds = [...new Set(allReports.map(r => r.order_id).filter(Boolean))]
+    if (orderIds.length) {
+      const { data: refOrders } = await supabase.from('orders').select('id,toss_order_id').in('id', orderIds)
+      ;(refOrders || []).forEach(o => { orderRefMap[o.id] = o.toss_order_id })
+    }
+  }
 
   const brands   = allMembers.filter(m => m.role === 'brand')
   const creators = allMembers.filter(m => m.role === 'creator')
@@ -594,6 +611,7 @@ async function loadAdminData() {
   renderMembers(allMembers)
   renderProducts(allProducts, allMembers)
   renderSettlements(allSettlements, allMembers)
+  renderReports(allReports, orderRefMap)
 }
 
 function renderMembers(members) {
@@ -726,6 +744,56 @@ window.setSettleStatus = async function(settleId, status) {
     alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_settlements" ON public.settlements\n  FOR UPDATE\n  USING (true);')
   } else {
     showToast('정산 상태가 변경됐습니다 ✓')
+    loadAdminData()
+  }
+}
+
+function renderReports(reports, orderRefMap) {
+  const emptyEl = document.getElementById('report-empty')
+  const wrap = document.getElementById('report-wrap')
+  const countEl = document.getElementById('report-pending-count')
+  const pendingCount = reports.filter(r => r.status === 'pending' || r.status === 'reviewing').length
+
+  if (countEl) countEl.textContent = `미처리 ${pendingCount}건`
+
+  const hasReports = reports.length > 0
+  if (emptyEl) emptyEl.style.display = hasReports ? 'none' : 'block'
+  if (wrap) wrap.style.display = hasReports ? 'block' : 'none'
+  if (!hasReports) return
+
+  const statusLabel = { pending: '접수됨', reviewing: '확인중', resolved: '처리완료', dismissed: '기각' }
+  const reasonLabel = { '상품 미배송': '📦 미배송', '상품 불량': '⚠️ 상품불량', '설명과 다름': '❓ 설명 상이', '환불 요청': '💸 환불요청', '기타': '기타' }
+
+  document.getElementById('report-tbody').innerHTML = reports.map(r => `
+    <tr>
+      <td class="td-m">${r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+      <td class="td-m">${orderRefMap[r.order_id] || '-'}</td>
+      <td class="td-b">${reasonLabel[r.reason] || r.reason}</td>
+      <td class="td-m" style="max-width:220px;white-space:normal">${r.description || '-'}</td>
+      <td class="td-m">${r.reporter_phone || '-'}</td>
+      <td><span class="badge ${r.status === 'pending' || r.status === 'reviewing' ? 'ba2' : 'bg2'}">${statusLabel[r.status] || r.status}</span></td>
+      <td>
+        ${(r.status === 'pending' || r.status === 'reviewing')
+          ? `<button class="act-btn green" onclick="setReportStatus('${r.id}','resolved')">처리완료</button>
+             <button class="act-btn red" onclick="setReportStatus('${r.id}','dismissed')">기각</button>`
+          : '-'}
+      </td>
+    </tr>`).join('')
+}
+
+window.setReportStatus = async function(reportId, status) {
+  const supabase = window._supabase
+  const { data, error } = await supabase
+    .from('reports')
+    .update({ status, resolved_at: new Date().toISOString() })
+    .eq('id', reportId)
+    .select()
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다). reports 테이블 RLS 정책을 확인해주세요.')
+  } else {
+    showToast('신고 처리가 완료됐습니다 ✓')
     loadAdminData()
   }
 }

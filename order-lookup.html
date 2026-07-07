@@ -51,6 +51,16 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .track-box{margin-top:14px;padding:14px;background:var(--canvas);border-radius:10px;font-size:13.5px}
 .track-box .tt{font-weight:700;margin-bottom:4px}
 .track-box .empty{color:rgba(10,12,16,.4)}
+
+.report-toggle{display:block;margin-top:18px;padding-top:16px;border-top:1px solid rgba(10,12,16,.08);text-align:center;font-size:13px;color:rgba(10,12,16,.45);text-decoration:underline;cursor:pointer;background:none;border:none;width:100%}
+.report-form{display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(10,12,16,.08)}
+.report-form.open{display:block}
+.report-form select,.report-form textarea{width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid rgba(10,12,16,.14);background:rgba(10,12,16,.03);font:400 14px/1.4 'Pretendard',sans-serif;font-family:inherit;outline:none;margin-bottom:10px}
+.report-form textarea{min-height:80px;resize:vertical}
+.report-form select:focus,.report-form textarea:focus{border-color:var(--blue);background:#fff}
+.report-submit{width:100%;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer}
+.report-submit:disabled{opacity:.5;cursor:not-allowed}
+.report-done{text-align:center;padding:10px 0;font:600 13.5px/1.5 'Pretendard',sans-serif;color:var(--green)}
 </style>
 </head>
 <body>
@@ -151,6 +161,74 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
     }
   }
 
+  const REPORT_FORM_HTML = `
+    <button class="report-toggle" onclick="toggleReportForm()">🚨 이 주문에 문제가 있으신가요? 신고하기</button>
+    <div class="report-form" id="reportForm">
+      <select id="report_reason">
+        <option value="">신고 사유를 선택해주세요</option>
+        <option value="상품 미배송">상품이 오지 않았어요</option>
+        <option value="상품 불량">받은 상품에 문제가 있어요</option>
+        <option value="설명과 다름">설명/사진과 실제 상품이 달라요</option>
+        <option value="환불 요청">환불하고 싶어요</option>
+        <option value="기타">기타 문의</option>
+      </select>
+      <textarea id="report_desc" placeholder="자세한 상황을 알려주시면 빠르게 확인하는 데 도움이 돼요 (선택)"></textarea>
+      <button class="report-submit" id="reportSubmitBtn" onclick="submitReport()">신고 접수하기</button>
+      <div id="reportErr" class="err" style="display:none;margin-top:10px;margin-bottom:0"></div>
+      <div id="reportDone" class="report-done" style="display:none">✅ 신고가 접수됐어요. 확인 후 조치할게요.</div>
+    </div>`
+
+  window.toggleReportForm = function() {
+    document.getElementById('reportForm').classList.toggle('open')
+  }
+
+  window.submitReport = async function() {
+    const reason = document.getElementById('report_reason').value
+    const description = document.getElementById('report_desc').value.trim()
+    const errEl = document.getElementById('reportErr')
+    const btn = document.getElementById('reportSubmitBtn')
+    errEl.style.display = 'none'
+
+    if (!reason) {
+      errEl.textContent = '신고 사유를 선택해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const orderId = document.getElementById('order_id').value.trim()
+    const phone = document.getElementById('phone').value.trim()
+
+    btn.disabled = true
+    btn.textContent = '접수 중...'
+
+    try {
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/submit-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({ orderId, phone, reason, description })
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        errEl.textContent = data.message || '신고 접수 중 오류가 발생했습니다.'
+        errEl.style.display = 'block'
+        btn.disabled = false
+        btn.textContent = '신고 접수하기'
+      } else {
+        document.getElementById('reportForm').innerHTML = `<div class="report-done" style="display:block">✅ 신고가 접수됐어요. 확인 후 조치할게요.</div>`
+      }
+    } catch (e) {
+      errEl.textContent = '네트워크 오류가 발생했습니다. 다시 시도해주세요.'
+      errEl.style.display = 'block'
+      btn.disabled = false
+      btn.textContent = '신고 접수하기'
+    }
+  }
+
   function renderResult(order) {
     const resultEl = document.getElementById('result')
 
@@ -160,7 +238,8 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
           <div class="r-status-dot cancelled"></div>
           <div class="r-status-text">${order.orderStatusLabel}</div>
         </div>
-        ${buildRows(order)}`
+        ${buildRows(order)}
+        ${REPORT_FORM_HTML}`
       resultEl.style.display = 'block'
       return
     }
@@ -195,6 +274,7 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
       <div class="steps">${stepsHtml}</div>
       ${buildRows(order)}
       ${trackHtml}
+      ${REPORT_FORM_HTML}
     `
     resultEl.style.display = 'block'
   }
