@@ -25,6 +25,10 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
 .r-label{color:rgba(10,12,16,.5);flex-shrink:0}
 .r-val{font-weight:700;text-align:right;word-break:break-all}
 .r-val.amt{color:var(--green);font-size:17px}
+.copy-row{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.copy-btn{flex-shrink:0;border:none;background:rgba(29,78,216,.1);color:var(--blue);width:26px;height:26px;border-radius:7px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.copy-btn:active{transform:scale(.92)}
+.copy-btn.copied{background:var(--green);color:#fff}
 .note{font-size:12.5px;color:rgba(10,12,16,.45);margin-top:-8px;margin-bottom:20px;line-height:1.6}
 .btn{display:inline-block;padding:12px 24px;border-radius:10px;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;font-size:14px}
 </style>
@@ -44,6 +48,25 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
 
   const card = document.getElementById('card')
 
+  window.copyText = async function(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch (e) {
+      const ta = document.createElement('textarea')
+      ta.value = text
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    const original = btn.textContent
+    btn.textContent = '✓'
+    btn.classList.add('copied')
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied') }, 1500)
+  }
+
   function showError(msg) {
     card.innerHTML = `
       <div class="icon err">✕</div>
@@ -54,7 +77,11 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
 
   function showSuccess(order, alreadyPaid) {
     const rows = []
-    if (order?.orderId) rows.push(['주문번호', order.orderId])
+    if (order?.orderId) rows.push(['주문번호', `
+      <span class="copy-row">
+        <span>${order.orderId}</span>
+        <button class="copy-btn" onclick="copyText('${order.orderId}', this)">복사</button>
+      </span>`])
     if (order?.productName) rows.push(['상품명', order.productName])
     if (order?.amount) rows.push(['결제금액', '₩' + Number(order.amount).toLocaleString(), 'amt'])
     if (order?.buyerName) rows.push(['받는 분', order.buyerName])

@@ -44,6 +44,10 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .r-label{color:rgba(10,12,16,.5);flex-shrink:0}
 .r-val{font-weight:700;text-align:right;word-break:break-all}
 .r-val.amt{color:var(--green);font-size:16px}
+.copy-row{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.copy-btn{flex-shrink:0;border:none;background:rgba(29,78,216,.1);color:var(--blue);width:26px;height:26px;border-radius:7px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.copy-btn:active{transform:scale(.92)}
+.copy-btn.copied{background:var(--green);color:#fff}
 .track-box{margin-top:14px;padding:14px;background:var(--canvas);border-radius:10px;font-size:13.5px}
 .track-box .tt{font-weight:700;margin-bottom:4px}
 .track-box .empty{color:rgba(10,12,16,.4)}
@@ -80,6 +84,26 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
   // URL에 주문번호가 같이 오면 (성공 화면에서 링크 클릭 등) 미리 채워줌
   const params = new URLSearchParams(location.search)
   if (params.get('orderId')) document.getElementById('order_id').value = params.get('orderId')
+
+  window.copyText = async function(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch (e) {
+      // 클립보드 API 실패 시 폴백
+      const ta = document.createElement('textarea')
+      ta.value = text
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    const original = btn.textContent
+    btn.textContent = '✓'
+    btn.classList.add('copied')
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied') }, 1500)
+  }
 
   window.lookupOrder = async function() {
     const orderId = document.getElementById('order_id').value.trim()
@@ -156,7 +180,10 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
       <div class="track-box">
         <div class="tt">📦 배송 정보</div>
         ${order.trackingNumber
-          ? `<div>${order.courier || '택배사'} · 운송장번호 ${order.trackingNumber}</div>`
+          ? `<div class="copy-row" style="justify-content:space-between">
+               <span>${order.courier || '택배사'} · ${order.trackingNumber}</span>
+               <button class="copy-btn" onclick="copyText('${order.trackingNumber}', this)">복사</button>
+             </div>`
           : `<div class="empty">아직 운송장번호가 등록되지 않았습니다.</div>`}
       </div>`
 
@@ -174,6 +201,13 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 
   function buildRows(order) {
     const rows = []
+    if (order.orderId) {
+      rows.push(['주문번호', `
+        <span class="copy-row">
+          <span>${order.orderId}</span>
+          <button class="copy-btn" onclick="copyText('${order.orderId}', this)">복사</button>
+        </span>`])
+    }
     if (order.productName) rows.push(['상품명', order.productName])
     if (order.amount) rows.push(['결제금액', '₩' + Number(order.amount).toLocaleString(), 'amt'])
     if (order.shippingAddress) rows.push(['배송지', order.shippingAddress])
