@@ -24,10 +24,21 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
 .result{margin-top:26px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.05);display:none}
-.r-status{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid rgba(10,12,16,.08)}
+.r-status{display:flex;align-items:center;gap:10px;margin-bottom:20px}
 .r-status-dot{width:10px;height:10px;border-radius:50%;background:var(--green)}
 .r-status-dot.cancelled{background:var(--red)}
 .r-status-text{font-weight:800;font-size:16px}
+
+.steps{display:flex;align-items:flex-start;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid rgba(10,12,16,.08)}
+.step{flex:1;text-align:center;position:relative}
+.step-dot{width:22px;height:22px;border-radius:50%;background:rgba(10,12,16,.1);color:rgba(10,12,16,.35);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 6px;position:relative;z-index:2}
+.step.done .step-dot{background:var(--green);color:#fff}
+.step-line{position:absolute;top:11px;left:-50%;width:100%;height:2px;background:rgba(10,12,16,.1);z-index:1}
+.step:first-child .step-line{display:none}
+.step.done .step-line{background:var(--green)}
+.step-label{font-size:11.5px;color:rgba(10,12,16,.45);font-weight:600}
+.step.done .step-label{color:var(--ink)}
+
 .r-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:14px;border-bottom:1px solid rgba(10,12,16,.06)}
 .r-row:last-child{border-bottom:none}
 .r-label{color:rgba(10,12,16,.5);flex-shrink:0}
@@ -35,6 +46,7 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .r-val.amt{color:var(--green);font-size:16px}
 .track-box{margin-top:14px;padding:14px;background:var(--canvas);border-radius:10px;font-size:13.5px}
 .track-box .tt{font-weight:700;margin-bottom:4px}
+.track-box .empty{color:rgba(10,12,16,.4)}
 </style>
 </head>
 <body>
@@ -117,34 +129,60 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 
   function renderResult(order) {
     const resultEl = document.getElementById('result')
-    const statusText = order.cancelled ? order.orderStatusLabel : order.shippingStatusLabel
-    const dotClass = order.cancelled ? 'cancelled' : ''
 
+    if (order.cancelled) {
+      resultEl.innerHTML = `
+        <div class="r-status">
+          <div class="r-status-dot cancelled"></div>
+          <div class="r-status-text">${order.orderStatusLabel}</div>
+        </div>
+        ${buildRows(order)}`
+      resultEl.style.display = 'block'
+      return
+    }
+
+    const STEP_ORDER = ['preparing', 'shipping', 'delivered']
+    const STEP_LABEL = { preparing: '결제완료', shipping: '배송중', delivered: '배송완료' }
+    const currentIdx = STEP_ORDER.indexOf(order.shippingStatus)
+
+    const stepsHtml = STEP_ORDER.map((s, i) => `
+      <div class="step ${i <= currentIdx ? 'done' : ''}">
+        <div class="step-line"></div>
+        <div class="step-dot">${i <= currentIdx ? '✓' : i + 1}</div>
+        <div class="step-label">${STEP_LABEL[s]}</div>
+      </div>`).join('')
+
+    const trackHtml = `
+      <div class="track-box">
+        <div class="tt">📦 배송 정보</div>
+        ${order.trackingNumber
+          ? `<div>${order.courier || '택배사'} · 운송장번호 ${order.trackingNumber}</div>`
+          : `<div class="empty">아직 운송장번호가 등록되지 않았습니다.</div>`}
+      </div>`
+
+    resultEl.innerHTML = `
+      <div class="r-status">
+        <div class="r-status-dot"></div>
+        <div class="r-status-text">${order.shippingStatusLabel}</div>
+      </div>
+      <div class="steps">${stepsHtml}</div>
+      ${buildRows(order)}
+      ${trackHtml}
+    `
+    resultEl.style.display = 'block'
+  }
+
+  function buildRows(order) {
     const rows = []
     if (order.productName) rows.push(['상품명', order.productName])
     if (order.amount) rows.push(['결제금액', '₩' + Number(order.amount).toLocaleString(), 'amt'])
     if (order.shippingAddress) rows.push(['배송지', order.shippingAddress])
     if (order.createdAt) rows.push(['주문일시', new Date(order.createdAt).toLocaleString('ko-KR')])
-
-    const trackHtml = (order.trackingNumber && !order.cancelled) ? `
-      <div class="track-box">
-        <div class="tt">📦 ${order.courier || '택배사'} 운송장번호</div>
-        <div>${order.trackingNumber}</div>
-      </div>` : ''
-
-    resultEl.innerHTML = `
-      <div class="r-status">
-        <div class="r-status-dot ${dotClass}"></div>
-        <div class="r-status-text">${statusText}</div>
-      </div>
-      ${rows.map(([label, val, cls]) => `
-        <div class="r-row">
-          <div class="r-label">${label}</div>
-          <div class="r-val${cls ? ' ' + cls : ''}">${val}</div>
-        </div>`).join('')}
-      ${trackHtml}
-    `
-    resultEl.style.display = 'block'
+    return rows.map(([label, val, cls]) => `
+      <div class="r-row">
+        <div class="r-label">${label}</div>
+        <div class="r-val${cls ? ' ' + cls : ''}">${val}</div>
+      </div>`).join('')
   }
 </script>
 </body>

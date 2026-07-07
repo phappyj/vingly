@@ -576,15 +576,20 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const courier = document.getElementById(`courier-${orderId}`).value
     const tracking_number = document.getElementById(`tracking-${orderId}`).value.trim()
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('orders')
       .update({ shipping_status, courier: courier || null, tracking_number: tracking_number || null })
       .eq('id', orderId)
+      .select()
 
     if (error) {
       alert('저장에 실패했습니다: ' + error.message)
+    } else if (!data || data.length === 0) {
+      // RLS 정책 때문에 조용히 0건 업데이트된 경우 (에러는 안 나지만 실제로 저장 안 됨)
+      alert('저장이 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "brand_can_update_own_orders" ON public.orders\n  FOR UPDATE\n  USING (auth.uid() = brand);')
     } else {
       alert('배송 정보가 저장됐습니다.')
+      loadOrders()
     }
   }
 
