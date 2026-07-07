@@ -164,6 +164,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button class="ni act" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
     <button class="ni" onclick="showPage('products',this)"><span class="ni-ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('orders',this)"><span class="ni-ic">🚚</span>주문 관리</button>
+    <button class="ni" onclick="showPage('reports',this)"><span class="ni-ic">🚨</span>신고 확인</button>
     <button class="ni" onclick="showPage('creators',this)"><span class="ni-ic">📱</span>크리에이터 현황</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ni-ic">💸</span>수익 및 비용</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ni-ic">🏦</span>정산 관리</button>
@@ -252,6 +253,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>주문일</th><th>상품명</th><th>구매자</th><th>금액</th><th>배송상태</th><th>택배사</th><th>운송장번호</th><th>관리</th></tr></thead>
           <tbody id="order-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="page content" id="pg-reports">
+    <div class="card">
+      <div class="card-h"><div class="card-t">내 제품 신고 · 문의</div><div style="font-size:12px;font-weight:700;color:var(--red)" id="brand-report-count">미처리 0건</div></div>
+      <div id="brand-report-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">✅</div>
+        <div style="font-size:14px;font-weight:600">접수된 신고가 없습니다</div>
+      </div>
+      <div class="tw" id="brand-report-wrap" style="display:none">
+        <table>
+          <thead><tr><th>신고일</th><th>주문번호</th><th>사유</th><th>상세내용</th><th>연락처</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="brand-report-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -457,6 +474,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         if (sbAv) sbAv.textContent = name[0]
         loadProducts()
         loadOrders()
+        loadReports()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -590,6 +608,65 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     } else {
       alert('배송 정보가 저장됐습니다.')
       loadOrders()
+    }
+  }
+
+  async function loadReports() {
+    const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
+    const allReports = reports || []
+
+    let orderRefMap = {}
+    if (allReports.length) {
+      const orderIds = [...new Set(allReports.map(r => r.order_id).filter(Boolean))]
+      if (orderIds.length) {
+        const { data: refOrders } = await supabase.from('orders').select('id,toss_order_id').in('id', orderIds)
+        ;(refOrders || []).forEach(o => { orderRefMap[o.id] = o.toss_order_id })
+      }
+    }
+
+    const emptyEl = document.getElementById('brand-report-empty')
+    const wrap = document.getElementById('brand-report-wrap')
+    const countEl = document.getElementById('brand-report-count')
+    const pendingCount = allReports.filter(r => r.status === 'pending' || r.status === 'reviewing').length
+    if (countEl) countEl.textContent = `미처리 ${pendingCount}건`
+
+    const hasReports = allReports.length > 0
+    if (emptyEl) emptyEl.style.display = hasReports ? 'none' : 'block'
+    if (wrap) wrap.style.display = hasReports ? 'block' : 'none'
+    if (!hasReports) return
+
+    const statusLabel = { pending: '접수됨', reviewing: '확인중', resolved: '처리완료', dismissed: '기각' }
+    const reasonLabel = { '상품 미배송': '📦 미배송', '상품 불량': '⚠️ 상품불량', '설명과 다름': '❓ 설명 상이', '환불 요청': '💸 환불요청', '기타': '기타' }
+
+    document.getElementById('brand-report-tbody').innerHTML = allReports.map(r => `
+      <tr>
+        <td>${r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+        <td>${orderRefMap[r.order_id] || '-'}</td>
+        <td class="td-b">${reasonLabel[r.reason] || r.reason}</td>
+        <td style="max-width:220px;white-space:normal">${r.description || '-'}</td>
+        <td>${r.reporter_phone || '-'}</td>
+        <td><span class="badge ${r.status === 'pending' || r.status === 'reviewing' ? 'bam' : 'bg'}">${statusLabel[r.status] || r.status}</span></td>
+        <td>
+          ${(r.status === 'pending' || r.status === 'reviewing')
+            ? `<button class="act-btn green" onclick="resolveReport('${r.id}')">처리완료로 표시</button>`
+            : '-'}
+        </td>
+      </tr>`).join('')
+  }
+
+  window.resolveReport = async function(reportId) {
+    const { data, error } = await supabase
+      .from('reports')
+      .update({ status: 'resolved', resolved_at: new Date().toISOString() })
+      .eq('id', reportId)
+      .select()
+    if (error) {
+      alert('처리 실패: ' + error.message)
+    } else if (!data || data.length === 0) {
+      alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "brand_can_update_own_reports" ON public.reports\n  FOR UPDATE\n  USING (order_id IN (SELECT id FROM public.orders WHERE brand = auth.uid()));')
+    } else {
+      showToast('신고가 처리 완료로 표시됐습니다 ✓')
+      loadReports()
     }
   }
 
@@ -828,7 +905,7 @@ function showPage(id, btn) {
   document.getElementById('pg-'+id).classList.add('act')
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'))
   if (btn) btn.classList.add('act')
-  const titles = {dashboard:'대시보드',products:'제품 관리',orders:'주문 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
+  const titles = {dashboard:'대시보드',products:'제품 관리',orders:'주문 관리',reports:'신고 확인',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
   document.getElementById('page-title').textContent = titles[id] || ''
   document.getElementById('mob-title').textContent = titles[id] || ''
   closeSidebar()
