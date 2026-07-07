@@ -183,26 +183,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <body>
 
 <!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="lmark"><svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="28" height="28" rx="7" fill="#00B37E"/>
-  <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M14 17.5 L19.5 23" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
-</svg></div>
-      <span class="lname">Vingly</span>
-      <span class="ladmin">ADMIN</span>
-    </div>
-    <div class="login-title">관리자 로그인</div>
-    <div class="login-sub">Vingly 운영팀 전용 관리 시스템</div>
-    <input class="linp" type="text" id="lid" placeholder="관리자 아이디" onkeydown="if(event.key==='Enter')doLogin()">
-    <input class="linp" type="password" id="lpw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="lbtn" onclick="doLogin()">로그인</button>
-    <div class="lerr" id="lerr">아이디 또는 비밀번호가 올바르지 않습니다</div>
-  </div>
-</div>
-
 <!-- SIDEBAR -->
 <aside class="sb" id="sb">
   <div class="sb-logo">
@@ -219,7 +199,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <nav class="sb-nav">
     <button class="ni act" onclick="showPage('dashboard',this)"><span class="ic">📊</span>대시보드</button>
     <button class="ni" onclick="showPage('members',this)"><span class="ic">👥</span>회원 관리</button>
-    <button class="ni" onclick="showPage('products',this)"><span class="ic">📦</span>제품 승인</button>
+    <button class="ni" onclick="showPage('products',this)"><span class="ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ic">💸</span>정산 관리</button>
     <button class="ni" onclick="showPage('alerts',this)"><span class="ic">🚨</span>알림 · 신고 <span style="margin-left:auto;background:var(--r2);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px">3</span></button>
     <div class="divr"></div>
@@ -228,8 +208,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </nav>
   <div class="sb-foot">
     <div class="admin-info">
-      <div class="admin-av">관</div>
-      <div><div class="admin-name">관리자</div><div class="admin-role">Vingly 운영팀</div></div>
+      <div class="admin-av" id="admin-av">관</div>
+      <div><div class="admin-name" id="admin-name">관리자</div><div class="admin-role">Vingly 운영팀</div></div>
     </div>
   </div>
 </aside>
@@ -273,22 +253,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     <div class="card">
       <div class="card-h"><div class="card-t">🚨 처리 필요 알림</div></div>
-      <div class="alert-item danger">
-        <div class="ai-ico">⛔</div>
-        <div style="text-align:center;padding:24px;color:rgba(10,12,16,.35)">
-          <div style="font-size:24px;margin-bottom:8px">✅</div>
-          <div style="font-size:13px;font-weight:500">처리 대기 항목이 없습니다</div>
-        </div>
-        <div style="margin-left:auto;flex-shrink:0"><button class="act-btn green" onclick="showPage('alerts',document.querySelector('.ni:nth-child(5))'))">처리</button></div>
-      </div>
-      <div class="alert-item warn">
-        <div class="ai-ico">⚠️</div>
-        <div><div class="ai-title">제품 승인 대기 3개</div><div class="ai-desc">신규 등록된 제품 3개가 승인 대기 중입니다.</div><div class="ai-time">2시간 전</div></div>
-        <div style="margin-left:auto;flex-shrink:0"><button class="act-btn" onclick="showPage('products',null)">확인</button></div>
-      </div>
-      <div class="alert-item">
-        <div class="ai-ico">💸</div>
-        <div><div class="ai-title">6월 정산 D-25</div><div class="ai-desc">6월 30일 자동 정산 예정 · 현재 정산 대상 없음</div><div class="ai-time">오늘</div></div>
+      <div id="dash-alerts-empty" style="text-align:center;padding:24px;color:rgba(10,12,16,.35)">
+        <div style="font-size:24px;margin-bottom:8px">✅</div>
+        <div style="font-size:13px;font-weight:500">처리 대기 항목이 없습니다</div>
       </div>
     </div>
   </div>
@@ -301,17 +268,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <select class="filter-sel"><option>전체 상태</option><option>정상</option><option>경고</option><option>정지</option></select>
     </div>
     <div class="card" style="margin-bottom:0">
-      <div class="card-h"><div class="card-t">전체 회원</div><div style="font-size:12px;color:var(--tm)">가입자 없음</div></div>
-      <div style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+      <div class="card-h"><div class="card-t">전체 회원</div><div style="font-size:12px;color:var(--tm)" id="admin-member-count">가입자 없음</div></div>
+      <div id="admin-member-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">👥</div>
         <div style="font-size:14px;font-weight:600">아직 가입한 회원이 없습니다</div>
       </div>
-      <div class="tw">
+      <div class="tw" id="admin-member-wrap" style="display:none">
         <table>
-          <thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>연락처</th><th>가입일</th><th>거래액</th><th>상태</th><th>관리</th></tr></thead>
-          <tbody>
-            <tr><td colspan="8" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">가입한 회원이 없습니다</td></tr>
-          </tbody>
+          <thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>연락처</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="admin-member-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -326,9 +291,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="card-h"><div class="card-t">전체 제품</div></div>
-      <div style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+      <div id="admin-product-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📦</div>
         <div style="font-size:14px;font-weight:600">등록된 제품이 없습니다</div>
+      </div>
+      <div class="tw" id="admin-product-wrap" style="display:none">
+        <table>
+          <thead><tr><th>제품명</th><th>브랜드</th><th>가격</th><th>수수료율</th><th>재고</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="admin-product-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -336,15 +307,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- SETTLE -->
   <div class="page" id="pg-settle">
     <div class="sg" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc2"><div class="sc-l">💸 이번 달 정산 예정</div><div class="sc-v">₩0</div><div class="sc-ch nt">정산 예정 없음</div></div>
-      <div class="sc2"><div class="sc-l">✅ 누적 지급 완료</div><div class="sc-v">₩0</div><div class="sc-ch nt">-</div></div>
+      <div class="sc2"><div class="sc-l">💸 이번 달 정산 예정</div><div class="sc-v" id="settle-pending-total">₩0</div><div class="sc-ch nt" id="settle-pending-sub">정산 예정 없음</div></div>
+      <div class="sc2"><div class="sc-l">✅ 누적 지급 완료</div><div class="sc-v" id="settle-paid-total">₩0</div><div class="sc-ch nt">-</div></div>
       <div class="sc2"><div class="sc-l">🏦 연동 계좌</div><div class="sc-v" style="font-size:16px">토스페이먼츠</div><div class="sc-ch nt">연동 대기</div></div>
     </div>
     <div class="card">
-      <div class="card-h"><div class="card-t">정산 내역</div><div class="card-a">엑셀 다운로드</div></div>
-      <div style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+      <div class="card-h"><div class="card-t">정산 내역</div></div>
+      <div id="admin-settle-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">💸</div>
         <div style="font-size:14px;font-weight:600">아직 정산 내역이 없습니다</div>
+      </div>
+      <div class="tw" id="admin-settle-wrap" style="display:none">
+        <table>
+          <thead><tr><th>브랜드</th><th>크리에이터</th><th>금액</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
+          <tbody id="admin-settle-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -368,9 +345,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="card-h"><div class="card-t">🔐 관리자 보안</div></div>
       <div class="g2" style="gap:20px">
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">관리자 비밀번호 변경</div>
+          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">비밀번호 변경</div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <input class="linp" type="password" id="pw_current" placeholder="현재 비밀번호" style="margin:0">
             <input class="linp" type="password" id="pw_new" placeholder="새 비밀번호 (8자 이상)" style="margin:0">
             <input class="linp" type="password" id="pw_confirm" placeholder="새 비밀번호 확인" style="margin:0">
             <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%" onclick="changeAdminPw()">비밀번호 변경</button>
@@ -378,13 +354,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </div>
         </div>
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">관리자 아이디 변경</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="font-size:13px;color:var(--ts);background:var(--bg);padding:10px 12px;border-radius:8px">현재 아이디: <strong id="cur_admin_id">admin</strong></div>
-            <input class="linp" type="text" id="new_admin_id" placeholder="새 아이디" style="margin:0">
-            <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%" onclick="changeAdminId()">아이디 변경</button>
-            <div id="id_msg" style="font-size:12px;display:none"></div>
-          </div>
+          <div style="font-size:12px;font-weight:600;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">로그인 계정</div>
+          <div style="font-size:13px;color:var(--ts);background:var(--bg);padding:10px 12px;border-radius:8px">현재 이메일: <strong id="cur_admin_id">-</strong></div>
+          <div style="font-size:12px;color:var(--tm);margin-top:8px;line-height:1.6">이메일(로그인 아이디) 변경은 Supabase 대시보드 → Authentication → Users 에서 해주세요.</div>
         </div>
       </div>
     </div>
@@ -539,122 +511,222 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </div>
 </div>
 
-<script>
-// 관리자 인증 — 비밀번호는 코드에 노출하지 않고 해시로 비교
-// SHA-256 해시: 실제 비밀번호는 설정에서만 관리
-async function hashPw(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
 
-// 최초 1회 — 관리자 비밀번호 해시 초기화 (변경 원하면 콘솔에서 setAdminPw('새비밀번호') 실행)
-async function setAdminPw(pw) {
-  const h = await hashPw(pw);
-  localStorage.setItem('vingly_admin_hash', h);
-  console.log('관리자 비밀번호 설정 완료');
-}
-
-async function doLogin() {
-  const id = document.getElementById('lid').value.trim();
-  const pw = document.getElementById('lpw').value.trim();
-  if (!id || !pw) { document.getElementById('lerr').classList.add('show'); return; }
-
-  const storedHash = localStorage.getItem('vingly_admin_hash');
-
-  // 최초 설정 전: 임시 1회용 진입 허용 (콘솔에서 setAdminPw 실행 유도)
-  if (!storedHash) {
-    const tempHash = await hashPw(pw);
-    // 임시 비밀번호 (첫 진입 후 반드시 변경)
-    const defaultHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // admin
-    if (id === 'admin' && tempHash === defaultHash) {
-      sessionStorage.setItem('vingly_admin', '1');
-      document.getElementById('loginScreen').style.display = 'none';
-      showToast('⚠️ 초기 비밀번호입니다. 시스템 설정에서 변경해주세요.');
-      loadAdminData();
-      loadSettings();
-      return;
-    }
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    location.replace('login.html')
   } else {
-    const inputHash = await hashPw(pw);
-    if (id === 'admin' && inputHash === storedHash) {
-      sessionStorage.setItem('vingly_admin', '1');
-      document.getElementById('loginScreen').style.display = 'none';
-      showToast('관리자로 로그인했습니다 ✓');
-      loadAdminData();
-      loadSettings();
-      return;
+    const user = session.user
+    if (user.user_metadata?.role !== 'admin') {
+      location.replace('login.html')
+    } else {
+      const name = user.user_metadata?.name || user.email || '관리자'
+      window._supabase = supabase
+      window._vinglyAdmin = { id: user.id, email: user.email, name }
+      document.addEventListener('DOMContentLoaded', () => {
+        const nameEl = document.getElementById('admin-name')
+        const avEl = document.getElementById('admin-av')
+        if (nameEl) nameEl.textContent = name
+        if (avEl) avEl.textContent = name[0]
+        const curIdEl = document.getElementById('cur_admin_id')
+        if (curIdEl) curIdEl.textContent = user.email
+        loadAdminData()
+        loadSettings()
+      })
     }
   }
 
-  document.getElementById('lerr').classList.add('show');
-  document.getElementById('lpw').value = '';
-}
+  window.logout = async function() {
+    await supabase.auth.signOut()
+    location.replace('login.html')
+  }
+</script>
 
-function logout() {
-  sessionStorage.removeItem('vingly_admin');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('lid').value = '';
-  document.getElementById('lpw').value = '';
-  document.getElementById('lerr').classList.remove('show');
-}
-
-// 자동 로그인 (세션 유지)
-if (sessionStorage.getItem('vingly_admin')) {
-  document.getElementById('loginScreen').style.display = 'none';
-  loadAdminData();
-  loadSettings();
-}
-
+<script>
 // ── 실제 데이터 로드 ──
-function loadAdminData() {
-  const members  = JSON.parse(localStorage.getItem('vingly_members')  || '[]');
-  const products = JSON.parse(localStorage.getItem('vingly_products') || '[]');
-  const links    = JSON.parse(localStorage.getItem('vingly_links')    || '[]');
+async function loadAdminData() {
+  const supabase = window._supabase
+  const { data: members }  = await supabase.from('users').select('*').order('created_at', { ascending: false })
+  const { data: products } = await supabase.from('products').select('*').order('created_at', { ascending: false })
+  const { data: orders }   = await supabase.from('orders').select('amount,status,created_at').in('status', ['confirmed','settled'])
+  const { data: settlements } = await supabase.from('settlements').select('*').order('created_at', { ascending: false })
 
-  const brands      = members.filter(m => m.role === 'brand');
-  const influencers = members.filter(m => m.role === 'influencer');
-  const totalRevenue = products.reduce((s,p) => s + (p.revenue||0), 0);
+  const allMembers = members || []
+  const allProducts = products || []
+  const allOrders = orders || []
+  const allSettlements = settlements || []
+
+  const brands   = allMembers.filter(m => m.role === 'brand')
+  const creators = allMembers.filter(m => m.role === 'creator')
+
+  const now = new Date()
+  const thisMonthRevenue = allOrders
+    .filter(o => { const d = new Date(o.created_at); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() })
+    .reduce((s, o) => s + Number(o.amount || 0), 0)
+
+  const pendingSettleCount = allSettlements.filter(s => s.status === 'pending').length
 
   // stat 카드
-  const sv = document.querySelectorAll('.sc2 .sc-v');
-  if(sv[0]) sv[0].textContent = members.length + '명';
-  if(sv[1]) sv[1].textContent = products.length + '개';
-  if(sv[2]) sv[2].textContent = totalRevenue > 0 ? '₩' + totalRevenue.toLocaleString() : '₩0';
+  const sv = document.querySelectorAll('.sg .sc2 .sc-v')
+  if (sv[0]) sv[0].textContent = allMembers.length + '명'
+  if (sv[1]) sv[1].textContent = allProducts.length + '개'
+  if (sv[2]) sv[2].textContent = '₩' + thisMonthRevenue.toLocaleString()
+  if (sv[3]) sv[3].textContent = pendingSettleCount + '건'
 
   // 얼리버드 바
-  const bBar = document.querySelector('.pr-fill');
-  const iBar = document.querySelectorAll('.pr-fill')[1];
-  const bTop = document.querySelectorAll('.pr-top span:last-child')[0];
-  const iTop = document.querySelectorAll('.pr-top span:last-child')[1];
-  if(bBar){ bBar.style.width = Math.min(brands.length/100*100,100)+'%'; }
-  if(iBar){ iBar.style.width = Math.min(influencers.length/1000*100,100)+'%'; }
-  if(bTop) bTop.textContent = brands.length + '개사';
-  if(iTop) iTop.textContent = influencers.length + '명';
-  const remain = document.querySelector('.pr-wrap + .pr-wrap + div strong');
-  if(remain) remain.textContent = Math.max(1000 - members.length, 0) + '명';
+  const bBar = document.querySelector('.pr-fill')
+  const iBar = document.querySelectorAll('.pr-fill')[1]
+  const bTop = document.querySelectorAll('.pr-top span:last-child')[0]
+  const iTop = document.querySelectorAll('.pr-top span:last-child')[1]
+  if (bBar) bBar.style.width = Math.min(brands.length / 100 * 100, 100) + '%'
+  if (iBar) iBar.style.width = Math.min(creators.length / 1000 * 100, 100) + '%'
+  if (bTop) bTop.textContent = brands.length + '개사'
+  if (iTop) iTop.textContent = creators.length + '명'
+  const remain = document.querySelector('.pr-wrap + .pr-wrap + div strong')
+  if (remain) remain.textContent = Math.max(1000 - allMembers.length, 0) + '명'
 
-  // 회원 목록
-  const membersSection = document.getElementById('pg-members');
-  if(membersSection) {
-    const header = membersSection.querySelector('.card-h .card-t');
-    if(header) header.textContent = `전체 회원 ${members.length}명`;
-    const emptyDiv = membersSection.querySelector('div[style*="text-align:center"]');
-    if(members.length === 0) return;
-    if(emptyDiv) emptyDiv.remove();
-    if(!membersSection.querySelector('table')) {
-      const tw = document.createElement('div'); tw.className = 'tw';
-      tw.innerHTML = `<table><thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead><tbody></tbody></table>`;
-      membersSection.querySelector('.card').appendChild(tw);
-    }
-    membersSection.querySelector('table tbody').innerHTML = members.map((m,i) => `
-      <tr>
-        <td class="td-b">${m.name}</td>
-        <td><span class="badge ${m.role==='brand'?'bb2':'bg2'}">${m.role==='brand'?'브랜드':'인플루언서'}</span></td>
-        <td class="td-m">${m.email}</td>
-        <td class="td-m">${m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('ko-KR') : '-'}</td>
-        <td><span class="badge ${m.status==='suspended'?'ba2':m.status==='deleted'?'br':'bg2'}">${m.status==='suspended'?'정지':m.status==='deleted'?'탈퇴':'정상'}</span></td>
-        <td><button class="act-btn" onclick="openMemberModal(${i})">수정</button><button class="act-btn red" onclick="suspendMember(${i})">정지</button></td>
-      </tr>`).join('');
+  renderMembers(allMembers)
+  renderProducts(allProducts, allMembers)
+  renderSettlements(allSettlements, allMembers)
+}
+
+function renderMembers(members) {
+  const emptyEl = document.getElementById('admin-member-empty')
+  const wrap = document.getElementById('admin-member-wrap')
+  const countEl = document.getElementById('admin-member-count')
+  const hasMembers = members.length > 0
+
+  if (countEl) countEl.textContent = hasMembers ? `총 ${members.length}명` : '가입자 없음'
+  if (emptyEl) emptyEl.style.display = hasMembers ? 'none' : 'block'
+  if (wrap) wrap.style.display = hasMembers ? 'block' : 'none'
+  if (!hasMembers) return
+
+  const roleLabel = { brand: '브랜드·셀러', creator: '인플루언서' }
+  const statusLabel = { active: '정상', suspended: '정지', deleted: '탈퇴' }
+  const statusBadge = { active: 'bg2', suspended: 'ba2', deleted: 'br' }
+
+  document.getElementById('admin-member-tbody').innerHTML = members.map(m => `
+    <tr>
+      <td class="td-b">${m.company_name || '-'}</td>
+      <td><span class="badge ${m.role === 'brand' ? 'bb2' : 'bg2'}">${roleLabel[m.role] || m.role || '-'}</span></td>
+      <td class="td-m">${m.email || '-'}</td>
+      <td class="td-m">${m.phone || '-'}</td>
+      <td class="td-m">${m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+      <td><span class="badge ${statusBadge[m.status] || 'bg2'}">${statusLabel[m.status] || '정상'}</span></td>
+      <td>
+        ${m.status === 'suspended'
+          ? `<button class="act-btn green" onclick="setMemberStatus('${m.id}','active')">정지 해제</button>`
+          : `<button class="act-btn red" onclick="setMemberStatus('${m.id}','suspended')">정지</button>`}
+      </td>
+    </tr>`).join('')
+}
+
+window.setMemberStatus = async function(userId, status) {
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('users').update({ status }).eq('id', userId).select()
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_users" ON public.users\n  FOR UPDATE\n  USING (true);')
+  } else {
+    showToast('회원 상태가 변경됐습니다 ✓')
+    loadAdminData()
+  }
+}
+
+function renderProducts(products, members) {
+  const emptyEl = document.getElementById('admin-product-empty')
+  const wrap = document.getElementById('admin-product-wrap')
+  const hasProducts = products.length > 0
+  if (emptyEl) emptyEl.style.display = hasProducts ? 'none' : 'block'
+  if (wrap) wrap.style.display = hasProducts ? 'block' : 'none'
+  if (!hasProducts) return
+
+  const brandMap = {}
+  ;(members || []).forEach(m => { brandMap[m.id] = m.company_name })
+
+  document.getElementById('admin-product-tbody').innerHTML = products.map(p => `
+    <tr>
+      <td class="td-b">${p.name}</td>
+      <td class="td-m">${brandMap[p.brand_user] || '-'}</td>
+      <td>₩${Number(p.price).toLocaleString()}</td>
+      <td>${p.commission_rate}%</td>
+      <td>${p.stock ?? '-'}</td>
+      <td><span class="badge ${p.status === 'active' ? 'bg2' : 'br'}">${p.status === 'active' ? '판매중' : '비활성'}</span></td>
+      <td>
+        ${p.status === 'active'
+          ? `<button class="act-btn red" onclick="setProductStatus('${p.id}','inactive')">비활성화</button>`
+          : `<button class="act-btn green" onclick="setProductStatus('${p.id}','active')">활성화</button>`}
+      </td>
+    </tr>`).join('')
+}
+
+window.setProductStatus = async function(productId, status) {
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('products').update({ status }).eq('id', productId).select()
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_products" ON public.products\n  FOR UPDATE\n  USING (true);')
+  } else {
+    showToast('제품 상태가 변경됐습니다 ✓')
+    loadAdminData()
+  }
+}
+
+function renderSettlements(settlements, members) {
+  const emptyEl = document.getElementById('admin-settle-empty')
+  const wrap = document.getElementById('admin-settle-wrap')
+  const hasSettlements = settlements.length > 0
+  if (emptyEl) emptyEl.style.display = hasSettlements ? 'none' : 'block'
+  if (wrap) wrap.style.display = hasSettlements ? 'block' : 'none'
+
+  const pendingTotal = settlements.filter(s => s.status === 'pending').reduce((sum, s) => sum + Number(s.amount || 0), 0)
+  const paidTotal = settlements.filter(s => s.status === 'completed' || s.status === 'paid').reduce((sum, s) => sum + Number(s.amount || 0), 0)
+  const pendingTotalEl = document.getElementById('settle-pending-total')
+  const paidTotalEl = document.getElementById('settle-paid-total')
+  const pendingSubEl = document.getElementById('settle-pending-sub')
+  if (pendingTotalEl) pendingTotalEl.textContent = '₩' + pendingTotal.toLocaleString()
+  if (paidTotalEl) paidTotalEl.textContent = '₩' + paidTotal.toLocaleString()
+  if (pendingSubEl) pendingSubEl.textContent = settlements.filter(s => s.status === 'pending').length + '건 대기중'
+
+  if (!hasSettlements) return
+
+  const nameMap = {}
+  ;(members || []).forEach(m => { nameMap[m.id] = m.company_name })
+  const statusLabel = { pending: '대기중', processing: '처리중', completed: '정산완료', paid: '정산완료', failed: '실패' }
+
+  document.getElementById('admin-settle-tbody').innerHTML = settlements.map(s => `
+    <tr>
+      <td class="td-m">${nameMap[s.brand] || '-'}</td>
+      <td class="td-m">${nameMap[s.creator] || '-'}</td>
+      <td>₩${Number(s.amount).toLocaleString()}</td>
+      <td><span class="badge ${s.status === 'pending' ? 'ba2' : 'bg2'}">${statusLabel[s.status] || s.status}</span></td>
+      <td class="td-m">${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+      <td>
+        ${s.status === 'pending'
+          ? `<button class="act-btn green" onclick="setSettleStatus('${s.id}','completed')">지급 완료 처리</button>`
+          : '-'}
+      </td>
+    </tr>`).join('')
+}
+
+window.setSettleStatus = async function(settleId, status) {
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('settlements').update({ status }).eq('id', settleId).select()
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_settlements" ON public.settlements\n  FOR UPDATE\n  USING (true);')
+  } else {
+    showToast('정산 상태가 변경됐습니다 ✓')
+    loadAdminData()
   }
 }
 
@@ -664,25 +736,8 @@ function showPage(id, btn) {
   document.getElementById('pg-' + id).classList.add('act');
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
   if (btn) btn.classList.add('act');
-  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 승인', settle:'정산 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
+  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 관리', settle:'정산 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
   document.getElementById('pageTitle').textContent = titles[id] || '';
-}
-
-// 제품 승인
-function approveProduct(btn) {
-  const row = btn.closest('tr');
-  row.querySelector('td:nth-child(7)').innerHTML = '<span class="badge bg2">판매중</span>';
-  row.querySelector('td:nth-child(1) .badge') && row.querySelector('td:nth-child(1) span')?.remove();
-  btn.parentElement.innerHTML = '<button class="act-btn">상세</button><button class="act-btn red">중단</button>';
-  showToast('제품이 승인됐습니다 ✓');
-}
-
-// 신고 처리
-function resolveAlert(btn, msg) {
-  const item = btn.closest('.alert-item');
-  item.style.opacity = '.4';
-  item.style.pointerEvents = 'none';
-  showToast(msg + ' ✓');
 }
 
 // 토글 설정
@@ -719,10 +774,6 @@ function loadSettings() {
   });
   // FAQ 불러오기
   renderFaq();
-  // 관리자 아이디
-  const adminId = localStorage.getItem('vingly_admin_id') || 'admin';
-  const cur = document.getElementById('cur_admin_id');
-  if(cur) cur.textContent = adminId;
 }
 
 // 수수료 정책 저장
@@ -747,44 +798,27 @@ function saveContent() {
   showToast('✅ 콘텐츠가 저장됐습니다');
 }
 
-// 관리자 비밀번호 변경
-async function changeAdminPw() {
-  const cur  = document.getElementById('pw_current').value;
+// 관리자 비밀번호 변경 (실제 Supabase Auth 계정 비밀번호를 변경함)
+window.changeAdminPw = async function() {
   const nw   = document.getElementById('pw_new').value;
   const conf = document.getElementById('pw_confirm').value;
   const msg  = document.getElementById('pw_msg');
   msg.style.display = 'block';
 
-  if(!cur || !nw || !conf) { msg.style.color = 'var(--r2)'; msg.textContent = '모든 항목을 입력해주세요'; return; }
+  if(!nw || !conf) { msg.style.color = 'var(--r2)'; msg.textContent = '모든 항목을 입력해주세요'; return; }
   if(nw.length < 8) { msg.style.color = 'var(--r2)'; msg.textContent = '새 비밀번호는 8자 이상이어야 합니다'; return; }
   if(nw !== conf) { msg.style.color = 'var(--r2)'; msg.textContent = '새 비밀번호가 일치하지 않습니다'; return; }
 
-  const storedHash = localStorage.getItem('vingly_admin_hash');
-  const curHash = await hashPw(cur);
-  const defaultHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
-  if(storedHash && curHash !== storedHash) { msg.style.color = 'var(--r2)'; msg.textContent = '현재 비밀번호가 올바르지 않습니다'; return; }
-  if(!storedHash && curHash !== defaultHash) { msg.style.color = 'var(--r2)'; msg.textContent = '현재 비밀번호가 올바르지 않습니다'; return; }
-
-  const newHash = await hashPw(nw);
-  localStorage.setItem('vingly_admin_hash', newHash);
-  msg.style.color = 'var(--gl)'; msg.textContent = '✅ 비밀번호가 변경됐습니다';
-  document.getElementById('pw_current').value = '';
-  document.getElementById('pw_new').value = '';
-  document.getElementById('pw_confirm').value = '';
-  showToast('✅ 관리자 비밀번호 변경 완료');
-}
-
-// 관리자 아이디 변경
-function changeAdminId() {
-  const nw  = document.getElementById('new_admin_id').value.trim();
-  const msg = document.getElementById('id_msg');
-  msg.style.display = 'block';
-  if(!nw || nw.length < 3) { msg.style.color = 'var(--r2)'; msg.textContent = '아이디는 3자 이상이어야 합니다'; return; }
-  localStorage.setItem('vingly_admin_id', nw);
-  document.getElementById('cur_admin_id').textContent = nw;
-  document.getElementById('new_admin_id').value = '';
-  msg.style.color = 'var(--gl)'; msg.textContent = '✅ 아이디가 변경됐습니다';
-  showToast('✅ 관리자 아이디 변경 완료');
+  const supabase = window._supabase
+  const { error } = await supabase.auth.updateUser({ password: nw })
+  if (error) {
+    msg.style.color = 'var(--r2)'; msg.textContent = '변경 실패: ' + error.message
+    return
+  }
+  msg.style.color = 'var(--gl)'; msg.textContent = '✅ 비밀번호가 변경됐습니다'
+  document.getElementById('pw_new').value = ''
+  document.getElementById('pw_confirm').value = ''
+  showToast('✅ 관리자 비밀번호 변경 완료')
 }
 
 // FAQ 렌더링
@@ -897,7 +931,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin(); });
+
 </script>
 
 </body>
