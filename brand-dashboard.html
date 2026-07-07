@@ -163,6 +163,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <nav class="sb-nav">
     <button class="ni act" onclick="showPage('dashboard',this)"><span class="ni-ic">📊</span>대시보드</button>
     <button class="ni" onclick="showPage('products',this)"><span class="ni-ic">📦</span>제품 관리</button>
+    <button class="ni" onclick="showPage('orders',this)"><span class="ni-ic">🚚</span>주문 관리</button>
     <button class="ni" onclick="showPage('creators',this)"><span class="ni-ic">📱</span>크리에이터 현황</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ni-ic">💸</span>수익 및 비용</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ni-ic">🏦</span>정산 관리</button>
@@ -234,6 +235,23 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>이미지</th><th>제품명</th><th>가격</th><th>수수료율</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="product-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="page content" id="pg-orders">
+    <div class="card">
+      <div class="card-h"><div class="card-t">주문 목록</div></div>
+      <div id="order-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">🚚</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 결제 완료된 주문이 없습니다</div>
+        <div style="font-size:13px">구매가 발생하면 여기서 배송 상태를 관리할 수 있어요</div>
+      </div>
+      <div class="tw" id="order-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>주문일</th><th>상품명</th><th>구매자</th><th>금액</th><th>배송상태</th><th>택배사</th><th>운송장번호</th><th>관리</th></tr></thead>
+          <tbody id="order-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -438,6 +456,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         if (sbName) sbName.textContent = name
         if (sbAv) sbAv.textContent = name[0]
         loadProducts()
+        loadOrders()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -497,6 +516,76 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </tr>`).join('')
     }
     window._products = products
+  }
+
+  const COURIERS = ['CJ대한통운', '한진택배', '롯데택배', '로젠택배', '우체국택배', '경동택배', '기타']
+  const SHIP_STATUS_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
+
+  async function loadOrders() {
+    const user = window._vinglyUser
+    if (!user) return
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('brand', user.id)
+      .in('status', ['confirmed', 'settled'])
+      .order('created_at', { ascending: false })
+
+    const hasOrders = orders && orders.length > 0
+    document.getElementById('order-empty').style.display = hasOrders ? 'none' : 'block'
+    document.getElementById('order-table-wrap').style.display = hasOrders ? 'block' : 'none'
+    if (!hasOrders) return
+
+    // 상품명 조회 (products 테이블에서 필요한 것만 한 번에)
+    const productIds = [...new Set(orders.map(o => o.product).filter(Boolean))]
+    let productMap = {}
+    if (productIds.length) {
+      const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
+      ;(prods || []).forEach(p => { productMap[p.id] = p.name })
+    }
+
+    document.getElementById('order-tbody').innerHTML = orders.map(o => {
+      const shipStatus = o.shipping_status || 'preparing'
+      const dateStr = o.created_at ? new Date(o.created_at).toLocaleDateString('ko-KR') : '-'
+      return `
+      <tr>
+        <td>${dateStr}</td>
+        <td class="td-b">${productMap[o.product] || '-'}</td>
+        <td>${o.buyer_name || '-'}</td>
+        <td>₩${Number(o.amount).toLocaleString()}</td>
+        <td>
+          <select id="ship-status-${o.id}" style="padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:600 12.5px/1 'Pretendard',sans-serif;font-family:inherit">
+            ${Object.entries(SHIP_STATUS_LABEL).map(([v, label]) =>
+              `<option value="${v}" ${v === shipStatus ? 'selected' : ''}>${label}</option>`).join('')}
+          </select>
+        </td>
+        <td>
+          <select id="courier-${o.id}" style="padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:400 12.5px/1 'Pretendard',sans-serif;font-family:inherit">
+            <option value="">선택</option>
+            ${COURIERS.map(c => `<option value="${c}" ${o.courier === c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </td>
+        <td><input id="tracking-${o.id}" type="text" value="${o.tracking_number || ''}" placeholder="운송장번호" style="width:130px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:400 12.5px/1 'Pretendard',sans-serif;font-family:inherit"></td>
+        <td><button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button></td>
+      </tr>`
+    }).join('')
+  }
+
+  window.saveShipping = async function(orderId) {
+    const shipping_status = document.getElementById(`ship-status-${orderId}`).value
+    const courier = document.getElementById(`courier-${orderId}`).value
+    const tracking_number = document.getElementById(`tracking-${orderId}`).value.trim()
+
+    const { error } = await supabase
+      .from('orders')
+      .update({ shipping_status, courier: courier || null, tracking_number: tracking_number || null })
+      .eq('id', orderId)
+
+    if (error) {
+      alert('저장에 실패했습니다: ' + error.message)
+    } else {
+      alert('배송 정보가 저장됐습니다.')
+    }
   }
 
   window.editProduct = function(id) {
@@ -734,7 +823,7 @@ function showPage(id, btn) {
   document.getElementById('pg-'+id).classList.add('act')
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'))
   if (btn) btn.classList.add('act')
-  const titles = {dashboard:'대시보드',products:'제품 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
+  const titles = {dashboard:'대시보드',products:'제품 관리',orders:'주문 관리',creators:'크리에이터 현황',revenue:'수익 및 비용',settle:'정산 관리',sample:'샘플 관리',settings:'내 설정'}
   document.getElementById('page-title').textContent = titles[id] || ''
   document.getElementById('mob-title').textContent = titles[id] || ''
   closeSidebar()
