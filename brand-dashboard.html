@@ -85,6 +85,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
 .bam{background:var(--amber-bg);color:var(--amber)}
+.br{background:var(--red-bg);color:var(--red)}
 .flow-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
 .flow-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
 .fl-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
@@ -326,7 +327,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-sample">
     <div class="card">
       <div class="card-h"><div class="card-t">샘플 신청 목록</div></div>
-      <div class="tw"><table><thead><tr><th>신청일</th><th>크리에이터</th><th>제품</th><th>상태</th><th>처리</th></tr></thead><tbody><tr><td colspan="5" style="text-align:center;padding:28px;color:rgba(10,12,16,.35);font-size:13px">아직 샘플 신청이 없습니다</td></tr></tbody></table></div>
+      <div id="sample-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">🎁</div>
+        <div style="font-size:14px;font-weight:600">아직 샘플 신청이 없습니다</div>
+      </div>
+      <div class="tw" id="sample-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>신청일</th><th>크리에이터</th><th>제품</th><th>배송지</th><th>상태</th><th>처리</th></tr></thead>
+          <tbody id="sample-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -445,6 +455,28 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
     </div>
 
+    <div class="sec-title">샘플 제공 설정 <span style="text-transform:none;font-weight:400;color:var(--ink-40)">(선택)</span></div>
+    <div style="background:var(--ink-07);border-radius:12px;padding:16px;margin-bottom:24px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:14px">
+        <input type="checkbox" id="p_sample_available" onchange="toggleSampleFields(this.checked)" style="width:18px;height:18px;cursor:pointer">
+        <span style="font:700 14px/1 'Pretendard',sans-serif">크리에이터에게 샘플을 제공합니다</span>
+      </label>
+      <div id="sampleFields" style="display:none;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">제공 수량</label>
+          <input id="p_sample_qty" type="number" min="1" placeholder="예: 10" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        </div>
+        <div>
+          <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">최소 팔로워 조건</label>
+          <input id="p_sample_min_followers" type="number" min="0" placeholder="예: 1000" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">신청 마감일</label>
+          <input id="p_sample_deadline" type="date" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--white);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        </div>
+      </div>
+    </div>
+
     <div id="product_err" style="font:600 13px/1 'Pretendard',sans-serif;color:var(--red);display:none;margin-bottom:12px"></div>
     <button id="saveBtn" onclick="saveProduct()" style="width:100%;padding:14px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 15px/1 'Pretendard',sans-serif;cursor:pointer;min-height:50px">등록하기</button>
   </div>
@@ -477,6 +509,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadProducts()
         loadOrders()
         loadReports()
+        loadSamples()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -676,6 +709,88 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
+  async function loadSamples() {
+    const { data: samples } = await supabase
+      .from('samples')
+      .select('*')
+      .order('created_at', { ascending: false })
+    const allSamples = samples || []
+
+    let productMap = {}, creatorMap = {}
+    if (allSamples.length) {
+      const productIds = [...new Set(allSamples.map(s => s.product).filter(Boolean))]
+      const creatorIds = [...new Set(allSamples.map(s => s.creator).filter(Boolean))]
+      if (productIds.length) {
+        const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
+        ;(prods || []).forEach(p => { productMap[p.id] = p.name })
+      }
+      if (creatorIds.length) {
+        const { data: creators } = await supabase.from('users').select('id,company_name').in('id', creatorIds)
+        ;(creators || []).forEach(c => { creatorMap[c.id] = c.company_name })
+      }
+    }
+
+    renderSamples(allSamples, productMap, creatorMap)
+  }
+
+  function renderSamples(samples, productMap, creatorMap) {
+    const emptyEl = document.getElementById('sample-empty')
+    const wrap = document.getElementById('sample-table-wrap')
+    const hasSamples = samples.length > 0
+    if (emptyEl) emptyEl.style.display = hasSamples ? 'none' : 'block'
+    if (wrap) wrap.style.display = hasSamples ? 'block' : 'none'
+    if (!hasSamples) return
+
+    const statusLabel = { requested: '신청됨', approved: '승인됨', rejected: '거절됨', sent: '발송완료' }
+    const statusBadge = { requested: 'bam', approved: 'bg', rejected: 'br', sent: 'bg' }
+
+    document.getElementById('sample-tbody').innerHTML = samples.map(s => `
+      <tr>
+        <td>${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
+        <td class="td-b">${creatorMap[s.creator] || '-'}</td>
+        <td>${productMap[s.product] || '-'}</td>
+        <td class="td-m" style="max-width:200px;white-space:normal">${s.shipping_address || '-'}</td>
+        <td><span class="badge ${statusBadge[s.status] || 'bg'}">${statusLabel[s.status] || s.status}</span></td>
+        <td>
+          ${s.status === 'requested'
+            ? `<button class="act-btn green" onclick="setSampleStatus('${s.id}','approved')">승인</button>
+               <button class="act-btn red" onclick="setSampleStatus('${s.id}','rejected')">거절</button>`
+            : s.status === 'approved'
+              ? `<button class="act-btn green" onclick="markSampleSent('${s.id}')">발송 처리</button>`
+              : '-'}
+        </td>
+      </tr>`).join('')
+  }
+
+  window.setSampleStatus = async function(sampleId, status) {
+    const { data, error } = await supabase.from('samples').update({ status }).eq('id', sampleId).select()
+    if (error) {
+      alert('처리 실패: ' + error.message)
+    } else if (!data || data.length === 0) {
+      alert('처리가 안 됐습니다 (권한 문제로 보입니다). brand_can_update_own_product_samples 정책을 확인해주세요.')
+    } else {
+      showToast('샘플 신청 상태가 변경됐습니다 ✓')
+      loadSamples()
+    }
+  }
+
+  window.markSampleSent = async function(sampleId) {
+    const tracking = prompt('운송장번호를 입력해주세요 (선택, 취소해도 발송 처리됩니다)')
+    const { data, error } = await supabase
+      .from('samples')
+      .update({ status: 'sent', tracking_number: tracking || null })
+      .eq('id', sampleId)
+      .select()
+    if (error) {
+      alert('처리 실패: ' + error.message)
+    } else if (!data || data.length === 0) {
+      alert('처리가 안 됐습니다 (권한 문제로 보입니다). brand_can_update_own_product_samples 정책을 확인해주세요.')
+    } else {
+      showToast('발송 처리됐습니다 ✓')
+      loadSamples()
+    }
+  }
+
   window.editProduct = function(id) {
     const p = (window._products || []).find(x => x.id === id)
     if (!p) return
@@ -692,6 +807,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('p_desc').value = p.description || ''
     document.getElementById('p_target').value = p.target_audience || ''
     document.getElementById('p_creator_msg').value = p.creator_message || ''
+    document.getElementById('p_sample_available').checked = !!p.sample_available
+    document.getElementById('p_sample_qty').value = p.sample_qty || ''
+    document.getElementById('p_sample_min_followers').value = p.sample_min_followers || ''
+    document.getElementById('p_sample_deadline').value = p.sample_deadline || ''
+    toggleSampleFields(!!p.sample_available)
     uploadedImages.forEach((url, i) => {
       const slot = document.getElementById(`slot-${i}`)
       const existing = slot.querySelector('img.preview')
@@ -724,6 +844,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const target = document.getElementById('p_target').value.trim()
     const creatorMsg = document.getElementById('p_creator_msg').value.trim()
     const kps = [...document.querySelectorAll('.kp-input')].map(i => i.value.trim()).filter(Boolean)
+    const sampleAvailable = document.getElementById('p_sample_available').checked
+    const sampleQty = parseInt(document.getElementById('p_sample_qty').value) || null
+    const sampleMinFollowers = parseInt(document.getElementById('p_sample_min_followers').value) || null
+    const sampleDeadline = document.getElementById('p_sample_deadline').value || null
     const errEl = document.getElementById('product_err')
 
     if (!name || !price || !category || !commission) {
@@ -756,7 +880,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const images = uploadedImages.filter(Boolean)
     const image_url = images[0] || null
-    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, key_points: kps, images, image_url, status: 'active' }
+    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, key_points: kps, images, image_url, status: 'active', sample_available: sampleAvailable, sample_qty: sampleQty, sample_min_followers: sampleMinFollowers, sample_deadline: sampleDeadline }
 
     let error
     if (editingProductId) {
@@ -1011,11 +1135,19 @@ function openProductModal() {
   document.getElementById('saveBtn').textContent = '등록하기'
   document.getElementById('product_err').style.display = 'none'
   ;['p_name','p_price','p_stock','p_category','p_commission','p_desc','p_target','p_creator_msg'].forEach(id => { const el = document.getElementById(id); if (el) el.value = '' })
+  document.getElementById('p_sample_available').checked = false
+  document.getElementById('p_sample_qty').value = ''
+  document.getElementById('p_sample_min_followers').value = ''
+  document.getElementById('p_sample_deadline').value = ''
+  toggleSampleFields(false)
   ;[0,1,2].forEach(i => { const slot = document.getElementById(`slot-${i}`); const img = slot?.querySelector('img.preview'); if (img) img.remove(); const input = document.getElementById(`img-input-${i}`); if (input) input.value = '' })
   document.getElementById('kp-list').innerHTML = `
     <div class="kp-row"><input class="kp-input" placeholder="예: 무방부제, 천연 성분 100%" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>
     <div class="kp-row"><input class="kp-input" placeholder="예: 피부과 테스트 완료" maxlength="50"><button class="kp-del" onclick="removeKP(this)">✕</button></div>`
   document.getElementById('productModal').style.display = 'flex'
+}
+function toggleSampleFields(checked) {
+  document.getElementById('sampleFields').style.display = checked ? 'grid' : 'none'
 }
 function closeProductModal() { document.getElementById('productModal').style.display = 'none'; window.editingProductId = null }
 function addKP() {
