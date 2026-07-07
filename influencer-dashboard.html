@@ -5,6 +5,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK606P"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -364,6 +365,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div id="exp-modal-content"></div>
       </div>
     </div>
+
+    <!-- 샘플 신청 모달 -->
+    <div id="sample-req-ov" onclick="if(event.target===this)closeSampleRequestModal()" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:20px;width:100%;max-width:420px;padding:28px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.2);max-height:92vh;overflow-y:auto">
+        <button onclick="closeSampleRequestModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.08);border:none;cursor:pointer;font-size:14px;color:var(--ink-40)">✕</button>
+        <div style="font:800 18px/1 'Pretendard',sans-serif;margin-bottom:6px">🎁 샘플 신청</div>
+        <div id="sample-req-product-name" style="font:400 13px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:20px"></div>
+
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">배송지 주소 *</label>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" id="sr_zonecode" placeholder="우편번호" readonly style="flex:0 0 100px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);color:var(--ink-70);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit">
+          <button type="button" onclick="execSampleDaumPostcode()" style="flex-shrink:0;padding:0 14px;border-radius:9px;border:1.5px solid var(--ink-14);background:#fff;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">🔍 주소 검색</button>
+        </div>
+        <input type="text" id="sr_address" placeholder="주소 검색을 눌러주세요" readonly style="width:100%;margin-bottom:8px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);color:var(--ink-70);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;box-sizing:border-box">
+        <input type="text" id="sr_address_detail" placeholder="상세주소 (동/호수 등)" style="width:100%;margin-bottom:16px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;box-sizing:border-box">
+
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">브랜드에게 전달할 메시지 <span style="font-weight:400;color:var(--ink-40)">(선택)</span></label>
+        <textarea id="sr_note" placeholder="예: 이런 콘텐츠로 소개하고 싶어요, 배송 시 요청사항 등" rows="3" style="width:100%;margin-bottom:16px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+
+        <div id="sample-req-err" style="display:none;font:600 13px/1.5 'Pretendard',sans-serif;color:#DC2626;margin-bottom:12px"></div>
+        <button id="sample-req-submit-btn" onclick="submitSampleRequest()" style="width:100%;padding:13px;border-radius:10px;border:none;background:#7C3AED;color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">신청하기</button>
+      </div>
+    </div>
   </div>
 
   <!-- 링크 관리 -->
@@ -506,33 +530,82 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     window._mySamples = data || []
   }
 
-  window.expRequestSample = async function(productId) {
-    const supabase = window._supabase
-    const user = window._vinglyUser
-    if (!supabase || !user) return
-
+  window.expRequestSample = function(productId) {
     const product = expProducts.find(p => p.id === productId)
     if (!product || !product.brand_user) {
       alert('제품 정보를 확인할 수 없습니다. 새로고침 후 다시 시도해주세요.')
       return
     }
+    window._sampleReqProductId = productId
+    document.getElementById('sample-req-product-name').textContent = product.name
+    document.getElementById('sr_zonecode').value = ''
+    document.getElementById('sr_address').value = ''
+    document.getElementById('sr_address_detail').value = ''
+    document.getElementById('sr_note').value = ''
+    document.getElementById('sample-req-err').style.display = 'none'
+    document.getElementById('sample-req-ov').style.display = 'flex'
+  }
 
-    const address = prompt('샘플을 받으실 배송지 주소를 입력해주세요.')
-    if (!address || !address.trim()) return
-    const note = prompt('브랜드에게 전달할 메시지가 있다면 입력해주세요 (선택, 취소해도 신청됩니다)') || null
+  window.closeSampleRequestModal = function() {
+    document.getElementById('sample-req-ov').style.display = 'none'
+  }
+
+  window.execSampleDaumPostcode = function() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        document.getElementById('sr_zonecode').value = data.zonecode
+        document.getElementById('sr_address').value = data.roadAddress || data.jibunAddress
+        document.getElementById('sr_address_detail').focus()
+      }
+    }).open()
+  }
+
+  window.submitSampleRequest = async function() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+
+    const productId = window._sampleReqProductId
+    const product = expProducts.find(p => p.id === productId)
+    const errEl = document.getElementById('sample-req-err')
+    const zonecode = document.getElementById('sr_zonecode').value.trim()
+    const roadAddress = document.getElementById('sr_address').value.trim()
+    const addressDetail = document.getElementById('sr_address_detail').value.trim()
+    const note = document.getElementById('sr_note').value.trim() || null
+
+    if (!roadAddress) {
+      errEl.textContent = '배송지 주소를 검색해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (!addressDetail) {
+      errEl.textContent = '상세주소(동/호수 등)를 입력해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const address = `[${zonecode}] ${roadAddress} ${addressDetail}`.trim()
+    const btn = document.getElementById('sample-req-submit-btn')
+    btn.disabled = true
+    btn.textContent = '신청 중...'
 
     const { error } = await supabase.from('samples').insert({
       product: productId,
       creator: user.id,
       brand: product.brand_user,
-      shipping_address: address.trim(),
+      shipping_address: address,
       note,
       status: 'requested',
     })
 
+    btn.disabled = false
+    btn.textContent = '신청하기'
+
     if (error) {
-      alert('신청 실패: ' + error.message)
+      errEl.textContent = '신청 실패: ' + error.message
+      errEl.style.display = 'block'
     } else {
+      closeSampleRequestModal()
       alert('샘플 신청이 접수됐어요. 브랜드 승인 후 발송됩니다.')
       await loadMySamples()
       expOpenProduct(productId)
