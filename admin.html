@@ -741,61 +741,92 @@ function showPage(id, btn) {
 }
 
 // 토글 설정
-function toggleSetting(el, key) {
-  el.classList.toggle('on');
-  const settings = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
-  settings[key] = el.classList.contains('on');
-  localStorage.setItem('vingly_settings', JSON.stringify(settings));
-  showToast((el.classList.contains('on') ? '✅ ' : '⭕ ') + key + ' 변경됨');
+// ── app_settings 테이블 헬퍼 (key-value 구조) ──
+async function getAllSettings() {
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('app_settings').select('key,value')
+  if (error) { console.error('설정 조회 실패:', error); return {} }
+  const map = {}
+  ;(data || []).forEach(r => { map[r.key] = r.value })
+  return map
+}
+
+// 실제로 행이 반영됐는지까지 확인 (RLS로 조용히 0건 처리되는 경우 감지)
+async function setSetting(key, value) {
+  const supabase = window._supabase
+  const { data, error } = await supabase
+    .from('app_settings')
+    .upsert({ key, value: String(value), updated_at: new Date().toISOString() }, { onConflict: 'key' })
+    .select()
+  if (error) return error
+  if (!data || data.length === 0) return { message: 'silent-fail' }
+  return null
+}
+
+function settingsPermissionHint() {
+  return '저장이 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_manage_app_settings" ON public.app_settings\n  FOR ALL\n  USING ((auth.jwt() -> \'user_metadata\' ->> \'role\') = \'admin\')\n  WITH CHECK ((auth.jwt() -> \'user_metadata\' ->> \'role\') = \'admin\');'
+}
+
+window.toggleSetting = async function(el, key) {
+  el.classList.toggle('on')
+  const newVal = el.classList.contains('on')
+  const error = await setSetting('toggle_' + key, newVal)
+  if (error) {
+    el.classList.toggle('on') // 실패 시 원복
+    alert(settingsPermissionHint())
+    return
+  }
+  showToast((newVal ? '✅ ' : '⭕ ') + key + ' 변경됨')
 }
 
 // 설정 값 불러오기
-function loadSettings() {
-  const s = JSON.parse(localStorage.getItem('vingly_settings') || '{}');
-  const keys = ['pilot','signup','maintenance','payment'];
+async function loadSettings() {
+  const settings = await getAllSettings()
+  const keys = ['pilot','signup','maintenance','payment']
   keys.forEach(k => {
-    const el = document.getElementById('tog_' + k);
-    if(!el) return;
+    const el = document.getElementById('tog_' + k)
+    if (!el) return
     // 기본값: pilot=on, signup=on, 나머지=off
-    const def = (k === 'pilot' || k === 'signup');
-    if(s[k] === undefined ? def : s[k]) el.classList.add('on');
-    else el.classList.remove('on');
-  });
+    const def = (k === 'pilot' || k === 'signup')
+    const raw = settings['toggle_' + k]
+    const val = raw === undefined ? def : raw === 'true'
+    if (val) el.classList.add('on')
+    else el.classList.remove('on')
+  })
   // 수수료 정책 불러오기
-  const fees = JSON.parse(localStorage.getItem('vingly_fees') || '{}');
-  if(fees.normal !== undefined) document.getElementById('fee_normal').value = fees.normal;
-  if(fees.early !== undefined)  document.getElementById('fee_early').value  = fees.early;
-  if(fees.target !== undefined) document.getElementById('fee_target').value = fees.target;
+  if (settings.fee_normal !== undefined) document.getElementById('fee_normal').value = settings.fee_normal
+  if (settings.fee_early !== undefined)  document.getElementById('fee_early').value  = settings.fee_early
+  if (settings.fee_target !== undefined) document.getElementById('fee_target').value = settings.fee_target
   // 콘텐츠 불러오기
-  const content = JSON.parse(localStorage.getItem('vingly_content') || '{}');
   ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el && content[id]) el.value = content[id];
-  });
+    const el = document.getElementById(id)
+    if (el && settings[id] !== undefined) el.value = settings[id]
+  })
   // FAQ 불러오기
-  renderFaq();
+  window._faqCache = settings.faq ? JSON.parse(settings.faq) : []
+  renderFaq()
 }
 
 // 수수료 정책 저장
-function saveFeePolicy() {
-  const fees = {
-    normal: document.getElementById('fee_normal').value,
-    early:  document.getElementById('fee_early').value,
-    target: document.getElementById('fee_target').value,
-  };
-  localStorage.setItem('vingly_fees', JSON.stringify(fees));
-  showToast('✅ 수수료 정책이 저장됐습니다');
+window.saveFeePolicy = async function() {
+  const normal = document.getElementById('fee_normal').value
+  const early  = document.getElementById('fee_early').value
+  const target = document.getElementById('fee_target').value
+  const errors = await Promise.all([
+    setSetting('fee_normal', normal),
+    setSetting('fee_early', early),
+    setSetting('fee_target', target),
+  ])
+  if (errors.some(Boolean)) { alert(settingsPermissionHint()); return }
+  showToast('✅ 수수료 정책이 저장됐습니다')
 }
 
 // 콘텐츠 저장
-function saveContent() {
-  const content = {};
-  ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) content[id] = el.value;
-  });
-  localStorage.setItem('vingly_content', JSON.stringify(content));
-  showToast('✅ 콘텐츠가 저장됐습니다');
+window.saveContent = async function() {
+  const ids = ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email']
+  const errors = await Promise.all(ids.map(id => setSetting(id, document.getElementById(id).value)))
+  if (errors.some(Boolean)) { alert(settingsPermissionHint()); return }
+  showToast('✅ 콘텐츠가 저장됐습니다')
 }
 
 // 관리자 비밀번호 변경 (실제 Supabase Auth 계정 비밀번호를 변경함)
@@ -823,7 +854,7 @@ window.changeAdminPw = async function() {
 
 // FAQ 렌더링
 function renderFaq() {
-  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
+  const faqs = window._faqCache || [];
   const list = document.getElementById('faq_list');
   const empty = document.getElementById('faq_empty');
   if(!list) return;
@@ -837,24 +868,28 @@ function renderFaq() {
     </div>`).join('');
 }
 
-function addFaq() {
-  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
-  faqs.push({ q: '', a: '' });
-  localStorage.setItem('vingly_faq', JSON.stringify(faqs));
-  renderFaq();
+window.addFaq = async function() {
+  window._faqCache = window._faqCache || []
+  window._faqCache.push({ q: '', a: '' })
+  const error = await setSetting('faq', JSON.stringify(window._faqCache))
+  if (error) { alert(settingsPermissionHint()); return }
+  renderFaq()
 }
 
-function updateFaq(i, field, val) {
-  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
-  if(faqs[i]) { faqs[i][field] = val; localStorage.setItem('vingly_faq', JSON.stringify(faqs)); }
+window.updateFaq = async function(i, field, val) {
+  if (window._faqCache && window._faqCache[i]) {
+    window._faqCache[i][field] = val
+    const error = await setSetting('faq', JSON.stringify(window._faqCache))
+    if (error) alert(settingsPermissionHint())
+  }
 }
 
-function deleteFaq(i) {
-  const faqs = JSON.parse(localStorage.getItem('vingly_faq') || '[]');
-  faqs.splice(i, 1);
-  localStorage.setItem('vingly_faq', JSON.stringify(faqs));
-  renderFaq();
-  showToast('FAQ 항목이 삭제됐습니다');
+window.deleteFaq = async function(i) {
+  window._faqCache.splice(i, 1)
+  const error = await setSetting('faq', JSON.stringify(window._faqCache))
+  if (error) { alert(settingsPermissionHint()); return }
+  renderFaq()
+  showToast('FAQ 항목이 삭제됐습니다')
 }
 
 // 회원 모달
