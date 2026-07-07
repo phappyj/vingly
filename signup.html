@@ -347,11 +347,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const { data } = await supabase.from('app_settings').select('key,value').eq('key', 'toggle_signup')
     const row = (data || [])[0]
     if (row && row.value === 'false') {
-      document.querySelector('.container').innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;padding:20px">
+      document.body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;padding:20px;font-family:'Pretendard',sans-serif;background:#F9F8F4;box-sizing:border-box">
           <div style="text-align:center;max-width:400px">
             <div style="font-size:40px;margin-bottom:16px">🚧</div>
-            <div style="font:800 20px/1.4 'Pretendard',sans-serif;margin-bottom:8px">현재 신규 가입을 받고 있지 않아요</div>
+            <div style="font:800 20px/1.4 'Pretendard',sans-serif;margin-bottom:8px;color:#0A0C10">현재 신규 가입을 받고 있지 않아요</div>
             <div style="font:400 14px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.55);margin-bottom:20px">잠시 후 다시 시도해주시거나, 문의사항이 있으시면 연락해주세요.</div>
             <a href="index.html" style="display:inline-block;padding:12px 24px;border-radius:10px;background:#1D4ED8;color:#fff;text-decoration:none;font-weight:700;font-size:14px">홈으로 돌아가기</a>
           </div>
