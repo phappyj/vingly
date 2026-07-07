@@ -287,14 +287,20 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- 수익 현황 -->
   <div class="page content" id="pg-earn">
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="earn-month-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="earn-month-sub">링크 생성 후 시작</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val">₩0</div><div class="sc-ch nt">첫 판매를 기다리는 중</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val" id="earn-net-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val" id="earn-total-val">₩0</div><div class="sc-ch nt" id="earn-total-sub">첫 판매를 기다리는 중</div></div>
     </div>
     <div class="card">
       <div class="card-h"><div class="card-t">수익 명세</div></div>
-      <div style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)"><div style="font-size:28px;margin-bottom:8px">💸</div><div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div></div>
+      <div id="earn-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)"><div style="font-size:28px;margin-bottom:8px">💸</div><div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div></div>
+      <div class="tw" id="earn-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>일시</th><th>제품</th><th>주문금액</th><th>내 수익</th><th>상태</th></tr></thead>
+          <tbody id="earn-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -303,20 +309,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="grade-card grade-current">
         <span class="gc-badge gc-b-curr">현재 등급</span>
-        <div style="font-size:28px;margin-bottom:8px">⚡</div>
-        <div class="gc-name">Active</div>
-        <div class="gc-cond">누적 0건 판매 완료</div>
+        <div id="grade-cur-icon" style="font-size:28px;margin-bottom:8px">🌱</div>
+        <div class="gc-name" id="grade-cur-name">New</div>
+        <div class="gc-cond" id="grade-cur-cond">누적 0건 판매 완료</div>
       </div>
-      <div class="grade-card grade-next">
+      <div class="grade-card grade-next" id="grade-next-card">
         <span class="gc-badge gc-b-next">다음 등급</span>
-        <div style="font-size:28px;margin-bottom:8px">🔥</div>
-        <div class="gc-name">Pro</div>
-        <div class="gc-cond">누적 판매 50건 달성 시</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font:500 13px/1.4 'Pretendard',sans-serif;color:var(--ink-70)">
-          <li>→ 프리미엄 제품 전용 접근</li>
-          <li>→ 수수료 전환 후 -1%p 추가 할인</li>
-          <li>→ 전담 매니저 배정</li>
-        </ul>
+        <div id="grade-next-icon" style="font-size:28px;margin-bottom:8px">⚡</div>
+        <div class="gc-name" id="grade-next-name">Active</div>
+        <div class="gc-cond" id="grade-next-cond">누적 판매 10건 달성 시</div>
+        <ul id="grade-next-perks" style="list-style:none;display:flex;flex-direction:column;gap:8px;font:500 13px/1.4 'Pretendard',sans-serif;color:var(--ink-70)"></ul>
       </div>
     </div>
     <div class="card">
@@ -472,9 +474,98 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         if (sbAv) sbAv.textContent = name[0]
         loadMyLinks()
         loadMySamples()
+        loadEarnings()
       })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
+    }
+  }
+
+  async function loadEarnings() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('amount,creator_fee,status,created_at,product')
+      .eq('creator', user.id)
+      .in('status', ['confirmed', 'settled'])
+      .order('created_at', { ascending: false })
+
+    const allOrders = orders || []
+    const now = new Date()
+    const thisMonthOrders = allOrders.filter(o => {
+      const d = new Date(o.created_at)
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+    })
+    const monthTotal = thisMonthOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
+    const grandTotal = allOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
+
+    const monthValEl = document.getElementById('earn-month-val')
+    const monthSubEl = document.getElementById('earn-month-sub')
+    const netValEl = document.getElementById('earn-net-val')
+    const totalValEl = document.getElementById('earn-total-val')
+    const totalSubEl = document.getElementById('earn-total-sub')
+    if (monthValEl) monthValEl.textContent = '₩' + monthTotal.toLocaleString()
+    if (monthSubEl) monthSubEl.textContent = thisMonthOrders.length > 0 ? `이번 달 ${thisMonthOrders.length}건` : '아직 이번 달 판매 없음'
+    if (netValEl) netValEl.textContent = '₩' + monthTotal.toLocaleString()
+    if (totalValEl) totalValEl.textContent = '₩' + grandTotal.toLocaleString()
+    if (totalSubEl) totalSubEl.textContent = allOrders.length > 0 ? `누적 ${allOrders.length}건 판매` : '첫 판매를 기다리는 중'
+
+    // 수익 명세 테이블
+    const emptyEl = document.getElementById('earn-empty')
+    const wrapEl = document.getElementById('earn-table-wrap')
+    const hasOrders = allOrders.length > 0
+    if (emptyEl) emptyEl.style.display = hasOrders ? 'none' : 'block'
+    if (wrapEl) wrapEl.style.display = hasOrders ? 'block' : 'none'
+    if (hasOrders) {
+      const productIds = [...new Set(allOrders.map(o => o.product).filter(Boolean))]
+      let productMap = {}
+      if (productIds.length) {
+        const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
+        ;(prods || []).forEach(p => { productMap[p.id] = p.name })
+      }
+      const statusLabel = { confirmed: '정산 대기', settled: '정산 완료' }
+      document.getElementById('earn-tbody').innerHTML = allOrders.map(o => `
+        <tr>
+          <td>${new Date(o.created_at).toLocaleDateString('ko-KR')}</td>
+          <td class="td-b">${productMap[o.product] || '-'}</td>
+          <td>₩${Number(o.amount).toLocaleString()}</td>
+          <td style="color:var(--green);font-weight:700">+₩${Number(o.creator_fee).toLocaleString()}</td>
+          <td>${statusLabel[o.status] || o.status}</td>
+        </tr>`).join('')
+    }
+
+    // 등급 계산
+    const salesCount = allOrders.length
+    const TIERS = [
+      { name: 'New', icon: '🌱', min: 0, perks: ['전체 제품 탐색 가능', '링크 생성 무제한', '파일럿 수수료 100%'] },
+      { name: 'Active', icon: '⚡', min: 10, perks: ['신규 제품 우선 접근', '전환 후 수수료 -0.5%p', '월간 실적 리포트'] },
+      { name: 'Pro', icon: '🔥', min: 50, perks: ['프리미엄 제품 전용 접근', '전환 후 수수료 -1%p', '전담 매니저 배정', '단독 할인코드 발급'] },
+      { name: 'Elite', icon: '👑', min: 200, perks: ['입점 전 독점 제품 협의', '최저 수수료율 영구 고정', '공식 파트너 인증', '단독 캠페인 기회'] },
+    ]
+    let curIdx = 0
+    for (let i = TIERS.length - 1; i >= 0; i--) { if (salesCount >= TIERS[i].min) { curIdx = i; break } }
+    const cur = TIERS[curIdx]
+    const next = TIERS[curIdx + 1]
+
+    const curIconEl = document.getElementById('grade-cur-icon')
+    const curNameEl = document.getElementById('grade-cur-name')
+    const curCondEl = document.getElementById('grade-cur-cond')
+    if (curIconEl) curIconEl.textContent = cur.icon
+    if (curNameEl) curNameEl.textContent = cur.name
+    if (curCondEl) curCondEl.textContent = `누적 ${salesCount}건 판매 완료`
+
+    const nextCard = document.getElementById('grade-next-card')
+    if (next) {
+      if (nextCard) nextCard.style.display = ''
+      document.getElementById('grade-next-icon').textContent = next.icon
+      document.getElementById('grade-next-name').textContent = next.name
+      document.getElementById('grade-next-cond').textContent = `누적 판매 ${next.min}건 달성 시 (${next.min - salesCount}건 남음)`
+      document.getElementById('grade-next-perks').innerHTML = next.perks.map(p => `<li>→ ${p}</li>`).join('')
+    } else if (nextCard) {
+      nextCard.style.display = 'none'
     }
   }
 

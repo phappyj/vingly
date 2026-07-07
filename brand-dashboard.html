@@ -283,28 +283,34 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-creators">
     <div class="card">
       <div class="card-h"><div class="card-t">연결된 크리에이터</div></div>
-      <div style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+      <div id="creators-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📭</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 연결된 크리에이터가 없습니다</div>
         <div style="font-size:13px">제품을 등록하면 크리에이터가 자동으로 매칭됩니다</div>
+      </div>
+      <div class="tw" id="creators-table-wrap" style="display:none">
+        <table>
+          <thead><tr><th>크리에이터</th><th>연결 제품 수</th><th>클릭 수</th><th>구매 전환 수</th></tr></thead>
+          <tbody id="creators-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
   <div class="page content" id="pg-revenue">
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩0</div><div class="sc-ch">첫 판매를 기다리는 중</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val">₩0</div><div class="sc-ch">연결된 크리에이터 0명</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val">₩0</div><div class="sc-ch">2.2% 토스</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="rev-total-val">₩0</div><div class="sc-ch" id="rev-total-sub">첫 판매를 기다리는 중</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-creator-fee-val">₩0</div><div class="sc-ch" id="rev-creator-count">연결된 크리에이터 0명</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val" id="rev-pg-fee-val">₩0</div><div class="sc-ch">2.2% 토스</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
     </div>
     <div class="card">
       <div class="card-h"><div class="card-t">이번 달 수익 명세</div></div>
-      <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r">₩0</div></div>
-      <div class="flow-row"><div class="fl-l">크리에이터 수수료</div><div class="fl-r r">-₩0</div></div>
-      <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r">-₩0</div></div>
+      <div class="flow-row"><div class="fl-l">총 매출</div><div class="fl-r" id="rev-flow-total">₩0</div></div>
+      <div class="flow-row"><div class="fl-l">크리에이터 수수료</div><div class="fl-r r" id="rev-flow-creator">-₩0</div></div>
+      <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r" id="rev-flow-pg">-₩0</div></div>
       <div class="flow-row"><div class="fl-l">Vingly 거래 수수료<small>파일럿 무료 → 정식 후 1.5% 얼리버드</small></div><div class="fl-r g">₩0</div></div>
-      <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액</div><div class="fl-r" style="font-size:18px;font-weight:800">₩0</div></div>
+      <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액</div><div class="fl-r" id="rev-flow-net" style="font-size:18px;font-weight:800">₩0</div></div>
     </div>
   </div>
 
@@ -514,6 +520,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadOrders()
         loadReports()
         loadSamples()
+        loadCreatorsAndRevenue()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -577,6 +584,85 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   const COURIERS = ['CJ대한통운', '한진택배', '롯데택배', '로젠택배', '우체국택배', '경동택배', '기타']
   const SHIP_STATUS_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
+
+  async function loadCreatorsAndRevenue() {
+    const user = window._vinglyUser
+    if (!user) return
+
+    // ── 수익 및 비용 (이번 달) ──
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('amount,creator_fee,creator,created_at')
+      .eq('brand', user.id)
+      .in('status', ['confirmed', 'settled'])
+
+    const allOrders = orders || []
+    const now = new Date()
+    const monthOrders = allOrders.filter(o => {
+      const d = new Date(o.created_at)
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+    })
+    const totalSales = monthOrders.reduce((s, o) => s + Number(o.amount || 0), 0)
+    const creatorFeeSum = monthOrders.reduce((s, o) => s + Number(o.creator_fee || 0), 0)
+    const pgFee = Math.round(totalSales * 0.022)
+    const netAmount = totalSales - creatorFeeSum - pgFee
+    const distinctCreators = new Set(monthOrders.map(o => o.creator).filter(Boolean))
+
+    const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val }
+    setText('rev-total-val', '₩' + totalSales.toLocaleString())
+    setText('rev-total-sub', monthOrders.length > 0 ? `이번 달 ${monthOrders.length}건 판매` : '첫 판매를 기다리는 중')
+    setText('rev-creator-fee-val', '₩' + creatorFeeSum.toLocaleString())
+    setText('rev-creator-count', `연결된 크리에이터 ${distinctCreators.size}명`)
+    setText('rev-pg-fee-val', '₩' + pgFee.toLocaleString())
+    setText('rev-flow-total', '₩' + totalSales.toLocaleString())
+    setText('rev-flow-creator', '-₩' + creatorFeeSum.toLocaleString())
+    setText('rev-flow-pg', '-₩' + pgFee.toLocaleString())
+    setText('rev-flow-net', '₩' + netAmount.toLocaleString())
+
+    // ── 연결된 크리에이터 ──
+    const { data: products } = await supabase.from('products').select('id').eq('brand_user', user.id)
+    const productIds = (products || []).map(p => p.id)
+
+    let links = []
+    if (productIds.length) {
+      const { data: linkData } = await supabase
+        .from('links')
+        .select('creator,product,click_count,conversion_count')
+        .in('product', productIds)
+      links = linkData || []
+    }
+
+    const emptyEl = document.getElementById('creators-empty')
+    const wrapEl = document.getElementById('creators-table-wrap')
+    const hasCreators = links.length > 0
+    if (emptyEl) emptyEl.style.display = hasCreators ? 'none' : 'block'
+    if (wrapEl) wrapEl.style.display = hasCreators ? 'block' : 'none'
+
+    if (hasCreators) {
+      const byCreator = {}
+      links.forEach(l => {
+        if (!byCreator[l.creator]) byCreator[l.creator] = { products: new Set(), clicks: 0, conversions: 0 }
+        byCreator[l.creator].products.add(l.product)
+        byCreator[l.creator].clicks += Number(l.click_count || 0)
+        byCreator[l.creator].conversions += Number(l.conversion_count || 0)
+      })
+      const creatorIds = Object.keys(byCreator)
+      const { data: creatorUsers } = await supabase.from('users').select('id,company_name').in('id', creatorIds)
+      const nameMap = {}
+      ;(creatorUsers || []).forEach(c => { nameMap[c.id] = c.company_name })
+
+      document.getElementById('creators-tbody').innerHTML = creatorIds.map(cid => {
+        const c = byCreator[cid]
+        return `
+        <tr>
+          <td class="td-b">${nameMap[cid] || '-'}</td>
+          <td>${c.products.size}개</td>
+          <td>${c.clicks.toLocaleString()}회</td>
+          <td>${c.conversions.toLocaleString()}건</td>
+        </tr>`
+      }).join('')
+    }
+  }
 
   async function loadOrders() {
     const user = window._vinglyUser
