@@ -536,14 +536,26 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const user = window._vinglyUser
     if (!supabase || !user) return
 
-    const { data } = await supabase
+    const { data: samples } = await supabase
       .from('samples')
       .select('id,status,brand_note,tracking_number,courier,created_at,product')
       .eq('creator', user.id)
       .in('status', ['approved', 'rejected', 'sent'])
       .order('created_at', { ascending: false })
 
-    const items = data || []
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('id,amount,creator_fee,created_at,product')
+      .eq('creator', user.id)
+      .in('status', ['confirmed', 'settled'])
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    const items = [
+      ...(samples || []).map(s => ({ ...s, ntype: 'sample', nid: 's_' + s.id })),
+      ...(orders || []).map(o => ({ ...o, ntype: 'order', nid: 'o_' + o.id })),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
     const dot = document.querySelector('.ndot')
     const body = document.getElementById('notif-body')
     if (!body) return
@@ -562,7 +574,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const seenKey = 'vingly_notif_seen_' + user.id
     const seenIds = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'))
-    const hasUnseen = items.some(i => !seenIds.has(i.id))
+    const hasUnseen = items.some(i => !seenIds.has(i.nid))
     if (dot) dot.style.display = hasUnseen ? 'block' : 'none'
 
     const statusMeta = {
@@ -572,17 +584,24 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
 
     body.innerHTML = items.map(i => {
-      const meta = statusMeta[i.status] || { icon: '🔔', text: i.status }
-      const isNew = !seenIds.has(i.id)
-      const detail = i.status === 'rejected' && i.brand_note
-        ? `사유: ${i.brand_note}`
-        : i.status === 'sent' && i.tracking_number
-          ? `${i.courier || ''} ${i.tracking_number}`.trim()
-          : ''
+      const isNew = !seenIds.has(i.nid)
+      let title, detail
+      if (i.ntype === 'order') {
+        title = `🎉 판매가 발생했어요! +₩${Number(i.creator_fee || 0).toLocaleString()}`
+        detail = productMap[i.product] || ''
+      } else {
+        const meta = statusMeta[i.status] || { icon: '🔔', text: i.status }
+        title = `${meta.icon} ${meta.text}`
+        detail = i.status === 'rejected' && i.brand_note
+          ? `사유: ${i.brand_note}`
+          : i.status === 'sent' && i.tracking_number
+            ? `${i.courier || ''} ${i.tracking_number}`.trim()
+            : (productMap[i.product] || '')
+      }
       return `
         <div style="padding:12px 18px;border-bottom:1px solid rgba(10,12,16,.06);${isNew ? 'background:#F5F3FF' : ''}">
-          <div style="font:700 13px/1.4 'Pretendard',sans-serif">${meta.icon} ${meta.text}</div>
-          <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${productMap[i.product] || ''}${detail ? ' · ' + detail : ''}</div>
+          <div style="font:700 13px/1.4 'Pretendard',sans-serif">${title}</div>
+          <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${detail}</div>
         </div>`
     }).join('')
   }
@@ -591,8 +610,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const supabase = window._supabase
     const user = window._vinglyUser
     if (!supabase || !user) return
-    supabase.from('samples').select('id').eq('creator', user.id).in('status', ['approved','rejected','sent']).then(({ data }) => {
-      const ids = (data || []).map(s => s.id)
+    Promise.all([
+      supabase.from('samples').select('id').eq('creator', user.id).in('status', ['approved','rejected','sent']),
+      supabase.from('orders').select('id').eq('creator', user.id).in('status', ['confirmed','settled']).order('created_at', { ascending: false }).limit(20),
+    ]).then(([sRes, oRes]) => {
+      const ids = [...(sRes.data || []).map(s => 's_' + s.id), ...(oRes.data || []).map(o => 'o_' + o.id)]
       localStorage.setItem('vingly_notif_seen_' + user.id, JSON.stringify(ids))
       const dot = document.querySelector('.ndot')
       if (dot) dot.style.display = 'none'

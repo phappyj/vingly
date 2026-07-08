@@ -494,9 +494,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </div>
 </div>
 
-<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif">알림</div>
-  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div></div>
+<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:320px;max-height:420px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.12)">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;position:sticky;top:0;background:#fff">알림</div>
+  <div id="notif-body">
+    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div></div>
+  </div>
 </div>
 
 <script type="module">
@@ -523,6 +525,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadReports()
         loadSamples()
         loadCreatorsAndRevenue()
+        loadNotifications()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -586,6 +589,113 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   const COURIERS = ['CJ대한통운', '한진택배', '롯데택배', '로젠택배', '우체국택배', '경동택배', '기타']
   const SHIP_STATUS_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
+
+  async function loadNotifications() {
+    const user = window._vinglyUser
+    if (!user) return
+
+    const { data: samples } = await supabase
+      .from('samples')
+      .select('id,status,created_at,product,creator')
+      .eq('brand', user.id)
+      .eq('status', 'requested')
+      .order('created_at', { ascending: false })
+
+    const { data: myOrders } = await supabase
+      .from('orders')
+      .select('id,status,created_at,product,creator,amount,order_id:id')
+      .eq('brand', user.id)
+      .in('status', ['confirmed', 'settled'])
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    let myOrderIds = new Set((myOrders || []).map(o => o.id))
+
+    const { data: reports } = await supabase
+      .from('reports')
+      .select('id,status,created_at,order_id,reason')
+      .order('created_at', { ascending: false })
+
+    const myReports = (reports || []).filter(r => myOrderIds.has(r.order_id) && (r.status === 'pending' || r.status === 'reviewing'))
+
+    const items = [
+      ...(samples || []).map(s => ({ type: 'sample', id: 's_' + s.id, refId: s.id, created_at: s.created_at, product: s.product, creator: s.creator })),
+      ...myReports.map(r => ({ type: 'report', id: 'r_' + r.id, refId: r.id, created_at: r.created_at, reason: r.reason })),
+      ...(myOrders || []).map(o => ({ type: 'order', id: 'o_' + o.id, refId: o.id, created_at: o.created_at, product: o.product, amount: o.amount })),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    const dot = document.querySelector('.ndot')
+    const body = document.getElementById('notif-body')
+    if (!body) return
+
+    if (items.length === 0) {
+      if (dot) dot.style.display = 'none'
+      return
+    }
+
+    const productIds = [...new Set(items.filter(i => i.product).map(i => i.product))]
+    const creatorIds = [...new Set(items.filter(i => i.creator).map(i => i.creator))]
+    let productMap = {}, creatorMap = {}
+    if (productIds.length) {
+      const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
+      ;(prods || []).forEach(p => { productMap[p.id] = p.name })
+    }
+    if (creatorIds.length) {
+      const { data: creators } = await supabase.from('users').select('id,company_name').in('id', creatorIds)
+      ;(creators || []).forEach(c => { creatorMap[c.id] = c.company_name })
+    }
+
+    const seenKey = 'vingly_notif_seen_' + user.id
+    const seenIds = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'))
+    const hasUnseen = items.some(i => !seenIds.has(i.id))
+    if (dot) dot.style.display = hasUnseen ? 'block' : 'none'
+
+    body.innerHTML = items.map(i => {
+      const isNew = !seenIds.has(i.id)
+      let title, detail
+      if (i.type === 'sample') {
+        title = '🎁 새 샘플 신청이 들어왔어요'
+        detail = `${creatorMap[i.creator] || '크리에이터'} · ${productMap[i.product] || '-'}`
+      } else if (i.type === 'order') {
+        title = `💰 새 판매가 발생했어요! ₩${Number(i.amount || 0).toLocaleString()}`
+        detail = productMap[i.product] || ''
+      } else {
+        title = '🚨 새 신고가 접수됐어요'
+        detail = i.reason || ''
+      }
+      return `
+        <div style="padding:12px 18px;border-bottom:1px solid rgba(10,12,16,.06);cursor:pointer;${isNew ? 'background:#EFF6FF' : ''}" onclick="goToNotifTarget('${i.type}')">
+          <div style="font:700 13px/1.4 'Pretendard',sans-serif">${title}</div>
+          <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${detail}</div>
+        </div>`
+    }).join('')
+  }
+
+  window.goToNotifTarget = function(type) {
+    const pageId = type === 'sample' ? 'sample' : type === 'order' ? 'orders' : 'reports'
+    const btn = document.querySelector(`.ni[onclick*="showPage('${pageId}'"]`)
+    showPage(pageId, btn)
+    toggleNotif()
+  }
+
+  window.markNotifsSeen = async function() {
+    const user = window._vinglyUser
+    if (!user) return
+    const { data: samples } = await supabase.from('samples').select('id').eq('brand', user.id).eq('status', 'requested')
+    const { data: recentOrders } = await supabase.from('orders').select('id').eq('brand', user.id).in('status', ['confirmed', 'settled']).order('created_at', { ascending: false }).limit(20)
+    const { data: myOrders } = await supabase.from('orders').select('id').eq('brand', user.id)
+    const myOrderIds = new Set((myOrders || []).map(o => o.id))
+    const { data: reports } = await supabase.from('reports').select('id,order_id,status')
+    const myReportIds = (reports || []).filter(r => myOrderIds.has(r.order_id) && (r.status === 'pending' || r.status === 'reviewing')).map(r => r.id)
+    const ids = [
+      ...(samples || []).map(s => 's_' + s.id),
+      ...myReportIds.map(id => 'r_' + id),
+      ...(recentOrders || []).map(o => 'o_' + o.id),
+    ]
+    localStorage.setItem('vingly_notif_seen_' + user.id, JSON.stringify(ids))
+    const dot = document.querySelector('.ndot')
+    if (dot) dot.style.display = 'none'
+  }
 
   async function loadCreatorsAndRevenue() {
     const user = window._vinglyUser
@@ -1324,8 +1434,9 @@ function addKP() {
 function removeKP(btn) { const list = document.getElementById('kp-list'); if (list.children.length <= 1) return; btn.closest('.kp-row').remove() }
 function toggleNotif() {
   const el = document.getElementById('notifPanel'); if (!el) return
-  el.style.display = el.style.display === 'block' ? 'none' : 'block'
-  const dot = document.querySelector('.ndot'); if (dot) dot.style.display = 'none'
+  const opening = el.style.display !== 'block'
+  el.style.display = opening ? 'block' : 'none'
+  if (opening && typeof markNotifsSeen === 'function') markNotifsSeen()
 }
 document.addEventListener('click', function(e) {
   const panel = document.getElementById('notifPanel'); const btn = document.querySelector('.icon-btn')
