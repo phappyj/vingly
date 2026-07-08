@@ -726,19 +726,19 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
         <div style="font:700 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px">예상 월 수익 계산기</div>
         <div style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
-            <span style="color:rgba(255,255,255,.6)">팔로워 수</span>
-            <span style="color:#fff;font-weight:700" id="v-followers">3,000명</span>
+            <span style="color:rgba(255,255,255,.6)">예상 월 판매 건수</span>
+            <span style="color:#fff;font-weight:700" id="v-posts">월 5건</span>
           </div>
-          <input type="range" min="100" max="50000" step="100" value="3000" id="sl-followers"
+          <input type="range" min="1" max="100" step="1" value="5" id="sl-posts"
             oninput="calcCreator()"
             style="width:100%;accent-color:#00B37E;cursor:pointer">
         </div>
         <div style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;font:500 13px/1 'Pretendard',sans-serif;margin-bottom:8px">
-            <span style="color:rgba(255,255,255,.6)">월 평균 포스팅 수</span>
-            <span style="color:#fff;font-weight:700" id="v-posts">월 8회</span>
+            <span style="color:rgba(255,255,255,.6)">크리에이터 수수료율</span>
+            <span style="color:#fff;font-weight:700" id="v-followers">15%</span>
           </div>
-          <input type="range" min="1" max="30" step="1" value="8" id="sl-posts"
+          <input type="range" min="10" max="20" step="1" value="15" id="sl-followers"
             oninput="calcCreator()"
             style="width:100%;accent-color:#00B37E;cursor:pointer">
         </div>
@@ -753,8 +753,8 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
         </div>
         <div style="background:rgba(0,179,126,.15);border-radius:12px;padding:16px">
           <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px">예상 월 수익 (수수료 0%)</div>
-          <div style="font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px" id="v-result">₩216,000</div>
-          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:6px" id="v-basis">팔로워 3,000명 · 전환율 0.3% 기준</div>
+          <div style="font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px" id="v-result">₩22,500</div>
+          <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.3);margin-top:6px" id="v-basis">월 5건 판매 · 수수료율 15% 기준</div>
         </div>
       </div>
       <!-- 흐름 -->
@@ -1392,16 +1392,15 @@ function showEarn(type) {
 
 /* ── 크리에이터 계산기 ── */
 function calcCreator() {
-  var followers = parseInt(document.getElementById('sl-followers').value);
-  var posts = parseInt(document.getElementById('sl-posts').value);
+  var sales = parseInt(document.getElementById('sl-posts').value);
+  var commRate = parseInt(document.getElementById('sl-followers').value);
   var price = parseInt(document.getElementById('sl-price').value);
-  document.getElementById('v-followers').textContent = followers.toLocaleString() + '명';
-  document.getElementById('v-posts').textContent = '월 ' + posts + '회';
+  document.getElementById('v-posts').textContent = '월 ' + sales + '건';
+  document.getElementById('v-followers').textContent = commRate + '%';
   document.getElementById('v-price').textContent = '₩' + price.toLocaleString();
-  var convRate = 0.003;
-  var result = Math.floor(followers * convRate * posts * price * 0.15);
+  var result = Math.floor(sales * price * (commRate / 100));
   document.getElementById('v-result').textContent = '₩' + result.toLocaleString();
-  document.getElementById('v-basis').textContent = '팔로워 ' + followers.toLocaleString() + '명 · 전환율 0.3% 기준';
+  document.getElementById('v-basis').textContent = '월 ' + sales + '건 판매 · 수수료율 ' + commRate + '% 기준';
 }
 
 /* ── 브랜드 계산기 ── */
