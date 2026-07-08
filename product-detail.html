@@ -263,6 +263,10 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   </div>
 </div>
 
+<div style="text-align:center;padding:24px 20px;border-top:1px solid var(--ink-14)">
+  <span style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40)">이 제품이 마음에 드셨다면? <a href="signup.html?role=creator" style="color:var(--green);font-weight:700;text-decoration:none">크리에이터로 직접 공유하고 수익 만들기 →</a></span>
+</div>
+
 <footer class="footer">
   <div style="margin-bottom:6px">
     <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="support.html">고객지원</a>
@@ -373,7 +377,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
             <div class="info-brand">${brand}</div>
             <div class="info-name">${data.name}</div>
             <div class="info-badges">
-              <span class="badge badge-green">수수료 ${data.commission_rate}%</span>
               <span class="badge badge-blue">${data.category || '기타'}</span>
             </div>
             <div class="info-price">₩${Number(data.price).toLocaleString()}</div>
@@ -400,7 +403,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
                   <div class="cb-label">이 링크를 공유한 크리에이터</div>
                   <div class="cb-name">${creatorName}</div>
                 </div>
-                <div class="cb-comm">수수료 ${data.commission_rate}%</div>
               </div>` : `
               <div style="background:var(--amber-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font:500 13px/1.5 'Pretendard',sans-serif;color:#92400E">
                 ⚠️ 이 상품은 크리에이터 링크를 통해서만 구매할 수 있습니다.
@@ -433,36 +435,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
               <span class="safe-badge">↩️ 7일 이내 반품</span>
               <span class="safe-badge">🏦 구매 안전 보장</span>
             </div>
-          </div>
-        </div>
-
-        ${data.creator_message ? `
-          <div class="detail-section">
-            <div class="ds-title">브랜드 안내사항</div>
-            <div style="background:var(--amber-bg);border-radius:10px;padding:16px;border-left:3px solid #D97706;font:400 14px/1.75 'Pretendard',sans-serif;color:var(--ink-70)">${data.creator_message}</div>
-          </div>` : ''}
-
-        <div class="detail-section">
-          <div class="ds-title">크리에이터와 함께하는 Vingly</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
-              <div style="font-size:24px;margin-bottom:8px">💸</div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">크리에이터 수수료 0%</div>
-              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">판매 수익 전액 수령</div>
-            </div>
-            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
-              <div style="font-size:24px;margin-bottom:8px">🔗</div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">링크 하나로 시작</div>
-              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">팔로워 100명부터 가능</div>
-            </div>
-            <div style="background:var(--white);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--ink-14)">
-              <div style="font-size:24px;margin-bottom:8px">📅</div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;margin-bottom:4px">월말 자동 정산</div>
-              <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">신청 없이 자동 입금</div>
-            </div>
-          </div>
-          <div style="text-align:center;margin-top:16px">
-            <button onclick="location.href='signup.html?role=creator'" style="padding:12px 28px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 시작하기 →</button>
           </div>
         </div>
       </div>`
