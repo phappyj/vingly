@@ -306,17 +306,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- 등급 -->
   <div class="page content" id="pg-grade">
-    <div class="card" style="background:linear-gradient(135deg,#0A0C10,#1a1d24);color:#fff;margin-bottom:14px;text-align:center;padding:28px 20px">
+    <div class="card" style="background:linear-gradient(135deg,#00B37E,#00875F);color:#fff;margin-bottom:14px;text-align:center;padding:28px 20px">
       <div id="grade-cur-icon" style="font-size:44px;margin-bottom:10px">🌱</div>
-      <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:4px">현재 내 등급</div>
+      <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.75);margin-bottom:4px">현재 내 등급</div>
       <div class="gc-name" id="grade-cur-name" style="font-size:26px;color:#fff;margin-bottom:6px">New</div>
-      <div class="gc-cond" id="grade-cur-cond" style="color:rgba(255,255,255,.6);margin-bottom:18px">누적 0건 판매 완료</div>
+      <div class="gc-cond" id="grade-cur-cond" style="color:rgba(255,255,255,.85);margin-bottom:18px">누적 0건 판매 완료</div>
       <div id="grade-progress-wrap" style="max-width:320px;margin:0 auto 10px">
-        <div style="height:8px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden">
-          <div id="grade-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#00B37E,#00D89A);border-radius:5px;transition:width .4s"></div>
+        <div style="height:8px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden">
+          <div id="grade-progress-bar" style="height:100%;width:0%;background:#fff;border-radius:5px;transition:width .4s"></div>
         </div>
       </div>
-      <div id="grade-progress-text" style="font:700 13.5px/1.5 'Pretendard',sans-serif;color:#00D89A"></div>
+      <div id="grade-progress-text" style="font:800 13.5px/1.5 'Pretendard',sans-serif;color:#fff"></div>
     </div>
 
     <div class="card" id="grade-next-card" style="margin-bottom:14px">
@@ -338,11 +338,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     <div class="card">
       <div class="card-h"><div class="card-t">전체 등급 로드맵</div></div>
-      <div id="grade-roadmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-        <div class="grm-tier" data-tier="New" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
-        <div class="grm-tier" data-tier="Active" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">10건+</div></div>
-        <div class="grm-tier" data-tier="Pro" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
-        <div class="grm-tier" data-tier="Elite" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
+      <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:12px">등급을 눌러보면 혜택을 볼 수 있어요</div>
+      <div id="grade-roadmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div class="grm-tier" data-tier="New" onclick="showTierPerks('New')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
+        <div class="grm-tier" data-tier="Active" onclick="showTierPerks('Active')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">10건+</div></div>
+        <div class="grm-tier" data-tier="Pro" onclick="showTierPerks('Pro')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
+        <div class="grm-tier" data-tier="Elite" onclick="showTierPerks('Elite')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
+      </div>
+      <div id="grade-tier-detail" style="display:none;background:var(--ink-07);border-radius:10px;padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div id="grade-detail-icon" style="font-size:24px"></div>
+          <div>
+            <div id="grade-detail-name" style="font:800 15px/1 'Pretendard',sans-serif"></div>
+            <div id="grade-detail-cond" style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px"></div>
+          </div>
+        </div>
+        <ul id="grade-detail-perks" style="list-style:none;display:flex;flex-direction:column;gap:8px;font:600 13px/1.4 'Pretendard',sans-serif;color:var(--ink)"></ul>
       </div>
     </div>
   </div>
@@ -497,6 +508,26 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
+  const TIERS = [
+    { name: 'New', icon: '🌱', min: 0, cond: '가입 직후', perks: ['전체 제품 탐색 가능', '링크 생성 무제한', '파일럿 수수료 100%'] },
+    { name: 'Active', icon: '⚡', min: 10, cond: '누적 판매 10건 달성 시', perks: ['신규 제품 우선 접근', '전환 후 수수료 -0.5%p', '월간 실적 리포트'] },
+    { name: 'Pro', icon: '🔥', min: 50, cond: '누적 판매 50건 달성 시', perks: ['프리미엄 제품 전용 접근', '전환 후 수수료 -1%p', '전담 매니저 배정', '단독 할인코드 발급'] },
+    { name: 'Elite', icon: '👑', min: 200, cond: '누적 판매 200건 달성 시', perks: ['입점 전 독점 제품 협의', '최저 수수료율 영구 고정', '공식 파트너 인증', '단독 캠페인 기회'] },
+  ]
+
+  window.showTierPerks = function(tierName) {
+    const tier = TIERS.find(t => t.name === tierName)
+    if (!tier) return
+    document.getElementById('grade-detail-icon').textContent = tier.icon
+    document.getElementById('grade-detail-name').textContent = tier.name
+    document.getElementById('grade-detail-cond').textContent = tier.cond
+    document.getElementById('grade-detail-perks').innerHTML = tier.perks.map(p => `<li>✓ ${p}</li>`).join('')
+    document.getElementById('grade-tier-detail').style.display = 'block'
+    document.querySelectorAll('#grade-roadmap .grm-tier').forEach(el => {
+      el.style.outline = el.dataset.tier === tierName ? '2px solid var(--green)' : 'none'
+    })
+  }
+
   async function loadEarnings() {
     const supabase = window._supabase
     const user = window._vinglyUser
@@ -555,12 +586,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     // 등급 계산
     const salesCount = allOrders.length
-    const TIERS = [
-      { name: 'New', icon: '🌱', min: 0, perks: ['전체 제품 탐색 가능', '링크 생성 무제한', '파일럿 수수료 100%'] },
-      { name: 'Active', icon: '⚡', min: 10, perks: ['신규 제품 우선 접근', '전환 후 수수료 -0.5%p', '월간 실적 리포트'] },
-      { name: 'Pro', icon: '🔥', min: 50, perks: ['프리미엄 제품 전용 접근', '전환 후 수수료 -1%p', '전담 매니저 배정', '단독 할인코드 발급'] },
-      { name: 'Elite', icon: '👑', min: 200, perks: ['입점 전 독점 제품 협의', '최저 수수료율 영구 고정', '공식 파트너 인증', '단독 캠페인 기회'] },
-    ]
     let curIdx = 0
     for (let i = TIERS.length - 1; i >= 0; i--) { if (salesCount >= TIERS[i].min) { curIdx = i; break } }
     const cur = TIERS[curIdx]
