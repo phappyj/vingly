@@ -764,10 +764,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.disabled = true
     btn.textContent = '신청 중...'
 
-    // 디버그: 실제 세션 상태 재확인 (RLS 실패 원인 추적용, 나중에 제거 예정)
-    const { data: sessionCheck } = await supabase.auth.getSession()
-    const actualAuthUid = sessionCheck?.session?.user?.id || null
-
     const { error } = await supabase.from('samples').insert({
       product: productId,
       creator: user.id,
@@ -781,8 +777,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = '신청하기'
 
     if (error) {
-      errEl.innerHTML = '신청 실패: ' + error.message +
-        `<br><span style="font-size:11px;color:#999">[debug] user.id=${user.id} / session.uid=${actualAuthUid} / match=${user.id === actualAuthUid} / product.brand_user=${product.brand_user}</span>`
+      errEl.textContent = '신청 실패: ' + error.message
       errEl.style.display = 'block'
     } else {
       closeSampleRequestModal()
@@ -935,7 +930,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div style="font:700 12px/1 'Pretendard',sans-serif;color:#7C3AED;margin-bottom:8px">🎁 샘플 제공 가능${p.sample_qty ? ` · ${p.sample_qty}개 한정` : ''}</div>
         ${p.sample_min_followers > 100 ? `<div style="font:400 12.5px/1.5 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:8px">팔로워 ${Number(p.sample_min_followers).toLocaleString()}명 이상 신청 가능</div>` : ''}
         ${mySample
-          ? `<div style="font:700 13px/1 'Pretendard',sans-serif;color:#7C3AED">${sampleStatusLabel[mySample.status] || mySample.status}</div>`
+          ? `<div style="font:700 13px/1 'Pretendard',sans-serif;color:${mySample.status === 'rejected' ? '#DC2626' : '#7C3AED'}">${sampleStatusLabel[mySample.status] || mySample.status}</div>
+             ${mySample.status === 'rejected' && mySample.brand_note ? `<div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-70);margin-top:6px;padding-top:6px;border-top:1px solid rgba(124,58,237,.15)">사유: ${mySample.brand_note}</div>` : ''}`
           : `<button onclick="event.stopPropagation();expRequestSample('${id}')" style="width:100%;padding:11px;border-radius:9px;border:none;background:#7C3AED;color:#fff;font:700 13.5px/1 'Pretendard',sans-serif;cursor:pointer">샘플 신청하기</button>`}
       </div>` : ''
 

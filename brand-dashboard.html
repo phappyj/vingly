@@ -372,6 +372,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </div>
 </main>
 
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
+
 <!-- 제품 등록/수정 모달 -->
 <div id="productModal" onclick="if(event.target===this)closeProductModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
   <div style="background:#fff;border-radius:18px;width:100%;max-width:600px;padding:28px;position:relative;max-height:92vh;overflow-y:auto">
@@ -799,6 +801,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
+  let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}
+
   async function loadSamples() {
     const { data: samples } = await supabase
       .from('samples')
@@ -806,7 +810,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .order('created_at', { ascending: false })
     const allSamples = samples || []
 
-    let productMap = {}, creatorMap = {}
+    let productMap = {}, creatorMap = {}, creatorInfoMap = {}
     if (allSamples.length) {
       const productIds = [...new Set(allSamples.map(s => s.product).filter(Boolean))]
       const creatorIds = [...new Set(allSamples.map(s => s.creator).filter(Boolean))]
@@ -815,15 +819,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         ;(prods || []).forEach(p => { productMap[p.id] = p.name })
       }
       if (creatorIds.length) {
-        const { data: creators } = await supabase.from('users').select('id,company_name').in('id', creatorIds)
-        ;(creators || []).forEach(c => { creatorMap[c.id] = c.company_name })
+        const { data: creators } = await supabase.from('users').select('id,company_name,follower_count,channel_url,category').in('id', creatorIds)
+        ;(creators || []).forEach(c => {
+          creatorMap[c.id] = c.company_name
+          creatorInfoMap[c.id] = c
+        })
       }
     }
 
-    renderSamples(allSamples, productMap, creatorMap)
+    _samplesCache = allSamples
+    _sampleProductMap = productMap
+    _sampleCreatorMap = creatorMap
+    _sampleCreatorInfoMap = creatorInfoMap
+    renderSamples(allSamples, productMap, creatorMap, creatorInfoMap)
   }
 
-  function renderSamples(samples, productMap, creatorMap) {
+  function renderSamples(samples, productMap, creatorMap, creatorInfoMap) {
     const emptyEl = document.getElementById('sample-empty')
     const wrap = document.getElementById('sample-table-wrap')
     const hasSamples = samples.length > 0
@@ -834,15 +845,26 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const statusLabel = { requested: '신청됨', approved: '승인됨', rejected: '거절됨', sent: '발송완료' }
     const statusBadge = { requested: 'bam', approved: 'bg', rejected: 'br', sent: 'bg' }
 
-    document.getElementById('sample-tbody').innerHTML = samples.map(s => `
-      <tr>
+    document.getElementById('sample-tbody').innerHTML = samples.map(s => {
+      const info = creatorInfoMap[s.creator] || {}
+      const followerText = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '팔로워 정보 없음'
+      const catText = info.category ? ` · ${info.category}` : ''
+      const channelLink = info.channel_url ? `<a href="${info.channel_url}" target="_blank" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
+      return `
+      <tr id="sample-row-${s.id}">
         <td>${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
-        <td class="td-b">${creatorMap[s.creator] || '-'}</td>
-        <td>${productMap[s.product] || '-'}</td>
-        <td class="td-m" style="max-width:200px;white-space:normal">${s.shipping_address || '-'}</td>
-        <td><span class="badge ${statusBadge[s.status] || 'bg'}">${statusLabel[s.status] || s.status}</span></td>
-        <td>${s.tracking_number ? `${s.courier || ''} ${s.tracking_number}`.trim() : '-'}</td>
         <td>
+          <div class="td-b">${creatorMap[s.creator] || '-'}</div>
+          <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${followerText}${catText} ${channelLink}</div>
+        </td>
+        <td>${productMap[s.product] || '-'}</td>
+        <td class="td-m" style="max-width:180px;white-space:normal">${s.shipping_address || '-'}</td>
+        <td>
+          <span class="badge ${statusBadge[s.status] || 'bg'}">${statusLabel[s.status] || s.status}</span>
+          ${s.status === 'rejected' && s.brand_note ? `<div style="font-size:11px;color:var(--ink-40);margin-top:4px">사유: ${s.brand_note}</div>` : ''}
+        </td>
+        <td>${s.tracking_number ? `${s.courier || ''} ${s.tracking_number}`.trim() : '-'}</td>
+        <td id="sample-actions-${s.id}">
           ${s.status === 'requested'
             ? `<button class="act-btn green" onclick="setSampleStatus('${s.id}','approved')">승인</button>
                <button class="act-btn red" onclick="setSampleStatus('${s.id}','rejected')">거절</button>`
@@ -850,23 +872,50 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
               ? `<button class="act-btn green" onclick="markSampleSent('${s.id}')">발송 처리</button>`
               : '-'}
         </td>
-      </tr>`).join('')
+      </tr>`
+    }).join('')
+  }
+
+  function patchSampleRow(sampleId, changes) {
+    const idx = _samplesCache.findIndex(s => s.id === sampleId)
+    if (idx === -1) return
+    _samplesCache[idx] = { ..._samplesCache[idx], ...changes }
+    renderSamples(_samplesCache, _sampleProductMap, _sampleCreatorMap, _sampleCreatorInfoMap)
   }
 
   window.setSampleStatus = async function(sampleId, status) {
-    const { data, error } = await supabase.from('samples').update({ status }).eq('id', sampleId).select()
+    let brand_note = null
+    if (status === 'rejected') {
+      brand_note = prompt('거절 사유를 입력해주세요 (크리에이터에게 표시됩니다, 선택)')
+      if (brand_note === null) return // 취소 시 처리 중단
+    }
+
+    // 낙관적 업데이트 — 버튼을 바로 처리중 표시로 바꿔서 반응이 즉시 보이게
+    const actionsEl = document.getElementById(`sample-actions-${sampleId}`)
+    if (actionsEl) actionsEl.innerHTML = '처리 중...'
+
+    const updatePayload = { status }
+    if (status === 'rejected') updatePayload.brand_note = brand_note || null
+
+    const { data, error } = await supabase.from('samples').update(updatePayload).eq('id', sampleId).select()
     if (error) {
       alert('처리 실패: ' + error.message)
+      loadSamples()
     } else if (!data || data.length === 0) {
       alert('처리가 안 됐습니다 (권한 문제로 보입니다). brand_can_update_own_product_samples 정책을 확인해주세요.')
-    } else {
-      showToast('샘플 신청 상태가 변경됐습니다 ✓')
       loadSamples()
+    } else {
+      showToast(status === 'approved' ? '샘플 신청을 승인했습니다 ✓' : '샘플 신청을 거절했습니다')
+      patchSampleRow(sampleId, updatePayload)
     }
   }
 
   window.markSampleSent = async function(sampleId) {
     const tracking = prompt('운송장번호를 입력해주세요 (선택, 취소해도 발송 처리됩니다)')
+
+    const actionsEl = document.getElementById(`sample-actions-${sampleId}`)
+    if (actionsEl) actionsEl.innerHTML = '처리 중...'
+
     const { data, error } = await supabase
       .from('samples')
       .update({ status: 'sent', tracking_number: tracking || null })
@@ -874,11 +923,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .select()
     if (error) {
       alert('처리 실패: ' + error.message)
+      loadSamples()
     } else if (!data || data.length === 0) {
       alert('처리가 안 됐습니다 (권한 문제로 보입니다). brand_can_update_own_product_samples 정책을 확인해주세요.')
+      loadSamples()
     } else {
       showToast('발송 처리됐습니다 ✓')
-      loadSamples()
+      patchSampleRow(sampleId, { status: 'sent', tracking_number: tracking || null })
     }
   }
 
@@ -1190,6 +1241,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </script>
 
 <script>
+function showToast(msg) {
+  const toast = document.getElementById('toast')
+  if (!toast) return
+  toast.textContent = msg; toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
+  setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, 3000)
+}
+
 function toggleSidebar() {
   document.getElementById('sb').classList.toggle('open')
   document.getElementById('sbBackdrop').classList.toggle('show')
