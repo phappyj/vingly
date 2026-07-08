@@ -306,28 +306,43 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- 등급 -->
   <div class="page content" id="pg-grade">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="grade-card grade-current">
-        <span class="gc-badge gc-b-curr">현재 등급</span>
-        <div id="grade-cur-icon" style="font-size:28px;margin-bottom:8px">🌱</div>
-        <div class="gc-name" id="grade-cur-name">New</div>
-        <div class="gc-cond" id="grade-cur-cond">누적 0건 판매 완료</div>
+    <div class="card" style="background:linear-gradient(135deg,#0A0C10,#1a1d24);color:#fff;margin-bottom:14px;text-align:center;padding:28px 20px">
+      <div id="grade-cur-icon" style="font-size:44px;margin-bottom:10px">🌱</div>
+      <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:4px">현재 내 등급</div>
+      <div class="gc-name" id="grade-cur-name" style="font-size:26px;color:#fff;margin-bottom:6px">New</div>
+      <div class="gc-cond" id="grade-cur-cond" style="color:rgba(255,255,255,.6);margin-bottom:18px">누적 0건 판매 완료</div>
+      <div id="grade-progress-wrap" style="max-width:320px;margin:0 auto 10px">
+        <div style="height:8px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden">
+          <div id="grade-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#00B37E,#00D89A);border-radius:5px;transition:width .4s"></div>
+        </div>
       </div>
-      <div class="grade-card grade-next" id="grade-next-card">
-        <span class="gc-badge gc-b-next">다음 등급</span>
-        <div id="grade-next-icon" style="font-size:28px;margin-bottom:8px">⚡</div>
-        <div class="gc-name" id="grade-next-name">Active</div>
-        <div class="gc-cond" id="grade-next-cond">누적 판매 10건 달성 시</div>
-        <ul id="grade-next-perks" style="list-style:none;display:flex;flex-direction:column;gap:8px;font:500 13px/1.4 'Pretendard',sans-serif;color:var(--ink-70)"></ul>
-      </div>
+      <div id="grade-progress-text" style="font:700 13.5px/1.5 'Pretendard',sans-serif;color:#00D89A"></div>
     </div>
+
+    <div class="card" id="grade-next-card" style="margin-bottom:14px">
+      <div class="card-h"><div class="card-t">🎯 다음 등급에서 받는 혜택</div></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div id="grade-next-icon" style="font-size:32px">⚡</div>
+        <div>
+          <div class="gc-name" id="grade-next-name" style="font-size:18px">Active</div>
+          <div class="gc-cond" id="grade-next-cond" style="font-size:12.5px">누적 판매 10건 달성 시</div>
+        </div>
+      </div>
+      <ul id="grade-next-perks" style="list-style:none;display:flex;flex-direction:column;gap:9px;font:600 13.5px/1.4 'Pretendard',sans-serif;color:var(--ink)"></ul>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">✅ 지금 내가 받고 있는 혜택</div></div>
+      <ul id="grade-cur-perks" style="list-style:none;display:flex;flex-direction:column;gap:9px;font:500 13.5px/1.4 'Pretendard',sans-serif;color:var(--ink-70)"></ul>
+    </div>
+
     <div class="card">
       <div class="card-h"><div class="card-t">전체 등급 로드맵</div></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-        <div style="padding:14px;border-radius:10px;background:var(--ink-07);text-align:center"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
-        <div style="padding:14px;border-radius:10px;background:var(--ink);text-align:center"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:#fff">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.4);margin-top:3px">10건+</div></div>
-        <div style="padding:14px;border-radius:10px;background:var(--blue-bg);text-align:center"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:var(--blue)">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
-        <div style="padding:14px;border-radius:10px;background:var(--green-bg);text-align:center"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif;color:var(--green)">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
+      <div id="grade-roadmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div class="grm-tier" data-tier="New" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
+        <div class="grm-tier" data-tier="Active" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">10건+</div></div>
+        <div class="grm-tier" data-tier="Pro" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
+        <div class="grm-tier" data-tier="Elite" style="padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
       </div>
     </div>
   </div>
@@ -353,6 +368,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <button class="exp-cat" onclick="expSelectCat(this,'패션 · 의류')">👗 패션</button>
         <button class="exp-cat" onclick="expSelectCat(this,'생활 · 홈')">🏠 생활·홈</button>
         <button class="exp-cat" onclick="expSelectCat(this,'디지털 · 전자')">📱 디지털</button>
+        <button class="exp-cat" onclick="expSelectCat(this,'기타')">📦 기타</button>
       </div>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -557,16 +573,59 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (curNameEl) curNameEl.textContent = cur.name
     if (curCondEl) curCondEl.textContent = `누적 ${salesCount}건 판매 완료`
 
+    // 지금 받고 있는 혜택
+    const curPerksEl = document.getElementById('grade-cur-perks')
+    if (curPerksEl) curPerksEl.innerHTML = cur.perks.map(p => `<li>✓ ${p}</li>`).join('')
+
     const nextCard = document.getElementById('grade-next-card')
+    const progressWrap = document.getElementById('grade-progress-wrap')
+    const progressBar = document.getElementById('grade-progress-bar')
+    const progressText = document.getElementById('grade-progress-text')
     if (next) {
       if (nextCard) nextCard.style.display = ''
       document.getElementById('grade-next-icon').textContent = next.icon
       document.getElementById('grade-next-name').textContent = next.name
-      document.getElementById('grade-next-cond').textContent = `누적 판매 ${next.min}건 달성 시 (${next.min - salesCount}건 남음)`
+      document.getElementById('grade-next-cond').textContent = `누적 판매 ${next.min}건 달성 시`
       document.getElementById('grade-next-perks').innerHTML = next.perks.map(p => `<li>→ ${p}</li>`).join('')
-    } else if (nextCard) {
-      nextCard.style.display = 'none'
+
+      const span = next.min - cur.min
+      const done = salesCount - cur.min
+      const pct = Math.min(100, Math.round((done / span) * 100))
+      if (progressBar) progressBar.style.width = pct + '%'
+      if (progressText) progressText.textContent = `${next.name}까지 ${next.min - salesCount}건 남았어요 🔥`
+      if (progressWrap) progressWrap.style.display = ''
+    } else {
+      if (nextCard) nextCard.style.display = 'none'
+      if (progressWrap) progressWrap.style.display = 'none'
+      if (progressText) { progressText.textContent = '🎉 최고 등급을 달성했어요!'; progressText.style.display = '' }
     }
+
+    // 로드맵 하이라이트
+    document.querySelectorAll('#grade-roadmap .grm-tier').forEach(el => {
+      const tierName = el.dataset.tier
+      const idx = TIERS.findIndex(t => t.name === tierName)
+      el.style.background = ''
+      el.style.opacity = '1'
+      el.querySelectorAll('div')[1].style.color = ''
+      const existingCheck = el.querySelector('.grm-check')
+      if (existingCheck) existingCheck.remove()
+      if (idx < curIdx) {
+        // 이미 지난 등급
+        el.style.opacity = '.55'
+        const check = document.createElement('div')
+        check.className = 'grm-check'
+        check.textContent = '✓'
+        check.style.cssText = 'position:absolute;top:6px;right:8px;color:var(--green);font-weight:800;font-size:12px'
+        el.appendChild(check)
+      } else if (idx === curIdx) {
+        // 현재 등급
+        el.style.background = 'var(--ink)'
+        el.querySelectorAll('div')[1].style.color = '#fff'
+        el.style.boxShadow = '0 0 0 2px var(--green)'
+      } else {
+        el.style.boxShadow = 'none'
+      }
+    })
   }
 
   async function loadMyLinks() {
