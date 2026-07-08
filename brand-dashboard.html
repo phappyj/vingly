@@ -1002,6 +1002,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const user = window._vinglyUser
     if (!user) return
 
+    // 세션이 오래돼서 인증 토큰이 만료됐을 수 있으니, 저장 전에 강제로 갱신
+    try { await supabase.auth.refreshSession() } catch (e) { /* 실패해도 기존 세션으로 계속 시도 */ }
+
     for (let i = 0; i < 3; i++) {
       const input = document.getElementById(`img-input-${i}`)
       const file = input.files[0]
@@ -1035,7 +1038,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     btn.textContent = editingProductId ? '수정 저장' : '등록하기'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
 
-    if (error) { errEl.textContent = '저장 실패: ' + error.message; errEl.style.display = 'block'; return }
+    if (error) {
+      const { data: uc } = await supabase.auth.getUser().catch(() => ({ data: null }))
+      errEl.innerHTML = '저장 실패: ' + error.message +
+        `<br><span style="font-size:10.5px;color:#999">[debug] user.id=${user.id} / getUser.uid=${uc?.user?.id || 'NONE'}</span>`
+      errEl.style.display = 'block'
+      return
+    }
     closeProductModal(); await loadProducts()
   }
 
