@@ -835,22 +835,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.disabled = true
     btn.textContent = '신청 중...'
 
-    // 세션이 오래돼서 인증 토큰이 만료됐을 수 있으니, 저장 전에 강제로 갱신
-    try { await supabase.auth.refreshSession() } catch (e) { /* 실패해도 기존 세션으로 계속 시도 */ }
+    // 이 탭이 열려있는 동안 다른 탭에서 다른 계정으로 로그인했을 수 있음 —
+    // 그럴 경우 이 페이지에 저장된 내 정보(user.id)가 실제 로그인 계정과 달라질 수 있어 반드시 재확인
+    const { data: userCheck } = await supabase.auth.getUser()
+    const actualUid = userCheck?.user?.id
 
-    // 디버그: 실제 인증 상태 재확인 (getUser는 서버에 재검증 요청 — 토큰 만료 여부까지 확인 가능)
-    let debugInfo = ''
-    try {
-      const { data: sessionCheck } = await supabase.auth.getSession()
-      const { data: userCheck, error: userCheckErr } = await supabase.auth.getUser()
-      debugInfo = `user.id=${user.id} / session.uid=${sessionCheck?.session?.user?.id || 'NONE'} / getUser.uid=${userCheck?.user?.id || 'NONE'} / getUserErr=${userCheckErr?.message || 'none'} / product.brand_user=${product?.brand_user || 'MISSING'}`
-    } catch (e) {
-      debugInfo = '디버그 조회 실패: ' + e.message
+    if (!actualUid || actualUid !== user.id) {
+      btn.disabled = false
+      btn.textContent = '신청하기'
+      errEl.textContent = '로그인 정보가 바뀐 것 같아요. 다른 탭에서 다른 계정으로 로그인하지 않으셨나요? 이 페이지를 새로고침한 뒤 다시 시도해주세요.'
+      errEl.style.display = 'block'
+      return
     }
 
     const { error } = await supabase.from('samples').insert({
       product: productId,
-      creator: user.id,
+      creator: actualUid,
       brand: product.brand_user,
       shipping_address: address,
       note,
@@ -861,7 +861,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = '신청하기'
 
     if (error) {
-      errEl.innerHTML = '신청 실패: ' + error.message + `<br><span style="font-size:10.5px;color:#999;word-break:break-all">[debug] ${debugInfo}</span>`
+      errEl.textContent = '신청 실패: ' + error.message
       errEl.style.display = 'block'
     } else {
       closeSampleRequestModal()

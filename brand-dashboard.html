@@ -1002,8 +1002,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const user = window._vinglyUser
     if (!user) return
 
-    // 세션이 오래돼서 인증 토큰이 만료됐을 수 있으니, 저장 전에 강제로 갱신
-    try { await supabase.auth.refreshSession() } catch (e) { /* 실패해도 기존 세션으로 계속 시도 */ }
+    // 이 탭이 열려있는 동안 다른 탭에서 다른 계정으로 로그인했을 수 있음 —
+    // 그럴 경우 이 페이지에 저장된 내 정보(user.id)가 실제 로그인 계정과 달라질 수 있어 반드시 재확인
+    const { data: userCheck } = await supabase.auth.getUser()
+    const actualUid = userCheck?.user?.id
+    if (!actualUid || actualUid !== user.id) {
+      errEl.textContent = '로그인 정보가 바뀐 것 같아요. 다른 탭에서 다른 계정으로 로그인하지 않으셨나요? 이 페이지를 새로고침한 뒤 다시 시도해주세요.'
+      errEl.style.display = 'block'
+      btn.textContent = editingProductId ? '수정 저장' : '등록하기'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
+      return
+    }
 
     for (let i = 0; i < 3; i++) {
       const input = document.getElementById(`img-input-${i}`)
@@ -1039,9 +1047,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = editingProductId ? '수정 저장' : '등록하기'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
 
     if (error) {
-      const { data: uc } = await supabase.auth.getUser().catch(() => ({ data: null }))
-      errEl.innerHTML = '저장 실패: ' + error.message +
-        `<br><span style="font-size:10.5px;color:#999">[debug] user.id=${user.id} / getUser.uid=${uc?.user?.id || 'NONE'}</span>`
+      errEl.textContent = '저장 실패: ' + error.message
       errEl.style.display = 'block'
       return
     }
