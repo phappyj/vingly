@@ -764,6 +764,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.disabled = true
     btn.textContent = '신청 중...'
 
+    // 디버그: 실제 인증 상태 재확인 (getUser는 서버에 재검증 요청 — 토큰 만료 여부까지 확인 가능)
+    let debugInfo = ''
+    try {
+      const { data: sessionCheck } = await supabase.auth.getSession()
+      const { data: userCheck, error: userCheckErr } = await supabase.auth.getUser()
+      debugInfo = `user.id=${user.id} / session.uid=${sessionCheck?.session?.user?.id || 'NONE'} / getUser.uid=${userCheck?.user?.id || 'NONE'} / getUserErr=${userCheckErr?.message || 'none'} / product.brand_user=${product?.brand_user || 'MISSING'}`
+    } catch (e) {
+      debugInfo = '디버그 조회 실패: ' + e.message
+    }
+
     const { error } = await supabase.from('samples').insert({
       product: productId,
       creator: user.id,
@@ -777,7 +787,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = '신청하기'
 
     if (error) {
-      errEl.textContent = '신청 실패: ' + error.message
+      errEl.innerHTML = '신청 실패: ' + error.message + `<br><span style="font-size:10.5px;color:#999;word-break:break-all">[debug] ${debugInfo}</span>`
       errEl.style.display = 'block'
     } else {
       closeSampleRequestModal()
