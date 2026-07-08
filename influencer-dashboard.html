@@ -475,9 +475,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
-<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif">알림</div>
-  <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div></div>
+<div id="notifPanel" style="display:none;position:fixed;top:70px;right:16px;z-index:300;background:#fff;border:1px solid rgba(10,12,16,.14);border-radius:16px;width:320px;max-height:400px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.12)">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(10,12,16,.07);font:700 14px/1 'Pretendard',sans-serif;position:sticky;top:0;background:#fff">알림</div>
+  <div id="notif-body">
+    <div style="padding:28px 18px;text-align:center;color:rgba(10,12,16,.35)"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font:500 13px/1.5 'Pretendard',sans-serif">아직 알림이 없습니다</div></div>
+  </div>
 </div>
 
 <script type="module">
@@ -502,6 +504,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadMyLinks()
         loadMySamples()
         loadEarnings()
+        loadNotifications()
       })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
@@ -525,6 +528,74 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('grade-tier-detail').style.display = 'block'
     document.querySelectorAll('#grade-roadmap .grm-tier').forEach(el => {
       el.style.outline = el.dataset.tier === tierName ? '2px solid var(--green)' : 'none'
+    })
+  }
+
+  async function loadNotifications() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+
+    const { data } = await supabase
+      .from('samples')
+      .select('id,status,brand_note,tracking_number,courier,created_at,product')
+      .eq('creator', user.id)
+      .in('status', ['approved', 'rejected', 'sent'])
+      .order('created_at', { ascending: false })
+
+    const items = data || []
+    const dot = document.querySelector('.ndot')
+    const body = document.getElementById('notif-body')
+    if (!body) return
+
+    if (items.length === 0) {
+      if (dot) dot.style.display = 'none'
+      return
+    }
+
+    const productIds = [...new Set(items.map(i => i.product).filter(Boolean))]
+    let productMap = {}
+    if (productIds.length) {
+      const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
+      ;(prods || []).forEach(p => { productMap[p.id] = p.name })
+    }
+
+    const seenKey = 'vingly_notif_seen_' + user.id
+    const seenIds = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'))
+    const hasUnseen = items.some(i => !seenIds.has(i.id))
+    if (dot) dot.style.display = hasUnseen ? 'block' : 'none'
+
+    const statusMeta = {
+      approved: { icon: '✅', text: '샘플 신청이 승인됐어요' },
+      rejected: { icon: '❌', text: '샘플 신청이 거절됐어요' },
+      sent: { icon: '📦', text: '샘플이 발송됐어요' },
+    }
+
+    body.innerHTML = items.map(i => {
+      const meta = statusMeta[i.status] || { icon: '🔔', text: i.status }
+      const isNew = !seenIds.has(i.id)
+      const detail = i.status === 'rejected' && i.brand_note
+        ? `사유: ${i.brand_note}`
+        : i.status === 'sent' && i.tracking_number
+          ? `${i.courier || ''} ${i.tracking_number}`.trim()
+          : ''
+      return `
+        <div style="padding:12px 18px;border-bottom:1px solid rgba(10,12,16,.06);${isNew ? 'background:#F5F3FF' : ''}">
+          <div style="font:700 13px/1.4 'Pretendard',sans-serif">${meta.icon} ${meta.text}</div>
+          <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${productMap[i.product] || ''}${detail ? ' · ' + detail : ''}</div>
+        </div>`
+    }).join('')
+  }
+
+  window.markNotifsSeen = function() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+    supabase.from('samples').select('id').eq('creator', user.id).in('status', ['approved','rejected','sent']).then(({ data }) => {
+      const ids = (data || []).map(s => s.id)
+      localStorage.setItem('vingly_notif_seen_' + user.id, JSON.stringify(ids))
+      const dot = document.querySelector('.ndot')
+      if (dot) dot.style.display = 'none'
     })
   }
 
@@ -1105,8 +1176,9 @@ function showToast(msg) {
 
 function toggleNotif() {
   const el = document.getElementById('notifPanel'); if (!el) return
-  el.style.display = el.style.display === 'block' ? 'none' : 'block'
-  const dot = document.querySelector('.ndot'); if (dot) dot.style.display = 'none'
+  const opening = el.style.display !== 'block'
+  el.style.display = opening ? 'block' : 'none'
+  if (opening && typeof markNotifsSeen === 'function') markNotifsSeen()
 }
 
 document.addEventListener('click', function(e) {
