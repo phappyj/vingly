@@ -764,6 +764,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.disabled = true
     btn.textContent = '신청 중...'
 
+    // 디버그: 실제 세션 상태 재확인 (RLS 실패 원인 추적용, 나중에 제거 예정)
+    const { data: sessionCheck } = await supabase.auth.getSession()
+    const actualAuthUid = sessionCheck?.session?.user?.id || null
+
     const { error } = await supabase.from('samples').insert({
       product: productId,
       creator: user.id,
@@ -777,7 +781,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = '신청하기'
 
     if (error) {
-      errEl.textContent = '신청 실패: ' + error.message
+      errEl.innerHTML = '신청 실패: ' + error.message +
+        `<br><span style="font-size:11px;color:#999">[debug] user.id=${user.id} / session.uid=${actualAuthUid} / match=${user.id === actualAuthUid} / product.brand_user=${product.brand_user}</span>`
       errEl.style.display = 'block'
     } else {
       closeSampleRequestModal()
