@@ -261,14 +261,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="calc-card">
         <div class="calc-title">내 예상 월 수익</div>
         <div class="calc-row">
-          <div class="calc-lbl">팔로워 수</div>
-          <input class="calc-input" type="range" min="100" max="100000" step="100" value="12400" id="c-followers" oninput="calcInfl()">
-          <div class="calc-val" id="cv-followers">12,400명</div>
+          <div class="calc-lbl">예상 월 판매 건수</div>
+          <input class="calc-input" type="range" min="1" max="100" value="5" id="c-posts" oninput="calcInfl()">
+          <div class="calc-val" id="cv-posts">월 5건</div>
         </div>
         <div class="calc-row">
-          <div class="calc-lbl">월 포스팅 수</div>
-          <input class="calc-input" type="range" min="1" max="30" value="8" id="c-posts" oninput="calcInfl()">
-          <div class="calc-val" id="cv-posts">월 8회</div>
+          <div class="calc-lbl">크리에이터 수수료율</div>
+          <input class="calc-input" type="range" min="10" max="20" value="15" id="c-followers" oninput="calcInfl()">
+          <div class="calc-val" id="cv-followers">15%</div>
         </div>
         <div class="calc-row">
           <div class="calc-lbl">평균 제품가</div>
@@ -277,8 +277,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
         <div class="calc-result">
           <div class="cr-lbl">예상 월 수익</div>
-          <div class="cr-num" id="c-result">₩840,000</div>
-          <div class="cr-sub" id="c-sub">파일럿 기간 전액 수령 기준</div>
+          <div class="cr-num" id="c-result">₩26,250</div>
+          <div class="cr-sub" id="c-sub">월 5건 판매 · 수수료율 15% 기준</div>
         </div>
       </div>
     </div>
@@ -1180,16 +1180,15 @@ function showPage(id, btn) {
 }
 
 function calcInfl() {
-  const f = parseInt(document.getElementById('c-followers').value)
-  const p = parseInt(document.getElementById('c-posts').value)
+  const commRate = parseInt(document.getElementById('c-followers').value)
+  const sales = parseInt(document.getElementById('c-posts').value)
   const pr = parseInt(document.getElementById('c-price').value)
-  document.getElementById('cv-followers').textContent = f.toLocaleString() + '명'
-  document.getElementById('cv-posts').textContent = '월 ' + p + '회'
+  document.getElementById('cv-followers').textContent = commRate + '%'
+  document.getElementById('cv-posts').textContent = '월 ' + sales + '건'
   document.getElementById('cv-price').textContent = '₩' + pr.toLocaleString()
-  const ctr = f < 10000 ? 0.005 : f < 50000 ? 0.003 : 0.0015
-  const earn = Math.floor(f * ctr * p * pr * 0.14)
+  const earn = Math.floor(sales * pr * (commRate / 100))
   document.getElementById('c-result').textContent = '₩' + earn.toLocaleString()
-  document.getElementById('c-sub').textContent = `팔로워 ${f.toLocaleString()}명 · 전환율 ${(ctr*100).toFixed(1)}% · 평균 14% 수수료`
+  document.getElementById('c-sub').textContent = `월 ${sales}건 판매 · 수수료율 ${commRate}% 기준`
 }
 calcInfl()
 
