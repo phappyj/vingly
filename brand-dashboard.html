@@ -343,7 +343,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="sample-table-wrap" style="display:none">
         <table>
-          <thead><tr><th>신청일</th><th>크리에이터</th><th>제품</th><th>배송지</th><th>상태</th><th>처리</th></tr></thead>
+          <thead><tr><th>신청일</th><th>크리에이터</th><th>제품</th><th>배송지</th><th>상태</th><th>운송장번호</th><th>처리</th></tr></thead>
           <tbody id="sample-tbody"></tbody>
         </table>
       </div>
@@ -841,6 +841,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <td>${productMap[s.product] || '-'}</td>
         <td class="td-m" style="max-width:200px;white-space:normal">${s.shipping_address || '-'}</td>
         <td><span class="badge ${statusBadge[s.status] || 'bg'}">${statusLabel[s.status] || s.status}</span></td>
+        <td>${s.tracking_number ? `${s.courier || ''} ${s.tracking_number}`.trim() : '-'}</td>
         <td>
           ${s.status === 'requested'
             ? `<button class="act-btn green" onclick="setSampleStatus('${s.id}','approved')">승인</button>
