@@ -452,6 +452,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
       </div>
       <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><div class="card-t">📱 내 SNS 채널</div></div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">채널별 팔로워 수를 등록해두면, 브랜드가 샘플 신청을 검토할 때 참고할 수 있어요.</div>
+        <div id="channel-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
+        <button onclick="addChannelRow()" style="padding:9px 18px;border-radius:9px;background:var(--ink-07);border:1.5px dashed var(--ink-14);font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;color:var(--ink-70)">+ 채널 추가</button>
+      </div>
+      <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">🏦 정산 계좌</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">은행</label>
@@ -505,6 +511,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadMySamples()
         loadEarnings()
         loadNotifications()
+        loadChannels()
       })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
@@ -529,6 +536,74 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.querySelectorAll('#grade-roadmap .grm-tier').forEach(el => {
       el.style.outline = el.dataset.tier === tierName ? '2px solid var(--green)' : 'none'
     })
+  }
+
+  const CHANNEL_PLATFORMS = ['인스타그램', '유튜브', '틱톡', '블로그', '기타']
+
+  async function loadChannels() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+    const { data } = await supabase.from('creator_channels').select('*').eq('creator', user.id).order('created_at', { ascending: true })
+    window._myChannels = data || []
+    renderChannelList()
+  }
+
+  function renderChannelList() {
+    const list = document.getElementById('channel-list')
+    if (!list) return
+    const channels = window._myChannels || []
+    if (channels.length === 0) {
+      list.innerHTML = '<div style="font:400 13px/1.5 \'Pretendard\',sans-serif;color:var(--ink-40);padding:8px 0">등록된 채널이 없어요. 채널을 추가해주세요.</div>'
+      return
+    }
+    list.innerHTML = channels.map(ch => `
+      <div style="display:grid;grid-template-columns:110px 1fr 120px 34px;gap:8px;align-items:center" data-ch-id="${ch.id}">
+        <select onchange="saveChannelRow('${ch.id}','platform',this.value)" style="padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          ${CHANNEL_PLATFORMS.map(p => `<option value="${p}" ${ch.platform === p ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+        <input type="text" value="${ch.url || ''}" placeholder="채널 URL" onchange="saveChannelRow('${ch.id}','url',this.value)" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <input type="number" value="${ch.follower_count ?? ''}" placeholder="팔로워 수" onchange="saveChannelRow('${ch.id}','follower_count',this.value)" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <button onclick="deleteChannelRow('${ch.id}')" style="width:34px;height:34px;border-radius:8px;border:none;background:#FEF2F2;color:#DC2626;cursor:pointer;font-size:14px">✕</button>
+      </div>`).join('')
+  }
+
+  window.addChannelRow = async function() {
+    const supabase = window._supabase
+    const user = window._vinglyUser
+    if (!supabase || !user) return
+    const { data, error } = await supabase.from('creator_channels').insert({ creator: user.id, platform: '인스타그램', url: '', follower_count: null }).select()
+    if (error) {
+      alert('채널 추가 실패: ' + error.message)
+      return
+    }
+    window._myChannels = [...(window._myChannels || []), data[0]]
+    renderChannelList()
+  }
+
+  window.saveChannelRow = async function(id, field, value) {
+    const supabase = window._supabase
+    const payload = { [field]: field === 'follower_count' ? (value ? parseInt(value) : null) : value }
+    const { error } = await supabase.from('creator_channels').update(payload).eq('id', id)
+    if (error) {
+      alert('저장 실패: ' + error.message)
+      return
+    }
+    const ch = (window._myChannels || []).find(c => c.id === id)
+    if (ch) ch[field] = payload[field]
+    showToast('채널 정보가 저장됐어요 ✓')
+  }
+
+  window.deleteChannelRow = async function(id) {
+    const supabase = window._supabase
+    const { error } = await supabase.from('creator_channels').delete().eq('id', id)
+    if (error) {
+      alert('삭제 실패: ' + error.message)
+      return
+    }
+    window._myChannels = (window._myChannels || []).filter(c => c.id !== id)
+    renderChannelList()
+    showToast('채널이 삭제됐어요')
   }
 
   async function loadNotifications() {
@@ -1017,7 +1092,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const returnHtml = `<div style="background:var(--ink-07);border-radius:9px;padding:12px 14px;margin-bottom:14px">
         <div style="font:700 11px/1 'Pretendard',sans-serif;margin-bottom:6px">↩️ 반품 안내 (구매자 문의 시 참고하세요)</div>
-        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">7일 이내 단순변심 반품, 하자·오배송은 3개월 이내 가능 (법정 기준)${p.return_policy ? `<br>판매자 추가 안내: ${p.return_policy}` : ''}</div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">7일 이내 단순변심 반품, 하자·오배송은 수령일로부터 3개월 이내(안 날로부터 30일 이내) 가능 (법정 기준)${p.return_policy ? `<br>판매자 추가 안내: ${p.return_policy}` : ''}</div>
       </div>`
 
     // 수익 계산기 (슬라이더)

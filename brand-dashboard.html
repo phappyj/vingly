@@ -464,7 +464,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div>
         <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터에게 한마디</label>
-        <textarea id="p_creator_msg" placeholder="예: 사용 전후 사진을 함께 보여주시면 효과적입니다. 할인코드 VINGLY10을 안내해 주세요!" rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
+        <textarea id="p_creator_msg" placeholder="예: 사용 전후 사진을 함께 보여주시면 효과적입니다. 성분/효능을 강조해서 소개해주세요!" rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
       </div>
     </div>
 
@@ -920,7 +920,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
-  let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}
+  let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}
 
   async function loadSamples() {
     const { data: samples } = await supabase
@@ -929,7 +929,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .order('created_at', { ascending: false })
     const allSamples = samples || []
 
-    let productMap = {}, creatorMap = {}, creatorInfoMap = {}
+    let productMap = {}, creatorMap = {}, creatorInfoMap = {}, creatorChannelsMap = {}
     if (allSamples.length) {
       const productIds = [...new Set(allSamples.map(s => s.product).filter(Boolean))]
       const creatorIds = [...new Set(allSamples.map(s => s.creator).filter(Boolean))]
@@ -943,6 +943,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           creatorMap[c.id] = c.company_name
           creatorInfoMap[c.id] = c
         })
+        const { data: channels } = await supabase.from('creator_channels').select('*').in('creator', creatorIds)
+        ;(channels || []).forEach(ch => {
+          if (!creatorChannelsMap[ch.creator]) creatorChannelsMap[ch.creator] = []
+          creatorChannelsMap[ch.creator].push(ch)
+        })
       }
     }
 
@@ -950,10 +955,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     _sampleProductMap = productMap
     _sampleCreatorMap = creatorMap
     _sampleCreatorInfoMap = creatorInfoMap
-    renderSamples(allSamples, productMap, creatorMap, creatorInfoMap)
+    _sampleCreatorChannelsMap = creatorChannelsMap
+    renderSamples(allSamples, productMap, creatorMap, creatorInfoMap, creatorChannelsMap)
   }
 
-  function renderSamples(samples, productMap, creatorMap, creatorInfoMap) {
+  function renderSamples(samples, productMap, creatorMap, creatorInfoMap, creatorChannelsMap) {
     const emptyEl = document.getElementById('sample-empty')
     const wrap = document.getElementById('sample-table-wrap')
     const hasSamples = samples.length > 0
@@ -966,15 +972,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     document.getElementById('sample-tbody').innerHTML = samples.map(s => {
       const info = creatorInfoMap[s.creator] || {}
-      const followerText = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '팔로워 정보 없음'
-      const catText = info.category ? ` · ${info.category}` : ''
-      const channelLink = info.channel_url ? `<a href="${info.channel_url}" target="_blank" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
+      const channels = (creatorChannelsMap && creatorChannelsMap[s.creator]) || []
+      const catText = info.category ? `${info.category}` : ''
+
+      let channelsHtml
+      if (channels.length > 0) {
+        channelsHtml = channels.map(ch => {
+          const followerTxt = ch.follower_count != null ? Number(ch.follower_count).toLocaleString() + '명' : '팔로워 미등록'
+          const link = ch.url ? `<a href="${ch.url}" target="_blank" style="color:var(--blue);text-decoration:underline">보기</a>` : ''
+          return `${ch.platform} ${followerTxt} ${link}`
+        }).join('<br>')
+      } else {
+        const followerText = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '채널 정보 없음'
+        const channelLink = info.channel_url ? `<a href="${info.channel_url}" target="_blank" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
+        channelsHtml = `${followerText} ${channelLink}`
+      }
+
       return `
       <tr id="sample-row-${s.id}">
         <td>${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
         <td>
           <div class="td-b">${creatorMap[s.creator] || '-'}</div>
-          <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${followerText}${catText} ${channelLink}</div>
+          <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${catText}</div>
+          <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px;line-height:1.6">${channelsHtml}</div>
         </td>
         <td>${productMap[s.product] || '-'}</td>
         <td class="td-m" style="max-width:180px;white-space:normal">${s.shipping_address || '-'}</td>
@@ -999,7 +1019,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const idx = _samplesCache.findIndex(s => s.id === sampleId)
     if (idx === -1) return
     _samplesCache[idx] = { ..._samplesCache[idx], ...changes }
-    renderSamples(_samplesCache, _sampleProductMap, _sampleCreatorMap, _sampleCreatorInfoMap)
+    renderSamples(_samplesCache, _sampleProductMap, _sampleCreatorMap, _sampleCreatorInfoMap, _sampleCreatorChannelsMap)
   }
 
   window.setSampleStatus = async function(sampleId, status) {
