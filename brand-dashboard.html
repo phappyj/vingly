@@ -1050,15 +1050,20 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   window.markSampleSent = async function(sampleId) {
-    const tracking = prompt('운송장번호를 입력해주세요 (빈칸으로 확인하면 운송장번호 없이 발송 처리됩니다)')
+    const tracking = prompt('운송장번호를 입력해주세요 (발송 처리를 위해 필수 입력입니다)')
     if (tracking === null) return // 취소 시 처리 중단
+    if (tracking.trim() === '') {
+      alert('운송장번호를 입력해야 발송 처리가 됩니다.')
+      return // 빈 값이면 처리 중단
+    }
 
     const actionsEl = document.getElementById(`sample-actions-${sampleId}`)
     if (actionsEl) actionsEl.innerHTML = '처리 중...'
 
+    const trackingValue = tracking.trim()
     const { data, error } = await supabase
       .from('samples')
-      .update({ status: 'sent', tracking_number: tracking || null })
+      .update({ status: 'sent', tracking_number: trackingValue })
       .eq('id', sampleId)
       .select()
     if (error) {
@@ -1069,7 +1074,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       loadSamples()
     } else {
       showToast('발송 처리됐습니다 ✓')
-      patchSampleRow(sampleId, { status: 'sent', tracking_number: tracking || null })
+      patchSampleRow(sampleId, { status: 'sent', tracking_number: trackingValue })
     }
   }
 
