@@ -373,7 +373,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   </div>
 </main>
 
-<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1 'Pretendard',sans-serif;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1.5 'Pretendard',sans-serif;max-width:320px;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
 <!-- 제품 등록/수정 모달 -->
 <div id="productModal" onclick="if(event.target===this)closeProductModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
@@ -1000,7 +1000,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <td class="td-m" style="max-width:180px;white-space:normal">${s.shipping_address || '-'}</td>
         <td>
           <span class="badge ${statusBadge[s.status] || 'bg'}">${statusLabel[s.status] || s.status}</span>
-          ${s.status === 'rejected' && s.brand_note ? `<div style="font-size:11px;color:var(--ink-40);margin-top:4px">사유: ${s.brand_note}</div>` : ''}
+          ${s.status === 'rejected' && s.brand_note ? `<div style="font-size:12.5px;font-weight:600;color:#C0392B;margin-top:6px;padding:4px 8px;background:rgba(192,57,43,.08);border-radius:6px;display:inline-block">사유: ${s.brand_note}</div>` : ''}
         </td>
         <td>${s.tracking_number ? `${s.courier || ''} ${s.tracking_number}`.trim() : '-'}</td>
         <td id="sample-actions-${s.id}">
@@ -1044,13 +1044,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       alert('처리가 안 됐습니다 (권한 문제로 보입니다). brand_can_update_own_product_samples 정책을 확인해주세요.')
       loadSamples()
     } else {
-      showToast(status === 'approved' ? '샘플 신청을 승인했습니다 ✓' : '샘플 신청을 거절했습니다')
+      showToast(status === 'approved' ? '샘플 신청을 승인했습니다 ✓' : `샘플 신청을 거절했습니다${brand_note ? ' (사유: ' + brand_note + ')' : ''}`)
       patchSampleRow(sampleId, updatePayload)
     }
   }
 
   window.markSampleSent = async function(sampleId) {
-    const tracking = prompt('운송장번호를 입력해주세요 (선택, 취소해도 발송 처리됩니다)')
+    const tracking = prompt('운송장번호를 입력해주세요 (빈칸으로 확인하면 운송장번호 없이 발송 처리됩니다)')
+    if (tracking === null) return // 취소 시 처리 중단
 
     const actionsEl = document.getElementById(`sample-actions-${sampleId}`)
     if (actionsEl) actionsEl.innerHTML = '처리 중...'
@@ -1397,11 +1398,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 </script>
 
 <script>
+let _toastTimer = null
 function showToast(msg) {
   const toast = document.getElementById('toast')
   if (!toast) return
+  clearTimeout(_toastTimer)
   toast.textContent = msg; toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'
-  setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, 3000)
+  const duration = Math.min(6000, Math.max(3000, msg.length * 90)) // 메시지 길수록 오래 표시
+  _toastTimer = setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0' }, duration)
 }
 
 function toggleSidebar() {
