@@ -917,6 +917,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       key_points: p.key_points || [],
       target_audience: p.target_audience || '',
       creator_message: p.creator_message || '',
+      return_policy: p.return_policy || '',
       sample_available: !!p.sample_available,
       sample_qty: p.sample_qty,
       sample_min_followers: p.sample_min_followers,
@@ -1014,6 +1015,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">${p.creator_message}</div>
         </div>` : ''
 
+    const returnHtml = `<div style="background:var(--ink-07);border-radius:9px;padding:12px 14px;margin-bottom:14px">
+        <div style="font:700 11px/1 'Pretendard',sans-serif;margin-bottom:6px">↩️ 반품 안내 (구매자 문의 시 참고하세요)</div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">7일 이내 단순변심 반품, 하자·오배송은 3개월 이내 가능 (법정 기준)${p.return_policy ? `<br>판매자 추가 안내: ${p.return_policy}` : ''}</div>
+      </div>`
+
     // 수익 계산기 (슬라이더)
     const calcHtml = `<div class="earn-calc">
       <div class="earn-calc-title">💰 내 예상 수익 계산해보기</div>
@@ -1053,7 +1059,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
         ${p.desc ? `<div style="font:400 13px/1.75 'Pretendard',sans-serif;color:var(--ink-70);margin-bottom:16px">${p.desc}</div>` : ''}
         ${sampleHtml}
-        ${kpHtml}${targetHtml}${msgHtml}${calcHtml}
+        ${kpHtml}${targetHtml}${msgHtml}${returnHtml}${calcHtml}
         <div style="height:14px"></div>
         <div class="exp-link-box ${myLink ? 'on' : ''}" id="exp-link-box">
           <div style="font:700 11px/1 'Pretendard',sans-serif;color:var(--green);margin-bottom:7px">✅ 내 링크</div>

@@ -267,6 +267,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-reports">
     <div class="card">
       <div class="card-h"><div class="card-t">내 제품 신고 · 문의</div><div style="font-size:12px;font-weight:700;color:var(--red)" id="brand-report-count">미처리 0건</div></div>
+      <div style="background:#FEF2F2;border-radius:9px;padding:10px 14px;margin-bottom:14px;font:500 12px/1.6 'Pretendard',sans-serif;color:#991B1B">⏰ 전자상거래법상 반품·환불은 접수 후 3영업일 이내 처리해야 해요. 처리가 늦어지면 3일 경과 시 관리자에게 별도 표시되니 빠르게 확인해주세요.</div>
       <div id="brand-report-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">✅</div>
         <div style="font-size:14px;font-weight:600">접수된 신고가 없습니다</div>
@@ -465,6 +466,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터에게 한마디</label>
         <textarea id="p_creator_msg" placeholder="예: 사용 전후 사진을 함께 보여주시면 효과적입니다. 할인코드 VINGLY10을 안내해 주세요!" rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
       </div>
+    </div>
+
+    <div class="sec-title">반품 · 교환 안내</div>
+    <div style="background:var(--blue-bg);border-radius:9px;padding:12px 14px;margin-bottom:10px;font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">
+      📋 전자상거래법상 <strong>수령 후 7일 이내 단순변심 반품</strong>과 <strong>상품 하자 시 3개월 이내 반품</strong>은 판매자가 임의로 제한할 수 없는 소비자의 법적 권리입니다. 아래에는 그 외 세부 안내사항만 추가해주세요 (예: 위생용품 특성상 개봉 시 반품 제한 등).
+    </div>
+    <div>
+      <textarea id="p_return_policy" placeholder="예: 화장품 특성상 개봉/사용 후에는 반품이 제한될 수 있습니다. 반품 시 왕복 배송비는 구매자 부담입니다." rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical;margin-bottom:20px"></textarea>
     </div>
 
     <div class="sec-title">샘플 제공 설정 <span style="text-transform:none;font-weight:400;color:var(--ink-40)">(선택)</span></div>
@@ -1059,6 +1068,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('p_desc').value = p.description || ''
     document.getElementById('p_target').value = p.target_audience || ''
     document.getElementById('p_creator_msg').value = p.creator_message || ''
+    document.getElementById('p_return_policy').value = p.return_policy || ''
     document.getElementById('p_sample_available').checked = !!p.sample_available
     document.getElementById('p_sample_qty').value = p.sample_qty || ''
     document.getElementById('p_sample_min_followers').value = p.sample_min_followers || ''
@@ -1095,6 +1105,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const desc = document.getElementById('p_desc').value.trim()
     const target = document.getElementById('p_target').value.trim()
     const creatorMsg = document.getElementById('p_creator_msg').value.trim()
+    const returnPolicy = document.getElementById('p_return_policy').value.trim()
     const kps = [...document.querySelectorAll('.kp-input')].map(i => i.value.trim()).filter(Boolean)
     const sampleAvailable = document.getElementById('p_sample_available').checked
     const sampleQty = parseInt(document.getElementById('p_sample_qty').value) || null
@@ -1143,7 +1154,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const images = uploadedImages.filter(Boolean)
     const image_url = images[0] || null
-    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, key_points: kps, images, image_url, status: 'active', sample_available: sampleAvailable, sample_qty: sampleQty, sample_min_followers: sampleMinFollowers, sample_deadline: sampleDeadline }
+    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, return_policy: returnPolicy, key_points: kps, images, image_url, status: 'active', sample_available: sampleAvailable, sample_qty: sampleQty, sample_min_followers: sampleMinFollowers, sample_deadline: sampleDeadline }
 
     let error
     if (editingProductId) {
