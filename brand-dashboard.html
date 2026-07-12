@@ -233,6 +233,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-products">
     <div class="card">
       <div class="card-h"><div class="card-t">등록 제품</div><button class="btn-primary" onclick="openProductModal()">+ 새 제품 등록</button></div>
+      <div id="plan-usage-bar" style="display:none;margin:0 0 14px;padding:10px 14px;border-radius:10px;font:600 12.5px/1.4 'Pretendard',sans-serif"></div>
       <div id="product-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📦</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">등록된 제품이 없습니다</div>
@@ -524,6 +525,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (user.user_metadata?.role !== 'brand') { location.replace('login.html') }
     else {
       const name = user.user_metadata?.company_name || user.user_metadata?.name || user.email || '브랜드'
+      const { data: userRow } = await supabase.from('users').select('plan').eq('id', user.id).single()
+      const plan = userRow?.plan || 'pilot'
       document.addEventListener('DOMContentLoaded', () => {
         const sbName = document.getElementById('sb-name')
         const sbAv = document.getElementById('sb-av')
@@ -540,19 +543,70 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           const now = new Date()
           settleMonth.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
         }
+
+        // 새로고침 없이도 최신 상태 유지 — 탭이 보이는 동안 20초마다 자동 갱신
+        setInterval(() => {
+          if (document.visibilityState !== 'visible') return
+          loadProducts()
+          loadOrders()
+          loadReports()
+          loadSamples()
+          loadCreatorsAndRevenue()
+          loadNotifications()
+        }, 20000)
+
+        // 탭을 잠깐 벗어났다가 돌아왔을 때도 즉시 한 번 갱신
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            loadProducts()
+            loadOrders()
+            loadReports()
+            loadSamples()
+            loadCreatorsAndRevenue()
+            loadNotifications()
+          }
+        })
       })
       window._supabase = supabase
-      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand' }
+      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan }
     }
   }
 
   let editingProductId = null
   let uploadedImages = [null, null, null]
 
+  let BRAND_PLANS_CACHE = null
+  async function getBrandPlans() {
+    if (BRAND_PLANS_CACHE) return BRAND_PLANS_CACHE
+    const { data } = await supabase.from('brand_plans').select('*')
+    BRAND_PLANS_CACHE = {}
+    ;(data || []).forEach(p => { BRAND_PLANS_CACHE[p.id] = p })
+    return BRAND_PLANS_CACHE
+  }
+
   async function loadProducts() {
     const user = window._vinglyUser
     if (!user) return
     const { data: products } = await supabase.from('products').select('*').eq('brand_user', user.id).order('created_at', { ascending: false })
+
+    const count = products ? products.length : 0
+    const plans = await getBrandPlans()
+    const planInfo = plans[user.plan] || plans.pilot
+    const limit = planInfo ? planInfo.product_limit : null
+    const usageEl = document.getElementById('plan-usage-bar')
+    if (usageEl) {
+      if (limit === null || limit === undefined) {
+        usageEl.style.display = 'none'
+      } else {
+        const nearLimit = count >= limit
+        usageEl.style.display = 'block'
+        usageEl.style.background = nearLimit ? 'var(--red-bg)' : 'var(--ink-06)'
+        usageEl.style.color = nearLimit ? 'var(--red)' : 'var(--ink-60)'
+        usageEl.textContent = nearLimit
+          ? `${planInfo.name} 플랜 제품 등록 한도(${limit}개)에 도달했습니다. 더 등록하려면 플랜 업그레이드가 필요해요.`
+          : `${planInfo.name} 플랜: 제품 ${count}/${limit}개 등록 중`
+      }
+    }
 
     const hasProducts = products && products.length > 0
     document.getElementById('product-empty').style.display = hasProducts ? 'none' : 'block'
@@ -1194,7 +1248,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     btn.textContent = editingProductId ? '수정 저장' : '등록하기'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'
 
     if (error) {
-      errEl.textContent = '저장 실패: ' + error.message
+      errEl.textContent = error.message.includes('PLAN_LIMIT_EXCEEDED')
+        ? `현재 플랜의 제품 등록 한도에 도달했습니다. 더 등록하려면 플랜 업그레이드가 필요해요.`
+        : '저장 실패: ' + error.message
       errEl.style.display = 'block'
       return
     }

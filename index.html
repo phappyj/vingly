@@ -999,34 +999,8 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
       <!-- 구독 플랜 -->
       <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:26px 28px" class="reveal">
         <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-40);margin-bottom:14px">공급자 월 구독 플랜</div>
-        <div style="display:flex;flex-direction:column;gap:9px">
-          <div style="padding:12px 14px;background:var(--ink-06);border-radius:10px;border:1px solid var(--ink-14);display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--green)">Free</div>
-              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">제품 3개 · 얼리버드 영구 제공</div>
-            </div>
-            <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--green)">₩0</div>
-          </div>
-          <div style="padding:12px 14px;background:var(--blue-bg);border-radius:10px;border:1px solid rgba(29,78,216,.18);display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--blue)">Basic</div>
-              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">제품 10개 · 얼리버드 ₩4,900</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--blue)">₩9,900</div>
-              <div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">/월</div>
-            </div>
-          </div>
-          <div style="padding:12px 14px;background:var(--green-bg);border-radius:10px;border:1px solid rgba(4,108,78,.18);display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--green)">Pro</div>
-              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">제품 무제한 · AI 우선 노출</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--green)">₩29,000</div>
-              <div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">/월</div>
-            </div>
-          </div>
+        <div id="brand-plan-list" style="display:flex;flex-direction:column;gap:9px">
+          <div style="padding:12px 14px;background:var(--ink-06);border-radius:10px;border:1px solid var(--ink-14);color:var(--ink-40);font:500 12px/1.4 'Pretendard',sans-serif">불러오는 중...</div>
         </div>
         <div style="margin-top:11px;padding:10px 12px;background:var(--green-bg);border-radius:8px">
           <p style="font:600 12px/1.4 'Pretendard',sans-serif;color:var(--green)">📌 크리에이터는 모든 플랜에서 ₩0 — 영구</p>
@@ -1072,52 +1046,8 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
     <div class="ey">크리에이터 등급 시스템</div>
     <h2 class="st">판매할수록<br>더 유리해지는 구조</h2>
     <p class="sb">실적이 쌓일수록 더 좋은 제품에 먼저 접근하고, 수수료도 낮아집니다.</p>
-    <div class="grade-grid">
-      <div class="gc gc-new reveal">
-        <span class="gc-badge">시작</span>
-        <div class="gc-ico">🌱</div>
-        <div class="gc-name">New</div>
-        <div class="gc-cond">가입 직후</div>
-        <ul class="gc-perks">
-          <li>전체 제품 탐색 가능</li>
-          <li>링크 생성 무제한</li>
-          <li>파일럿 수수료 100%</li>
-        </ul>
-      </div>
-      <div class="gc gc-active reveal">
-        <span class="gc-badge">성장</span>
-        <div class="gc-ico">⚡</div>
-        <div class="gc-name">Active</div>
-        <div class="gc-cond">누적 판매 10건+</div>
-        <ul class="gc-perks">
-          <li>신규 제품 우선 접근</li>
-          <li>전환 후 수수료 -0.5%p</li>
-          <li>월간 실적 리포트</li>
-        </ul>
-      </div>
-      <div class="gc gc-pro reveal">
-        <span class="gc-badge">전문가</span>
-        <div class="gc-ico">🔥</div>
-        <div class="gc-name">Pro</div>
-        <div class="gc-cond">누적 판매 50건+</div>
-        <ul class="gc-perks">
-          <li>프리미엄 제품 전용 접근</li>
-          <li>전환 후 수수료 -1%p</li>
-          <li>전담 매니저 배정</li>
-        </ul>
-      </div>
-      <div class="gc gc-elite reveal">
-        <span class="gc-badge">파트너</span>
-        <div class="gc-ico">👑</div>
-        <div class="gc-name">Elite</div>
-        <div class="gc-cond">누적 판매 200건+</div>
-        <ul class="gc-perks">
-          <li>입점 전 독점 제품 협의</li>
-          <li>최저 수수료율 영구 고정</li>
-          <li>공식 파트너 인증</li>
-          <li>단독 캠페인 기회</li>
-        </ul>
-      </div>
+    <div class="grade-grid" id="creator-grade-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--ink-40);font:500 13px/1 'Pretendard',sans-serif">불러오는 중...</div>
     </div>
   </div>
 </section>
@@ -1537,6 +1467,9 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
     const settings = {}
     ;(data || []).forEach(r => { settings[r.key] = r.value })
 
+    const { data: gradesData } = await supabase.from('creator_grades').select('*').order('sort_order', { ascending: true })
+    const { data: plansData } = await supabase.from('brand_plans').select('*').order('sort_order', { ascending: true })
+
     // 로그인 상태 확인 — 이미 로그인돼 있으면 로그인/가입 버튼 대신 대시보드 이동 버튼 표시
     const { data: { session } } = await supabase.auth.getSession()
     const dashboardByRole = { brand: 'brand-dashboard.html', creator: 'influencer-dashboard.html', admin: 'admin.html' }
@@ -1561,6 +1494,43 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
       // 공지 배너 문구
       const bannerEl = document.getElementById('hero-live-text')
       if (bannerEl && settings.banner_text) bannerEl.textContent = settings.banner_text
+
+      // 크리에이터 등급 카드 (creator_grades 테이블 기반 — 숫자/혜택 바뀌어도 코드 수정 불필요)
+      const gradeGrid = document.getElementById('creator-grade-grid')
+      if (gradeGrid && gradesData && gradesData.length) {
+        const badgeMap = { new: '시작', active: '성장', pro: '전문가', elite: '파트너' }
+        const classMap = { new: 'gc-new', active: 'gc-active', pro: 'gc-pro', elite: 'gc-elite' }
+        gradeGrid.innerHTML = gradesData.map(g => `
+          <div class="gc ${classMap[g.id] || ''} reveal">
+            <span class="gc-badge">${badgeMap[g.id] || g.name}</span>
+            <div class="gc-ico">${g.icon}</div>
+            <div class="gc-name">${g.name}</div>
+            <div class="gc-cond">${g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건+`}</div>
+            <ul class="gc-perks">${(g.perks_display || []).map(p => `<li>${p}</li>`).join('')}</ul>
+          </div>`).join('')
+      }
+
+      // 브랜드 구독 플랜 카드 (brand_plans 테이블 기반, pilot 제외)
+      const planList = document.getElementById('brand-plan-list')
+      if (planList && plansData && plansData.length) {
+        const visiblePlans = plansData.filter(p => p.id !== 'pilot')
+        const colorMap = { free: 'green', basic: 'blue', pro: 'green' }
+        planList.innerHTML = visiblePlans.map(p => {
+          const c = colorMap[p.id] || 'green'
+          const priceLabel = p.price === 0 ? '₩0' : `₩${Number(p.price).toLocaleString()}`
+          return `
+          <div style="padding:12px 14px;background:var(--${c}-bg);border-radius:10px;border:1px solid var(--ink-14);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--${c})">${p.name}</div>
+              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${p.perks_display}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--${c})">${priceLabel}</div>
+              ${p.price > 0 ? `<div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">/월</div>` : ''}
+            </div>
+          </div>`
+        }).join('')
+      }
 
       // 점검 모드
       if (settings.toggle_maintenance === 'true') {

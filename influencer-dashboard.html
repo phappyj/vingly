@@ -515,15 +515,24 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
+      await loadTiers()
     }
   }
 
-  const TIERS = [
-    { name: 'New', icon: '🌱', min: 0, cond: '가입 직후', perks: ['전체 제품 탐색 가능', '링크 생성 무제한', '파일럿 수수료 100%'] },
-    { name: 'Active', icon: '⚡', min: 10, cond: '누적 판매 10건 달성 시', perks: ['신규 제품 우선 접근', '전환 후 수수료 -0.5%p', '월간 실적 리포트'] },
-    { name: 'Pro', icon: '🔥', min: 50, cond: '누적 판매 50건 달성 시', perks: ['프리미엄 제품 전용 접근', '전환 후 수수료 -1%p', '전담 매니저 배정'] },
-    { name: 'Elite', icon: '👑', min: 200, cond: '누적 판매 200건 달성 시', perks: ['입점 전 독점 제품 협의', '최저 수수료율 영구 고정', '공식 파트너 인증', '단독 캠페인 기회'] },
-  ]
+  let TIERS = []
+  async function loadTiers() {
+    const { data } = await supabase.from('creator_grades').select('*').order('sort_order', { ascending: true })
+    TIERS = (data || []).map(g => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      min: g.min_sales,
+      cond: g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건 달성 시`,
+      perks: g.perks_display || [],
+      commissionBonus: Number(g.commission_bonus_pct) || 0,
+      earlyAccessHours: g.early_access_hours || 0
+    }))
+  }
 
   window.showTierPerks = function(tierName) {
     const tier = TIERS.find(t => t.name === tierName)
@@ -970,6 +979,23 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   let expCat = '전체'
   let expProducts = []
+  let myTierCache = null
+
+  async function getMyTier() {
+    if (myTierCache) return myTierCache
+    const user = window._vinglyUser
+    if (!user || !window._supabase) return TIERS[0] || { commissionBonus: 0, earlyAccessHours: 0 }
+    const { count } = await window._supabase
+      .from('orders')
+      .select('id, links!inner(creator)', { count: 'exact', head: true })
+      .eq('links.creator', user.id)
+      .eq('status', 'completed')
+    const salesCount = count || 0
+    let cur = TIERS[0]
+    for (let i = TIERS.length - 1; i >= 0; i--) { if (salesCount >= TIERS[i].min) { cur = TIERS[i]; break } }
+    myTierCache = cur
+    return cur
+  }
 
   async function expLoadProducts() {
     if (!window._supabase) return []
@@ -979,25 +1005,36 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .eq('status', 'active')
       .order('created_at', { ascending: false })
     if (error || !data) return []
+    const myTier = await getMyTier()
+    const maxEarlyAccessHours = Math.max(0, ...TIERS.map(t => t.earlyAccessHours || 0))
+    const now = Date.now()
     const emoMap = {'뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗','헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'}
-    return data.map(p => ({
-      id: p.id, name: p.name,
-      brand: p.users?.company_name || '브랜드',
-      brand_user: p.brand_user,
-      cat: p.category || '기타', price: p.price, comm: p.commission_rate,
-      emoji: emoMap[p.category] || '📦',
-      desc: p.description || '',
-      image_url: p.image_url || null,
-      images: p.images || [],
-      key_points: p.key_points || [],
-      target_audience: p.target_audience || '',
-      creator_message: p.creator_message || '',
-      return_policy: p.return_policy || '',
-      sample_available: !!p.sample_available,
-      sample_qty: p.sample_qty,
-      sample_min_followers: p.sample_min_followers,
-      sample_deadline: p.sample_deadline
-    }))
+    return data
+      .filter(p => {
+        // 등록된 지 얼마 안 된 신제품은, 얼리 액세스 권한 없는 등급에게는 잠시 숨김
+        if (!maxEarlyAccessHours || (myTier.earlyAccessHours || 0) > 0) return true
+        const ageHours = (now - new Date(p.created_at).getTime()) / 3600000
+        return ageHours >= maxEarlyAccessHours
+      })
+      .map(p => ({
+        id: p.id, name: p.name,
+        brand: p.users?.company_name || '브랜드',
+        brand_user: p.brand_user,
+        cat: p.category || '기타', price: p.price,
+        comm: Number(p.commission_rate) + (myTier.commissionBonus || 0),
+        emoji: emoMap[p.category] || '📦',
+        desc: p.description || '',
+        image_url: p.image_url || null,
+        images: p.images || [],
+        key_points: p.key_points || [],
+        target_audience: p.target_audience || '',
+        creator_message: p.creator_message || '',
+        return_policy: p.return_policy || '',
+        sample_available: !!p.sample_available,
+        sample_qty: p.sample_qty,
+        sample_min_followers: p.sample_min_followers,
+        sample_deadline: p.sample_deadline
+      }))
   }
 
   window.expRender = async function() {
