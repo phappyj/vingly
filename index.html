@@ -1470,6 +1470,60 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
     const { data: gradesData } = await supabase.from('creator_grades').select('*').order('sort_order', { ascending: true })
     const { data: plansData } = await supabase.from('brand_plans').select('*').order('sort_order', { ascending: true })
 
+    // 등급/플랜 카드 렌더링 — 다른 초기화 로직과 분리된 독립 블록.
+    // DOM은 모듈 스크립트 실행 시점에 이미 완성돼 있으므로 DOMContentLoaded를 기다릴 필요 없음.
+    try {
+      console.log('[등급/플랜] gradesData:', gradesData, 'plansData:', plansData)
+
+      const gradeGrid = document.getElementById('creator-grade-grid')
+      if (!gradeGrid) {
+        console.error('[등급/플랜] #creator-grade-grid 엘리먼트를 찾을 수 없음')
+      } else if (!gradesData || !gradesData.length) {
+        console.error('[등급/플랜] creator_grades 데이터가 비어있음')
+      } else {
+        const badgeMap = { new: '시작', active: '성장', pro: '전문가', elite: '파트너' }
+        const classMap = { new: 'gc-new', active: 'gc-active', pro: 'gc-pro', elite: 'gc-elite' }
+        gradeGrid.innerHTML = gradesData.map(g => `
+          <div class="gc ${classMap[g.id] || ''} reveal">
+            <span class="gc-badge">${badgeMap[g.id] || g.name}</span>
+            <div class="gc-ico">${g.icon}</div>
+            <div class="gc-name">${g.name}</div>
+            <div class="gc-cond">${g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건+`}</div>
+            <ul class="gc-perks">${(g.perks_display || []).map(p => `<li>${p}</li>`).join('')}</ul>
+          </div>`).join('')
+        console.log('[등급/플랜] 등급 카드 렌더링 완료:', gradesData.length, '개')
+      }
+
+      const planList = document.getElementById('brand-plan-list')
+      if (!planList) {
+        console.error('[등급/플랜] #brand-plan-list 엘리먼트를 찾을 수 없음')
+      } else if (!plansData || !plansData.length) {
+        console.error('[등급/플랜] brand_plans 데이터가 비어있음')
+      } else {
+        const visiblePlans = plansData.filter(p => p.id !== 'pilot')
+        const colorMap = { free: 'green', basic: 'blue', pro: 'green' }
+        planList.innerHTML = visiblePlans.map(p => {
+          const c = colorMap[p.id] || 'green'
+          const priceLabel = p.price === 0 ? '₩0' : `₩${Number(p.price).toLocaleString()}`
+          return `
+          <div style="padding:12px 14px;background:var(--${c}-bg);border-radius:10px;border:1px solid var(--ink-14);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--${c})">${p.name}</div>
+              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${p.perks_display}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--${c})">${priceLabel}</div>
+              ${p.price > 0 ? `<div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">/월</div>` : ''}
+            </div>
+          </div>`
+        }).join('')
+        console.log('[등급/플랜] 플랜 카드 렌더링 완료:', visiblePlans.length, '개')
+      }
+    } catch (renderErr) {
+      console.error('[등급/플랜] 렌더링 중 예외 발생:', renderErr)
+    }
+
+
     // 로그인 상태 확인 — 이미 로그인돼 있으면 로그인/가입 버튼 대신 대시보드 이동 버튼 표시
     const { data: { session } } = await supabase.auth.getSession()
     const dashboardByRole = { brand: 'brand-dashboard.html', creator: 'influencer-dashboard.html', admin: 'admin.html' }
@@ -1494,43 +1548,6 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
       // 공지 배너 문구
       const bannerEl = document.getElementById('hero-live-text')
       if (bannerEl && settings.banner_text) bannerEl.textContent = settings.banner_text
-
-      // 크리에이터 등급 카드 (creator_grades 테이블 기반 — 숫자/혜택 바뀌어도 코드 수정 불필요)
-      const gradeGrid = document.getElementById('creator-grade-grid')
-      if (gradeGrid && gradesData && gradesData.length) {
-        const badgeMap = { new: '시작', active: '성장', pro: '전문가', elite: '파트너' }
-        const classMap = { new: 'gc-new', active: 'gc-active', pro: 'gc-pro', elite: 'gc-elite' }
-        gradeGrid.innerHTML = gradesData.map(g => `
-          <div class="gc ${classMap[g.id] || ''} reveal">
-            <span class="gc-badge">${badgeMap[g.id] || g.name}</span>
-            <div class="gc-ico">${g.icon}</div>
-            <div class="gc-name">${g.name}</div>
-            <div class="gc-cond">${g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건+`}</div>
-            <ul class="gc-perks">${(g.perks_display || []).map(p => `<li>${p}</li>`).join('')}</ul>
-          </div>`).join('')
-      }
-
-      // 브랜드 구독 플랜 카드 (brand_plans 테이블 기반, pilot 제외)
-      const planList = document.getElementById('brand-plan-list')
-      if (planList && plansData && plansData.length) {
-        const visiblePlans = plansData.filter(p => p.id !== 'pilot')
-        const colorMap = { free: 'green', basic: 'blue', pro: 'green' }
-        planList.innerHTML = visiblePlans.map(p => {
-          const c = colorMap[p.id] || 'green'
-          const priceLabel = p.price === 0 ? '₩0' : `₩${Number(p.price).toLocaleString()}`
-          return `
-          <div style="padding:12px 14px;background:var(--${c}-bg);border-radius:10px;border:1px solid var(--ink-14);display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font:700 13px/1 'Pretendard',sans-serif;color:var(--${c})">${p.name}</div>
-              <div style="font:400 11px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${p.perks_display}</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font:800 18px/1 'Pretendard',sans-serif;color:var(--${c})">${priceLabel}</div>
-              ${p.price > 0 ? `<div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">/월</div>` : ''}
-            </div>
-          </div>`
-        }).join('')
-      }
 
       // 점검 모드
       if (settings.toggle_maintenance === 'true') {
