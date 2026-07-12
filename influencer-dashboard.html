@@ -495,6 +495,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
   )
 
+  let TIERS = []
+  async function loadTiers() {
+    const { data } = await supabase.from('creator_grades').select('*').order('sort_order', { ascending: true })
+    TIERS = (data || []).map(g => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      min: g.min_sales,
+      cond: g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건 달성 시`,
+      perks: g.perks_display || [],
+      commissionBonus: Number(g.commission_bonus_pct) || 0,
+      earlyAccessHours: g.early_access_hours || 0
+    }))
+  }
+
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) { location.replace('login.html') }
   else {
@@ -519,20 +534,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
-  let TIERS = []
-  async function loadTiers() {
-    const { data } = await supabase.from('creator_grades').select('*').order('sort_order', { ascending: true })
-    TIERS = (data || []).map(g => ({
-      id: g.id,
-      name: g.name,
-      icon: g.icon,
-      min: g.min_sales,
-      cond: g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건 달성 시`,
-      perks: g.perks_display || [],
-      commissionBonus: Number(g.commission_bonus_pct) || 0,
-      earlyAccessHours: g.early_access_hours || 0
-    }))
-  }
 
   window.showTierPerks = function(tierName) {
     const tier = TIERS.find(t => t.name === tierName)
