@@ -246,7 +246,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작됩니다</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch nt">아직 판매 없음</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div><div class="sc-val" id="dash-clicks">0</div><div class="sc-ch nt">전환율 —</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">자동 입금 예정</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label" id="dash-settle-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-settle-sub">자동 입금 예정</div></div>
     </div>
     <div class="g3">
       <div class="card">
@@ -506,7 +506,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       cond: g.min_sales === 0 ? '가입 직후' : `누적 판매 ${g.min_sales}건 달성 시`,
       perks: g.perks_display || [],
       commissionBonus: Number(g.commission_bonus_pct) || 0,
-      earlyAccessHours: g.early_access_hours || 0
+      earlyAccessHours: g.early_access_hours || 0,
+      settlementsPerMonth: g.settlements_per_month || 1
     }))
   }
 
@@ -726,6 +727,18 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     })
     const monthTotal = thisMonthOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
     const grandTotal = allOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
+
+    // 등급별 정산 주기 표시 (Elite는 월 2회, 나머지는 월 1회)
+    let myTier = TIERS[0]
+    for (let i = TIERS.length - 1; i >= 0; i--) { if (allOrders.length >= TIERS[i].min) { myTier = TIERS[i]; break } }
+    const settleLabelEl = document.getElementById('dash-settle-label')
+    const settleSubEl = document.getElementById('dash-settle-sub')
+    if (settleLabelEl && myTier) {
+      settleLabelEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? '정산 예정 (월 2회)' : '정산 예정 (월말)'
+    }
+    if (settleSubEl && myTier) {
+      settleSubEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? `${myTier.name} 등급 · 월 2회 입금` : '자동 입금 예정'
+    }
 
     const monthValEl = document.getElementById('earn-month-val')
     const monthSubEl = document.getElementById('earn-month-sub')
@@ -990,7 +1003,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .from('orders')
       .select('id, links!inner(creator)', { count: 'exact', head: true })
       .eq('links.creator', user.id)
-      .eq('status', 'completed')
+      .in('status', ['confirmed', 'settled'])
     const salesCount = count || 0
     let cur = TIERS[0]
     for (let i = TIERS.length - 1; i >= 0; i--) { if (salesCount >= TIERS[i].min) { cur = TIERS[i]; break } }
