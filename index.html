@@ -1535,53 +1535,52 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL
     const dashboardByRole = { brand: 'brand-dashboard.html', creator: 'influencer-dashboard.html', admin: 'admin.html' }
     const dashboardUrl = session ? dashboardByRole[session.user.user_metadata?.role] : null
 
-    document.addEventListener('DOMContentLoaded', () => {
-      if (dashboardUrl) {
-        [['navLoginBtn', 'navSignupBtn'], ['drawerLoginBtn', 'drawerSignupBtn']].forEach(([loginId, signupId]) => {
-          const loginBtn = document.getElementById(loginId)
-          const signupBtn = document.getElementById(signupId)
-          if (loginBtn) {
-            loginBtn.textContent = '대시보드로 이동'
-            loginBtn.onclick = () => location.href = dashboardUrl
-          }
-          if (signupBtn) {
-            signupBtn.textContent = '로그아웃'
-            signupBtn.onclick = async () => { await supabase.auth.signOut(); location.reload() }
-          }
-        })
-      }
-
-      // 공지 배너 문구
-      const bannerEl = document.getElementById('hero-live-text')
-      if (bannerEl && settings.banner_text) bannerEl.textContent = settings.banner_text
-
-      // 점검 모드
-      if (settings.toggle_maintenance === 'true') {
-        const mBanner = document.getElementById('maintenance-banner')
-        if (mBanner) {
-          mBanner.textContent = '🔧 ' + (settings.maintenance_text || '서비스 점검 중입니다. 잠시 후 이용해주세요.')
-          mBanner.style.display = 'block'
+    // 모듈 스크립트는 DOM이 완성된 뒤 실행되므로 DOMContentLoaded를 기다릴 필요 없음
+    if (dashboardUrl) {
+      [['navLoginBtn', 'navSignupBtn'], ['drawerLoginBtn', 'drawerSignupBtn']].forEach(([loginId, signupId]) => {
+        const loginBtn = document.getElementById(loginId)
+        const signupBtn = document.getElementById(signupId)
+        if (loginBtn) {
+          loginBtn.textContent = '대시보드로 이동'
+          loginBtn.onclick = () => location.href = dashboardUrl
         }
-      }
+        if (signupBtn) {
+          signupBtn.textContent = '로그아웃'
+          signupBtn.onclick = async () => { await supabase.auth.signOut(); location.reload() }
+        }
+      })
+    }
 
-      // 관리자가 추가한 FAQ 항목 (기존 FAQ 뒤에 추가됨)
-      const faqInner = document.getElementById('faq-inner')
-      if (faqInner && settings.faq) {
-        try {
-          const items = JSON.parse(settings.faq)
-          items.forEach(item => {
-            if (!item.q && !item.a) return
-            const div = document.createElement('div')
-            div.className = 'faq-item'
-            div.setAttribute('onclick', 'toggleFaq(this)')
-            div.innerHTML = `
-              <div class="faq-q"><span class="fq-t">${item.q || ''}</span><div class="fq-ic">+</div></div>
-              <div class="faq-a">${item.a || ''}</div>`
-            faqInner.appendChild(div)
-          })
-        } catch (e) { /* ignore malformed faq json */ }
+    // 공지 배너 문구
+    const bannerEl = document.getElementById('hero-live-text')
+    if (bannerEl && settings.banner_text) bannerEl.textContent = settings.banner_text
+
+    // 점검 모드
+    if (settings.toggle_maintenance === 'true') {
+      const mBanner = document.getElementById('maintenance-banner')
+      if (mBanner) {
+        mBanner.textContent = '🔧 ' + (settings.maintenance_text || '서비스 점검 중입니다. 잠시 후 이용해주세요.')
+        mBanner.style.display = 'block'
       }
-    })
+    }
+
+    // 관리자가 추가한 FAQ 항목 (기존 FAQ 뒤에 추가됨)
+    const faqInner = document.getElementById('faq-inner')
+    if (faqInner && settings.faq) {
+      try {
+        const items = JSON.parse(settings.faq)
+        items.forEach(item => {
+          if (!item.q && !item.a) return
+          const div = document.createElement('div')
+          div.className = 'faq-item'
+          div.setAttribute('onclick', 'toggleFaq(this)')
+          div.innerHTML = `
+            <div class="faq-q"><span class="fq-t">${item.q || ''}</span><div class="fq-ic">+</div></div>
+            <div class="faq-a">${item.a || ''}</div>`
+          faqInner.appendChild(div)
+        })
+      } catch (e) { /* ignore malformed faq json */ }
+    }
   } catch (e) {
     console.error('설정 불러오기 실패:', e)
   }

@@ -548,16 +548,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const name = user.user_metadata?.name || user.email || '관리자'
       window._supabase = supabase
       window._vinglyAdmin = { id: user.id, email: user.email, name }
-      document.addEventListener('DOMContentLoaded', () => {
-        const nameEl = document.getElementById('admin-name')
-        const avEl = document.getElementById('admin-av')
-        if (nameEl) nameEl.textContent = name
-        if (avEl) avEl.textContent = name[0]
-        const curIdEl = document.getElementById('cur_admin_id')
-        if (curIdEl) curIdEl.textContent = user.email
-        loadAdminData()
-        loadSettings()
-      })
+      // 모듈 스크립트는 DOM이 완성된 뒤 실행되므로 DOMContentLoaded를 기다릴 필요 없음
+      const nameEl = document.getElementById('admin-name')
+      const avEl = document.getElementById('admin-av')
+      if (nameEl) nameEl.textContent = name
+      if (avEl) avEl.textContent = name[0]
+      const curIdEl = document.getElementById('cur_admin_id')
+      if (curIdEl) curIdEl.textContent = user.email
+      loadAdminData()
+      loadSettings()
     }
   }
 

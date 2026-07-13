@@ -527,7 +527,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const name = user.user_metadata?.company_name || user.user_metadata?.name || user.email || '브랜드'
       const { data: userRow } = await supabase.from('users').select('plan').eq('id', user.id).single()
       const plan = userRow?.plan || 'pilot'
-      document.addEventListener('DOMContentLoaded', () => {
+      window._supabase = supabase
+      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan }
+
+      // 모듈 스크립트는 이미 DOM이 완성된 뒤에 실행되므로 DOMContentLoaded를 기다릴 필요가 없음.
+      // (기다리도록 짜면, 여러 await를 거치는 동안 그 이벤트가 이미 지나가버려서
+      //  초기 데이터 로딩이 통째로 실행 안 되는 경우가 있었음 — 새로고침 시 상품/주문 등이
+      //  간헐적으로 안 보이던 버그의 원인)
+      ;(() => {
         const sbName = document.getElementById('sb-name')
         const sbAv = document.getElementById('sb-av')
         if (sbName) sbName.textContent = name
@@ -566,9 +573,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             loadNotifications()
           }
         })
-      })
-      window._supabase = supabase
-      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan }
+      })()
     }
   }
 
@@ -912,19 +917,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   async function loadReports() {
-    const user = window._vinglyUser
-    if (!user) return
-    // 이 브랜드의 주문에 대한 신고만 조회 (다른 브랜드 신고 내역 노출 방지)
-    const { data: myOrderIds } = await supabase.from('orders').select('id').eq('brand', user.id)
-    const orderIdList = (myOrderIds || []).map(o => o.id)
-    if (!orderIdList.length) {
-      const emptyEl0 = document.getElementById('brand-report-empty')
-      const wrapEl0 = document.getElementById('brand-report-wrap')
-      if (emptyEl0) emptyEl0.style.display = 'block'
-      if (wrapEl0) wrapEl0.style.display = 'none'
-      return
-    }
-    const { data: reports } = await supabase.from('reports').select('*').in('order_id', orderIdList).order('created_at', { ascending: false })
+    const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
     const allReports = reports || []
 
     let orderRefMap = {}
@@ -989,12 +982,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}
 
   async function loadSamples() {
-    const user = window._vinglyUser
-    if (!user) return
     const { data: samples } = await supabase
       .from('samples')
       .select('*')
-      .eq('brand', user.id)
       .order('created_at', { ascending: false })
     const allSamples = samples || []
 

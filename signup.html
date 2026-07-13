@@ -367,14 +367,13 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   let currentStep = 1
   const g = id => document.getElementById(id)
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const r = new URLSearchParams(location.search).get('role')
-    if (r === 'creator' || r === 'brand') {
-      selectRole(r)
-      setTimeout(() => goStep(2), 100)
-    }
-    g('goBtn').onclick = () => location.href = 'login.html'
-  })
+  // 모듈 스크립트는 DOM이 완성된 뒤 실행되므로 DOMContentLoaded를 기다릴 필요 없음
+  const r = new URLSearchParams(location.search).get('role')
+  if (r === 'creator' || r === 'brand') {
+    selectRole(r)
+    setTimeout(() => goStep(2), 100)
+  }
+  g('goBtn').onclick = () => location.href = 'login.html'
 
   window.selectRole = function(r) {
     role = r

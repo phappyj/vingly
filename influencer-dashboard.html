@@ -518,20 +518,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (user.user_metadata?.role !== 'creator') { location.replace('login.html') }
     else {
       const name = user.user_metadata?.name || user.email || '크리에이터'
-      document.addEventListener('DOMContentLoaded', () => {
-        const sbName = document.getElementById('sb-name')
-        const sbAv = document.getElementById('sb-av')
-        if (sbName) sbName.textContent = name
-        if (sbAv) sbAv.textContent = name[0]
-        loadMyLinks()
-        loadMySamples()
-        loadEarnings()
-        loadNotifications()
-        loadChannels()
-      })
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
       await loadTiers()
+
+      // 모듈 스크립트는 DOM이 완성된 뒤 실행되므로 DOMContentLoaded를 기다릴 필요 없음
+      // (기다리면 여러 await 사이에 이벤트가 이미 지나가버려 초기 로딩이 간헐적으로 실행 안 되는 문제가 있었음)
+      const sbName = document.getElementById('sb-name')
+      const sbAv = document.getElementById('sb-av')
+      if (sbName) sbName.textContent = name
+      if (sbAv) sbAv.textContent = name[0]
+      loadMyLinks()
+      loadMySamples()
+      loadEarnings()
+      loadNotifications()
+      loadChannels()
     }
   }
 
