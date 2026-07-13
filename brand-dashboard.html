@@ -912,7 +912,19 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   async function loadReports() {
-    const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
+    const user = window._vinglyUser
+    if (!user) return
+    // 이 브랜드의 주문에 대한 신고만 조회 (다른 브랜드 신고 내역 노출 방지)
+    const { data: myOrderIds } = await supabase.from('orders').select('id').eq('brand', user.id)
+    const orderIdList = (myOrderIds || []).map(o => o.id)
+    if (!orderIdList.length) {
+      const emptyEl0 = document.getElementById('brand-report-empty')
+      const wrapEl0 = document.getElementById('brand-report-wrap')
+      if (emptyEl0) emptyEl0.style.display = 'block'
+      if (wrapEl0) wrapEl0.style.display = 'none'
+      return
+    }
+    const { data: reports } = await supabase.from('reports').select('*').in('order_id', orderIdList).order('created_at', { ascending: false })
     const allReports = reports || []
 
     let orderRefMap = {}
@@ -977,9 +989,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}
 
   async function loadSamples() {
+    const user = window._vinglyUser
+    if (!user) return
     const { data: samples } = await supabase
       .from('samples')
       .select('*')
+      .eq('brand', user.id)
       .order('created_at', { ascending: false })
     const allSamples = samples || []
 
