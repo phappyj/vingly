@@ -210,7 +210,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="sb-foot">
     <div class="ua">
       <div class="ua-av" id="sb-av">크</div>
-      <div><div class="ua-name" id="sb-name">크리에이터</div><div class="ua-role">Active · 얼리버드</div></div>
+      <div><div class="ua-name" id="sb-name">크리에이터</div><div class="ua-role" id="sb-grade-label">New</div></div>
     </div>
   </div>
 </aside>
@@ -729,9 +729,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const monthTotal = thisMonthOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
     const grandTotal = allOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
 
-    // 등급별 정산 주기 표시 (Elite는 월 2회, 나머지는 월 1회)
-    let myTier = TIERS[0]
-    for (let i = TIERS.length - 1; i >= 0; i--) { if (allOrders.length >= TIERS[i].min) { myTier = TIERS[i]; break } }
+    // 등급별 정산 주기 표시 (Elite는 월 2회, 나머지는 월 1회) — 테스트 강제등급 있으면 그걸 반영
+    const myTier = await getMyTier()
     const settleLabelEl = document.getElementById('dash-settle-label')
     const settleSubEl = document.getElementById('dash-settle-sub')
     if (settleLabelEl && myTier) {
@@ -776,12 +775,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </tr>`).join('')
     }
 
-    // 등급 계산
+    // 등급 계산 — 테스트 강제등급(myTier)이 있으면 그걸 우선 사용
     const salesCount = allOrders.length
-    let curIdx = 0
-    for (let i = TIERS.length - 1; i >= 0; i--) { if (salesCount >= TIERS[i].min) { curIdx = i; break } }
-    const cur = TIERS[curIdx]
-    const next = TIERS[curIdx + 1]
+    const curIdx = TIERS.findIndex(t => t.id === myTier.id)
+    const cur = myTier
+    const next = curIdx >= 0 ? TIERS[curIdx + 1] : null
 
     const curIconEl = document.getElementById('grade-cur-icon')
     const curNameEl = document.getElementById('grade-cur-name')
@@ -789,6 +787,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (curIconEl) curIconEl.textContent = cur.icon
     if (curNameEl) curNameEl.textContent = cur.name
     if (curCondEl) curCondEl.textContent = `누적 ${salesCount}건 판매 완료`
+
+    const sbGradeEl = document.getElementById('sb-grade-label')
+    if (sbGradeEl) sbGradeEl.textContent = `${cur.name} 등급`
 
     // 지금 받고 있는 혜택
     const curPerksEl = document.getElementById('grade-cur-perks')
@@ -1014,6 +1015,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (myTierCache) return myTierCache
     const user = window._vinglyUser
     if (!user || !window._supabase) return TIERS[0] || { commissionBonus: 0, earlyAccessHours: 0 }
+
+    // 테스트 계정용 강제 등급 지정이 있으면 그걸 우선 사용 (실제 판매건수 무시)
+    const { data: userRow } = await window._supabase.from('users').select('test_grade_override').eq('id', user.id).single()
+    const overrideId = userRow?.test_grade_override
+    if (overrideId) {
+      const overrideTier = TIERS.find(t => t.id === overrideId)
+      if (overrideTier) { myTierCache = overrideTier; return overrideTier }
+    }
+
     const { count } = await window._supabase
       .from('orders')
       .select('id, links!inner(creator)', { count: 'exact', head: true })
