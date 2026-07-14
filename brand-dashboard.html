@@ -182,7 +182,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="sb-foot">
     <div class="ua">
       <div class="ua-av" id="sb-av">브</div>
-      <div><div class="ua-name" id="sb-name">브랜드</div><div class="ua-role">공급자 · Active</div></div>
+      <div><div class="ua-name" id="sb-name">브랜드</div><div class="ua-role" id="sb-plan-label">공급자</div></div>
     </div>
   </div>
 </aside>
@@ -530,10 +530,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan }
 
-      // 모듈 스크립트는 이미 DOM이 완성된 뒤에 실행되므로 DOMContentLoaded를 기다릴 필요가 없음.
-      // (기다리도록 짜면, 여러 await를 거치는 동안 그 이벤트가 이미 지나가버려서
-      //  초기 데이터 로딩이 통째로 실행 안 되는 경우가 있었음 — 새로고침 시 상품/주문 등이
-      //  간헐적으로 안 보이던 버그의 원인)
+      // 모듈 스크립트는 이미 DOM이 완성된 뒤에 실행되므로 DOMContentLoaded를 기다릴 필요가 없음
       ;(() => {
         const sbName = document.getElementById('sb-name')
         const sbAv = document.getElementById('sb-av')
@@ -597,6 +594,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const count = products ? products.length : 0
     const plans = await getBrandPlans()
     const planInfo = plans[user.plan] || plans.pilot
+    const sbPlanEl = document.getElementById('sb-plan-label')
+    if (sbPlanEl && planInfo) sbPlanEl.textContent = `공급자 · ${planInfo.name}`
     const limit = planInfo ? planInfo.product_limit : null
     const usageEl = document.getElementById('plan-usage-bar')
     if (usageEl) {
@@ -917,7 +916,19 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   async function loadReports() {
-    const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
+    const user = window._vinglyUser
+    if (!user) return
+    // 이 브랜드의 주문에 대한 신고만 조회 (다른 브랜드 신고 내역 노출 방지)
+    const { data: myOrderIds } = await supabase.from('orders').select('id').eq('brand', user.id)
+    const orderIdList = (myOrderIds || []).map(o => o.id)
+    if (!orderIdList.length) {
+      const emptyEl0 = document.getElementById('brand-report-empty')
+      const wrapEl0 = document.getElementById('brand-report-wrap')
+      if (emptyEl0) emptyEl0.style.display = 'block'
+      if (wrapEl0) wrapEl0.style.display = 'none'
+      return
+    }
+    const { data: reports } = await supabase.from('reports').select('*').in('order_id', orderIdList).order('created_at', { ascending: false })
     const allReports = reports || []
 
     let orderRefMap = {}
@@ -982,9 +993,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}
 
   async function loadSamples() {
+    const user = window._vinglyUser
+    if (!user) return
     const { data: samples } = await supabase
       .from('samples')
       .select('*')
+      .eq('brand', user.id)
       .order('created_at', { ascending: false })
     const allSamples = samples || []
 
@@ -1007,6 +1021,32 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           if (!creatorChannelsMap[ch.creator]) creatorChannelsMap[ch.creator] = []
           creatorChannelsMap[ch.creator].push(ch)
         })
+      }
+
+      // 등급 기반 신청 우선순위 정렬 — 재고 부족할 때 상위 등급 크리에이터 요청이 먼저 보이도록
+      // (승인/거절은 여전히 브랜드가 직접 결정, 이건 검토 순서만 조정)
+      try {
+        const { data: gradeRows } = await supabase.from('creator_grades').select('min_sales, sample_priority').order('min_sales', { ascending: false })
+        const grades = gradeRows || []
+        const priorityCache = {}
+        for (const cid of creatorIds) {
+          const { count } = await supabase.from('orders').select('id, links!inner(creator)', { count: 'exact', head: true }).eq('links.creator', cid).in('status', ['confirmed', 'settled'])
+          const salesCount = count || 0
+          const g = grades.find(g => salesCount >= g.min_sales) || { sample_priority: 0 }
+          priorityCache[cid] = g.sample_priority || 0
+        }
+        allSamples.sort((a, b) => {
+          const aPending = a.status === 'requested' ? 1 : 0
+          const bPending = b.status === 'requested' ? 1 : 0
+          if (aPending !== bPending) return bPending - aPending // 대기중인 신청을 위로
+          if (aPending && bPending) {
+            const pDiff = (priorityCache[b.creator] || 0) - (priorityCache[a.creator] || 0)
+            if (pDiff !== 0) return pDiff // 대기중인 것끼리는 등급 우선순위 높은 순
+          }
+          return new Date(b.created_at) - new Date(a.created_at)
+        })
+      } catch (e) {
+        console.error('샘플 우선순위 정렬 실패, 기본 정렬로 표시:', e)
       }
     }
 

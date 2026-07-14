@@ -339,12 +339,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="card">
       <div class="card-h"><div class="card-t">전체 등급 로드맵</div></div>
       <div style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:12px">등급을 눌러보면 혜택을 볼 수 있어요</div>
-      <div id="grade-roadmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
-        <div class="grm-tier" data-tier="New" onclick="showTierPerks('New')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🌱</div><div style="font:700 14px/1 'Pretendard',sans-serif">New</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">가입 직후</div></div>
-        <div class="grm-tier" data-tier="Active" onclick="showTierPerks('Active')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font:700 14px/1 'Pretendard',sans-serif">Active</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">10건+</div></div>
-        <div class="grm-tier" data-tier="Pro" onclick="showTierPerks('Pro')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font:700 14px/1 'Pretendard',sans-serif">Pro</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">50건+</div></div>
-        <div class="grm-tier" data-tier="Elite" onclick="showTierPerks('Elite')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s"><div style="font-size:22px;margin-bottom:6px">👑</div><div style="font:700 14px/1 'Pretendard',sans-serif">Elite</div><div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">200건+</div></div>
-      </div>
+      <div id="grade-roadmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px"></div>
       <div id="grade-tier-detail" style="display:none;background:var(--ink-07);border-radius:10px;padding:16px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
           <div id="grade-detail-icon" style="font-size:24px"></div>
@@ -521,6 +516,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
       await loadTiers()
+      renderGradeRoadmap()
 
       // 모듈 스크립트는 DOM이 완성된 뒤 실행되므로 DOMContentLoaded를 기다릴 필요 없음
       // (기다리면 여러 await 사이에 이벤트가 이미 지나가버려 초기 로딩이 간헐적으로 실행 안 되는 문제가 있었음)
@@ -548,6 +544,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.querySelectorAll('#grade-roadmap .grm-tier').forEach(el => {
       el.style.outline = el.dataset.tier === tierName ? '2px solid var(--green)' : 'none'
     })
+  }
+
+  function renderGradeRoadmap() {
+    const roadmap = document.getElementById('grade-roadmap')
+    if (!roadmap || !TIERS.length) return
+    roadmap.innerHTML = TIERS.map(t => `
+      <div class="grm-tier" data-tier="${t.name}" onclick="showTierPerks('${t.name}')" style="cursor:pointer;padding:14px 8px;border-radius:10px;background:var(--ink-07);text-align:center;position:relative;transition:all .2s">
+        <div style="font-size:22px;margin-bottom:6px">${t.icon}</div>
+        <div style="font:700 14px/1 'Pretendard',sans-serif">${t.name}</div>
+        <div style="font:500 11px/1 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${t.min === 0 ? '가입 직후' : `${t.min}건+`}</div>
+      </div>`).join('')
   }
 
   const CHANNEL_PLATFORMS = ['인스타그램', '유튜브', '틱톡', '블로그', '기타']
