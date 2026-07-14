@@ -951,6 +951,20 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
 
+    // 최소 팔로워 조건 실제 검증 — 지금까진 화면 문구로만 안내되고 실제로는 막지 않고 있었음
+    if (product && product.sample_min_followers > 0) {
+      if (!window._myChannels) {
+        const { data: chData } = await supabase.from('creator_channels').select('*').eq('creator', user.id)
+        window._myChannels = chData || []
+      }
+      const myMaxFollowers = Math.max(0, ...(window._myChannels || []).map(ch => ch.follower_count || 0))
+      if (myMaxFollowers < product.sample_min_followers) {
+        errEl.textContent = `이 샘플은 팔로워 ${Number(product.sample_min_followers).toLocaleString()}명 이상부터 신청 가능해요. (현재 등록된 최대 팔로워: ${myMaxFollowers.toLocaleString()}명) 채널 관리에서 팔로워 수를 업데이트한 뒤 다시 시도해주세요.`
+        errEl.style.display = 'block'
+        return
+      }
+    }
+
     const address = `[${zonecode}] ${roadAddress} ${addressDetail}`.trim()
     const btn = document.getElementById('sample-req-submit-btn')
     btn.disabled = true
