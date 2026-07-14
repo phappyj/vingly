@@ -1546,13 +1546,44 @@ function showPage(id, btn) {
     const user = window._vinglyUser || {}
     const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
     if (el) el.value = user.name || ''; if (em) em.value = user.email || ''
+    if (typeof window.loadBrandSettingsData === 'function') window.loadBrandSettingsData()
   }
   if (id === 'settle' && typeof window.loadSettlements === 'function') {
     window.loadSettlements()
   }
 }
-function saveProfile() {
-  const msg = document.getElementById('profile_msg'); msg.style.display = 'inline'
+window.loadBrandSettingsData = async function() {
+  const supabase = window._supabase
+  const user = window._vinglyUser
+  if (!supabase || !user) return
+  const { data, error } = await supabase.from('users').select('company_name, phone, business_number').eq('id', user.id).single()
+  if (error) { console.error('설정 정보 불러오기 실패:', error); return }
+  if (!data) return
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
+  setVal('set_name', data.company_name || user.name)
+  setVal('set_phone', data.phone)
+  setVal('set_bizno', data.business_number)
+}
+async function saveProfile() {
+  const supabase = window._supabase
+  const user = window._vinglyUser
+  const msg = document.getElementById('profile_msg')
+  if (!supabase || !user) return
+  const name = document.getElementById('set_name')?.value.trim()
+  const phone = document.getElementById('set_phone')?.value.trim() || null
+  const business_number = document.getElementById('set_bizno')?.value.trim() || null
+
+  const { error } = await supabase.from('users').update({ company_name: name, phone, business_number }).eq('id', user.id)
+  if (error) {
+    alert('저장 실패: ' + error.message + '\n\n(users 테이블에 business_number 컬럼이 없을 수 있습니다 — 실제 컬럼명 확인이 필요합니다)')
+    return
+  }
+  await supabase.auth.updateUser({ data: { company_name: name } })
+  window._vinglyUser.name = name
+  const sbName = document.getElementById('sb-name')
+  if (sbName) sbName.textContent = name
+
+  msg.style.display = 'inline'
   setTimeout(() => msg.style.display = 'none', 2500)
 }
 function openProductModal() {
