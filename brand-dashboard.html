@@ -990,7 +990,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
   }
 
-  let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}
+  let _samplesCache = [], _sampleProductMap = {}, _sampleCreatorMap = {}, _sampleCreatorInfoMap = {}, _sampleCreatorChannelsMap = {}, _sampleCreatorGradeMap = {}
 
   async function loadSamples() {
     const user = window._vinglyUser
@@ -1011,7 +1011,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         ;(prods || []).forEach(p => { productMap[p.id] = p.name })
       }
       if (creatorIds.length) {
-        const { data: creators } = await supabase.from('users').select('id,company_name,follower_count,channel_url,category').in('id', creatorIds)
+        const { data: creators } = await supabase.from('users').select('id,company_name,follower_count,channel_url,category,test_grade_override').in('id', creatorIds)
         ;(creators || []).forEach(c => {
           creatorMap[c.id] = c.company_name
           creatorInfoMap[c.id] = c
@@ -1023,18 +1023,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         })
       }
 
-      // 등급 기반 신청 우선순위 정렬 — 재고 부족할 때 상위 등급 크리에이터 요청이 먼저 보이도록
-      // (승인/거절은 여전히 브랜드가 직접 결정, 이건 검토 순서만 조정)
+      // 등급 기반 신청 우선순위 정렬 + 공식 파트너 뱃지 표시 — 재고 부족할 때 상위 등급 크리에이터 요청이 먼저 보이도록
+      // (승인/거절은 여전히 브랜드가 직접 결정, 이건 검토 순서/표시만 조정)
       try {
-        const { data: gradeRows } = await supabase.from('creator_grades').select('min_sales, sample_priority').order('min_sales', { ascending: false })
+        const { data: gradeRows } = await supabase.from('creator_grades').select('id, name, min_sales, sample_priority, show_badge').order('min_sales', { ascending: false })
         const grades = gradeRows || []
         const priorityCache = {}
+        const gradeInfoCache = {}
         for (const cid of creatorIds) {
-          const { count } = await supabase.from('orders').select('id, links!inner(creator)', { count: 'exact', head: true }).eq('links.creator', cid).in('status', ['confirmed', 'settled'])
-          const salesCount = count || 0
-          const g = grades.find(g => salesCount >= g.min_sales) || { sample_priority: 0 }
+          const overrideId = creatorInfoMap[cid]?.test_grade_override
+          let g
+          if (overrideId) {
+            g = grades.find(g => g.id === overrideId)
+          }
+          if (!g) {
+            const { count } = await supabase.from('orders').select('id, links!inner(creator)', { count: 'exact', head: true }).eq('links.creator', cid).in('status', ['confirmed', 'settled'])
+            const salesCount = count || 0
+            g = grades.find(g => salesCount >= g.min_sales)
+          }
+          g = g || { sample_priority: 0, show_badge: false, name: 'New' }
           priorityCache[cid] = g.sample_priority || 0
+          gradeInfoCache[cid] = g
         }
+        _sampleCreatorGradeMap = gradeInfoCache
         allSamples.sort((a, b) => {
           const aPending = a.status === 'requested' ? 1 : 0
           const bPending = b.status === 'requested' ? 1 : 0
@@ -1091,7 +1102,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <tr id="sample-row-${s.id}">
         <td>${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
         <td>
-          <div class="td-b">${creatorMap[s.creator] || '-'}</div>
+          <div class="td-b">${creatorMap[s.creator] || '-'}${(_sampleCreatorGradeMap[s.creator]?.show_badge) ? ` <span title="${_sampleCreatorGradeMap[s.creator].name} 등급 · 공식 파트너" style="font-size:11px;background:linear-gradient(135deg,#1D4ED8,#7C3AED);color:#fff;padding:2px 6px;border-radius:5px;font-weight:800;vertical-align:middle">👑 파트너</span>` : ''}</div>
           <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${catText}</div>
           <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px;line-height:1.6">${channelsHtml}</div>
         </td>

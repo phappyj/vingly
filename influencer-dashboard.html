@@ -1043,15 +1043,25 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     return cur
   }
 
+  let BRAND_PLANS_LOOKUP = null
+  async function getBrandPlansLookup() {
+    if (BRAND_PLANS_LOOKUP) return BRAND_PLANS_LOOKUP
+    const { data } = await window._supabase.from('brand_plans').select('id, exposure_weight')
+    BRAND_PLANS_LOOKUP = {}
+    ;(data || []).forEach(p => { BRAND_PLANS_LOOKUP[p.id] = p.exposure_weight || 0 })
+    return BRAND_PLANS_LOOKUP
+  }
+
   async function expLoadProducts() {
     if (!window._supabase) return []
     const { data, error } = await window._supabase
       .from('products')
-      .select('*, users!brand_user(company_name)')
+      .select('*, users!brand_user(company_name, plan)')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
     if (error || !data) return []
     const myTier = await getMyTier()
+    const planWeights = await getBrandPlansLookup()
     const maxEarlyAccessHours = Math.max(0, ...TIERS.map(t => t.earlyAccessHours || 0))
     const now = Date.now()
     const emoMap = {'뷰티 · 스킨케어':'💄','패션 · 의류':'👗','식품 · 건강':'🥗','헬스 · 운동':'💪','생활 · 홈':'🏠','디지털 · 전자':'📱','기타':'📦'}
@@ -1061,6 +1071,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         if (!maxEarlyAccessHours || (myTier.earlyAccessHours || 0) > 0) return true
         const ageHours = (now - new Date(p.created_at).getTime()) / 3600000
         return ageHours >= maxEarlyAccessHours
+      })
+      .sort((a, b) => {
+        // 브랜드 플랜의 탐색 노출 가중치가 높을수록 먼저 노출 (Basic/Pro 플랜 혜택)
+        const wA = planWeights[a.users?.plan] || 0
+        const wB = planWeights[b.users?.plan] || 0
+        if (wA !== wB) return wB - wA
+        return new Date(b.created_at) - new Date(a.created_at)
       })
       .map(p => ({
         id: p.id, name: p.name,
