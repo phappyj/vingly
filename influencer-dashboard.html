@@ -577,12 +577,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
     list.innerHTML = channels.map(ch => `
-      <div style="display:grid;grid-template-columns:110px 1fr 120px 34px;gap:8px;align-items:center" data-ch-id="${ch.id}">
-        <select onchange="saveChannelRow('${ch.id}','platform',this.value)" style="padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      <div style="display:grid;grid-template-columns:100px 1fr 90px auto 34px;gap:8px;align-items:center" data-ch-id="${ch.id}">
+        <select id="ch-platform-${ch.id}" style="padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
           ${CHANNEL_PLATFORMS.map(p => `<option value="${p}" ${ch.platform === p ? 'selected' : ''}>${p}</option>`).join('')}
         </select>
-        <input type="text" value="${ch.url || ''}" placeholder="채널 URL" onchange="saveChannelRow('${ch.id}','url',this.value)" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
-        <input type="number" value="${ch.follower_count ?? ''}" placeholder="팔로워 수" onchange="saveChannelRow('${ch.id}','follower_count',this.value)" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <input type="text" id="ch-url-${ch.id}" value="${ch.url || ''}" placeholder="채널 URL" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <input type="number" id="ch-followers-${ch.id}" value="${ch.follower_count ?? ''}" placeholder="팔로워 수" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+        <button id="ch-save-${ch.id}" onclick="saveChannelRow('${ch.id}')" style="padding:9px 12px;border-radius:8px;border:none;background:var(--green);color:#fff;font:700 12.5px/1 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap">저장</button>
         <button onclick="deleteChannelRow('${ch.id}')" style="width:34px;height:34px;border-radius:8px;border:none;background:#FEF2F2;color:#DC2626;cursor:pointer;font-size:14px">✕</button>
       </div>`).join('')
   }
@@ -600,16 +601,31 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     renderChannelList()
   }
 
-  window.saveChannelRow = async function(id, field, value) {
+  window.saveChannelRow = async function(id) {
     const supabase = window._supabase
-    const payload = { [field]: field === 'follower_count' ? (value ? parseInt(value) : null) : value }
-    const { error } = await supabase.from('creator_channels').update(payload).eq('id', id)
+    const btn = document.getElementById(`ch-save-${id}`)
+    const platform = document.getElementById(`ch-platform-${id}`)?.value
+    const url = document.getElementById(`ch-url-${id}`)?.value.trim() || null
+    const followersRaw = document.getElementById(`ch-followers-${id}`)?.value
+    const follower_count = followersRaw ? parseInt(followersRaw) : null
+
+    if (btn) { btn.textContent = '저장 중...'; btn.disabled = true }
+
+    const { error } = await supabase.from('creator_channels').update({ platform, url, follower_count }).eq('id', id)
+
     if (error) {
+      if (btn) { btn.textContent = '저장'; btn.disabled = false }
       alert('저장 실패: ' + error.message)
       return
     }
+
     const ch = (window._myChannels || []).find(c => c.id === id)
-    if (ch) ch[field] = payload[field]
+    if (ch) { ch.platform = platform; ch.url = url; ch.follower_count = follower_count }
+
+    if (btn) {
+      btn.textContent = '저장됨 ✓'
+      setTimeout(() => { btn.textContent = '저장'; btn.disabled = false }, 1500)
+    }
     showToast('채널 정보가 저장됐어요 ✓')
   }
 
