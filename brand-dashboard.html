@@ -1613,7 +1613,10 @@ window.verifyBusinessNumber = async function() {
   try {
     const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/verify-business-number', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+      },
       body: JSON.stringify({
         userId: user.id,
         businessNumber,
