@@ -250,7 +250,23 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
           </select>
           <div class="ferr" id="b_cat_err">카테고리를 선택해주세요</div>
         </div>
-        <div class="nbox nb-b">✅ 파일럿 기간 이용료 무료 · 심사 없음</div>
+        <div class="fg">
+          <label class="fl">사업자등록번호 <span class="req">*</span></label>
+          <input class="fi" id="b_bizno" type="text" placeholder="000-00-00000" oninput="clearFerr(this)">
+          <div class="ferr" id="b_bizno_err">사업자등록번호를 입력해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">대표자명 <span class="req">*</span></label>
+          <input class="fi" id="b_rep" type="text" placeholder="사업자등록증상 대표자명" oninput="clearFerr(this)">
+          <div class="ferr" id="b_rep_err">대표자명을 입력해주세요</div>
+        </div>
+        <div class="fg">
+          <label class="fl">개업일자 <span class="req">*</span></label>
+          <input class="fi" id="b_start" type="date" oninput="clearFerr(this)">
+          <div class="ferr" id="b_start_err">개업일자를 입력해주세요</div>
+        </div>
+        <div class="ferr" id="b_verify_err" style="display:block"></div>
+        <div class="nbox nb-b">🛡️ 국세청 사업자등록정보와 실시간 대조 확인 후 가입이 완료됩니다 · 파일럿 기간 이용료 무료</div>
       </div>
       <div class="fsec" id="s3_creator">
         <div class="fg">
@@ -424,6 +440,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       if (role === 'brand') {
         if (!g('b_brand').value.trim()) { showFerr('b_brand', '브랜드명을 입력해주세요'); ok = false }
         if (!g('b_cat').value) { showFerr('b_cat', '카테고리를 선택해주세요'); ok = false }
+        if (!g('b_bizno').value.trim()) { showFerr('b_bizno', '사업자등록번호를 입력해주세요'); ok = false }
+        if (!g('b_rep').value.trim()) { showFerr('b_rep', '대표자명을 입력해주세요'); ok = false }
+        if (!g('b_start').value) { showFerr('b_start', '개업일자를 입력해주세요'); ok = false }
       } else {
         if (!g('c_handle').value.trim()) { showFerr('c_handle', '활동명을 입력해주세요'); ok = false }
         if (!g('c_ch').value) { showFerr('c_ch', '채널을 선택해주세요'); ok = false }
@@ -450,6 +469,47 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const company  = role === 'brand' ? g('b_brand').value.trim() : g('c_handle').value.trim()
     const category = role === 'brand' ? g('b_cat').value : g('c_ch').value
 
+    // 브랜드는 계정 생성 전 국세청 사업자등록정보 진위확인을 반드시 통과해야 함
+    let bizVerified = false
+    let businessNumber, representativeName, businessStartDate, businessStatus
+    if (role === 'brand') {
+      businessNumber = g('b_bizno').value.trim()
+      representativeName = g('b_rep').value.trim()
+      businessStartDate = g('b_start').value.replace(/-/g, '')
+
+      const verifyErrEl = g('b_verify_err')
+      verifyErrEl.textContent = '🔍 국세청 사업자등록정보 확인 중...'
+      verifyErrEl.style.color = 'var(--ink-40)'
+
+      try {
+        const vres = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/verify-business-number', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+          },
+          body: JSON.stringify({ businessNumber, representativeName, startDate: businessStartDate })
+        })
+        const vdata = await vres.json()
+        bizVerified = !!vdata.verified
+        businessStatus = vdata.status
+
+        if (!bizVerified) {
+          verifyErrEl.textContent = '❌ ' + (vdata.error || vdata.message || '사업자 정보를 확인할 수 없습니다.')
+          verifyErrEl.style.color = '#DC2626'
+          btn.classList.remove('loading')
+          return
+        }
+        verifyErrEl.textContent = '✅ 사업자 인증 완료'
+        verifyErrEl.style.color = 'var(--green)'
+      } catch (e) {
+        verifyErrEl.textContent = '❌ 인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'
+        verifyErrEl.style.color = '#DC2626'
+        btn.classList.remove('loading')
+        return
+      }
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -468,6 +528,20 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       g('alertErrMsg4').textContent = errMsg
       g('alertErr4').classList.add('on')
       return
+    }
+
+    // 브랜드는 인증된 사업자 정보를 계정에 기록
+    if (role === 'brand' && data.user) {
+      try {
+        await supabase.from('users').update({
+          business_number: businessNumber,
+          representative_name: representativeName,
+          business_start_date: businessStartDate,
+          business_verified: bizVerified,
+          business_verified_at: new Date().toISOString(),
+          business_status: businessStatus,
+        }).eq('id', data.user.id)
+      } catch (e) { console.error('사업자 인증 정보 저장 실패:', e) }
     }
 
     // Google Sheets 저장
