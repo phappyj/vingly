@@ -360,10 +360,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명"></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
-          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label><input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000"></div>
         </div>
         <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
         <span id="profile_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><div class="card-t">🏛️ 사업자 인증</div></div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">국세청 사업자등록정보와 대조해서 실제 사업자인지 확인합니다. 구매자에게 신뢰를 주는 인증 절차예요.</div>
+        <div id="biz-verified-badge" style="display:none;margin-bottom:12px;padding:10px 14px;background:var(--green-bg);border-radius:10px;color:var(--green);font:700 13px/1 'Pretendard',sans-serif">✅ 사업자 인증 완료</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label><input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">대표자명</label><input type="text" id="set_biz_rep" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="사업자등록증상 대표자명"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">개업일자</label><input type="date" id="set_biz_start" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none"></div>
+        </div>
+        <button onclick="verifyBusinessNumber()" id="biz-verify-btn" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">🔍 사업자 인증하기</button>
+        <span id="biz_verify_msg" style="font-size:12px;margin-left:10px;display:none"></span>
       </div>
       <div class="card" style="border-color:var(--red-bg)">
         <div class="card-h"><div class="card-t" style="color:var(--red)">⚠️ 회원 탈퇴</div></div>
@@ -1556,13 +1567,82 @@ window.loadBrandSettingsData = async function() {
   const supabase = window._supabase
   const user = window._vinglyUser
   if (!supabase || !user) return
-  const { data, error } = await supabase.from('users').select('company_name, phone, business_number').eq('id', user.id).single()
+  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_start_date, business_verified, business_status').eq('id', user.id).single()
   if (error) { console.error('설정 정보 불러오기 실패:', error); return }
   if (!data) return
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
   setVal('set_name', data.company_name || user.name)
   setVal('set_phone', data.phone)
   setVal('set_bizno', data.business_number)
+  setVal('set_biz_rep', data.representative_name)
+  if (data.business_start_date) {
+    // YYYYMMDD → YYYY-MM-DD (date input 형식)
+    const d = data.business_start_date
+    setVal('set_biz_start', d.length === 8 ? `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}` : d)
+  }
+  const badge = document.getElementById('biz-verified-badge')
+  if (badge) badge.style.display = data.business_verified ? 'block' : 'none'
+}
+
+window.verifyBusinessNumber = async function() {
+  const supabase = window._supabase
+  const user = window._vinglyUser
+  const btn = document.getElementById('biz-verify-btn')
+  const msg = document.getElementById('biz_verify_msg')
+  if (!supabase || !user) return
+
+  const businessNumber = document.getElementById('set_bizno')?.value.trim()
+  const representativeName = document.getElementById('set_biz_rep')?.value.trim()
+  const startDateRaw = document.getElementById('set_biz_start')?.value // YYYY-MM-DD
+
+  if (!businessNumber || !representativeName || !startDateRaw) {
+    alert('사업자번호, 대표자명, 개업일자를 모두 입력해주세요.')
+    return
+  }
+
+  // 인증 전 먼저 입력값 저장 (인증 실패해도 다음에 다시 시도할 수 있게)
+  await supabase.from('users').update({
+    business_number: businessNumber,
+    representative_name: representativeName,
+    business_start_date: startDateRaw.replace(/-/g, ''),
+  }).eq('id', user.id)
+
+  btn.textContent = '확인 중...'; btn.disabled = true
+  msg.style.display = 'none'
+
+  try {
+    const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/verify-business-number', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        businessNumber,
+        representativeName,
+        startDate: startDateRaw.replace(/-/g, ''),
+      }),
+    })
+    const result = await res.json()
+
+    if (result.error) {
+      msg.style.color = 'var(--red)'
+      msg.textContent = '❌ ' + result.error
+    } else if (result.verified) {
+      msg.style.color = 'var(--green)'
+      msg.textContent = '✅ ' + result.message
+      const badge = document.getElementById('biz-verified-badge')
+      if (badge) badge.style.display = 'block'
+    } else {
+      msg.style.color = 'var(--red)'
+      msg.textContent = '❌ ' + result.message
+    }
+    msg.style.display = 'inline'
+  } catch (e) {
+    msg.style.display = 'inline'
+    msg.style.color = 'var(--red)'
+    msg.textContent = '❌ 인증 서버 연결 실패: ' + e.message
+  }
+
+  btn.textContent = '🔍 사업자 인증하기'; btn.disabled = false
 }
 async function saveProfile() {
   const supabase = window._supabase
