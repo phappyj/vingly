@@ -296,7 +296,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       </div>
       <div class="btn-row">
         <button class="btn-back" onclick="goStep(2)">← 이전</button>
-        <button class="btn-next" onclick="goStep(4)"><span class="btn-text">다음 →</span></button>
+        <button class="btn-next" onclick="goStep(4,this)"><span class="btn-text">다음 →</span></button>
       </div>
     </div>
 
@@ -397,8 +397,53 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     g('rc-creator').className = 'rc' + (r === 'creator' ? ' sel-g' : '')
   }
 
-  window.goStep = function(n) {
+  async function verifyBrandBusinessInfo() {
+    const businessNumber = g('b_bizno').value.trim()
+    const representativeName = g('b_rep').value.trim()
+    const businessStartDate = g('b_start').value.replace(/-/g, '')
+    const verifyErrEl = g('b_verify_err')
+
+    verifyErrEl.textContent = '🔍 국세청 사업자등록정보 확인 중...'
+    verifyErrEl.style.color = 'var(--ink-40)'
+
+    try {
+      const vres = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/verify-business-number', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+        },
+        body: JSON.stringify({ businessNumber, representativeName, startDate: businessStartDate })
+      })
+      const vdata = await vres.json()
+      if (!vdata.verified) {
+        verifyErrEl.textContent = '❌ ' + (vdata.error || vdata.message || '사업자 정보를 확인할 수 없습니다.')
+        verifyErrEl.style.color = '#DC2626'
+        return { verified: false }
+      }
+      verifyErrEl.textContent = '✅ 사업자 인증 완료'
+      verifyErrEl.style.color = 'var(--green)'
+      lastVerifiedBizKey = businessNumber + '|' + representativeName + '|' + businessStartDate
+      return { verified: true, status: vdata.status, businessNumber, representativeName, businessStartDate }
+    } catch (e) {
+      verifyErrEl.textContent = '❌ 인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'
+      verifyErrEl.style.color = '#DC2626'
+      return { verified: false }
+    }
+  }
+  let lastVerifiedBizKey = null
+
+  window.goStep = async function(n, btnEl) {
     if (n > currentStep && !validate(currentStep)) return
+
+    // 브랜드가 상세정보(3단계)에서 다음으로 넘어가려면 사업자 인증을 반드시 통과해야 함
+    if (currentStep === 3 && n === 4 && role === 'brand') {
+      if (btnEl) { btnEl.disabled = true; btnEl.style.opacity = '0.6' }
+      const result = await verifyBrandBusinessInfo()
+      if (btnEl) { btnEl.disabled = false; btnEl.style.opacity = '1' }
+      if (!result.verified) return // 인증 실패 시 다음 단계로 진행 자체를 막음
+    }
+
     if (n === 3) {
       g('s3_title').textContent = role === 'brand' ? '브랜드 정보' : '채널 정보'
       g('s3_sub').textContent   = role === 'brand' ? '제품 등록에 필요한 정보입니다.' : '링크 생성에 필요한 정보입니다.'
@@ -476,37 +521,19 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       businessNumber = g('b_bizno').value.trim()
       representativeName = g('b_rep').value.trim()
       businessStartDate = g('b_start').value.replace(/-/g, '')
+      const curKey = businessNumber + '|' + representativeName + '|' + businessStartDate
 
-      const verifyErrEl = g('b_verify_err')
-      verifyErrEl.textContent = '🔍 국세청 사업자등록정보 확인 중...'
-      verifyErrEl.style.color = 'var(--ink-40)'
-
-      try {
-        const vres = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/verify-business-number', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
-          },
-          body: JSON.stringify({ businessNumber, representativeName, startDate: businessStartDate })
-        })
-        const vdata = await vres.json()
-        bizVerified = !!vdata.verified
-        businessStatus = vdata.status
-
+      if (curKey === lastVerifiedBizKey) {
+        // 3단계에서 이미 이 값 그대로 인증 통과함 — 재검증 생략
+        bizVerified = true
+      } else {
+        const result = await verifyBrandBusinessInfo()
+        bizVerified = result.verified
+        businessStatus = result.status
         if (!bizVerified) {
-          verifyErrEl.textContent = '❌ ' + (vdata.error || vdata.message || '사업자 정보를 확인할 수 없습니다.')
-          verifyErrEl.style.color = '#DC2626'
           btn.classList.remove('loading')
           return
         }
-        verifyErrEl.textContent = '✅ 사업자 인증 완료'
-        verifyErrEl.style.color = 'var(--green)'
-      } catch (e) {
-        verifyErrEl.textContent = '❌ 인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'
-        verifyErrEl.style.color = '#DC2626'
-        btn.classList.remove('loading')
-        return
       }
     }
 
