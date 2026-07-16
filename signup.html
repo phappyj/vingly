@@ -508,6 +508,18 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     btn.classList.add('loading')
 
     const email    = g('s2_email').value.trim()
+
+    // 탈퇴 후 30일 이내 재가입 제한 체크
+    try {
+      const { data: blocked } = await supabase.rpc('is_email_blocked', { p_email: email })
+      if (blocked) {
+        g('alertErrMsg4').textContent = '탈퇴 후 1개월간 재가입이 제한됩니다. 잠시 후 다시 시도해주세요.'
+        g('alertErr4').classList.add('on')
+        btn.classList.remove('loading')
+        return
+      }
+    } catch (e) { console.error('재가입 제한 확인 실패:', e) }
+
     const password = g('s2_pw').value
     const name     = g('s2_name').value.trim()
     const phone    = g('s2_phone').value.trim()
