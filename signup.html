@@ -569,6 +569,13 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       return
     }
 
+    // 얼리버드 표시 — 지금 가입하는 모든 유저는 정식 오픈 후 요금제 전환에서 예외 처리됨
+    if (data.user) {
+      try {
+        await supabase.from('users').update({ early_bird: true }).eq('id', data.user.id)
+      } catch (e) { console.error('얼리버드 표시 실패:', e) }
+    }
+
     // 브랜드는 인증된 사업자 정보를 계정에 기록
     if (role === 'brand' && data.user) {
       try {
@@ -613,8 +620,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 
     if (data.role === 'brand') {
       g('s_badge').className = 's-badge sb-b'
-      g('s_badge').textContent = '브랜드 등록 완료'
-      g('s_desc').innerHTML = `${data.name}님, 환영합니다.`
+      g('s_badge').textContent = '브랜드 얼리버드 등록 완료'
+      g('s_desc').innerHTML = `${data.name}님, 환영합니다. 정식 오픈 후 유료 플랜이 도입돼도 지금 등록하신 무제한 혜택은 계속 유지됩니다.`
       g('s_steps').innerHTML = `
         <div class="ns-item"><span>✅</span><span>가입 확인 메일이 ${data.email}로 발송됩니다.</span></div>
         <div class="ns-item"><span>📦</span><span>로그인 후 제품을 등록하면 크리에이터 매칭이 시작됩니다.</span></div>`
