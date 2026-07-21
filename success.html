@@ -115,24 +115,25 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
     // emailjs 스크립트 로드 실패 등으로 이 블록에서 오류가 나도 위에서 이미 그려진 결제완료 화면에는 영향 없어야 함
     if (!alreadyPaid && order?.buyerEmail) {
       try {
-        const msgLines = [
-          `${order.buyerName || '고객'}님, Vingly에서 주문해주셔서 감사합니다.`,
-          '',
-          `주문번호: ${order.orderId || '-'}`,
-          `상품명: ${order.productName || '-'}`,
-          `결제금액: ₩${Number(order.amount || 0).toLocaleString()}`,
-          `배송지: ${order.shippingAddress || '-'}`,
-          '',
-          '배송 관련 문의는 구매하신 채널의 크리에이터 링크 또는 vingly.official@gmail.com 으로 연락해주세요.'
-        ]
+        const orderDate = new Date().toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })
+        const orderRowsHtml = `
+          <tr>
+            <td style="padding:10px 0;font-size:13.5px;color:#0A0C10">${order.productName || '-'}</td>
+            <td style="padding:10px 0;font-size:13.5px;color:#0A0C10;text-align:right">₩${Number(order.amount || 0).toLocaleString()}</td>
+          </tr>`
+        const footerNoteHtml = `배송 관련 문의는 구매하신 채널의 크리에이터 링크 또는 <a href="mailto:vingly.official@gmail.com" style="color:#1D4ED8">vingly.official@gmail.com</a>으로 연락해주세요.<br><br>주문 조회: <a href="https://vingly.kr/order-lookup.html" style="color:#1D4ED8">vingly.kr/order-lookup.html</a>`
+
         if (typeof emailjs !== 'undefined') {
-          emailjs.send('service_jrejejn', 'template_pz9kl97', {
+          emailjs.send('service_jrejejn', 'template_54lvwco', {
             to_email: order.buyerEmail,
-            email: order.buyerEmail,
+            title: '주문이 접수됐습니다',
             user_name: order.buyerName || '고객',
-            user_role: '구매자',
-            message: msgLines.join('\n'),
-            title: 'Vingly 주문 확인'
+            order_id: order.orderId || '-',
+            order_date: orderDate,
+            order_rows_html: orderRowsHtml,
+            total_amount: '₩' + Number(order.amount || 0).toLocaleString(),
+            shipping_address: order.shippingAddress || '-',
+            footer_note_html: footerNoteHtml
           }).catch(e => console.error('주문 확인 메일 발송 실패:', e))
         } else {
           console.error('emailjs 스크립트가 로드되지 않아 주문 확인 메일을 보내지 못했습니다.')
