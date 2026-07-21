@@ -600,15 +600,33 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       })
     } catch(e) { console.error('Sheets 저장 실패:', e) }
 
-    // 환영 이메일
+    // 환영 이메일 — 역할별로 뱃지 색상/제목/본문을 다르게 구성
     try {
+      const isBrand = role === 'brand'
+      const bodyHtml = isBrand ? `
+        <p style="margin:0 0 16px">Vingly 브랜드 파트너로 등록이 완료됐어요.</p>
+        <ul style="margin:0 0 20px;padding-left:18px">
+          <li style="margin-bottom:6px">첫 제품을 등록하면 크리에이터 매칭이 바로 시작돼요</li>
+          <li style="margin-bottom:6px">등록한 사업자 정보는 국세청 진위확인을 통과한 상태예요</li>
+          <li>파일럿 기간 동안 무제한 혜택이 계속 유지돼요</li>
+        </ul>
+        <a href="https://vingly.kr/login.html" style="display:inline-block;background:#1D4ED8;color:#fff;padding:12px 22px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none">로그인하고 제품 등록하기 →</a>
+      ` : `
+        <p style="margin:0 0 16px">Vingly 크리에이터로 등록이 완료됐어요.</p>
+        <ul style="margin:0 0 20px;padding-left:18px">
+          <li style="margin-bottom:6px">제품을 탐색하고 링크를 만들면 바로 수익이 시작돼요</li>
+          <li style="margin-bottom:6px">크리에이터는 언제나 수수료 0%, 수익 전액이 내 몫이에요</li>
+          <li>판매 실적이 쌓이면 등급이 올라가고 혜택도 늘어나요</li>
+        </ul>
+        <a href="https://vingly.kr/login.html" style="display:inline-block;background:#00B37E;color:#fff;padding:12px 22px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none">로그인하고 제품 탐색하기 →</a>
+      `
       await emailjs.send('service_jrejejn', 'template_pz9kl97', {
-        to_email: email, email, user_name: name,
-        user_role: role === 'brand' ? '브랜드·셀러' : '크리에이터',
-        message: role === 'brand'
-          ? '브랜드 등록이 완료됐습니다.\nhttps://vingly.kr/login.html'
-          : '크리에이터 등록이 완료됐습니다.\nhttps://vingly.kr/login.html',
-        title: 'Vingly 가입 완료'
+        to_email: email,
+        title: isBrand ? '브랜드 가입을 환영해요' : '크리에이터 가입을 환영해요',
+        badge_text: isBrand ? '브랜드 가입 완료' : '크리에이터 가입 완료',
+        badge_color: isBrand ? '#1D4ED8' : '#00B37E',
+        user_name: name,
+        body_html: bodyHtml
       })
     } catch(e) { console.error('메일 발송 실패:', e) }
 

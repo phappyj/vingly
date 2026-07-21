@@ -78,6 +78,8 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TH29BK606P"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>window.addEventListener('load', function() { emailjs.init('ni95sDX1JNQCe4_tI'); });</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -309,15 +311,63 @@ function filterFaq(cat, btn) {
   });
 }
 
-function submitContact() {
+async function submitContact() {
   const name = document.getElementById('c-name').value.trim();
   const email = document.getElementById('c-email').value.trim();
+  const type = document.getElementById('c-type').value;
   const msg = document.getElementById('c-msg').value.trim();
   if(!name || !email || !msg) { alert('이름, 이메일, 문의 내용을 입력해주세요.'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('올바른 이메일 주소를 입력해주세요.'); return; }
-  document.getElementById('formArea').style.display = 'none';
-  document.getElementById('successMsg').classList.add('on');
+
+  const submitBtn = document.querySelector('.submit-btn')
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '전송 중...' }
+
+  try {
+    // 1) 팀에게 문의 내용 전달
+    await emailjs.send('service_jrejejn', 'template_pz9kl97', {
+      to_email: 'vingly.official@gmail.com',
+      title: '새 고객문의가 접수됐습니다',
+      badge_text: '문의 접수 (' + (type || '유형 미선택') + ')',
+      badge_color: '#DC2626',
+      user_name: '운영팀',
+      body_html: `
+        <div style="background:#F9F8F4;border-radius:10px;padding:16px 18px;margin-bottom:12px">
+          <div style="font-size:12.5px;color:rgba(10,12,16,.5);margin-bottom:4px">보낸 사람</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:10px">${name} (${email})</div>
+          <div style="font-size:12.5px;color:rgba(10,12,16,.5);margin-bottom:4px">문의 내용</div>
+          <div style="font-size:14px;white-space:pre-wrap">${msg}</div>
+        </div>
+        <a href="mailto:${email}" style="display:inline-block;background:#0A0C10;color:#fff;padding:10px 18px;border-radius:9px;font-weight:700;font-size:13px;text-decoration:none">답장하기 →</a>
+      `
+    })
+
+    // 2) 문의한 사람에게 접수 확인 메일
+    await emailjs.send('service_jrejejn', 'template_pz9kl97', {
+      to_email: email,
+      title: '문의가 접수됐어요',
+      badge_text: '문의 접수 확인',
+      badge_color: '#6B7280',
+      user_name: name,
+      body_html: `
+        <p style="margin:0 0 16px">아래 내용으로 문의가 정상 접수됐습니다. 평일 기준 24시간 내로 답변드릴게요.</p>
+        <div style="background:#F9F8F4;border-radius:10px;padding:16px 18px">
+          <div style="font-size:12.5px;color:rgba(10,12,16,.5);margin-bottom:4px">문의 유형</div>
+          <div style="font-size:13.5px;font-weight:600;margin-bottom:10px">${type || '미선택'}</div>
+          <div style="font-size:12.5px;color:rgba(10,12,16,.5);margin-bottom:4px">문의 내용</div>
+          <div style="font-size:13.5px;white-space:pre-wrap">${msg}</div>
+        </div>
+      `
+    })
+
+    document.getElementById('formArea').style.display = 'none';
+    document.getElementById('successMsg').classList.add('on');
+  } catch (e) {
+    console.error('문의 전송 실패:', e)
+    alert('문의 전송에 실패했습니다. 잠시 후 다시 시도해주시거나, vingly.official@gmail.com으로 직접 메일 보내주세요.')
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '문의 보내기' }
+  }
 }
+
 </script>
 </body>
 </html>
