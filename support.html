@@ -326,6 +326,7 @@ async function submitContact() {
     // 1) 팀에게 문의 내용 전달
     await emailjs.send('service_jrejejn', 'template_pz9kl97', {
       to_email: 'vingly.official@gmail.com',
+      reply_to: email,
       title: '새 고객문의가 접수됐습니다',
       badge_text: '문의 접수 (' + (type || '유형 미선택') + ')',
       badge_color: '#DC2626',
@@ -344,6 +345,7 @@ async function submitContact() {
     // 2) 문의한 사람에게 접수 확인 메일
     await emailjs.send('service_jrejejn', 'template_pz9kl97', {
       to_email: email,
+      reply_to: 'vingly.official@gmail.com',
       title: '문의가 접수됐어요',
       badge_text: '문의 접수 확인',
       badge_color: '#6B7280',
