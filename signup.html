@@ -197,6 +197,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         </div>
       </div>
       <div class="fg">
+        <label class="fl">생년월일 <span class="req">*</span></label>
+        <input class="fi" id="s2_birth" type="date" oninput="clearFerr(this)">
+        <div class="ferr" id="s2_birth_err">생년월일을 입력해주세요</div>
+      </div>
+      <div class="fg">
         <label class="fl">이메일 <span class="req">*</span></label>
         <input class="fi" id="s2_email" type="email" placeholder="이메일 입력" oninput="clearFerr(this)">
         <div class="ferr" id="s2_email_err">올바른 이메일을 입력해주세요</div>
@@ -477,6 +482,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       let ok = true
       if (!g('s2_name').value.trim()) { showFerr('s2_name', '이름을 입력해주세요'); ok = false }
       if (!chkPhone(g('s2_phone').value)) { showFerr('s2_phone', '올바른 연락처를 입력해주세요'); ok = false }
+      if (!g('s2_birth').value) {
+        showFerr('s2_birth', '생년월일을 입력해주세요'); ok = false
+      } else if (!isAtLeast14(g('s2_birth').value)) {
+        showFerr('s2_birth', '만 14세 미만은 가입할 수 없습니다 (개인정보보호법 제22조의2)'); ok = false
+      }
       if (!chkEmail(g('s2_email').value)) { showFerr('s2_email', '올바른 이메일을 입력해주세요'); ok = false }
       if (g('s2_pw').value.length < 8) { showFerr('s2_pw', '8자 이상 입력해주세요'); ok = false }
       if (g('s2_pw').value !== g('s2_pw2').value) { showFerr('s2_pw2', '비밀번호가 일치하지 않습니다'); ok = false }
@@ -525,6 +535,16 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const password = g('s2_pw').value
     const name     = g('s2_name').value.trim()
     const phone    = g('s2_phone').value.trim()
+    const birthDate = g('s2_birth').value
+
+    // 클라이언트 우회 방지 — 제출 직전 한 번 더 나이 검증 (devtools로 폼 필드 조작 대비)
+    if (!birthDate || !isAtLeast14(birthDate)) {
+      g('alertErrMsg4').textContent = '만 14세 미만은 가입할 수 없습니다.'
+      g('alertErr4').classList.add('on')
+      btn.classList.remove('loading')
+      return
+    }
+
     const company  = role === 'brand' ? g('b_brand').value.trim() : g('c_handle').value.trim()
     const category = role === 'brand' ? g('b_cat').value : g('c_ch').value
 
@@ -555,7 +575,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       email,
       password,
       options: {
-        data: { role, name, company_name: company, phone, category }
+        data: { role, name, company_name: company, phone, category, birth_date: birthDate }
       }
     })
 
@@ -563,19 +583,22 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 
     if (error) {
       const isExisting = error.message.includes('already') || error.status === 422
+      const isMinor = error.message.includes('14') || error.message.includes('min_age') || error.message.includes('나이')
       const errMsg = isExisting
         ? '이미 가입된 이메일입니다. 로그인 페이지에서 로그인해주세요.'
-        : '가입 중 오류가 발생했습니다: ' + error.message
+        : isMinor
+          ? '만 14세 미만은 가입할 수 없습니다.'
+          : '가입 중 오류가 발생했습니다: ' + error.message
       g('alertErrMsg4').textContent = errMsg
       g('alertErr4').classList.add('on')
       return
     }
 
-    // 얼리버드 표시 — 지금 가입하는 모든 유저는 정식 오픈 후 요금제 전환에서 예외 처리됨
+    // 얼리버드 표시 + 생년월일 저장 (DB 트리거가 만 14세 미만이면 이 UPDATE 자체를 거부함 — 서버단 최종 방어선)
     if (data.user) {
       try {
-        await supabase.from('users').update({ early_bird: true }).eq('id', data.user.id)
-      } catch (e) { console.error('얼리버드 표시 실패:', e) }
+        await supabase.from('users').update({ early_bird: true, birth_date: birthDate }).eq('id', data.user.id)
+      } catch (e) { console.error('얼리버드/생년월일 저장 실패:', e) }
     }
 
     // 브랜드는 인증된 사업자 정보를 계정에 기록
@@ -592,13 +615,6 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       } catch (e) { console.error('사업자 인증 정보 저장 실패:', e) }
     }
 
-    // Google Sheets 저장
-    try {
-      await fetch('https://script.google.com/macros/s/AKfycby0bphW0DvaJ18NQU4KL9g8rFh5TErh8s1oiLZwgxC1aKFFLK-ryGfsZWSiMLVEsk6TXw/exec', {
-        method: 'POST', mode: 'no-cors',
-        body: JSON.stringify({ role, name, email, phone, company, category, joinedAt: new Date().toISOString() })
-      })
-    } catch(e) { console.error('Sheets 저장 실패:', e) }
 
     // 환영 이메일 — 역할별로 뱃지 색상/제목/본문을 다르게 구성
     try {
@@ -709,6 +725,15 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 
   const chkEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
   const chkPhone = p => /^\d{3}-\d{3,4}-\d{4}$/.test(p)
+  function isAtLeast14(birthStr) {
+    const b = new Date(birthStr)
+    if (isNaN(b.getTime())) return false
+    const today = new Date()
+    let age = today.getFullYear() - b.getFullYear()
+    const m = today.getMonth() - b.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < b.getDate())) age--
+    return age >= 14
+  }
 </script>
 </body>
 </html>
