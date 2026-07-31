@@ -1001,9 +1001,47 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </select>
         </td>
         <td><input id="tracking-${o.id}" type="text" value="${o.tracking_number || ''}" placeholder="운송장번호" style="width:130px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:400 12.5px/1 'Pretendard',sans-serif;font-family:inherit"></td>
-        <td><button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button></td>
+        <td>
+          <button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button>
+          <button class="act-btn" style="background:var(--red-bg);color:var(--red)" onclick="refundOrder('${o.id}')">환불처리</button>
+        </td>
       </tr>`
     }).join('')
+  }
+
+  // 환불 처리 — 실제 Toss 환불(돈)은 Toss 대시보드에서 별도로 수동 처리해야 함.
+  // 이 버튼은 DB 상의 주문 상태와 연결된 정산건을 맞춰주는 역할만 함.
+  window.refundOrder = async function(orderId) {
+    const ok = confirm(
+      '환불 처리하시겠습니까?\n\n' +
+      '⚠️ 이 버튼은 Vingly 내부 기록만 갱신합니다.\n' +
+      '실제 결제 취소/환불은 Toss페이먼츠 대시보드에서 별도로 처리해야 합니다.\n\n' +
+      '처리 시 이 주문은 취소 상태로 바뀌고, 연결된 정산(수수료 지급) 건도 함께 무효화됩니다.'
+    )
+    if (!ok) return
+
+    const { error: orderErr } = await supabase
+      .from('orders')
+      .update({ status: 'cancelled' })
+      .eq('id', orderId)
+
+    if (orderErr) {
+      alert('주문 상태 변경에 실패했습니다: ' + orderErr.message)
+      return
+    }
+
+    const { error: settleErr } = await supabase
+      .from('settlements')
+      .update({ status: 'voided' })
+      .eq('order_id', orderId)
+
+    if (settleErr) {
+      // 정산 무효화만 실패한 경우 — 주문은 이미 취소됐으니 반드시 알려서 수동 확인하게 함
+      alert('주문은 취소됐지만, 연결된 정산 무효화에 실패했습니다: ' + settleErr.message + '\n\n관리자에게 이 주문번호를 전달해 수동으로 확인해주세요.')
+    } else {
+      alert('환불 처리가 완료됐습니다. (Toss 실제 환불은 별도로 진행해주세요)')
+    }
+    loadOrders()
   }
 
   window.saveShipping = async function(orderId) {
