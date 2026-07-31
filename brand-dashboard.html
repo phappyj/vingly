@@ -1020,28 +1020,34 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     )
     if (!ok) return
 
-    const { error: orderErr } = await supabase
-      .from('orders')
-      .update({ status: 'cancelled' })
-      .eq('id', orderId)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { alert('로그인이 만료됐습니다. 다시 로그인해주세요.'); return }
 
-    if (orderErr) {
-      alert('주문 상태 변경에 실패했습니다: ' + orderErr.message)
-      return
+    try {
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/refund-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+          'Authorization': 'Bearer ' + session.access_token
+        },
+        body: JSON.stringify({ orderId })
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        alert('환불 처리에 실패했습니다: ' + (data.message || '알 수 없는 오류'))
+        return
+      }
+      if (data.warning) {
+        alert('⚠️ ' + data.warning)
+      } else {
+        alert('환불 처리가 완료됐습니다. (Toss 실제 환불은 별도로 진행해주세요)')
+      }
+      loadOrders()
+    } catch (e) {
+      alert('네트워크 오류가 발생했습니다: ' + e.message)
     }
-
-    const { error: settleErr } = await supabase
-      .from('settlements')
-      .update({ status: 'voided' })
-      .eq('order_id', orderId)
-
-    if (settleErr) {
-      // 정산 무효화만 실패한 경우 — 주문은 이미 취소됐으니 반드시 알려서 수동 확인하게 함
-      alert('주문은 취소됐지만, 연결된 정산 무효화에 실패했습니다: ' + settleErr.message + '\n\n관리자에게 이 주문번호를 전달해 수동으로 확인해주세요.')
-    } else {
-      alert('환불 처리가 완료됐습니다. (Toss 실제 환불은 별도로 진행해주세요)')
-    }
-    loadOrders()
   }
 
   window.saveShipping = async function(orderId) {
