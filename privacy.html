@@ -88,7 +88,7 @@ table tr:last-child td{border:none}
       <div class="sb-item"><strong>수집 항목</strong>이름, 이메일, 연락처, 채널 정보 (필수) / 사업자번호 (브랜드·셀러)</div>
       <div class="sb-item"><strong>수집 목적</strong>서비스 제공, 정산 처리, 가입 확인 메일 발송</div>
       <div class="sb-item"><strong>보관 기간</strong>회원 탈퇴 후 30일 이내 삭제 (법령 보관 의무 항목 제외)</div>
-      <div class="sb-item"><strong>제3자 제공</strong>Google (Sheets 저장), 이메일 발송 서비스 — 외 제3자 미제공</div>
+      <div class="sb-item"><strong>제3자 제공</strong>Supabase (DB 저장), Toss Payments (결제), 이메일 발송 서비스 — 외 제3자 미제공</div>
       <div class="sb-item"><strong>문의</strong>vingly.official@gmail.com</div>
     </div>
   </div>
@@ -151,11 +151,12 @@ table tr:last-child td{border:none}
     <table>
       <thead><tr><th>서비스</th><th>목적</th><th>처리 항목</th></tr></thead>
       <tbody>
-        <tr><td>Google Sheets / Drive</td><td>가입자 데이터 관리</td><td>이름, 이메일, 역할, 가입일</td></tr>
-        <tr><td>이메일 발송 서비스</td><td>가입 확인·알림 메일</td><td>이름, 이메일</td></tr>
-        <tr><td>PG사 (결제 처리)</td><td>결제 처리</td><td>결제 정보 (PG사 자체 관리)</td></tr>
+        <tr><td>Supabase (해외 서버 운영)</td><td>회원 데이터베이스 저장·관리</td><td>이름, 이메일, 연락처, 계좌정보 등 전체 회원정보</td></tr>
+        <tr><td>Toss Payments</td><td>결제 처리</td><td>결제 정보 (PG사 자체 관리)</td></tr>
+        <tr><td>EmailJS</td><td>가입 확인·알림 메일 발송</td><td>이름, 이메일</td></tr>
       </tbody>
     </table>
+    <div class="hl"><p>Supabase는 해외에 서버를 두고 있어 개인정보가 국외로 이전되어 처리될 수 있습니다.</p></div>
   </div>
 
   <div class="sec" id="p5">
@@ -164,8 +165,9 @@ table tr:last-child td{border:none}
     <table>
       <thead><tr><th>수탁사</th><th>위탁 업무</th></tr></thead>
       <tbody>
-        <tr><td>Google LLC</td><td>데이터 저장·관리 (Google Sheets, Drive)</td></tr>
-        <tr><td>이메일 발송 서비스</td><td>서비스 알림 및 가입 확인 메일 발송</td></tr>
+        <tr><td>Supabase Inc.</td><td>데이터베이스 저장·관리 (해외 서버)</td></tr>
+        <tr><td>Toss Payments</td><td>결제 대행</td></tr>
+        <tr><td>EmailJS</td><td>서비스 알림 및 가입 확인 메일 발송</td></tr>
       </tbody>
     </table>
   </div>
@@ -218,8 +220,8 @@ table tr:last-child td{border:none}
 
     <!-- 사업자 정보 -->
     <div style="font:400 11px/1.8 'Pretendard',sans-serif;color:rgba(10,12,16,.35);margin-top:10px">
-      상호: Vingly &nbsp;·&nbsp; 대표자: [대표자명] &nbsp;·&nbsp; 사업자등록번호: [000-00-00000] &nbsp;·&nbsp; 통신판매업신고번호: [제0000-서울-0000호]<br>
-      사업장 주소: [사업장 주소] &nbsp;·&nbsp; 이메일: vingly.official@gmail.com
+      상호: Vingly &nbsp;·&nbsp; 대표자: 박희경 &nbsp;·&nbsp; 사업자등록번호: 416-75-00580 &nbsp;·&nbsp; 통신판매업신고번호: 신고 진행 중 (완료 후 게시 예정)<br>
+      사업장 주소: 서울특별시 강남구 봉은사로57길 57 &nbsp;·&nbsp; 이메일: vingly.official@gmail.com
     </div>
 </div>
 </body>
