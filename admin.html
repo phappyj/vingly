@@ -320,19 +320,41 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- SETTLE -->
   <div class="page" id="pg-settle">
     <div class="sg" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc2"><div class="sc-l">💸 이번 달 정산 예정</div><div class="sc-v" id="settle-pending-total">₩0</div><div class="sc-ch nt" id="settle-pending-sub">정산 예정 없음</div></div>
+      <div class="sc2"><div class="sc-l">🏦 오늘 지급 가능</div><div class="sc-v" id="settle-payable-total">₩0</div><div class="sc-ch nt" id="settle-payable-sub">보류 해제된 건 없음</div></div>
+      <div class="sc2"><div class="sc-l">⏳ 보류 중 (14일 대기)</div><div class="sc-v" id="settle-pending-total">₩0</div><div class="sc-ch nt" id="settle-pending-sub">정산 예정 없음</div></div>
       <div class="sc2"><div class="sc-l">✅ 누적 지급 완료</div><div class="sc-v" id="settle-paid-total">₩0</div><div class="sc-ch nt">-</div></div>
-      <div class="sc2"><div class="sc-l">🏦 연동 계좌</div><div class="sc-v" style="font-size:16px">토스페이먼츠</div><div class="sc-ch nt">연동 대기</div></div>
     </div>
+
     <div class="card">
-      <div class="card-h"><div class="card-t">정산 내역</div></div>
+      <div class="card-h">
+        <div class="card-t">💰 지급 대상 리스트 (계좌이체용)</div>
+        <button class="act-btn green" onclick="downloadPayoutCSV()">CSV 다운로드</button>
+      </div>
+      <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.45);padding:0 4px 12px">
+        14일 보류기간이 지나 지금 바로 계좌이체 가능한 대상만 모아서 보여줍니다. 은행 앱에서 대량이체 시 아래 CSV를 업로드하면 편합니다.
+        토스 지급대행 API 연동 전까지는 이 리스트를 보고 수동으로 이체한 뒤, 아래 "일괄 지급완료 처리" 버튼을 눌러주세요.
+      </div>
+      <div id="payout-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">🏦</div>
+        <div style="font-size:14px;font-weight:600">지금 지급 가능한 대상이 없습니다</div>
+      </div>
+      <div class="tw" id="payout-wrap" style="display:none">
+        <table>
+          <thead><tr><th>대상</th><th>구분</th><th>은행</th><th>계좌번호</th><th>예금주</th><th>총 지급액</th><th>건수</th><th>관리</th></tr></thead>
+          <tbody id="payout-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">정산 내역 (전체)</div></div>
       <div id="admin-settle-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">💸</div>
         <div style="font-size:14px;font-weight:600">아직 정산 내역이 없습니다</div>
       </div>
       <div class="tw" id="admin-settle-wrap" style="display:none">
         <table>
-          <thead><tr><th>브랜드</th><th>크리에이터</th><th>금액</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
+          <thead><tr><th>대상</th><th>구분</th><th>금액</th><th>보류상태</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
           <tbody id="admin-settle-tbody"></tbody>
         </table>
       </div>
@@ -710,6 +732,8 @@ window.setProductStatus = async function(productId, status) {
   }
 }
 
+let _payoutGroups = [] // CSV 다운로드에서 재사용
+
 function renderSettlements(settlements, members) {
   const emptyEl = document.getElementById('admin-settle-empty')
   const wrap = document.getElementById('admin-settle-wrap')
@@ -717,34 +741,136 @@ function renderSettlements(settlements, members) {
   if (emptyEl) emptyEl.style.display = hasSettlements ? 'none' : 'block'
   if (wrap) wrap.style.display = hasSettlements ? 'block' : 'none'
 
-  const pendingTotal = settlements.filter(s => s.status === 'pending').reduce((sum, s) => sum + Number(s.amount || 0), 0)
+  const now = new Date()
+  const isPayable = s => s.status === 'pending' && s.payable_after && new Date(s.payable_after) <= now
+  const isHolding = s => s.status === 'pending' && (!s.payable_after || new Date(s.payable_after) > now)
+
+  const payableTotal = settlements.filter(isPayable).reduce((sum, s) => sum + Number(s.amount || 0), 0)
+  const holdingTotal = settlements.filter(isHolding).reduce((sum, s) => sum + Number(s.amount || 0), 0)
   const paidTotal = settlements.filter(s => s.status === 'completed' || s.status === 'paid').reduce((sum, s) => sum + Number(s.amount || 0), 0)
+
+  const payableTotalEl = document.getElementById('settle-payable-total')
+  const payableSubEl = document.getElementById('settle-payable-sub')
   const pendingTotalEl = document.getElementById('settle-pending-total')
-  const paidTotalEl = document.getElementById('settle-paid-total')
   const pendingSubEl = document.getElementById('settle-pending-sub')
-  if (pendingTotalEl) pendingTotalEl.textContent = '₩' + pendingTotal.toLocaleString()
+  const paidTotalEl = document.getElementById('settle-paid-total')
+  if (payableTotalEl) payableTotalEl.textContent = '₩' + payableTotal.toLocaleString()
+  if (payableSubEl) payableSubEl.textContent = settlements.filter(isPayable).length + '건 지급 가능'
+  if (pendingTotalEl) pendingTotalEl.textContent = '₩' + holdingTotal.toLocaleString()
+  if (pendingSubEl) pendingSubEl.textContent = settlements.filter(isHolding).length + '건 보류중'
   if (paidTotalEl) paidTotalEl.textContent = '₩' + paidTotal.toLocaleString()
-  if (pendingSubEl) pendingSubEl.textContent = settlements.filter(s => s.status === 'pending').length + '건 대기중'
 
-  if (!hasSettlements) return
-
-  const nameMap = {}
-  ;(members || []).forEach(m => { nameMap[m.id] = m.company_name })
+  const nameMap = {}, bankMap = {}
+  ;(members || []).forEach(m => {
+    nameMap[m.id] = m.company_name || '-'
+    bankMap[m.id] = { bank: m.bank_name || '-', account: m.account_number || '-', holder: m.account_holder || '-' }
+  })
+  window._adminNameMap = nameMap
+  window._adminBankMap = bankMap
   const statusLabel = { pending: '대기중', processing: '처리중', completed: '정산완료', paid: '정산완료', failed: '실패' }
+  const roleLabel = { creator: '크리에이터', brand: '브랜드' }
 
-  document.getElementById('admin-settle-tbody').innerHTML = settlements.map(s => `
+  // ── 지급 대상 리스트 (지급 가능한 건만, recipient별로 합산) ──
+  const payableSettlements = settlements.filter(isPayable)
+  const groups = {}
+  payableSettlements.forEach(s => {
+    const key = s.recipient || (s.recipient_role === 'brand' ? s.brand : s.creator)
+    if (!key) return
+    if (!groups[key]) groups[key] = { recipient: key, role: s.recipient_role, amount: 0, count: 0, ids: [] }
+    groups[key].amount += Number(s.amount || 0)
+    groups[key].count += 1
+    groups[key].ids.push(s.id)
+  })
+  _payoutGroups = Object.values(groups)
+
+  const payoutEmptyEl = document.getElementById('payout-empty')
+  const payoutWrapEl = document.getElementById('payout-wrap')
+  const hasPayouts = _payoutGroups.length > 0
+  if (payoutEmptyEl) payoutEmptyEl.style.display = hasPayouts ? 'none' : 'block'
+  if (payoutWrapEl) payoutWrapEl.style.display = hasPayouts ? 'block' : 'none'
+
+  if (hasPayouts) {
+    document.getElementById('payout-tbody').innerHTML = _payoutGroups.map(g => {
+      const bank = bankMap[g.recipient] || {}
+      return `
+      <tr>
+        <td class="td-m">${nameMap[g.recipient] || '-'}</td>
+        <td><span class="badge ${g.role === 'brand' ? 'bg2' : 'ba2'}">${roleLabel[g.role] || g.role}</span></td>
+        <td>${bank.bank}</td>
+        <td>${bank.account}</td>
+        <td>${bank.holder}</td>
+        <td>₩${g.amount.toLocaleString()}</td>
+        <td>${g.count}건</td>
+        <td><button class="act-btn green" onclick='batchMarkPaid(${JSON.stringify(g.ids)})'>일괄 지급완료 처리</button></td>
+      </tr>`
+    }).join('')
+  }
+
+  // ── 정산 내역 전체 (상세) ──
+  if (!hasSettlements) return
+  document.getElementById('admin-settle-tbody').innerHTML = settlements.map(s => {
+    const holdStatusHtml = s.status !== 'pending'
+      ? '-'
+      : isPayable(s)
+        ? '<span class="badge ba2">지급가능</span>'
+        : `<span class="badge bg2">보류중 (~${s.payable_after ? new Date(s.payable_after).toLocaleDateString('ko-KR') : '-'})</span>`
+    return `
     <tr>
-      <td class="td-m">${nameMap[s.brand] || '-'}</td>
-      <td class="td-m">${nameMap[s.creator] || '-'}</td>
+      <td class="td-m">${nameMap[s.recipient] || nameMap[s.brand] || nameMap[s.creator] || '-'}</td>
+      <td>${roleLabel[s.recipient_role] || '-'}</td>
       <td>₩${Number(s.amount).toLocaleString()}</td>
+      <td>${holdStatusHtml}</td>
       <td><span class="badge ${s.status === 'pending' ? 'ba2' : 'bg2'}">${statusLabel[s.status] || s.status}</span></td>
       <td class="td-m">${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
       <td>
-        ${s.status === 'pending'
+        ${s.status === 'pending' && isPayable(s)
           ? `<button class="act-btn green" onclick="setSettleStatus('${s.id}','completed')">지급 완료 처리</button>`
           : '-'}
       </td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
+}
+
+window.batchMarkPaid = async function(ids) {
+  if (!confirm(`이 대상의 ${ids.length}건을 지급 완료로 일괄 처리하시겠습니까?\n\n※ 실제 계좌이체를 먼저 완료한 뒤에 눌러주세요.`)) return
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('settlements').update({ status: 'completed' }).in('id', ids).select()
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_settlements" ON public.settlements\n  FOR UPDATE\n  USING (true);')
+  } else {
+    showToast(`${data.length}건 지급 완료 처리됐습니다 ✓`)
+    loadAdminData()
+  }
+}
+
+window.downloadPayoutCSV = function() {
+  if (!_payoutGroups.length) { alert('다운로드할 지급 대상이 없습니다.'); return }
+  const nameMap = window._adminNameMap || {}
+  const bankMap = window._adminBankMap || {}
+  const roleLabel = { creator: '크리에이터', brand: '브랜드' }
+  const rows = [['대상명', '구분', '은행', '계좌번호', '예금주', '금액', '건수']]
+  _payoutGroups.forEach(g => {
+    const bank = bankMap[g.recipient] || {}
+    rows.push([
+      nameMap[g.recipient] || '-',
+      roleLabel[g.role] || g.role,
+      bank.bank || '-',
+      bank.account || '-',
+      bank.holder || '-',
+      g.amount,
+      g.count
+    ])
+  })
+  const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `vingly_지급대상_${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 window.setSettleStatus = async function(settleId, status) {
