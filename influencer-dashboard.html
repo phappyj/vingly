@@ -124,6 +124,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .grade-next .gc-cond{color:var(--ink-40)}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
+.tw table{min-width:640px}
 thead th{font:700 11px/1 'Pretendard',sans-serif;color:var(--ink-40);text-align:left;padding:8px 12px;border-bottom:1px solid var(--ink-14);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 tbody td{font:400 13px/1 'Pretendard',sans-serif;padding:12px;border-bottom:1px solid var(--ink-07);color:var(--ink)}
 tbody tr:last-child td{border:none}
@@ -179,6 +180,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 }
 @media(max-width:420px){
   .stat-grid{grid-template-columns:1fr}
+  .ch-row{grid-template-columns:1fr 1fr!important}
 }
 </style>
 </head>
@@ -246,12 +248,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작됩니다</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch nt">아직 판매 없음</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div><div class="sc-val" id="dash-clicks">0</div><div class="sc-ch nt">전환율 —</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label" id="dash-settle-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-settle-sub">자동 입금 예정</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label" id="dash-settle-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-settle-sub">14일 보류 후 정산</div></div>
     </div>
     <div class="g3">
       <div class="card">
         <div class="card-h"><div class="card-t">🔥 내 링크 현황</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
-        <div id="dash-links-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
+        <div id="dash-links-loading" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35);font-size:13px;font-weight:500">불러오는 중...</div>
+        <div id="dash-links-empty" style="display:none;text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
           <div style="font-size:28px;margin-bottom:8px">🔗</div>
           <div style="font-size:13px;font-weight:500">아직 생성된 링크가 없습니다</div>
           <div style="font-size:12px;margin-top:4px;color:var(--ink-40)">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
@@ -289,12 +292,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="earn-month-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="earn-month-sub">링크 생성 후 시작</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val" id="earn-net-val">₩0</div><div class="sc-ch nt">월말 자동 입금</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val" id="earn-net-val">₩0</div><div class="sc-ch nt">14일 보류 후 정산</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val" id="earn-total-val">₩0</div><div class="sc-ch nt" id="earn-total-sub">첫 판매를 기다리는 중</div></div>
     </div>
     <div class="card">
       <div class="card-h"><div class="card-t">수익 명세</div></div>
-      <div id="earn-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35)"><div style="font-size:28px;margin-bottom:8px">💸</div><div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div></div>
+      <div id="earn-loading" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35);font-size:13px;font-weight:500">불러오는 중...</div>
+      <div id="earn-empty" style="display:none;text-align:center;padding:28px 0;color:rgba(10,12,16,.35)"><div style="font-size:28px;margin-bottom:8px">💸</div><div style="font-size:13px;font-weight:500">아직 수익이 없습니다</div></div>
       <div class="tw" id="earn-table-wrap" style="display:none">
         <table>
           <thead><tr><th>일시</th><th>제품</th><th>주문금액</th><th>내 수익</th><th>상태</th></tr></thead>
@@ -418,7 +422,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="page content" id="pg-links">
     <div class="card">
       <div class="card-h"><div class="card-t">내 전체 링크</div><button class="btn-primary" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">+ 링크 생성</button></div>
-      <div id="links-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+      <div id="links-loading" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35);font-size:14px;font-weight:600">불러오는 중...</div>
+      <div id="links-empty" style="display:none;text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">🔗</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 생성된 링크가 없습니다</div>
         <div style="font-size:13px">제품 탐색에서 링크를 생성하면 여기에 표시됩니다</div>
@@ -437,7 +442,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div style="max-width:680px">
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="g3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">활동명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="활동명"></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
@@ -454,7 +459,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">🏦 정산 계좌</div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="g3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">은행</label>
             <select id="set_bank" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
               <option value="">은행 선택</option><option>카카오뱅크</option><option>토스뱅크</option><option>국민은행</option><option>신한은행</option><option>우리은행</option><option>하나은행</option><option>농협은행</option>
@@ -577,7 +582,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
     list.innerHTML = channels.map(ch => `
-      <div style="display:grid;grid-template-columns:100px 1fr 90px auto 34px;gap:8px;align-items:center" data-ch-id="${ch.id}">
+      <div class="ch-row" style="display:grid;grid-template-columns:100px 1fr 90px auto 34px;gap:8px;align-items:center" data-ch-id="${ch.id}">
         <select id="ch-platform-${ch.id}" style="padding:9px 10px;border-radius:8px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
           ${CHANNEL_PLATFORMS.map(p => `<option value="${p}" ${ch.platform === p ? 'selected' : ''}>${p}</option>`).join('')}
         </select>
@@ -760,7 +765,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       settleLabelEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? '정산 예정 (월 2회)' : '정산 예정 (월말)'
     }
     if (settleSubEl && myTier) {
-      settleSubEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? `${myTier.name} 등급 · 월 2회 입금` : '자동 입금 예정'
+      settleSubEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? `${myTier.name} 등급 · 월 2회 입금` : '14일 보류 후 정산 예정'
     }
 
     const monthValEl = document.getElementById('earn-month-val')
@@ -775,6 +780,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (totalSubEl) totalSubEl.textContent = allOrders.length > 0 ? `누적 ${allOrders.length}건 판매` : '첫 판매를 기다리는 중'
 
     // 수익 명세 테이블
+    const loadingEl = document.getElementById('earn-loading')
+    if (loadingEl) loadingEl.style.display = 'none'
     const emptyEl = document.getElementById('earn-empty')
     const wrapEl = document.getElementById('earn-table-wrap')
     const hasOrders = allOrders.length > 0
@@ -878,7 +885,18 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .eq('creator', user.id).eq('status', 'active')
       .order('created_at', { ascending: false })
 
-    if (!links || links.length === 0) return
+    const dashLoadingEl = document.getElementById('dash-links-loading')
+    if (dashLoadingEl) dashLoadingEl.style.display = 'none'
+    const linksLoadingEl = document.getElementById('links-loading')
+    if (linksLoadingEl) linksLoadingEl.style.display = 'none'
+
+    if (!links || links.length === 0) {
+      const dashEmptyEl = document.getElementById('dash-links-empty')
+      if (dashEmptyEl) dashEmptyEl.style.display = 'block'
+      const linksEmptyEl = document.getElementById('links-empty')
+      if (linksEmptyEl) linksEmptyEl.style.display = 'block'
+      return
+    }
 
     document.getElementById('dash-links-empty').style.display = 'none'
     const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
