@@ -263,7 +263,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <span style="color:var(--ink-40);font-size:12px">~</span>
         <input id="order-date-to" type="date" onchange="orderFilterChanged()" style="padding:9px 10px;border-radius:9px;border:1.5px solid var(--ink-14);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit">
       </div>
-      <div id="order-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+      <div id="order-loading" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
+        <div style="font-size:14px;font-weight:600">불러오는 중...</div>
+      </div>
+      <div id="order-empty" style="display:none;text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">🚚</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 결제 완료된 주문이 없습니다</div>
         <div style="font-size:13px">구매가 발생하면 여기서 배송 상태를 관리할 수 있어요</div>
@@ -939,7 +942,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     query = query.order('created_at', { ascending: false }).range(from, to)
 
     const { data: orders, count, error } = await query
-    if (error) { console.error('주문 조회 실패:', error); return }
+    document.getElementById('order-loading').style.display = 'none'
+    if (error) { console.error('주문 조회 실패:', error); document.getElementById('order-empty').style.display = 'block'; return }
 
     const totalCount = count || 0
     const totalPages = Math.max(1, Math.ceil(totalCount / ORDER_PAGE_SIZE))
@@ -1001,53 +1005,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </select>
         </td>
         <td><input id="tracking-${o.id}" type="text" value="${o.tracking_number || ''}" placeholder="운송장번호" style="width:130px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:400 12.5px/1 'Pretendard',sans-serif;font-family:inherit"></td>
-        <td>
-          <button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button>
-          <button class="act-btn" style="background:var(--red-bg);color:var(--red)" onclick="refundOrder('${o.id}')">환불처리</button>
-        </td>
+        <td><button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button></td>
       </tr>`
     }).join('')
-  }
-
-  // 환불 처리 — 실제 Toss 환불(돈)은 Toss 대시보드에서 별도로 수동 처리해야 함.
-  // 이 버튼은 DB 상의 주문 상태와 연결된 정산건을 맞춰주는 역할만 함.
-  window.refundOrder = async function(orderId) {
-    const ok = confirm(
-      '환불 처리하시겠습니까?\n\n' +
-      '⚠️ 이 버튼은 Vingly 내부 기록만 갱신합니다.\n' +
-      '실제 결제 취소/환불은 Toss페이먼츠 대시보드에서 별도로 처리해야 합니다.\n\n' +
-      '처리 시 이 주문은 취소 상태로 바뀌고, 연결된 정산(수수료 지급) 건도 함께 무효화됩니다.'
-    )
-    if (!ok) return
-
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) { alert('로그인이 만료됐습니다. 다시 로그인해주세요.'); return }
-
-    try {
-      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/refund-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
-          'Authorization': 'Bearer ' + session.access_token
-        },
-        body: JSON.stringify({ orderId })
-      })
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        alert('환불 처리에 실패했습니다: ' + (data.message || '알 수 없는 오류'))
-        return
-      }
-      if (data.warning) {
-        alert('⚠️ ' + data.warning)
-      } else {
-        alert('환불 처리가 완료됐습니다. (Toss 실제 환불은 별도로 진행해주세요)')
-      }
-      loadOrders()
-    } catch (e) {
-      alert('네트워크 오류가 발생했습니다: ' + e.message)
-    }
   }
 
   window.saveShipping = async function(orderId) {
