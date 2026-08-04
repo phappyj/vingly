@@ -215,10 +215,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <button class="ob-btn" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">제품 등록하기 →</button>
     </div>
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val">₩0</div><div class="sc-ch">제품 등록 후 시작됩니다</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">활동 크리에이터</div><div class="sc-ico" style="background:var(--green-bg)">📱</div></div><div class="sc-val">0명</div><div class="sc-ch">제품 등록 시 매칭 시작</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch">아직 판매 없음</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val">₩0</div><div class="sc-ch">결제 완료 후 14일 보류</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="home-month-sales">₩0</div><div class="sc-ch" id="home-month-sales-sub">제품 등록 후 시작됩니다</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">활동 크리에이터</div><div class="sc-ico" style="background:var(--green-bg)">📱</div></div><div class="sc-val" id="home-active-creators">0명</div><div class="sc-ch">제품 등록 시 매칭 시작</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val" id="home-total-orders">0건</div><div class="sc-ch">아직 판매 없음</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val" id="home-settle-pending">₩0</div><div class="sc-ch">결제 완료 후 14일 보류</div></div>
     </div>
     <div class="card">
       <div class="card-h"><div class="card-t">제품별 판매 현황</div><button class="btn-primary" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">+ 제품 등록</button></div>
@@ -834,6 +834,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     setText('rev-flow-creator', '-₩' + creatorFeeSum.toLocaleString())
     setText('rev-flow-pg', '-₩' + pgFee.toLocaleString())
     setText('rev-flow-net', '₩' + netAmount.toLocaleString())
+
+    // 홈 화면 상단 통계 카드 (제품 등록 전엔 계속 ₩0으로 고정돼있던 문제 수정)
+    setText('home-month-sales', '₩' + totalSales.toLocaleString())
+    const monthSalesSubEl = document.getElementById('home-month-sales-sub')
+    if (monthSalesSubEl) monthSalesSubEl.textContent = monthOrders.length > 0 ? `이번 달 ${monthOrders.length}건 판매` : '제품 등록 후 시작됩니다'
+    setText('home-active-creators', distinctCreators.size + '명')
+    setText('home-total-orders', allOrders.length + '건')
+
+    const { data: pendingBrandSettlements } = await supabase
+      .from('settlements')
+      .select('amount')
+      .eq('brand', user.id)
+      .eq('recipient_role', 'brand')
+      .eq('status', 'pending')
+    const settlePending = (pendingBrandSettlements || []).reduce((s, r) => s + Number(r.amount || 0), 0)
+    setText('home-settle-pending', '₩' + settlePending.toLocaleString())
 
     // Vingly 거래 수수료 — 파일럿 중엔 0원, 정식 전환 후 얼리버드/신규 요율대로 실제 계산됨
     const vinglyEl = document.getElementById('rev-flow-vingly')
@@ -1623,6 +1639,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .from('settlements')
       .select('id, brand, creator, amount, status, created_at')
       .eq('brand', user.id)
+      .eq('recipient_role', 'brand')
       .gte('created_at', start)
       .lt('created_at', end)
       .order('created_at', { ascending: false })
