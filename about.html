@@ -310,8 +310,8 @@ footer{border-top:1px solid var(--ink-14);padding:36px 48px}
       </div>
       <div class="tc-right">
         <div class="tc-stat">
-          <div class="tc-stat-num" style="color:#00E5A0">231명+</div>
-          <div class="tc-stat-label">얼리버드 참여 중</div>
+          <div class="tc-stat-num" id="earlybird-count" style="color:#00E5A0">모집 중</div>
+          <div class="tc-stat-label" id="earlybird-label">얼리버드 참여 중</div>
         </div>
         <div class="tc-stat">
           <div class="tc-stat-num" style="color:#7CB9FF">1,000명</div>
@@ -358,6 +358,31 @@ footer{border-top:1px solid var(--ink-14);padding:36px 48px}
   </div>
 </footer>
 
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+  )
+
+  // 231명 같은 가짜 숫자 대신 실제 가입자 수를 보여줌.
+  // 아직 숫자가 적을 땐(30명 미만) 구체적 숫자 대신 "모집 중"으로 표시해서
+  // 거짓말도 안 하고 초라해 보이지도 않게 하고, 30명 넘으면 자동으로 실제 숫자로 전환됨.
+  const THRESHOLD = 30
+  try {
+    const { data: count, error } = await supabase.rpc('get_public_member_count')
+    const numEl = document.getElementById('earlybird-count')
+    if (!error && numEl && typeof count === 'number') {
+      if (count >= THRESHOLD) {
+        numEl.textContent = count.toLocaleString() + '명+'
+      } else {
+        numEl.textContent = '모집 중'
+      }
+    }
+  } catch (e) {
+    console.error('얼리버드 가입자 수 조회 실패:', e)
+  }
+</script>
 <script>
 window.addEventListener('load', () => {
   const io = new IntersectionObserver(entries => {
