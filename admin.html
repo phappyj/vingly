@@ -148,6 +148,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .mn{margin-left:0}
   .sg{grid-template-columns:1fr 1fr;gap:8px}
   .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr!important}
   .page{padding:14px 16px}
   .topbar{display:none}
   .mob-top{display:flex}
@@ -208,6 +209,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button class="ni" onclick="showPage('members',this)"><span class="ic">👥</span>회원 관리</button>
     <button class="ni" onclick="showPage('products',this)"><span class="ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ic">💸</span>정산 관리</button>
+    <button class="ni" onclick="showPage('revenue',this)"><span class="ic">📊</span>매출 관리</button>
     <button class="ni" onclick="showPage('alerts',this)"><span class="ic">🚨</span>알림 · 신고</button>
     <div class="divr"></div>
     <button class="ni" onclick="showPage('settings',this)"><span class="ic">⚙️</span>시스템 설정</button>
@@ -257,10 +259,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="card">
         <div class="card-h"><div class="card-t">⚡ 오늘 실시간</div></div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>신규 가입</span><span style="font-weight:600;color:var(--g)">+0명</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>링크 생성</span><span style="font-weight:600">0건</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>판매 발생</span><span style="font-weight:600;color:var(--b)">0건</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0"><span>오늘 거래액</span><span style="font-weight:600">₩890,000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>신규 가입</span><span style="font-weight:600;color:var(--g)" id="today-signups">+0명</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--br)"><span>판매 발생</span><span style="font-weight:600;color:var(--b)" id="today-orders">0건</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0"><span>오늘 거래액</span><span style="font-weight:600" id="today-gmv">₩0</span></div>
         </div>
       </div>
     </div>
@@ -374,6 +375,50 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>신고일</th><th>주문번호</th><th>사유</th><th>상세내용</th><th>신고자 연락처</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="report-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVENUE -->
+  <div class="page" id="pg-revenue">
+    <div class="sg">
+      <div class="sc2"><div class="sc-l">🛒 총 거래액 (GMV)</div><div class="sc-v" id="rev-gmv">₩0</div><div class="sc-ch nt">플랫폼 전체 결제 합계</div></div>
+      <div class="sc2"><div class="sc-l">💎 Vingly 매출</div><div class="sc-v" id="rev-vingly">₩0</div><div class="sc-ch nt" id="rev-vingly-sub">파일럿 기간 수수료 0%</div></div>
+      <div class="sc2"><div class="sc-l">🏷️ 브랜드 지급대상</div><div class="sc-v" id="rev-brand-owed">₩0</div><div class="sc-ch nt">보류중+지급가능 합계</div></div>
+      <div class="sc2"><div class="sc-l">🎤 크리에이터 지급대상</div><div class="sc-v" id="rev-creator-owed">₩0</div><div class="sc-ch nt">보류중+지급가능 합계</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">🏦 계좌 잔액 대조 (사고 방지용)</div></div>
+      <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.5);padding:0 4px 16px">
+        시스템이 계산한 "지금 계좌에 있어야 할 예상 잔액"과 실제 Toss 정산 계좌 잔액을 대조합니다.
+        차이가 크게 나면 정산 누락, 중복 지급, 시스템 오류 등을 의심해봐야 합니다.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end" class="g3">
+        <div>
+          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">시스템 예상 잔액</div>
+          <div style="font:800 20px/1 'Pretendard',sans-serif" id="rev-expected-balance">₩0</div>
+          <div style="font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.35);margin-top:4px">총 입금액 − 누적 지급완료액</div>
+        </div>
+        <div>
+          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">실제 계좌 잔액 (직접 입력)</div>
+          <input type="number" id="rev-actual-balance" placeholder="Toss 정산계좌 실제 잔액 입력" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-family:inherit" oninput="compareBalance()">
+        </div>
+        <div>
+          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">차이</div>
+          <div style="font:800 20px/1 'Pretendard',sans-serif" id="rev-diff">-</div>
+        </div>
+      </div>
+      <div id="rev-diff-warning" style="display:none;margin-top:14px;padding:12px 14px;background:#FEF2F2;border-radius:8px;font:600 13px/1.5 'Pretendard',sans-serif;color:var(--r2)"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">📈 누적 지급 현황</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>구분</th><th>보류중</th><th>지급가능</th><th>지급완료</th><th>합계</th></tr></thead>
+          <tbody id="rev-breakdown-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -595,7 +640,7 @@ async function loadAdminData() {
   const supabase = window._supabase
   const { data: members }  = await supabase.from('users').select('*').order('created_at', { ascending: false })
   const { data: products } = await supabase.from('products').select('*').order('created_at', { ascending: false })
-  const { data: orders }   = await supabase.from('orders').select('amount,status,created_at').in('status', ['confirmed','settled'])
+  const { data: orders }   = await supabase.from('orders').select('amount,status,created_at,vingly_fee_amount,creator_fee').in('status', ['confirmed','settled'])
   const { data: settlements } = await supabase.from('settlements').select('*').order('created_at', { ascending: false })
   const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
 
@@ -643,10 +688,114 @@ async function loadAdminData() {
   const remain = document.querySelector('.pr-wrap + .pr-wrap + div strong')
   if (remain) remain.textContent = Math.max(1000 - allMembers.length, 0) + '명'
 
+  // 오늘 실시간 통계 (가짜 하드코딩값 제거하고 실제 계산)
+  const todayStr = now.toISOString().slice(0, 10)
+  const todaySignups = allMembers.filter(m => (m.created_at || '').slice(0, 10) === todayStr).length
+  const todayOrders = allOrders.filter(o => (o.created_at || '').slice(0, 10) === todayStr)
+  const todaySignupsEl = document.getElementById('today-signups')
+  const todayOrdersEl = document.getElementById('today-orders')
+  const todayGmvEl = document.getElementById('today-gmv')
+  if (todaySignupsEl) todaySignupsEl.textContent = '+' + todaySignups + '명'
+  if (todayOrdersEl) todayOrdersEl.textContent = todayOrders.length + '건'
+  if (todayGmvEl) todayGmvEl.textContent = '₩' + todayOrders.reduce((s, o) => s + Number(o.amount || 0), 0).toLocaleString()
+
   renderMembers(allMembers)
   renderProducts(allProducts, allMembers)
   renderSettlements(allSettlements, allMembers)
   renderReports(allReports, orderRefMap)
+  renderRevenue(allOrders, allSettlements)
+}
+
+let _expectedBalance = 0
+
+function renderRevenue(orders, settlements) {
+  // 총 거래액(GMV) — 실제 결제완료된 주문 전체 합
+  const gmv = orders.reduce((s, o) => s + Number(o.amount || 0), 0)
+  // Vingly 매출 — 수수료 수익만 (파일럿 기간엔 0원)
+  const vinglyRevenue = orders.reduce((s, o) => s + Number(o.vingly_fee_amount || 0), 0)
+
+  const gmvEl = document.getElementById('rev-gmv')
+  const vinglyEl = document.getElementById('rev-vingly')
+  const vinglySubEl = document.getElementById('rev-vingly-sub')
+  if (gmvEl) gmvEl.textContent = '₩' + gmv.toLocaleString()
+  if (vinglyEl) vinglyEl.textContent = '₩' + vinglyRevenue.toLocaleString()
+  if (vinglySubEl) vinglySubEl.textContent = vinglyRevenue > 0 ? '정식 수수료 활성화됨' : '파일럿 기간 수수료 0%'
+
+  const now = new Date()
+  const isPayable = s => s.status === 'pending' && s.payable_after && new Date(s.payable_after) <= now
+  const isHolding = s => s.status === 'pending' && (!s.payable_after || new Date(s.payable_after) > now)
+  const isPaid = s => s.status === 'completed' || s.status === 'paid'
+
+  function sumByRole(role, filterFn) {
+    return settlements.filter(s => s.recipient_role === role && filterFn(s)).reduce((sum, s) => sum + Number(s.amount || 0), 0)
+  }
+
+  const brandHolding = sumByRole('brand', isHolding)
+  const brandPayable = sumByRole('brand', isPayable)
+  const brandPaid = sumByRole('brand', isPaid)
+  const creatorHolding = sumByRole('creator', isHolding)
+  const creatorPayable = sumByRole('creator', isPayable)
+  const creatorPaid = sumByRole('creator', isPaid)
+
+  const brandOwedEl = document.getElementById('rev-brand-owed')
+  const creatorOwedEl = document.getElementById('rev-creator-owed')
+  if (brandOwedEl) brandOwedEl.textContent = '₩' + (brandHolding + brandPayable).toLocaleString()
+  if (creatorOwedEl) creatorOwedEl.textContent = '₩' + (creatorHolding + creatorPayable).toLocaleString()
+
+  const totalPaidOut = brandPaid + creatorPaid
+  _expectedBalance = gmv - totalPaidOut
+  const expectedEl = document.getElementById('rev-expected-balance')
+  if (expectedEl) expectedEl.textContent = '₩' + _expectedBalance.toLocaleString()
+
+  const tbody = document.getElementById('rev-breakdown-tbody')
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td class="td-m">브랜드</td>
+        <td>₩${brandHolding.toLocaleString()}</td>
+        <td>₩${brandPayable.toLocaleString()}</td>
+        <td>₩${brandPaid.toLocaleString()}</td>
+        <td class="td-m">₩${(brandHolding + brandPayable + brandPaid).toLocaleString()}</td>
+      </tr>
+      <tr>
+        <td class="td-m">크리에이터</td>
+        <td>₩${creatorHolding.toLocaleString()}</td>
+        <td>₩${creatorPayable.toLocaleString()}</td>
+        <td>₩${creatorPaid.toLocaleString()}</td>
+        <td class="td-m">₩${(creatorHolding + creatorPayable + creatorPaid).toLocaleString()}</td>
+      </tr>`
+  }
+
+  compareBalance()
+}
+
+window.compareBalance = function() {
+  const input = document.getElementById('rev-actual-balance')
+  const diffEl = document.getElementById('rev-diff')
+  const warnEl = document.getElementById('rev-diff-warning')
+  if (!input || !diffEl) return
+
+  const actual = Number(input.value)
+  if (!input.value) {
+    diffEl.textContent = '-'
+    diffEl.style.color = ''
+    if (warnEl) warnEl.style.display = 'none'
+    return
+  }
+
+  const diff = actual - _expectedBalance
+  const absDiff = Math.abs(diff)
+  diffEl.textContent = (diff >= 0 ? '+' : '') + '₩' + diff.toLocaleString()
+  diffEl.style.color = absDiff <= 1000 ? 'var(--g)' : 'var(--r2)'
+
+  if (warnEl) {
+    if (absDiff > 1000) {
+      warnEl.style.display = 'block'
+      warnEl.textContent = `⚠️ 예상 잔액과 ₩${absDiff.toLocaleString()} 차이가 있습니다. 정산 기록 누락, 중복 지급, 미반영된 환불 등이 없는지 확인해주세요.`
+    } else {
+      warnEl.style.display = 'none'
+    }
+  }
 }
 
 function renderMembers(members) {
@@ -958,7 +1107,7 @@ function showPage(id, btn) {
   document.getElementById('pg-' + id).classList.add('act');
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
   if (btn) btn.classList.add('act');
-  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 관리', settle:'정산 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
+  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 관리', settle:'정산 관리', revenue:'매출 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
   document.getElementById('pageTitle').textContent = titles[id] || '';
   const mobTitleEl = document.getElementById('mob-title');
   if (mobTitleEl) mobTitleEl.textContent = titles[id] || '';
