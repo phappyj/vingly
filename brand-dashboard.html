@@ -444,7 +444,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
         <div>
           <label style="font:700 13px/1 'Pretendard',sans-serif;color:var(--ink);display:block;margin-bottom:6px">크리에이터 수수료율 (%) *</label>
-          <input id="p_commission" type="number" placeholder="예: 15 (최소 10%)" min="10" max="50" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          <input id="p_commission" type="number" placeholder="예: 15 (최소 10%)" min="10" max="50" oninput="updateGradeBonusHint()" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          <div id="grade-bonus-hint" style="margin-top:8px;padding:9px 11px;background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 7px 7px 0;font:500 12px/1.6 'Pretendard',sans-serif;color:#92400E">
+            상위 등급 크리에이터가 판매하면 <strong>등급 가산율이 추가로 적용</strong>됩니다. 잘 파는 크리에이터일수록 더 많은 판매를 만들어내므로, 성과에 비례한 보상 구조입니다.
+          </div>
         </div>
       </div>
       <div>
@@ -624,6 +627,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   async function loadProducts() {
     const user = window._vinglyUser
     if (!user) return
+
+    // 상품 등록/수정 모달의 "등급 가산율" 안내에 쓸 등급 정보 캐싱
+    if (!window._creatorGrades) {
+      try {
+        const { data: gr } = await supabase.from('creator_grades').select('id, name, commission_bonus_pct').order('min_sales', { ascending: true })
+        window._creatorGrades = gr || []
+      } catch (e) { window._creatorGrades = [] }
+    }
+
     const { data: products } = await supabase.from('products').select('*').eq('brand_user', user.id).order('created_at', { ascending: false })
 
     const count = products ? products.length : 0
@@ -1160,7 +1172,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       // 등급 기반 신청 우선순위 정렬 + 공식 파트너 뱃지 표시 — 재고 부족할 때 상위 등급 크리에이터 요청이 먼저 보이도록
       // (승인/거절은 여전히 브랜드가 직접 결정, 이건 검토 순서/표시만 조정)
       try {
-        const { data: gradeRows } = await supabase.from('creator_grades').select('id, name, min_sales, sample_priority, show_badge').order('min_sales', { ascending: false })
+        const { data: gradeRows } = await supabase.from('creator_grades').select('id, name, min_sales, sample_priority, show_badge, commission_bonus_pct').order('min_sales', { ascending: false })
         const grades = gradeRows || []
         const priorityCache = {}
         const gradeInfoCache = {}
@@ -1343,6 +1355,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('p_sample_qty').value = p.sample_qty || ''
     document.getElementById('p_sample_min_followers').value = p.sample_min_followers || ''
     document.getElementById('p_sample_deadline').value = p.sample_deadline || ''
+    updateGradeBonusHint()
     {
       const deadlineEl = document.getElementById('p_sample_deadline')
       const maxDate = new Date(); maxDate.setFullYear(maxDate.getFullYear() + 2)
@@ -1831,12 +1844,36 @@ async function saveProfile() {
   msg.style.display = 'inline'
   setTimeout(() => msg.style.display = 'none', 2500)
 }
+function updateGradeBonusHint() {
+  const hintEl = document.getElementById('grade-bonus-hint')
+  const input = document.getElementById('p_commission')
+  if (!hintEl || !input) return
+
+  const base = Number(input.value)
+  const grades = (window._creatorGrades || []).filter(g => Number(g.commission_bonus_pct || 0) > 0)
+
+  if (!base || grades.length === 0) {
+    hintEl.innerHTML = '상위 등급 크리에이터가 판매하면 <strong>등급 가산율이 추가로 적용</strong>됩니다. 잘 파는 크리에이터일수록 더 많은 판매를 만들어내므로, 성과에 비례한 보상 구조입니다.'
+    return
+  }
+
+  const maxBonus = Math.max(...grades.map(g => Number(g.commission_bonus_pct || 0)))
+  const rows = grades
+    .slice()
+    .sort((a, b) => Number(a.commission_bonus_pct) - Number(b.commission_bonus_pct))
+    .map(g => `${g.name} 등급 ${(base + Number(g.commission_bonus_pct)).toFixed(1)}%`)
+    .join(' · ')
+
+  hintEl.innerHTML = `입력하신 <strong>${base}%</strong>는 기본 수수료율입니다. 상위 등급 크리에이터가 판매하면 등급 가산율이 더해져 <strong>최대 ${(base + maxBonus).toFixed(1)}%</strong>까지 지급될 수 있습니다.<br><span style="opacity:.85">(${rows})</span>`
+}
+
 function openProductModal() {
   window.editingProductId = null; window.uploadedImages = [null, null, null]
   document.getElementById('modal-title').textContent = '📦 제품 등록'
   document.getElementById('saveBtn').textContent = '등록하기'
   document.getElementById('product_err').style.display = 'none'
   ;['p_name','p_price','p_stock','p_category','p_commission','p_desc','p_target','p_creator_msg'].forEach(id => { const el = document.getElementById(id); if (el) el.value = '' })
+  updateGradeBonusHint()
   document.getElementById('p_sample_available').checked = false
   document.getElementById('p_sample_qty').value = ''
   document.getElementById('p_sample_min_followers').value = ''
