@@ -419,9 +419,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button onclick="closeRefundModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
     <div style="font:800 18px/1 'Pretendard',sans-serif;margin-bottom:8px">💸 환불 처리</div>
     <div style="background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:11px 13px;font:500 12px/1.6 'Pretendard',sans-serif;color:#92400E;margin-bottom:20px">
-      환불 승인 시 <strong>Vingly 운영팀이 구매자에게 결제 취소를 진행</strong>합니다.<br>
-      해당 주문의 정산(브랜드·크리에이터 몫)은 즉시 무효 처리되며,<br>
-      실제 결제 취소는 <strong>영업일 기준 1~3일</strong> 내 완료됩니다.
+      환불 승인 시 <strong>구매자에게 결제 취소가 즉시 자동 처리</strong>됩니다.<br>
+      해당 주문의 정산(브랜드·크리에이터 몫)도 함께 무효 처리됩니다.<br>
+      <strong>환불은 취소할 수 없으니</strong> 유형과 사유를 정확히 입력해주세요.
     </div>
 
     <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">환불 유형 *</label>
@@ -1358,7 +1358,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       btn.disabled = false
 
       if (!res.ok) {
-        errEl.textContent = data.message || '환불 처리에 실패했습니다.'
+        // 토스 결제취소 자체가 실패한 경우 — 정산은 그대로 유지되므로 재시도 가능
+        errEl.innerHTML = (data.message || '환불 처리에 실패했습니다.') +
+          '<br><span style="font-weight:500">결제 취소가 완료되지 않아 주문은 그대로 유지됩니다. 잠시 후 다시 시도하거나 문제가 반복되면 고객지원으로 문의해주세요.</span>'
         errEl.style.display = 'block'
         return
       }
@@ -1366,7 +1368,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       if (data.warning) {
         alert('⚠️ ' + data.warning)
       } else {
-        alert('환불이 접수됐습니다.\n\n해당 주문의 정산은 무효 처리됐으며,\n구매자 결제 취소는 Vingly 운영팀이 영업일 기준 1~3일 내 완료합니다.')
+        alert('환불이 완료됐습니다.\n\n구매자에게 결제 취소가 처리됐으며, 해당 주문의 정산도 무효 처리됐습니다.\n※ 카드사에 따라 실제 환급까지 영업일 기준 3~5일이 소요될 수 있습니다.')
       }
       loadOrders()
     } catch (e) {
