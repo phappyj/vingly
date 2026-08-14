@@ -610,9 +610,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const supabase = window._supabase
     const btn = document.getElementById(`ch-save-${id}`)
     const platform = document.getElementById(`ch-platform-${id}`)?.value
-    const url = document.getElementById(`ch-url-${id}`)?.value.trim() || null
+    let url = document.getElementById(`ch-url-${id}`)?.value.trim() || null
     const followersRaw = document.getElementById(`ch-followers-${id}`)?.value
     const follower_count = followersRaw ? parseInt(followersRaw) : null
+
+    // URL 유효성 검증 — "11" 같은 값이 저장되면 브라우저가 IP로 해석해 엉뚱한 곳으로 이동함
+    if (url) {
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url.replace(/^\/+/, '')
+      let host = ''
+      try { host = new URL(url).hostname } catch (e) { host = '' }
+      // 최소한 도메인 형태(점 포함 + 문자 포함)여야 함
+      if (!host || !host.includes('.') || !/[a-z]/i.test(host)) {
+        alert('올바른 채널 주소를 입력해주세요.\n\n예: https://instagram.com/내아이디\n\n입력하신 값: ' + document.getElementById(`ch-url-${id}`).value)
+        return
+      }
+    }
 
     if (btn) { btn.textContent = '저장 중...'; btn.disabled = true }
 

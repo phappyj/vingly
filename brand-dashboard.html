@@ -1260,11 +1260,18 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const channels = (creatorChannelsMap && creatorChannelsMap[s.creator]) || []
       const catText = info.category ? `${info.category}` : ''
 
-      // https:// 없이 저장된 URL은 브라우저가 상대경로로 해석해 사이트 내부로 튕기므로 보정
+      // https:// 없이 저장된 URL은 브라우저가 상대경로로 해석해 사이트 내부로 튕기므로 보정.
+      // 단 "11" 같은 값은 브라우저가 IP로 해석해 엉뚱한 곳으로 가므로, 도메인 형태가 아니면 링크를 만들지 않음.
       const normalizeUrl = (u) => {
         if (!u) return ''
-        const t = String(u).trim()
-        return /^https?:\/\//i.test(t) ? t : 'https://' + t.replace(/^\/+/, '')
+        let t = String(u).trim()
+        if (!t) return ''
+        if (!/^https?:\/\//i.test(t)) t = 'https://' + t.replace(/^\/+/, '')
+        try {
+          const host = new URL(t).hostname
+          if (!host || !host.includes('.') || !/[a-z]/i.test(host)) return ''
+          return t
+        } catch (e) { return '' }
       }
 
       let channelsHtml
@@ -1987,6 +1994,22 @@ function updateGradeBonusHint() {
   if (!hintEl || !input) return
 
   const base = Number(input.value)
+
+  // 10% 미만은 저장이 차단되므로 입력 즉시 알려줌 (저장 버튼 눌러야 알게 되면 답답함)
+  if (input.value !== '' && base < 10) {
+    input.style.borderColor = 'var(--red)'
+    hintEl.style.background = '#FEF2F2'
+    hintEl.style.borderLeftColor = '#991B1B'
+    hintEl.style.color = '#991B1B'
+    hintEl.innerHTML = '⚠️ 크리에이터 수수료율은 <strong>최소 10% 이상</strong>이어야 등록할 수 있습니다. (업계 표준 기준 — 너무 낮으면 크리에이터가 판매하지 않습니다)'
+    return
+  }
+
+  input.style.borderColor = ''
+  hintEl.style.background = '#FFFBEB'
+  hintEl.style.borderLeftColor = '#D97706'
+  hintEl.style.color = '#92400E'
+
   const grades = (window._creatorGrades || []).filter(g => Number(g.commission_bonus_pct || 0) > 0)
 
   if (!base || grades.length === 0) {
