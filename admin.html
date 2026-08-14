@@ -812,9 +812,15 @@ async function renderRefunds(members) {
     .from('orders')
     .select('id,toss_order_id,brand,amount,cancelled_at,cancel_type,cancel_reason,refund_status,refund_error,refund_completed_at')
     .in('refund_status', ['requested', 'processing', 'completed', 'failed'])
-    .order('cancelled_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
 
-  if (error) { console.error('환불 목록 조회 실패:', error); return }
+  if (error) {
+    console.error('환불 목록 조회 실패:', error)
+    emptyEl.style.display = 'block'
+    emptyEl.innerHTML = `<div style="font-size:36px;margin-bottom:10px">⚠️</div><div style="font-size:14px;font-weight:600;color:#991B1B">환불 이력을 불러오지 못했습니다</div><div style="font-size:12.5px;margin-top:6px">${error.message}</div>`
+    wrapEl.style.display = 'none'
+    return
+  }
 
   const all = refunds || []
   const nameMap = {}
