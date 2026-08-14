@@ -720,11 +720,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const limit = planInfo ? planInfo.product_limit : null
     const usageEl = document.getElementById('plan-usage-bar')
     if (usageEl) {
+      usageEl.style.display = 'block'
       if (limit === null || limit === undefined) {
-        usageEl.style.display = 'none'
+        // 무제한 플랜이어도 몇 개 등록했는지는 보여준다 (등록 현황 파악용)
+        usageEl.style.background = 'var(--ink-06)'
+        usageEl.style.color = 'var(--ink-60)'
+        usageEl.textContent = `${planInfo ? planInfo.name : '파일럿'} 플랜: 제품 ${count}개 등록 중 (등록 한도 없음)`
       } else {
         const nearLimit = count >= limit
-        usageEl.style.display = 'block'
         usageEl.style.background = nearLimit ? 'var(--red-bg)' : 'var(--ink-06)'
         usageEl.style.color = nearLimit ? 'var(--red)' : 'var(--ink-60)'
         usageEl.textContent = nearLimit
@@ -748,19 +751,25 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         : `<div style="width:48px;height:48px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>`
     }
 
-    document.getElementById('product-tbody').innerHTML = products.map(p => `
-      <tr>
+    document.getElementById('product-tbody').innerHTML = products.map(p => {
+      const isActive = p.status === 'active'
+      return `
+      <tr${isActive ? '' : ' style="background:var(--ink-06)"'}>
         <td>${thumbHtml(p)}</td>
-        <td class="td-b">${p.name}</td>
+        <td class="td-b"${isActive ? '' : ' style="color:var(--ink-40)"'}>${p.name}</td>
         <td>₩${Number(p.price).toLocaleString()}</td>
         <td>${p.commission_rate}%</td>
-        <td><span class="badge bg">${p.status === 'active' ? '판매중' : '비활성'}</span></td>
-        <td>
+        <td><span class="badge ${isActive ? 'bg' : 'bam'}">${isActive ? '판매중' : '판매중지'}</span></td>
+        <td style="white-space:nowrap">
           <a class="act-btn" href="product-detail.html?id=${p.id}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">미리보기</a>
           <button class="act-btn" onclick="editProduct('${p.id}')">수정</button>
+          ${isActive
+            ? `<button class="act-btn" onclick="toggleProductStatus('${p.id}','inactive')" title="크리에이터·구매자에게 노출되지 않습니다">판매중지</button>`
+            : `<button class="act-btn green" onclick="toggleProductStatus('${p.id}','active')">판매재개</button>`}
           <button class="act-btn r" onclick="deleteProduct('${p.id}')">삭제</button>
         </td>
-      </tr>`).join('')
+      </tr>`
+    }).join('')
 
     const dashTbody = document.getElementById('dash-tbody')
     if (dashTbody) {
@@ -1847,6 +1856,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       errEl.style.display = 'block'
       return
     }
+    if (commission > 50) {
+      errEl.textContent = '크리에이터 수수료율은 최대 50%까지 설정할 수 있습니다. 입력하신 값을 다시 확인해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
 
     const btn = document.getElementById('saveBtn')
     btn.textContent = '저장 중...'; btn.style.opacity = '.7'; btn.style.pointerEvents = 'none'
@@ -1909,8 +1923,44 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   window.deleteProduct = async function(id) {
-    if (!confirm('이 제품을 삭제하시겠습니까?')) return
-    await supabase.from('products').delete().eq('id', id)
+    if (!confirm('이 제품을 삭제하시겠습니까?\n\n※ 주문·링크 이력이 있는 제품은 기록 보존을 위해 삭제할 수 없습니다.\n   이 경우 "판매중지"로 전환해주세요.')) return
+
+    const { error } = await supabase.from('products').delete().eq('id', id)
+
+    if (error) {
+      // 외래키 제약(주문/링크가 연결된 경우) — 거래기록 보존을 위해 삭제가 막히는 게 정상
+      const isFK = /foreign key|violates|23503/i.test(error.message || '')
+      if (isFK) {
+        if (confirm('이 제품은 주문 또는 링크 이력이 있어 삭제할 수 없습니다.\n(전자상거래법상 거래기록 보존 대상)\n\n대신 "판매중지" 상태로 전환할까요?\n판매중지하면 크리에이터·구매자에게 노출되지 않습니다.')) {
+          await toggleProductStatus(id, 'inactive')
+        }
+      } else {
+        alert('삭제에 실패했습니다: ' + error.message)
+      }
+      return
+    }
+    showToast('제품이 삭제됐습니다 ✓')
+    await loadProducts()
+  }
+
+  // 판매중지 / 재개 — 삭제가 불가능한 제품(거래이력 있음)의 대안이자 일시 품절 대응용
+  window.toggleProductStatus = async function(id, newStatus) {
+    const label = newStatus === 'inactive' ? '판매중지' : '판매재개'
+    const { data, error } = await supabase
+      .from('products')
+      .update({ status: newStatus })
+      .eq('id', id)
+      .select()
+
+    if (error) {
+      alert(label + ' 처리에 실패했습니다: ' + error.message)
+      return
+    }
+    if (!data || data.length === 0) {
+      alert(label + ' 처리가 안 됐습니다 (권한 문제로 보입니다).')
+      return
+    }
+    showToast(`${label} 처리됐습니다 ✓`)
     await loadProducts()
   }
 
@@ -2344,13 +2394,15 @@ function updateGradeBonusHint() {
 
   const base = Number(input.value)
 
-  // 10% 미만은 저장이 차단되므로 입력 즉시 알려줌 (저장 버튼 눌러야 알게 되면 답답함)
-  if (input.value !== '' && base < 10) {
+  // 10% 미만 / 50% 초과는 저장이 차단되므로 입력 즉시 알려줌
+  if (input.value !== '' && (base < 10 || base > 50)) {
     input.style.borderColor = 'var(--red)'
     hintEl.style.background = '#FEF2F2'
     hintEl.style.borderLeftColor = '#991B1B'
     hintEl.style.color = '#991B1B'
-    hintEl.innerHTML = '⚠️ 크리에이터 수수료율은 <strong>최소 10% 이상</strong>이어야 등록할 수 있습니다. (업계 표준 기준 — 너무 낮으면 크리에이터가 판매하지 않습니다)'
+    hintEl.innerHTML = base < 10
+      ? '⚠️ 크리에이터 수수료율은 <strong>최소 10% 이상</strong>이어야 등록할 수 있습니다. (업계 표준 기준 — 너무 낮으면 크리에이터가 판매하지 않습니다)'
+      : '⚠️ 크리에이터 수수료율은 <strong>최대 50%</strong>까지 설정할 수 있습니다. 입력하신 값을 다시 확인해주세요.'
     return
   }
 
