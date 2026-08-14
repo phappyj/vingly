@@ -412,6 +412,35 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1.5 'Pretendard',sans-serif;max-width:320px;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
 <!-- 제품 등록/수정 모달 -->
+<div id="rejectModal" style="display:none;position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:420px;padding:26px;position:relative">
+    <button onclick="closeRejectModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
+    <div style="font:800 18px/1 'Pretendard',sans-serif;margin-bottom:8px">샘플 신청 거절</div>
+    <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:20px">거절 사유는 크리에이터에게 그대로 표시됩니다. 명확한 사유는 불필요한 재문의를 줄여줍니다.</div>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">거절 사유 *</label>
+    <select id="reject_reason_select" onchange="onRejectReasonChange()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;margin-bottom:12px">
+      <option value="">사유를 선택해주세요</option>
+      <option value="샘플 재고가 소진되었습니다">샘플 재고 소진</option>
+      <option value="제품 컨셉과 채널 방향이 맞지 않습니다">채널 방향 불일치</option>
+      <option value="현재 팔로워 기준에 미치지 못합니다">팔로워 기준 미달</option>
+      <option value="샘플 신청 기간이 종료되었습니다">신청 기간 종료</option>
+      <option value="기타">기타 (직접 입력)</option>
+    </select>
+
+    <div id="reject_etc_wrap" style="display:none;margin-bottom:12px">
+      <textarea id="reject_reason_etc" placeholder="거절 사유를 입력해주세요" style="width:100%;min-height:80px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical"></textarea>
+    </div>
+
+    <div id="reject_err" style="display:none;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--red);margin-bottom:12px"></div>
+
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button onclick="closeRejectModal()" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--ink-14);background:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+      <button onclick="confirmReject()" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">거절하기</button>
+    </div>
+  </div>
+</div>
+
 <div id="productModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
   <div style="background:#fff;border-radius:18px;width:100%;max-width:600px;padding:28px;position:relative;max-height:92vh;overflow-y:auto">
     <button onclick="closeProductModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
@@ -1231,24 +1260,41 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const channels = (creatorChannelsMap && creatorChannelsMap[s.creator]) || []
       const catText = info.category ? `${info.category}` : ''
 
+      // https:// 없이 저장된 URL은 브라우저가 상대경로로 해석해 사이트 내부로 튕기므로 보정
+      const normalizeUrl = (u) => {
+        if (!u) return ''
+        const t = String(u).trim()
+        return /^https?:\/\//i.test(t) ? t : 'https://' + t.replace(/^\/+/, '')
+      }
+
       let channelsHtml
       if (channels.length > 0) {
         channelsHtml = channels.map(ch => {
           const followerTxt = ch.follower_count != null ? Number(ch.follower_count).toLocaleString() + '명' : '팔로워 미등록'
-          const link = ch.url ? `<a href="${ch.url}" target="_blank" style="color:var(--blue);text-decoration:underline">보기</a>` : ''
+          const href = normalizeUrl(ch.url)
+          const link = href ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">보기</a>` : ''
           return `${ch.platform} ${followerTxt} ${link}`
         }).join('<br>')
       } else {
         const followerText = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '채널 정보 없음'
-        const channelLink = info.channel_url ? `<a href="${info.channel_url}" target="_blank" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
+        const href = normalizeUrl(info.channel_url)
+        const channelLink = href ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
         channelsHtml = `${followerText} ${channelLink}`
       }
+
+      // 등급을 항상 표시 — 정렬이 등급순인데 등급이 안 보이면 왜 이 순서인지 알 수 없음
+      const grade = _sampleCreatorGradeMap[s.creator]
+      const gradeName = grade?.name || 'New'
+      const isPartner = !!grade?.show_badge
+      const gradeChip = isPartner
+        ? `<span title="${gradeName} 등급 · 공식 파트너" style="font-size:11px;background:linear-gradient(135deg,#00B37E,#C9911D);color:#fff;padding:2px 7px;border-radius:5px;font-weight:800;vertical-align:middle">👑 ${gradeName}</span>`
+        : `<span title="${gradeName} 등급" style="font-size:11px;background:var(--ink-07);color:var(--ink-70);padding:2px 7px;border-radius:5px;font-weight:700;vertical-align:middle">${gradeName}</span>`
 
       return `
       <tr id="sample-row-${s.id}">
         <td>${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
         <td>
-          <div class="td-b">${creatorMap[s.creator] || '-'}${(_sampleCreatorGradeMap[s.creator]?.show_badge) ? ` <span title="${_sampleCreatorGradeMap[s.creator].name} 등급 · 공식 파트너" style="font-size:11px;background:linear-gradient(135deg,#1D4ED8,#7C3AED);color:#fff;padding:2px 6px;border-radius:5px;font-weight:800;vertical-align:middle">👑 파트너</span>` : ''}</div>
+          <div class="td-b">${creatorMap[s.creator] || '-'} ${gradeChip}</div>
           <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${catText}</div>
           <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px;line-height:1.6">${channelsHtml}</div>
         </td>
@@ -1278,12 +1324,56 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     renderSamples(_samplesCache, _sampleProductMap, _sampleCreatorMap, _sampleCreatorInfoMap, _sampleCreatorChannelsMap)
   }
 
-  window.setSampleStatus = async function(sampleId, status) {
-    let brand_note = null
-    if (status === 'rejected') {
-      brand_note = prompt('거절 사유를 입력해주세요 (크리에이터에게 표시됩니다, 선택)')
-      if (brand_note === null) return // 취소 시 처리 중단
+  window.openRejectModal = function(sampleId) {
+    const modal = document.getElementById('rejectModal')
+    if (!modal) return
+    modal.dataset.sampleId = sampleId
+    document.getElementById('reject_reason_select').value = ''
+    document.getElementById('reject_reason_etc').value = ''
+    document.getElementById('reject_etc_wrap').style.display = 'none'
+    document.getElementById('reject_err').style.display = 'none'
+    modal.style.display = 'flex'
+  }
+
+  window.closeRejectModal = function() {
+    const modal = document.getElementById('rejectModal')
+    if (modal) modal.style.display = 'none'
+  }
+
+  window.onRejectReasonChange = function() {
+    const val = document.getElementById('reject_reason_select').value
+    document.getElementById('reject_etc_wrap').style.display = val === '기타' ? 'block' : 'none'
+  }
+
+  window.confirmReject = function() {
+    const sel = document.getElementById('reject_reason_select').value
+    const etc = document.getElementById('reject_reason_etc').value.trim()
+    const errEl = document.getElementById('reject_err')
+
+    if (!sel) {
+      errEl.textContent = '거절 사유를 선택해주세요.'
+      errEl.style.display = 'block'
+      return
     }
+    if (sel === '기타' && !etc) {
+      errEl.textContent = '기타 사유를 입력해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const note = sel === '기타' ? etc : sel
+    const sampleId = document.getElementById('rejectModal').dataset.sampleId
+    closeRejectModal()
+    setSampleStatus(sampleId, 'rejected', note)
+  }
+
+  window.setSampleStatus = async function(sampleId, status, rejectNote) {
+    // 거절은 모달에서 사유를 받아 다시 호출됨 (rejectNote가 넘어옴)
+    if (status === 'rejected' && rejectNote === undefined) {
+      openRejectModal(sampleId)
+      return
+    }
+    const brand_note = status === 'rejected' ? (rejectNote || null) : null
 
     // 낙관적 업데이트 — 버튼을 바로 처리중 표시로 바꿔서 반응이 즉시 보이게
     const actionsEl = document.getElementById(`sample-actions-${sampleId}`)
@@ -1579,6 +1669,53 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (window._supabase) await window._supabase.auth.signOut()
     location.replace('login.html')
   }
+
+  /* ===== 자동 로그아웃 (개인정보보호법 제29조 안전조치의무 / 접근통제) =====
+     일정 시간 조작이 없으면 자동으로 접속을 차단해야 함.
+     브랜드·크리에이터 대시보드는 업계 표준인 2시간(카페24 등과 동일) 적용.
+     관리자 페이지는 전체 회원 개인정보·계좌에 접근 가능하므로 30분으로 별도 설정. */
+  ;(function initIdleLogout() {
+    const IDLE_LIMIT_MS = 2 * 60 * 60 * 1000  // 2시간
+    const WARN_BEFORE_MS = 2 * 60 * 1000      // 만료 2분 전 경고
+    let idleTimer = null, warnTimer = null, warnEl = null
+
+    function removeWarning() {
+      if (warnEl) { warnEl.remove(); warnEl = null }
+    }
+
+    function showWarning() {
+      removeWarning()
+      warnEl = document.createElement('div')
+      warnEl.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:9999;background:#0A0C10;color:#fff;padding:14px 20px;border-radius:12px;font:600 13.5px/1.5 Pretendard,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:14px'
+      warnEl.innerHTML = '<span>보안을 위해 곧 자동 로그아웃됩니다.</span>'
+      const btn = document.createElement('button')
+      btn.textContent = '계속 사용하기'
+      btn.style.cssText = 'padding:7px 13px;border-radius:8px;border:none;background:#00B37E;color:#fff;font:700 12.5px/1 Pretendard,sans-serif;cursor:pointer'
+      btn.onclick = () => { removeWarning(); resetTimers() }
+      warnEl.appendChild(btn)
+      document.body.appendChild(warnEl)
+    }
+
+    async function forceLogout() {
+      removeWarning()
+      try { if (window._supabase) await window._supabase.auth.signOut() } catch (e) {}
+      alert('장시간 사용하지 않아 보안을 위해 로그아웃되었습니다.\n다시 로그인해주세요.')
+      location.replace('login.html')
+    }
+
+    function resetTimers() {
+      clearTimeout(idleTimer); clearTimeout(warnTimer)
+      warnTimer = setTimeout(showWarning, IDLE_LIMIT_MS - WARN_BEFORE_MS)
+      idleTimer = setTimeout(forceLogout, IDLE_LIMIT_MS)
+    }
+
+    // 사용자 조작이 있으면 타이머 초기화 (경고가 떠 있는 동안은 명시적 클릭만 인정)
+    ;['click', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+      document.addEventListener(evt, () => { if (!warnEl) resetTimers() }, { passive: true })
+    })
+
+    resetTimers()
+  })()
 
   window.requestWithdrawal = async function() {
     const user = window._vinglyUser
