@@ -87,6 +87,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .bg{background:var(--green-bg);color:var(--green)}
 .bam{background:var(--amber-bg);color:var(--amber)}
 .br{background:var(--red-bg);color:var(--red)}
+.br{background:var(--red-bg);color:var(--red)}
 .flow-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ink-07)}
 .flow-row:last-child{border:none;padding-top:12px;border-top:1px solid var(--ink-14);margin-top:2px}
 .fl-l{font:500 13px/1 'Pretendard',sans-serif;color:var(--ink-70)}
@@ -255,10 +256,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div id="order-toolbar" style="display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
         <input id="order-search" type="text" placeholder="구매자명 또는 상품명 검색" oninput="debounceOrderSearch()" style="flex:1;min-width:180px;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
         <select id="order-status-filter" onchange="orderFilterChanged()" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:600 13px/1 'Pretendard',sans-serif;font-family:inherit">
-          <option value="">전체 배송상태</option>
+          <option value="">전체 (환불 제외)</option>
           <option value="preparing">배송준비중</option>
           <option value="shipping">배송중</option>
           <option value="delivered">배송완료</option>
+          <option value="__cancelled">환불·취소된 주문</option>
         </select>
         <input id="order-date-from" type="date" onchange="orderFilterChanged()" style="padding:9px 10px;border-radius:9px;border:1.5px solid var(--ink-14);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit">
         <span style="color:var(--ink-40);font-size:12px">~</span>
@@ -412,6 +414,41 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 <div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font:600 13px/1.5 'Pretendard',sans-serif;max-width:320px;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none"></div>
 
 <!-- 제품 등록/수정 모달 -->
+<div id="refundModal" style="display:none;position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:460px;padding:26px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeRefundModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
+    <div style="font:800 18px/1 'Pretendard',sans-serif;margin-bottom:8px">💸 환불 처리</div>
+    <div style="background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:11px 13px;font:500 12px/1.6 'Pretendard',sans-serif;color:#92400E;margin-bottom:20px">
+      이 화면은 <strong>Vingly 내부 기록만</strong> 갱신합니다.<br>
+      실제 결제 취소·환불은 <strong>토스페이먼츠에서 별도로</strong> 처리해주세요.<br>
+      처리 시 연결된 정산(브랜드·크리에이터 몫)이 모두 무효화됩니다.
+    </div>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">환불 유형 *</label>
+    <select id="refund_type" onchange="onRefundTypeChange()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;margin-bottom:10px">
+      <option value="">유형을 선택해주세요</option>
+      <option value="change_of_mind">단순변심 (구매자 사유)</option>
+      <option value="defect">상품 하자·불량</option>
+      <option value="not_delivered">미배송</option>
+      <option value="wrong_item">오배송</option>
+      <option value="seller_cancel">판매자 취소 (재고소진 등)</option>
+      <option value="other">기타</option>
+    </select>
+
+    <div id="refund_type_hint" style="display:none;font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-70);background:var(--ink-07);padding:10px 12px;border-radius:8px;margin-bottom:14px"></div>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">상세 사유 <span style="font-weight:400;color:var(--ink-40)">(기록으로 보존됩니다)</span></label>
+    <textarea id="refund_reason" placeholder="예: 구매자 요청으로 반품 접수, 상품 수령 확인 후 환불 처리" style="width:100%;min-height:80px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical;margin-bottom:12px"></textarea>
+
+    <div id="refund_err" style="display:none;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--red);margin-bottom:12px"></div>
+
+    <div style="display:flex;gap:8px">
+      <button onclick="closeRefundModal()" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--ink-14);background:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+      <button id="refund_submit_btn" onclick="confirmRefund()" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">환불 처리하기</button>
+    </div>
+  </div>
+</div>
+
 <div id="reportDetailModal" style="display:none;position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
   <div style="background:#fff;border-radius:18px;width:100%;max-width:460px;padding:26px;position:relative;max-height:90vh;overflow-y:auto">
     <button onclick="closeReportDetail()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--ink-07);border:none;cursor:pointer;font-size:14px">✕</button>
@@ -1070,9 +1107,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     let query = supabase.from('orders').select('*', { count: 'exact' })
       .eq('brand', user.id)
-      .in('status', ['confirmed', 'settled'])
 
-    if (statusFilter) query = query.eq('shipping_status', statusFilter)
+    // 환불·취소 주문은 기본 목록에서는 빼되, 전용 필터로 언제든 조회 가능하게 함
+    // (전자상거래법상 환불 기록은 5년 보존 대상이라 반드시 다시 찾아볼 수 있어야 함)
+    if (statusFilter === '__cancelled') {
+      query = query.eq('status', 'cancelled')
+    } else {
+      query = query.in('status', ['confirmed', 'settled'])
+      if (statusFilter) query = query.eq('shipping_status', statusFilter)
+    }
     if (dateFrom) query = query.gte('created_at', dateFrom)
     if (dateTo) query = query.lte('created_at', dateTo + 'T23:59:59')
     if (search) {
@@ -1125,9 +1168,42 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       ;(creators || []).forEach(c => { creatorMap[c.id] = c.company_name })
     }
 
+    const CANCEL_TYPE_LABEL = {
+      change_of_mind: '단순변심',
+      defect: '상품하자',
+      not_delivered: '미배송',
+      wrong_item: '오배송',
+      seller_cancel: '판매자취소',
+      other: '기타',
+    }
+    window._cancelTypeLabel = CANCEL_TYPE_LABEL
+
     document.getElementById('order-tbody').innerHTML = orders.map(o => {
       const shipStatus = o.shipping_status || 'preparing'
       const dateStr = o.created_at ? new Date(o.created_at).toLocaleDateString('ko-KR') : '-'
+      const isCancelled = o.status === 'cancelled'
+
+      // 환불된 주문은 배송정보 수정이 의미 없으므로 읽기전용 + 환불 내역 표시
+      if (isCancelled) {
+        const cancelDate = o.cancelled_at ? new Date(o.cancelled_at).toLocaleDateString('ko-KR') : '-'
+        const typeLabel = CANCEL_TYPE_LABEL[o.cancel_type] || '기타'
+        return `
+        <tr style="background:rgba(153,27,27,.04)">
+          <td>${dateStr}</td>
+          <td class="td-b" style="text-decoration:line-through;color:var(--ink-40)">${productMap[o.product] || '-'}</td>
+          <td>${o.buyer_name || '-'}</td>
+          <td style="text-decoration:line-through;color:var(--ink-40)">₩${Number(o.amount).toLocaleString()}</td>
+          <td>${creatorMap[o.creator] || '-'}</td>
+          <td style="color:var(--ink-40)">정산 무효</td>
+          <td colspan="3">
+            <span style="font-size:11px;background:var(--red-bg);color:var(--red);padding:3px 8px;border-radius:5px;font-weight:800">환불완료 · ${typeLabel}</span>
+            <span style="font-size:11.5px;color:var(--ink-40);margin-left:6px">${cancelDate}</span>
+            ${o.cancel_reason ? `<div style="font-size:11.5px;color:var(--ink-40);margin-top:4px">사유: ${o.cancel_reason}</div>` : ''}
+          </td>
+          <td>-</td>
+        </tr>`
+      }
+
       return `
       <tr>
         <td>${dateStr}</td>
@@ -1149,7 +1225,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </select>
         </td>
         <td><input id="tracking-${o.id}" type="text" value="${o.tracking_number || ''}" placeholder="운송장번호" style="width:130px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--ink-14);font:400 12.5px/1 'Pretendard',sans-serif;font-family:inherit"></td>
-        <td><button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button></td>
+        <td style="white-space:nowrap">
+          <button class="act-btn green" onclick="saveShipping('${o.id}')">저장</button>
+          <button class="act-btn" style="background:var(--red-bg);color:var(--red)" onclick="openRefundModal('${o.id}')">환불</button>
+        </td>
       </tr>`
     }).join('')
   }
@@ -1205,6 +1284,100 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   let _reportsCache = {}
+
+  // ── 환불 처리 ──
+  // 실제 결제 취소(돈)는 Toss 대시보드에서 수동 처리하고, 여기서는 Vingly 내부 기록을 맞춘다.
+  // 단순변심(구매자 배송비 부담)과 상품하자(판매자 부담)는 법적 취급이 달라 반드시 구분 기록.
+  window.openRefundModal = function(orderId) {
+    document.getElementById('refundModal').dataset.orderId = orderId
+    document.getElementById('refund_type').value = ''
+    document.getElementById('refund_reason').value = ''
+    document.getElementById('refund_err').style.display = 'none'
+    document.getElementById('refund_type_hint').style.display = 'none'
+    document.getElementById('refundModal').style.display = 'flex'
+  }
+
+  window.closeRefundModal = function() {
+    document.getElementById('refundModal').style.display = 'none'
+  }
+
+  window.onRefundTypeChange = function() {
+    const v = document.getElementById('refund_type').value
+    const hint = document.getElementById('refund_type_hint')
+    const HINTS = {
+      change_of_mind: '단순변심은 수령 후 <strong>7일 이내</strong>만 가능하며, 반품 배송비는 <strong>구매자 부담</strong>입니다.',
+      defect: '상품 하자는 수령일로부터 <strong>3개월 이내</strong>(하자를 안 날로부터 30일) 가능하며, 배송비는 <strong>판매자 부담</strong>입니다.',
+      not_delivered: '미배송 건은 전액 환불 대상이며 배송비는 <strong>판매자 부담</strong>입니다.',
+      wrong_item: '오배송은 판매자 귀책으로 배송비 <strong>판매자 부담</strong>입니다.',
+      seller_cancel: '판매자 사정에 의한 취소입니다. 반복 시 판매가 제한될 수 있습니다.',
+      other: '기타 사유는 상세 내용을 반드시 남겨주세요.',
+    }
+    if (v && HINTS[v]) {
+      hint.innerHTML = HINTS[v]
+      hint.style.display = 'block'
+    } else {
+      hint.style.display = 'none'
+    }
+  }
+
+  window.confirmRefund = async function() {
+    const orderId = document.getElementById('refundModal').dataset.orderId
+    const cancelType = document.getElementById('refund_type').value
+    const cancelReason = document.getElementById('refund_reason').value.trim()
+    const errEl = document.getElementById('refund_err')
+
+    if (!cancelType) {
+      errEl.textContent = '환불 유형을 선택해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (cancelType === 'other' && !cancelReason) {
+      errEl.textContent = '기타 사유는 상세 내용을 입력해주세요.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    const btn = document.getElementById('refund_submit_btn')
+    btn.textContent = '처리 중...'
+    btn.disabled = true
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { alert('로그인이 만료됐습니다. 다시 로그인해주세요.'); return }
+
+    try {
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/refund-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+          'Authorization': 'Bearer ' + session.access_token
+        },
+        body: JSON.stringify({ orderId, cancelType, cancelReason })
+      })
+      const data = await res.json().catch(() => ({}))
+
+      btn.textContent = '환불 처리하기'
+      btn.disabled = false
+
+      if (!res.ok) {
+        errEl.textContent = data.message || '환불 처리에 실패했습니다.'
+        errEl.style.display = 'block'
+        return
+      }
+      closeRefundModal()
+      if (data.warning) {
+        alert('⚠️ ' + data.warning)
+      } else {
+        alert('환불 처리가 완료됐습니다.\n\n⚠️ 실제 결제 취소는 토스페이먼츠에서 별도로 진행해주세요.')
+      }
+      loadOrders()
+    } catch (e) {
+      btn.textContent = '환불 처리하기'
+      btn.disabled = false
+      errEl.textContent = '네트워크 오류: ' + e.message
+      errEl.style.display = 'block'
+    }
+  }
 
   async function loadReports() {
     const user = window._vinglyUser
@@ -1919,11 +2092,14 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   /* ===== 정산 관리 (CSV 다운로드) ===== */
-  const SETTLE_STATUS_LABEL = { pending: '대기중', processing: '처리중', completed: '정산완료', paid: '정산완료', failed: '실패' }
+  const SETTLE_STATUS_LABEL = { pending: '대기중', processing: '처리중', completed: '정산완료', paid: '정산완료', failed: '실패', voided: '환불로 무효' }
   let _settlements = []
 
   function settleStatusLabel(s) { return SETTLE_STATUS_LABEL[s] || s || '-' }
-  function settleStatusClass(s) { return (s === 'completed' || s === 'paid') ? 'bg' : 'bam' }
+  function settleStatusClass(s) {
+    if (s === 'voided') return 'br'
+    return (s === 'completed' || s === 'paid') ? 'bg' : 'bam'
+  }
 
   function getMonthRange(yearMonth) {
     const [y, m] = yearMonth.split('-').map(Number)
@@ -1941,14 +2117,20 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       return
     }
     tbody.innerHTML = rows.map(r => `
-      <tr>
+      <tr${r.status === 'voided' ? ' style="background:rgba(153,27,27,.04)"' : ''}>
         <td>${new Date(r.created_at).toLocaleDateString('ko-KR')}</td>
         <td class="td-b">${r.creator_name}</td>
-        <td>₩${Number(r.amount).toLocaleString()}</td>
+        <td${r.status === 'voided' ? ' style="text-decoration:line-through;color:var(--ink-40)"' : ''}>₩${Number(r.amount).toLocaleString()}</td>
         <td><span class="badge ${settleStatusClass(r.status)}">${settleStatusLabel(r.status)}</span></td>
       </tr>`).join('')
-    const total = rows.reduce((sum, r) => sum + Number(r.amount || 0), 0)
-    summary.textContent = `총 ${rows.length}건 · ₩${total.toLocaleString()}`
+
+    // 환불로 무효화된 건은 실제 받을 금액이 아니므로 합계에서 제외하고 따로 표기
+    const validRows = rows.filter(r => r.status !== 'voided')
+    const voidedRows = rows.filter(r => r.status === 'voided')
+    const total = validRows.reduce((sum, r) => sum + Number(r.amount || 0), 0)
+    const voidedTotal = voidedRows.reduce((sum, r) => sum + Number(r.amount || 0), 0)
+    summary.innerHTML = `총 ${validRows.length}건 · ₩${total.toLocaleString()}` +
+      (voidedRows.length ? ` <span style="color:var(--red);font-weight:600">(환불 무효 ${voidedRows.length}건 · ₩${voidedTotal.toLocaleString()} 제외)</span>` : '')
   }
 
   window.loadSettlements = async function() {
