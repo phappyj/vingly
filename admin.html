@@ -210,6 +210,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <button class="ni" onclick="showPage('products',this)"><span class="ic">📦</span>제품 관리</button>
     <button class="ni" onclick="showPage('settle',this)"><span class="ic">💸</span>정산 관리</button>
     <button class="ni" onclick="showPage('revenue',this)"><span class="ic">📊</span>매출 관리</button>
+    <button class="ni" onclick="showPage('refunds',this)"><span class="ic">💸</span>환불 관리</button>
     <button class="ni" onclick="showPage('alerts',this)"><span class="ic">🚨</span>알림 · 신고</button>
     <div class="divr"></div>
     <button class="ni" onclick="showPage('settings',this)"><span class="ic">⚙️</span>시스템 설정</button>
@@ -358,6 +359,30 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <table>
           <thead><tr><th>대상</th><th>구분</th><th>금액</th><th>보류상태</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
           <tbody id="admin-settle-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFUNDS -->
+  <div class="page" id="pg-refunds">
+    <div class="card">
+      <div class="card-h">
+        <div class="card-t">💸 환불 처리 대기</div>
+        <div style="font-size:12px;font-weight:700;color:var(--r2)" id="refund-pending-count">0건</div>
+      </div>
+      <div style="background:#FEF2F2;border-radius:9px;padding:11px 14px;margin-bottom:14px;font:500 12px/1.6 'Pretendard',sans-serif;color:#991B1B">
+        브랜드가 환불 승인한 주문입니다. <strong>토스페이먼츠 상점관리자에서 실제 결제 취소를 진행</strong>한 뒤 "결제취소 완료" 버튼을 눌러주세요.<br>
+        전자상거래법상 <strong>환불은 3영업일 이내</strong> 처리해야 합니다.
+      </div>
+      <div id="refund-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
+        <div style="font-size:36px;margin-bottom:10px">✅</div>
+        <div style="font-size:14px;font-weight:600">처리 대기 중인 환불이 없습니다</div>
+      </div>
+      <div class="tw" id="refund-wrap" style="display:none">
+        <table>
+          <thead><tr><th>환불 승인일</th><th>주문번호</th><th>브랜드</th><th>금액</th><th>유형</th><th>사유</th><th>처리</th></tr></thead>
+          <tbody id="refund-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -752,6 +777,83 @@ async function loadAdminData() {
   renderSettlements(allSettlements, allMembers)
   renderReports(allReports, orderRefMap)
   renderRevenue(allOrders, allSettlements)
+  renderRefunds(allMembers)
+}
+
+const CANCEL_TYPE_LABEL_ADMIN = {
+  change_of_mind: '단순변심',
+  defect: '상품하자',
+  not_delivered: '미배송',
+  wrong_item: '오배송',
+  seller_cancel: '판매자취소',
+  other: '기타',
+}
+
+async function renderRefunds(members) {
+  const supabase = window._supabase
+  const emptyEl = document.getElementById('refund-empty')
+  const wrapEl = document.getElementById('refund-wrap')
+  const countEl = document.getElementById('refund-pending-count')
+  if (!emptyEl || !wrapEl) return
+
+  // 브랜드가 환불 승인했지만 아직 실제 결제취소가 안 끝난 건
+  const { data: refunds, error } = await supabase
+    .from('orders')
+    .select('id,toss_order_id,brand,amount,cancelled_at,cancel_type,cancel_reason,refund_completed_at')
+    .eq('status', 'cancelled')
+    .order('cancelled_at', { ascending: true })
+
+  if (error) { console.error('환불 목록 조회 실패:', error); return }
+
+  const pending = (refunds || []).filter(r => !r.refund_completed_at)
+  if (countEl) countEl.textContent = `처리 대기 ${pending.length}건`
+
+  const has = pending.length > 0
+  emptyEl.style.display = has ? 'none' : 'block'
+  wrapEl.style.display = has ? 'block' : 'none'
+  if (!has) return
+
+  const nameMap = {}
+  ;(members || []).forEach(m => { nameMap[m.id] = m.company_name || '-' })
+
+  const now = Date.now()
+  document.getElementById('refund-tbody').innerHTML = pending.map(r => {
+    const days = r.cancelled_at ? Math.floor((now - new Date(r.cancelled_at).getTime()) / 86400000) : 0
+    const overdue = days >= 3
+    const shortRef = r.toss_order_id && r.toss_order_id.length > 12 ? '…' + r.toss_order_id.slice(-8) : (r.toss_order_id || '-')
+    return `
+    <tr style="${overdue ? 'background:rgba(153,27,27,.05)' : ''}">
+      <td class="td-m" style="white-space:nowrap">
+        ${r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'}
+        ${overdue ? `<div style="margin-top:4px"><span style="font-size:10.5px;background:#FEF2F2;color:#991B1B;padding:2px 6px;border-radius:4px;font-weight:800">🚨 ${days}일 경과</span></div>` : ''}
+      </td>
+      <td class="td-m" title="${r.toss_order_id || ''}" style="white-space:nowrap">${shortRef}</td>
+      <td>${nameMap[r.brand] || '-'}</td>
+      <td style="font-weight:700">₩${Number(r.amount || 0).toLocaleString()}</td>
+      <td><span class="badge bam">${CANCEL_TYPE_LABEL_ADMIN[r.cancel_type] || '기타'}</span></td>
+      <td style="max-width:200px;white-space:normal;font-size:12.5px">${r.cancel_reason || '-'}</td>
+      <td><button class="act-btn green" onclick="markRefundCompleted('${r.id}')">결제취소 완료</button></td>
+    </tr>`
+  }).join('')
+}
+
+window.markRefundCompleted = async function(orderId) {
+  if (!confirm('토스페이먼츠에서 실제 결제 취소를 완료하셨나요?\n\n확인을 누르면 이 건은 처리 완료로 기록됩니다.')) return
+  const supabase = window._supabase
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ refund_completed_at: new Date().toISOString() })
+    .eq('id', orderId)
+    .select()
+
+  if (error) {
+    alert('처리 실패: ' + error.message)
+  } else if (!data || data.length === 0) {
+    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행해주세요:\n\nCREATE POLICY "admin_can_update_orders" ON public.orders FOR UPDATE USING (true);')
+  } else {
+    showToast('환불 처리 완료로 기록됐습니다 ✓')
+    loadAdminData()
+  }
 }
 
 let _expectedBalance = 0
@@ -1155,7 +1257,7 @@ function showPage(id, btn) {
   document.getElementById('pg-' + id).classList.add('act');
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
   if (btn) btn.classList.add('act');
-  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 관리', settle:'정산 관리', revenue:'매출 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
+  const titles = { dashboard:'대시보드', members:'회원 관리', products:'제품 관리', settle:'정산 관리', revenue:'매출 관리', refunds:'환불 관리', alerts:'알림 · 신고', settings:'시스템 설정' };
   document.getElementById('pageTitle').textContent = titles[id] || '';
   const mobTitleEl = document.getElementById('mob-title');
   if (mobTitleEl) mobTitleEl.textContent = titles[id] || '';
