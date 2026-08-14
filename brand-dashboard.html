@@ -251,7 +251,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <div class="page content" id="pg-orders">
     <div class="card">
-      <div class="card-h"><div class="card-t">주문 목록</div><div id="order-total-count" style="font:600 12.5px/1 'Pretendard',sans-serif;color:var(--ink-40)"></div></div>
+      <div class="card-h"><div class="card-t">주문 목록</div><div style="display:flex;align-items:center;gap:12px"><div id="order-total-count" style="font:600 12.5px/1 'Pretendard',sans-serif;color:var(--ink-40)"></div><button id="save-all-shipping-btn" class="act-btn green" onclick="saveAllShipping()" title="화면에 보이는 주문들의 배송상태·택배사·운송장번호를 한 번에 저장합니다">전체 저장</button></div></div>
       <div id="order-toolbar" style="display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
         <input id="order-search" type="text" placeholder="구매자명 또는 상품명 검색" oninput="debounceOrderSearch()" style="flex:1;min-width:180px;padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:400 13px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
         <select id="order-status-filter" onchange="orderFilterChanged()" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:600 13px/1 'Pretendard',sans-serif;font-family:inherit">
@@ -308,7 +308,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <div class="page content" id="pg-creators">
     <div class="card">
-      <div class="card-h"><div class="card-t">연결된 크리에이터</div></div>
+      <div class="card-h"><div class="card-t">연결된 크리에이터</div><div style="font:400 12px/1 'Pretendard',sans-serif;color:var(--ink-40)">전환율 높은 순</div></div>
       <div id="creators-empty" style="text-align:center;padding:40px 0;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📭</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">아직 연결된 크리에이터가 없습니다</div>
@@ -316,7 +316,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="creators-table-wrap" style="display:none">
         <table>
-          <thead><tr><th>크리에이터</th><th>연결 제품 수</th><th>클릭 수</th><th>구매 전환 수</th></tr></thead>
+          <thead><tr><th>크리에이터</th><th>연결 제품 수</th><th>클릭 수</th><th>구매 전환 수</th><th>전환율</th></tr></thead>
           <tbody id="creators-tbody"></tbody>
         </table>
       </div>
@@ -937,18 +937,96 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         byCreator[l.creator].conversions += Number(l.conversion_count || 0)
       })
       const creatorIds = Object.keys(byCreator)
-      const { data: creatorUsers } = await supabase.from('users').select('id,company_name').in('id', creatorIds)
-      const nameMap = {}
-      ;(creatorUsers || []).forEach(c => { nameMap[c.id] = c.company_name })
+      const { data: creatorUsers } = await supabase.from('users').select('id,company_name,category,follower_count,channel_url,test_grade_override').in('id', creatorIds)
+      const infoMap = {}
+      ;(creatorUsers || []).forEach(c => { infoMap[c.id] = c })
+
+      // 채널 정보
+      const channelsMap = {}
+      try {
+        const { data: chData } = await supabase.from('creator_channels').select('*').in('creator', creatorIds)
+        ;(chData || []).forEach(ch => {
+          if (!channelsMap[ch.creator]) channelsMap[ch.creator] = []
+          channelsMap[ch.creator].push(ch)
+        })
+      } catch (e) {}
+
+      // 등급 정보 (샘플 관리와 동일한 기준)
+      const gradeMap = {}
+      try {
+        const { data: gradeRows } = await supabase.from('creator_grades').select('id,name,min_sales,show_badge').order('min_sales', { ascending: false })
+        const grades = gradeRows || []
+        for (const cid of creatorIds) {
+          const overrideId = infoMap[cid]?.test_grade_override
+          let g = overrideId ? grades.find(x => x.id === overrideId) : null
+          if (!g) {
+            const { count } = await supabase.from('orders').select('id, links!inner(creator)', { count: 'exact', head: true }).eq('links.creator', cid).in('status', ['confirmed', 'settled'])
+            g = grades.find(x => (count || 0) >= x.min_sales)
+          }
+          gradeMap[cid] = g || { name: 'New', show_badge: false }
+        }
+      } catch (e) {}
+
+      const normalizeUrl = (u) => {
+        if (!u) return ''
+        let t = String(u).trim()
+        if (!t) return ''
+        if (!/^https?:\/\//i.test(t)) t = 'https://' + t.replace(/^\/+/, '')
+        try {
+          const host = new URL(t).hostname
+          if (!host || !host.includes('.') || !/[a-z]/i.test(host)) return ''
+          return t
+        } catch (e) { return '' }
+      }
+
+      // 전환율 높은 순으로 정렬 — 어느 크리에이터가 실제로 성과를 내는지 바로 보이게
+      creatorIds.sort((a, b) => {
+        const ra = byCreator[a].clicks ? byCreator[a].conversions / byCreator[a].clicks : 0
+        const rb = byCreator[b].clicks ? byCreator[b].conversions / byCreator[b].clicks : 0
+        if (rb !== ra) return rb - ra
+        return byCreator[b].conversions - byCreator[a].conversions
+      })
 
       document.getElementById('creators-tbody').innerHTML = creatorIds.map(cid => {
         const c = byCreator[cid]
+        const info = infoMap[cid] || {}
+        const grade = gradeMap[cid] || { name: 'New', show_badge: false }
+        const rate = c.clicks > 0 ? ((c.conversions / c.clicks) * 100).toFixed(1) : '0.0'
+
+        const gradeChip = grade.show_badge
+          ? `<span title="${grade.name} 등급 · 공식 파트너" style="font-size:11px;background:linear-gradient(135deg,#00B37E,#C9911D);color:#fff;padding:2px 7px;border-radius:5px;font-weight:800;vertical-align:middle">👑 ${grade.name}</span>`
+          : `<span title="${grade.name} 등급" style="font-size:11px;background:var(--ink-07);color:var(--ink-70);padding:2px 7px;border-radius:5px;font-weight:700;vertical-align:middle">${grade.name}</span>`
+
+        const channels = channelsMap[cid] || []
+        let channelsHtml
+        if (channels.length > 0) {
+          channelsHtml = channels.map(ch => {
+            const f = ch.follower_count != null ? Number(ch.follower_count).toLocaleString() + '명' : '팔로워 미등록'
+            const href = normalizeUrl(ch.url)
+            const link = href
+              ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">보기</a>`
+              : `<span style="color:var(--ink-40)">URL 미등록</span>`
+            return `${ch.platform} ${f} ${link}`
+          }).join('<br>')
+        } else {
+          const f = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '채널 정보 없음'
+          const href = normalizeUrl(info.channel_url)
+          channelsHtml = href
+            ? `${f} <a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">보기</a>`
+            : f
+        }
+
         return `
         <tr>
-          <td class="td-b">${nameMap[cid] || '-'}</td>
+          <td>
+            <div class="td-b">${info.company_name || '이름 미등록'} ${gradeChip}</div>
+            ${info.category ? `<div style="font-size:11.5px;color:var(--ink-40);margin-top:2px">${info.category}</div>` : ''}
+            <div style="font-size:11.5px;color:var(--ink-40);margin-top:2px;line-height:1.6">${channelsHtml}</div>
+          </td>
           <td>${c.products.size}개</td>
           <td>${c.clicks.toLocaleString()}회</td>
           <td>${c.conversions.toLocaleString()}건</td>
+          <td><span style="font-weight:700;color:${Number(rate) > 0 ? 'var(--green)' : 'var(--ink-40)'}">${rate}%</span></td>
         </tr>`
       }).join('')
     }
@@ -1068,7 +1146,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }).join('')
   }
 
-  window.saveShipping = async function(orderId) {
+  window.saveShipping = async function(orderId, silent) {
     const shipping_status = document.getElementById(`ship-status-${orderId}`).value
     const courier = document.getElementById(`courier-${orderId}`).value
     const tracking_number = document.getElementById(`tracking-${orderId}`).value.trim()
@@ -1079,6 +1157,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .eq('id', orderId)
       .select()
 
+    if (silent) {
+      if (error) return { ok: false, msg: error.message }
+      if (!data || data.length === 0) return { ok: false, msg: '권한 문제로 저장되지 않음' }
+      return { ok: true }
+    }
+
     if (error) {
       alert('저장에 실패했습니다: ' + error.message)
     } else if (!data || data.length === 0) {
@@ -1088,6 +1172,28 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       alert('배송 정보가 저장됐습니다.')
       loadOrders()
     }
+  }
+
+  // 화면에 보이는 주문들의 배송정보를 한 번에 저장 — 여러 건 처리 시 매번 저장 버튼 누르는 불편 해소
+  window.saveAllShipping = async function() {
+    const rows = [...document.querySelectorAll('[id^="ship-status-"]')]
+    if (rows.length === 0) { alert('저장할 주문이 없습니다.'); return }
+
+    const btn = document.getElementById('save-all-shipping-btn')
+    if (btn) { btn.textContent = '저장 중...'; btn.disabled = true }
+
+    const orderIds = rows.map(el => el.id.replace('ship-status-', ''))
+    const results = await Promise.all(orderIds.map(id => saveShipping(id, true)))
+    const failed = results.filter(r => !r.ok)
+
+    if (btn) { btn.textContent = '전체 저장'; btn.disabled = false }
+
+    if (failed.length === 0) {
+      alert(`${orderIds.length}건의 배송 정보가 저장됐습니다.`)
+    } else {
+      alert(`${orderIds.length - failed.length}건 저장 완료, ${failed.length}건 실패했습니다.\n\n실패 사유: ${failed[0].msg}`)
+    }
+    loadOrders()
   }
 
   async function loadReports() {
@@ -1279,13 +1385,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         channelsHtml = channels.map(ch => {
           const followerTxt = ch.follower_count != null ? Number(ch.follower_count).toLocaleString() + '명' : '팔로워 미등록'
           const href = normalizeUrl(ch.url)
-          const link = href ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">보기</a>` : ''
+          const link = href
+            ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">보기</a>`
+            : `<span style="color:var(--ink-40)" title="크리에이터가 올바른 채널 주소를 등록하지 않았습니다">URL 미등록</span>`
           return `${ch.platform} ${followerTxt} ${link}`
         }).join('<br>')
       } else {
         const followerText = info.follower_count != null ? `팔로워 ${Number(info.follower_count).toLocaleString()}명` : '채널 정보 없음'
         const href = normalizeUrl(info.channel_url)
-        const channelLink = href ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">채널 보기</a>` : ''
+        const channelLink = href
+          ? `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline">채널 보기</a>`
+          : (info.channel_url ? `<span style="color:var(--ink-40)">URL 미등록</span>` : '')
         channelsHtml = `${followerText} ${channelLink}`
       }
 
