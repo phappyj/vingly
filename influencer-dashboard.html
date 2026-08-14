@@ -1357,6 +1357,50 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     location.replace('login.html')
   }
 
+  /* ===== 자동 로그아웃 (개인정보보호법 제29조 안전조치의무 / 접근통제) =====
+     일정 시간 조작이 없으면 자동으로 접속을 차단해야 함. 업계 표준 2시간 적용. */
+  ;(function initIdleLogout() {
+    const IDLE_LIMIT_MS = 2 * 60 * 60 * 1000  // 2시간
+    const WARN_BEFORE_MS = 2 * 60 * 1000      // 만료 2분 전 경고
+    let idleTimer = null, warnTimer = null, warnEl = null
+
+    function removeWarning() {
+      if (warnEl) { warnEl.remove(); warnEl = null }
+    }
+
+    function showWarning() {
+      removeWarning()
+      warnEl = document.createElement('div')
+      warnEl.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:9999;background:#0A0C10;color:#fff;padding:14px 20px;border-radius:12px;font:600 13.5px/1.5 Pretendard,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:14px'
+      warnEl.innerHTML = '<span>보안을 위해 곧 자동 로그아웃됩니다.</span>'
+      const btn = document.createElement('button')
+      btn.textContent = '계속 사용하기'
+      btn.style.cssText = 'padding:7px 13px;border-radius:8px;border:none;background:#00B37E;color:#fff;font:700 12.5px/1 Pretendard,sans-serif;cursor:pointer'
+      btn.onclick = () => { removeWarning(); resetTimers() }
+      warnEl.appendChild(btn)
+      document.body.appendChild(warnEl)
+    }
+
+    async function forceLogout() {
+      removeWarning()
+      try { if (window._supabase) await window._supabase.auth.signOut() } catch (e) {}
+      alert('장시간 사용하지 않아 보안을 위해 로그아웃되었습니다.\n다시 로그인해주세요.')
+      location.replace('login.html')
+    }
+
+    function resetTimers() {
+      clearTimeout(idleTimer); clearTimeout(warnTimer)
+      warnTimer = setTimeout(showWarning, IDLE_LIMIT_MS - WARN_BEFORE_MS)
+      idleTimer = setTimeout(forceLogout, IDLE_LIMIT_MS)
+    }
+
+    ;['click', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+      document.addEventListener(evt, () => { if (!warnEl) resetTimers() }, { passive: true })
+    })
+
+    resetTimers()
+  })()
+
   window.requestWithdrawal = async function() {
     const user = window._vinglyUser
     if (!user) return
