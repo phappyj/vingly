@@ -133,8 +133,8 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
   <div class="notice-band">
     <div class="nb-ico">⚡</div>
     <div>
-      <div class="nb-t">파일럿 운영 중 — 빠른 응대를 드리고 있습니다</div>
-      <div class="nb-d">현재 파일럿 기간으로 대부분의 문의에 24시간 내 답변드립니다. 정산 관련 문의는 이메일로 주시면 더 빠르게 처리됩니다.</div>
+      <div class="nb-t">1:1 문의 — 빠른 응대를 드리고 있습니다</div>
+      <div class="nb-d">대부분의 문의에 24시간 내 답변드립니다. 정산 관련 문의는 이메일로 주시면 더 빠르게 처리됩니다.</div>
     </div>
   </div>
 
@@ -144,7 +144,7 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
 
   <div class="faq-tabs">
     <button class="ftab on" onclick="filterFaq('all',this)">전체</button>
-    <button class="ftab" onclick="filterFaq('pilot',this)">파일럿 안내</button>
+    <button class="ftab" onclick="filterFaq('pilot',this)">얼리버드 안내</button>
     <button class="ftab" onclick="filterFaq('creator',this)">크리에이터</button>
     <button class="ftab" onclick="filterFaq('brand',this)">브랜드·셀러</button>
     <button class="ftab" onclick="filterFaq('settle',this)">정산</button>
@@ -162,7 +162,7 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
     </div>
     <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">수수료는 언제, 어떻게 받나요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">결제 완료 후 14일의 보류 기간을 거쳐 등록된 계좌로 정산됩니다. 이는 전자상거래법상 청약철회 기간과 환불 처리 기간을 고려한 것입니다. 별도 정산 신청은 필요 없으며, 대시보드에서 실시간으로 수익 내역을 확인할 수 있습니다. 파일럿 기간에는 Vingly 수수료 차감 없이 전액 수령하실 수 있습니다.</div>
+      <div class="faq-a">결제 완료 후 14일의 보류 기간을 거쳐 등록된 계좌로 정산됩니다. 이는 전자상거래법상 청약철회 기간과 환불 처리 기간을 고려한 것입니다. 별도 정산 신청은 필요 없으며, 대시보드에서 실시간으로 수익 내역을 확인할 수 있습니다. 크리에이터는 플랫폼 수수료 차감 없이 전액 수령하며, 브랜드는 거래 수수료(얼리버드 1.5% / 일반 1.8%)가 차감된 후 정산됩니다.</div>
     </div>
     <div class="faq-item" data-cat="creator" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">내가 추천한 제품이 불량이면 어떻게 되나요?</span><div class="fq-ic">+</div></div>
@@ -179,8 +179,8 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
       <div class="faq-a">제품 등록 시 수수료율을 직접 설정할 수 있습니다. 일반적으로 10~20% 범위에서 설정하시면 크리에이터들의 선택을 받기 쉽습니다. 수수료율이 높을수록 크리에이터 노출 우선순위가 높아집니다.</div>
     </div>
     <div class="faq-item" data-cat="brand" onclick="toggleFaq(this)">
-      <div class="faq-q"><span class="fq-t">파일럿 기간 이후 수수료는 어떻게 바뀌나요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">파일럿 회원 1,000명 달성 후 30일 전에 이메일로 사전 공지 드립니다. 정식 전환 후에는 거래 수수료와 월 구독료가 적용됩니다. 지금 가입하신 얼리버드 회원은 우대 수수료율이 적용됩니다. 자세한 내용은 수수료 안내 페이지를 참고해주세요.</div>
+      <div class="faq-q"><span class="fq-t">수수료는 나중에 오르나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">얼리버드로 가입하신 브랜드는 거래 수수료 1.5%가 <strong>영구 고정</strong>됩니다. 이후 일반 요율이 인상되더라도 얼리버드 요율은 그대로 유지됩니다. 크리에이터는 언제나 플랫폼 수수료 0%입니다. 요금 체계가 변경될 경우 시행 30일 전 이메일로 사전 공지드립니다.</div>
     </div>
 
     <!-- 정산 -->
@@ -194,13 +194,13 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
     </div>
     <div class="faq-item" data-cat="settle" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">세금계산서 발행이 되나요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">현재 파일럿 기간으로 세금계산서 자동 발행 시스템은 준비 중입니다. 세금계산서가 필요하신 경우 vingly.official@gmail.com로 문의 주시면 개별 처리해드립니다.</div>
+      <div class="faq-a">세금계산서 자동 발행 시스템은 준비 중입니다. 세금계산서가 필요하신 경우 vingly.official@gmail.com로 문의 주시면 개별 처리해드립니다.</div>
     </div>
 
     <!-- 파일럿 -->
     <div class="faq-item" data-cat="pilot" onclick="toggleFaq(this)">
-      <div class="faq-q"><span class="fq-t">파일럿 서비스가 뭔가요? 실제로 돈을 받을 수 있나요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">파일럿은 정식 오픈 전 실제 사용자들과 함께 서비스를 테스트하는 단계입니다. 현재 사업자등록 및 통신판매업 신고를 준비 중이며, 완료 즉시 결제 시스템이 활성화됩니다. 파일럿 기간 중 제품 등록·링크 생성·크리에이터 연결은 모두 가능하며, 결제 시스템 오픈 시 바로 수익 창출이 시작됩니다. 지금 얼리버드로 가입하면 수수료 혜택이 영구 적용됩니다.</div>
+      <div class="faq-q"><span class="fq-t">지금 가입하면 실제로 돈을 받을 수 있나요?</span><div class="fq-ic">+</div></div>
+      <div class="faq-a">네. 제품 등록·링크 생성·크리에이터 연결·결제·정산이 모두 정상 운영되고 있습니다. 판매가 발생하면 결제 완료 후 14일의 보류 기간을 거쳐 등록하신 계좌로 정산됩니다. 지금 가입하시면 얼리버드 수수료 혜택이 영구 적용됩니다.</div>
     </div>
     <div class="faq-item" data-cat="pilot" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">결제는 언제부터 가능한가요?</span><div class="fq-ic">+</div></div>
@@ -208,7 +208,7 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
     </div>
     <div class="faq-item" data-cat="pilot" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">얼리버드 혜택은 정확히 무엇인가요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">파일럿 기간(1,000명 달성 전) 가입자에게 적용되는 혜택입니다. 크리에이터는 플랫폼 수수료 0% 영구 적용(정식 전환 후에도 동일). 브랜드·셀러는 거래 수수료 1.5% 영구 고정(정식 일반 요율 1.8%보다 낮음). 이 혜택은 탈퇴하지 않는 한 영구 유지됩니다.</div>
+      <div class="faq-a">초기 가입자에게 적용되는 혜택입니다. 크리에이터는 플랫폼 수수료 0%가 영구 적용됩니다. 브랜드는 거래 수수료 1.5%가 영구 고정되며, 이는 일반 요율 1.8%보다 낮습니다. 이 혜택은 탈퇴하지 않는 한 계속 유지됩니다.</div>
     </div>
 
     <!-- 크리에이터 추가 -->
@@ -228,7 +228,7 @@ textarea.fi{min-height:120px;resize:vertical;line-height:1.6}
     </div>
     <div class="faq-item" data-cat="brand" onclick="toggleFaq(this)">
       <div class="faq-q"><span class="fq-t">제품 등록 후 크리에이터 매칭까지 얼마나 걸리나요?</span><div class="fq-ic">+</div></div>
-      <div class="faq-a">파일럿 기간에는 제품이 등록되면 플랫폼 내 크리에이터들이 직접 제품을 탐색하고 링크를 생성합니다. 수수료율이 높을수록 더 많은 크리에이터가 선택합니다. 현재 파일럿이므로 크리에이터 수가 늘어날수록 매칭 속도도 빨라집니다.</div>
+      <div class="faq-a">제품이 등록되면 플랫폼 내 크리에이터들이 직접 제품을 탐색하고 링크를 생성합니다. 크리에이터 수수료율을 높게 설정할수록 더 많은 크리에이터가 선택하며, 상위 등급 크리에이터일수록 전환율이 높습니다.</div>
     </div>
 
     <!-- 공통 -->
