@@ -335,10 +335,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
     </div>
 
-    <div class="stat-grid">
+    <div class="stat-grid" style="grid-template-columns:repeat(5,1fr)">
       <div class="sc"><div class="sc-top"><div class="sc-label" id="rev-total-label">매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="rev-total-val">₩0</div><div class="sc-ch" id="rev-total-sub">첫 판매를 기다리는 중</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">크리에이터 수수료 지급액</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-creator-fee-val">₩0</div><div class="sc-ch" id="rev-creator-count">판매 발생 크리에이터 0명</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">크리에이터 수수료</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-creator-fee-val">₩0</div><div class="sc-ch" id="rev-creator-count">판매 발생 크리에이터 0명</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val" id="rev-pg-fee-val">₩0</div><div class="sc-ch">2.2% 토스</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🏷️</div></div><div class="sc-val" id="rev-vingly-fee-val">₩0</div><div class="sc-ch" id="rev-vingly-fee-sub">확인 중</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">환불</div><div class="sc-ico" style="background:var(--red-bg)">↩️</div></div><div class="sc-val" id="rev-refund-val" style="color:var(--red)">₩0</div><div class="sc-ch" id="rev-refund-sub">환불 0건</div></div>
     </div>
 
@@ -1023,21 +1024,39 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const settlePending = (pendingBrandSettlements || []).reduce((s, r) => s + Number(r.amount || 0), 0)
     setText('home-settle-pending', '₩' + settlePending.toLocaleString())
 
-    // Vingly 거래 수수료 — 파일럿 중엔 0원, 정식 전환 후 얼리버드/신규 요율대로 실제 계산됨
+    // Vingly 거래 수수료 — 실제 app_settings 값을 읽어 현재 적용 요율을 정확히 안내한다
+    // (기존엔 합계가 0원이면 무조건 "파일럿 무료"로 표시해, 수수료가 켜져있어도 잘못 안내되던 문제)
+    let feeActive = false, feeRate = null
+    try {
+      const { data: fs } = await supabase.from('app_settings').select('key,value')
+        .in('key', ['vingly_fee_active', 'vingly_fee_standard_rate', 'vingly_fee_early_bird_rate'])
+      const m = {}
+      ;(fs || []).forEach(r => { m[r.key] = r.value })
+      feeActive = String(m.vingly_fee_active) === 'true'
+      feeRate = user.early_bird ? Number(m.vingly_fee_early_bird_rate) : Number(m.vingly_fee_standard_rate)
+    } catch (e) { /* 설정 조회 실패 시 안내만 생략 */ }
+
+    const rateText = feeActive && feeRate
+      ? `${feeRate}% 적용 중${user.early_bird ? ' (얼리버드 영구 혜택)' : ''}`
+      : '파일럿 기간 무료'
+
     const vinglyEl = document.getElementById('rev-flow-vingly')
     if (vinglyEl) {
       vinglyEl.textContent = (vinglyFeeSum > 0 ? '-' : '') + '₩' + vinglyFeeSum.toLocaleString()
       vinglyEl.className = 'fl-r ' + (vinglyFeeSum > 0 ? 'r' : 'g')
     }
+    const vinglySubEl = document.getElementById('rev-flow-vingly-sub')
+    if (vinglySubEl) vinglySubEl.textContent = rateText
+
     const vinglyCardVal = document.getElementById('rev-vingly-fee-val')
     const vinglyCardSub = document.getElementById('rev-vingly-fee-sub')
     if (vinglyCardVal) {
       vinglyCardVal.textContent = '₩' + vinglyFeeSum.toLocaleString()
-      vinglyCardVal.style.color = vinglyFeeSum > 0 ? 'var(--red)' : 'var(--green)'
+      vinglyCardVal.style.color = vinglyFeeSum > 0 ? 'var(--red)' : 'var(--ink)'
     }
     if (vinglyCardSub) {
-      vinglyCardSub.textContent = vinglyFeeSum > 0 ? '정식 요율 적용 중' : '파일럿 무료'
-      vinglyCardSub.style.color = vinglyFeeSum > 0 ? 'var(--red)' : 'var(--green)'
+      vinglyCardSub.textContent = rateText
+      vinglyCardSub.style.color = feeActive ? 'var(--ink-40)' : 'var(--green)'
     }
 
     // ── 연결된 크리에이터 ──
