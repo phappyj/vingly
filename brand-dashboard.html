@@ -688,6 +688,107 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
   )
 
+  // 메뉴 위치(nth-child)는 구분선 등으로 쉽게 어긋나므로 onclick 내용으로 버튼을 찾는다
+  window.goPage = function(pageId) {
+    const btn = [...document.querySelectorAll('.ni')].find(b => (b.getAttribute('onclick') || '').includes(`'${pageId}'`))
+    showPage(pageId, btn || null)
+  }
+
+  // 홈 화면 요약 — 각 탭을 일일이 열어보지 않아도 처리할 일과 최근 흐름을 한눈에
+  window.loadHomeSummary = async function() {
+    const user = window._vinglyUser
+    if (!user) return
+
+    const [sampleRes, reportRes, orderRes] = await Promise.all([
+      supabase.from('samples').select('id,status,created_at,creator,product').eq('brand', user.id).order('created_at', { ascending: false }).limit(30),
+      supabase.from('orders').select('id').eq('brand', user.id).limit(200),
+      supabase.from('orders').select('id,amount,buyer_name,created_at,product,shipping_status,status').eq('brand', user.id).in('status', ['confirmed', 'settled']).order('created_at', { ascending: false }).limit(5),
+    ])
+
+    const samples = sampleRes.data || []
+    const recentOrders = orderRes.data || []
+
+    // 신고는 내 주문에 달린 것만 (reports는 order_id로 연결됨)
+    let pendingReports = 0
+    try {
+      const myOrderIds = (reportRes.data || []).map(o => o.id)
+      if (myOrderIds.length) {
+        const { data: reps } = await supabase.from('reports').select('id,status,order_id').in('order_id', myOrderIds)
+        pendingReports = (reps || []).filter(r => r.status === 'pending' || r.status === 'reviewing').length
+      }
+    } catch (e) { /* ignore */ }
+
+    const pendingSamples = samples.filter(s => s.status === 'requested' || s.status === 'pending').length
+    const readyToShip = recentOrders.filter(o => (o.shipping_status || 'preparing') === 'preparing').length
+
+    // ── 처리가 필요한 항목 ──
+    const todos = []
+    if (pendingReports > 0) {
+      todos.push({ icon: '🚨', text: `미처리 신고 ${pendingReports}건`, sub: '전자상거래법상 3영업일 이내 처리 필요', page: 'reports', urgent: true })
+    }
+    if (pendingSamples > 0) {
+      todos.push({ icon: '🎁', text: `샘플 신청 ${pendingSamples}건 대기`, sub: '승인 또는 거절 처리가 필요합니다', page: 'sample' })
+    }
+    if (readyToShip > 0) {
+      todos.push({ icon: '📦', text: `배송 준비중 주문 ${readyToShip}건`, sub: '운송장번호를 등록해주세요', page: 'orders' })
+    }
+
+    const todoCard = document.getElementById('home-todo-card')
+    const todoList = document.getElementById('home-todo-list')
+    if (todoCard && todoList) {
+      todoCard.style.display = todos.length ? 'block' : 'none'
+      todoList.innerHTML = todos.map(t => `
+        <div onclick="goPage('${t.page}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;background:${t.urgent ? 'var(--red-bg)' : 'var(--ink-06)'};cursor:pointer">
+          <span style="font-size:18px">${t.icon}</span>
+          <div style="flex:1">
+            <div style="font:700 13.5px/1.3 'Pretendard',sans-serif;color:${t.urgent ? 'var(--red)' : 'var(--ink)'}">${t.text}</div>
+            <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${t.sub}</div>
+          </div>
+          <span style="color:var(--ink-40);font-size:14px">→</span>
+        </div>`).join('')
+    }
+
+    // ── 최근 활동 (최근 주문 5건) ──
+    const actEmpty = document.getElementById('home-activity-empty')
+    const actList = document.getElementById('home-activity-list')
+    if (!actEmpty || !actList) return
+
+    if (recentOrders.length === 0) {
+      actEmpty.style.display = 'block'
+      actList.style.display = 'none'
+      return
+    }
+
+    const pids = [...new Set(recentOrders.map(o => o.product).filter(Boolean))]
+    let pmap = {}
+    if (pids.length) {
+      const { data: ps } = await supabase.from('products').select('id,name').in('id', pids)
+      ;(ps || []).forEach(p => { pmap[p.id] = p.name })
+    }
+
+    const SHIP_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
+    const timeAgo = (d) => {
+      const diff = Date.now() - new Date(d).getTime()
+      const h = Math.floor(diff / 3600000)
+      if (h < 1) return '방금 전'
+      if (h < 24) return `${h}시간 전`
+      return `${Math.floor(h / 24)}일 전`
+    }
+
+    actEmpty.style.display = 'none'
+    actList.style.display = 'flex'
+    actList.innerHTML = recentOrders.map(o => `
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--ink-06)">
+        <span style="font-size:16px">🛒</span>
+        <div style="flex:1;min-width:0">
+          <div style="font:600 13.5px/1.3 'Pretendard',sans-serif">${pmap[o.product] || '제품'} · ₩${Number(o.amount || 0).toLocaleString()}</div>
+          <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${o.buyer_name || '구매자'} · ${SHIP_LABEL[o.shipping_status || 'preparing']}</div>
+        </div>
+        <span style="font:400 11.5px/1 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap">${timeAgo(o.created_at)}</span>
+      </div>`).join('')
+  }
+
+
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) { location.replace('login.html') }
   else {
@@ -706,13 +807,21 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         const sbAv = document.getElementById('sb-av')
         if (sbName) sbName.textContent = name
         if (sbAv) sbAv.textContent = name[0]
-        loadProducts()
-        loadOrders()
-        loadReports()
-        loadSamples()
-        loadCreatorsAndRevenue()
-        loadNotifications()
-        loadHomeSummary()
+
+        // 아래 로딩 함수들이 참조하는 캐시 변수(let 선언)가 이 지점보다 뒤에 정의돼 있어
+        // 곧바로 호출하면 "Cannot access ... before initialization" 오류가 난다.
+        // setTimeout(0)으로 현재 스크립트 실행이 모두 끝난 뒤에 시작하도록 미룬다.
+        const runAllLoaders = () => {
+          loadProducts()
+          loadOrders()
+          loadReports()
+          loadSamples()
+          loadCreatorsAndRevenue()
+          loadNotifications()
+          loadHomeSummary()
+        }
+        setTimeout(runAllLoaders, 0)
+
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -722,26 +831,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         // 새로고침 없이도 최신 상태 유지 — 탭이 보이는 동안 20초마다 자동 갱신
         setInterval(() => {
           if (document.visibilityState !== 'visible') return
-          loadProducts()
-          loadOrders()
-          loadReports()
-          loadSamples()
-          loadCreatorsAndRevenue()
-          loadNotifications()
-          loadHomeSummary()
+          runAllLoaders()
         }, 20000)
 
         // 탭을 잠깐 벗어났다가 돌아왔을 때도 즉시 한 번 갱신
         document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') {
-            loadProducts()
-            loadOrders()
-            loadReports()
-            loadSamples()
-            loadCreatorsAndRevenue()
-            loadNotifications()
-            loadHomeSummary()
-          }
+          if (document.visibilityState === 'visible') runAllLoaders()
         })
       })()
     }
@@ -1232,106 +1327,6 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
 
     finishLoading()
-  }
-
-  // 메뉴 위치(nth-child)는 구분선 등으로 쉽게 어긋나므로 onclick 내용으로 버튼을 찾는다
-  window.goPage = function(pageId) {
-    const btn = [...document.querySelectorAll('.ni')].find(b => (b.getAttribute('onclick') || '').includes(`'${pageId}'`))
-    showPage(pageId, btn || null)
-  }
-
-  // 홈 화면 요약 — 각 탭을 일일이 열어보지 않아도 처리할 일과 최근 흐름을 한눈에
-  window.loadHomeSummary = async function() {
-    const user = window._vinglyUser
-    if (!user) return
-
-    const [sampleRes, reportRes, orderRes] = await Promise.all([
-      supabase.from('samples').select('id,status,created_at,creator,product').eq('brand', user.id).order('created_at', { ascending: false }).limit(30),
-      supabase.from('orders').select('id').eq('brand', user.id).limit(200),
-      supabase.from('orders').select('id,amount,buyer_name,created_at,product,shipping_status,status').eq('brand', user.id).in('status', ['confirmed', 'settled']).order('created_at', { ascending: false }).limit(5),
-    ])
-
-    const samples = sampleRes.data || []
-    const recentOrders = orderRes.data || []
-
-    // 신고는 내 주문에 달린 것만 (reports는 order_id로 연결됨)
-    let pendingReports = 0
-    try {
-      const myOrderIds = (reportRes.data || []).map(o => o.id)
-      if (myOrderIds.length) {
-        const { data: reps } = await supabase.from('reports').select('id,status,order_id').in('order_id', myOrderIds)
-        pendingReports = (reps || []).filter(r => r.status === 'pending' || r.status === 'reviewing').length
-      }
-    } catch (e) { /* ignore */ }
-
-    const pendingSamples = samples.filter(s => s.status === 'requested' || s.status === 'pending').length
-    const readyToShip = recentOrders.filter(o => (o.shipping_status || 'preparing') === 'preparing').length
-
-    // ── 처리가 필요한 항목 ──
-    const todos = []
-    if (pendingReports > 0) {
-      todos.push({ icon: '🚨', text: `미처리 신고 ${pendingReports}건`, sub: '전자상거래법상 3영업일 이내 처리 필요', page: 'reports', urgent: true })
-    }
-    if (pendingSamples > 0) {
-      todos.push({ icon: '🎁', text: `샘플 신청 ${pendingSamples}건 대기`, sub: '승인 또는 거절 처리가 필요합니다', page: 'sample' })
-    }
-    if (readyToShip > 0) {
-      todos.push({ icon: '📦', text: `배송 준비중 주문 ${readyToShip}건`, sub: '운송장번호를 등록해주세요', page: 'orders' })
-    }
-
-    const todoCard = document.getElementById('home-todo-card')
-    const todoList = document.getElementById('home-todo-list')
-    if (todoCard && todoList) {
-      todoCard.style.display = todos.length ? 'block' : 'none'
-      todoList.innerHTML = todos.map(t => `
-        <div onclick="goPage('${t.page}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;background:${t.urgent ? 'var(--red-bg)' : 'var(--ink-06)'};cursor:pointer">
-          <span style="font-size:18px">${t.icon}</span>
-          <div style="flex:1">
-            <div style="font:700 13.5px/1.3 'Pretendard',sans-serif;color:${t.urgent ? 'var(--red)' : 'var(--ink)'}">${t.text}</div>
-            <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${t.sub}</div>
-          </div>
-          <span style="color:var(--ink-40);font-size:14px">→</span>
-        </div>`).join('')
-    }
-
-    // ── 최근 활동 (최근 주문 5건) ──
-    const actEmpty = document.getElementById('home-activity-empty')
-    const actList = document.getElementById('home-activity-list')
-    if (!actEmpty || !actList) return
-
-    if (recentOrders.length === 0) {
-      actEmpty.style.display = 'block'
-      actList.style.display = 'none'
-      return
-    }
-
-    const pids = [...new Set(recentOrders.map(o => o.product).filter(Boolean))]
-    let pmap = {}
-    if (pids.length) {
-      const { data: ps } = await supabase.from('products').select('id,name').in('id', pids)
-      ;(ps || []).forEach(p => { pmap[p.id] = p.name })
-    }
-
-    const SHIP_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
-    const timeAgo = (d) => {
-      const diff = Date.now() - new Date(d).getTime()
-      const h = Math.floor(diff / 3600000)
-      if (h < 1) return '방금 전'
-      if (h < 24) return `${h}시간 전`
-      return `${Math.floor(h / 24)}일 전`
-    }
-
-    actEmpty.style.display = 'none'
-    actList.style.display = 'flex'
-    actList.innerHTML = recentOrders.map(o => `
-      <div style="display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--ink-06)">
-        <span style="font-size:16px">🛒</span>
-        <div style="flex:1;min-width:0">
-          <div style="font:600 13.5px/1.3 'Pretendard',sans-serif">${pmap[o.product] || '제품'} · ₩${Number(o.amount || 0).toLocaleString()}</div>
-          <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${o.buyer_name || '구매자'} · ${SHIP_LABEL[o.shipping_status || 'preparing']}</div>
-        </div>
-        <span style="font:400 11.5px/1 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap">${timeAgo(o.created_at)}</span>
-      </div>`).join('')
   }
 
   const ORDER_PAGE_SIZE = 30
