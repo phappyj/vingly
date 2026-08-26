@@ -424,6 +424,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <button onclick="verifyBusinessNumber()" id="biz-verify-btn" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">🔍 사업자 인증하기</button>
         <span id="biz_verify_msg" style="font-size:12px;margin-left:10px;display:none"></span>
       </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><div class="card-t">🏦 정산 계좌</div></div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">판매 대금이 입금될 계좌입니다. <strong>정확히 입력하지 않으면 정산이 지연될 수 있습니다.</strong> 예금주는 사업자등록증상 명의와 일치해야 합니다.</div>
+        <div id="bank-warning" style="display:none;margin-bottom:12px;padding:10px 14px;background:var(--amber-bg);border-radius:10px;color:var(--amber);font:700 12.5px/1.5 'Pretendard',sans-serif">⚠️ 정산 계좌가 등록되지 않았습니다. 판매가 발생해도 정산을 받을 수 없으니 지금 등록해주세요.</div>
+        <div class="g3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">은행</label>
+            <select id="set_bank" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+              <option value="">선택해주세요</option>
+              <option>국민은행</option><option>신한은행</option><option>우리은행</option><option>하나은행</option>
+              <option>농협은행</option><option>기업은행</option><option>SC제일은행</option><option>씨티은행</option>
+              <option>수협은행</option><option>대구은행</option><option>부산은행</option><option>경남은행</option>
+              <option>광주은행</option><option>전북은행</option><option>제주은행</option><option>새마을금고</option>
+              <option>신협</option><option>우체국</option><option>산업은행</option><option>카카오뱅크</option>
+              <option>케이뱅크</option><option>토스뱅크</option>
+            </select>
+          </div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">계좌번호</label><input type="text" id="set_account" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="- 없이 숫자만"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">예금주</label><input type="text" id="set_holder" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="사업자등록증상 명의"></div>
+        </div>
+        <button onclick="saveBankAccount()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">계좌 저장</button>
+        <span id="bank_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
+      </div>
       <div class="card" style="border-color:var(--red-bg)">
         <div class="card-h"><div class="card-t" style="color:var(--red)">⚠️ 회원 탈퇴</div></div>
         <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">탈퇴 시 등록된 제품, 수익 내역, 크리에이터 연결 정보가 모두 삭제됩니다.</div>
@@ -2402,7 +2425,7 @@ window.loadBrandSettingsData = async function() {
   const supabase = window._supabase
   const user = window._vinglyUser
   if (!supabase || !user) return
-  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_start_date, business_verified, business_status').eq('id', user.id).single()
+  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
   if (error) { console.error('설정 정보 불러오기 실패:', error); return }
   if (!data) return
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
@@ -2410,6 +2433,16 @@ window.loadBrandSettingsData = async function() {
   setVal('set_phone', data.phone)
   setVal('set_bizno', data.business_number)
   setVal('set_biz_rep', data.representative_name)
+  setVal('set_bank', data.bank_name)
+  setVal('set_account', data.account_number)
+  setVal('set_holder', data.account_holder)
+
+  // 계좌 미등록 시 경고 — 등록 안 하면 판매가 나도 정산을 받을 수 없음
+  const bankWarn = document.getElementById('bank-warning')
+  if (bankWarn) {
+    const hasBank = data.bank_name && data.account_number && data.account_holder
+    bankWarn.style.display = hasBank ? 'none' : 'block'
+  }
   if (data.business_start_date) {
     // YYYYMMDD → YYYY-MM-DD (date input 형식)
     const d = data.business_start_date
@@ -2482,6 +2515,46 @@ window.verifyBusinessNumber = async function() {
 
   btn.textContent = '🔍 사업자 인증하기'; btn.disabled = false
 }
+window.saveBankAccount = async function() {
+  const supabase = window._supabase
+  const user = window._vinglyUser
+  if (!supabase || !user) return
+
+  const bank_name = document.getElementById('set_bank')?.value || ''
+  const account_number = (document.getElementById('set_account')?.value || '').replace(/[^0-9]/g, '')
+  const account_holder = (document.getElementById('set_holder')?.value || '').trim()
+
+  if (!bank_name || !account_number || !account_holder) {
+    alert('은행, 계좌번호, 예금주를 모두 입력해주세요.\n\n하나라도 비어있으면 정산이 불가능합니다.')
+    return
+  }
+  if (account_number.length < 8) {
+    alert('계좌번호를 다시 확인해주세요. (숫자만 입력, 최소 8자리)')
+    return
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ bank_name, account_number, account_holder })
+    .eq('id', user.id)
+    .select()
+
+  if (error) {
+    alert('계좌 저장에 실패했습니다: ' + error.message)
+    return
+  }
+  // RLS로 조용히 0건 업데이트되는 경우를 반드시 잡아야 함 (저장된 줄 알고 넘어가면 정산 사고)
+  if (!data || data.length === 0) {
+    alert('계좌가 저장되지 않았습니다 (권한 문제로 보입니다).\n\n고객지원으로 문의해주세요.')
+    return
+  }
+
+  const msg = document.getElementById('bank_msg')
+  if (msg) { msg.style.display = 'inline'; setTimeout(() => { msg.style.display = 'none' }, 2500) }
+  const bankWarn = document.getElementById('bank-warning')
+  if (bankWarn) bankWarn.style.display = 'none'
+}
+
 async function saveProfile() {
   const supabase = window._supabase
   const user = window._vinglyUser
