@@ -659,10 +659,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (user.user_metadata?.role !== 'brand') { location.replace('login.html') }
     else {
       const name = user.user_metadata?.company_name || user.user_metadata?.name || user.email || '브랜드'
-      const { data: userRow } = await supabase.from('users').select('plan').eq('id', user.id).single()
+      const { data: userRow } = await supabase.from('users').select('plan, early_bird').eq('id', user.id).single()
       const plan = userRow?.plan || 'pilot'
       window._supabase = supabase
-      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan }
+      window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan, early_bird: !!userRow?.early_bird }
 
       // 모듈 스크립트는 이미 DOM이 완성된 뒤에 실행되므로 DOMContentLoaded를 기다릴 필요가 없음
       ;(() => {
@@ -738,7 +738,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const plans = await getBrandPlans()
     const planInfo = plans[user.plan] || plans.pilot
     const sbPlanEl = document.getElementById('sb-plan-label')
-    if (sbPlanEl && planInfo) sbPlanEl.textContent = `공급자 · ${planInfo.name}`
+    if (sbPlanEl && planInfo) {
+      // 얼리버드는 영구 우대 요율이 적용되므로 항상 보이게 해서 혜택을 인지시킨다
+      sbPlanEl.innerHTML = `공급자 · ${planInfo.name}` +
+        (user.early_bird ? ' <span style="font-size:10px;background:linear-gradient(135deg,#00B37E,#C9911D);color:#fff;padding:1px 6px;border-radius:4px;font-weight:800;vertical-align:middle">얼리버드</span>' : '')
+    }
     const limit = planInfo ? planInfo.product_limit : null
     const usageEl = document.getElementById('plan-usage-bar')
     if (usageEl) {
