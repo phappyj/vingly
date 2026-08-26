@@ -329,7 +329,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="card" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <label style="font:700 13px/1 'Pretendard',sans-serif">조회 기간</label>
-        <input type="month" id="rev-month" onchange="loadCreatorsAndRevenue()" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:600 13px/1 'Pretendard',sans-serif;font-family:inherit">
+        <input type="month" id="rev-month" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:600 13px/1 'Pretendard',sans-serif;font-family:inherit">
+        <button class="act-btn green" id="rev-search-btn" onclick="loadCreatorsAndRevenue()">조회</button>
         <button class="act-btn" onclick="revSetThisMonth()">이번 달</button>
         <span style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">환불된 주문은 매출에서 제외됩니다</span>
       </div>
@@ -929,6 +930,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const user = window._vinglyUser
     if (!user) return
 
+    // 조회 중임을 버튼에 표시 (반응이 없으면 더 느리게 느껴지므로)
+    const searchBtn = document.getElementById('rev-search-btn')
+    if (searchBtn) { searchBtn.textContent = '조회 중...'; searchBtn.disabled = true }
+    const finishLoading = () => { if (searchBtn) { searchBtn.textContent = '조회'; searchBtn.disabled = false } }
+
     // 조회 기간 (기본: 이번 달)
     const monthEl = document.getElementById('rev-month')
     const now = new Date()
@@ -1180,6 +1186,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </tr>`
       }).join('')
     }
+
+    finishLoading()
   }
 
   const ORDER_PAGE_SIZE = 30
