@@ -218,9 +218,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="home-month-sales">₩0</div><div class="sc-ch" id="home-month-sales-sub">제품 등록 후 시작됩니다</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">활동 크리에이터</div><div class="sc-ico" style="background:var(--green-bg)">📱</div></div><div class="sc-val" id="home-active-creators">0명</div><div class="sc-ch">제품 등록 시 매칭 시작</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val" id="home-total-orders">0건</div><div class="sc-ch">아직 판매 없음</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val" id="home-total-orders">0건</div><div class="sc-ch" id="home-total-orders-sub">아직 판매 없음</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val" id="home-settle-pending">₩0</div><div class="sc-ch">결제 완료 후 14일 보류</div></div>
     </div>
+
+    <!-- 처리해야 할 일 — 각 탭을 일일이 열어보지 않아도 홈에서 바로 확인 -->
+    <div class="card" id="home-todo-card" style="display:none;margin-bottom:16px;border-color:var(--amber)">
+      <div class="card-h"><div class="card-t">⚡ 처리가 필요한 항목</div></div>
+      <div id="home-todo-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-h"><div class="card-t">🕒 최근 활동</div><a class="card-a" onclick="goPage('orders')">주문 전체보기</a></div>
+      <div id="home-activity-empty" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35);font-size:13px">최근 활동이 없습니다</div>
+      <div id="home-activity-list" style="display:none;flex-direction:column"></div>
+    </div>
+
     <div class="card">
       <div class="card-h"><div class="card-t">제품별 판매 현황</div><button class="btn-primary" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">+ 제품 등록</button></div>
       <div class="tw">
@@ -699,6 +712,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadSamples()
         loadCreatorsAndRevenue()
         loadNotifications()
+        loadHomeSummary()
         const settleMonth = document.getElementById('settle_month')
         if (settleMonth) {
           const now = new Date()
@@ -714,6 +728,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           loadSamples()
           loadCreatorsAndRevenue()
           loadNotifications()
+          loadHomeSummary()
         }, 20000)
 
         // 탭을 잠깐 벗어났다가 돌아왔을 때도 즉시 한 번 갱신
@@ -725,6 +740,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             loadSamples()
             loadCreatorsAndRevenue()
             loadNotifications()
+            loadHomeSummary()
           }
         })
       })()
@@ -1047,6 +1063,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (monthSalesSubEl) monthSalesSubEl.textContent = monthOrders.length > 0 ? `이번 달 ${monthOrders.length}건 판매` : '제품 등록 후 시작됩니다'
     setText('home-active-creators', distinctCreators.size + '명')
     setText('home-total-orders', allOrders.length + '건')
+    setText('home-total-orders-sub', allOrders.length > 0 ? `누적 ₩${allOrders.reduce((s, o) => s + Number(o.amount || 0), 0).toLocaleString()}` : '아직 판매 없음')
 
     const { data: pendingBrandSettlements } = await supabase
       .from('settlements')
@@ -1215,6 +1232,106 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
 
     finishLoading()
+  }
+
+  // 메뉴 위치(nth-child)는 구분선 등으로 쉽게 어긋나므로 onclick 내용으로 버튼을 찾는다
+  window.goPage = function(pageId) {
+    const btn = [...document.querySelectorAll('.ni')].find(b => (b.getAttribute('onclick') || '').includes(`'${pageId}'`))
+    showPage(pageId, btn || null)
+  }
+
+  // 홈 화면 요약 — 각 탭을 일일이 열어보지 않아도 처리할 일과 최근 흐름을 한눈에
+  window.loadHomeSummary = async function() {
+    const user = window._vinglyUser
+    if (!user) return
+
+    const [sampleRes, reportRes, orderRes] = await Promise.all([
+      supabase.from('samples').select('id,status,created_at,creator,product').eq('brand', user.id).order('created_at', { ascending: false }).limit(30),
+      supabase.from('orders').select('id').eq('brand', user.id).limit(200),
+      supabase.from('orders').select('id,amount,buyer_name,created_at,product,shipping_status,status').eq('brand', user.id).in('status', ['confirmed', 'settled']).order('created_at', { ascending: false }).limit(5),
+    ])
+
+    const samples = sampleRes.data || []
+    const recentOrders = orderRes.data || []
+
+    // 신고는 내 주문에 달린 것만 (reports는 order_id로 연결됨)
+    let pendingReports = 0
+    try {
+      const myOrderIds = (reportRes.data || []).map(o => o.id)
+      if (myOrderIds.length) {
+        const { data: reps } = await supabase.from('reports').select('id,status,order_id').in('order_id', myOrderIds)
+        pendingReports = (reps || []).filter(r => r.status === 'pending' || r.status === 'reviewing').length
+      }
+    } catch (e) { /* ignore */ }
+
+    const pendingSamples = samples.filter(s => s.status === 'requested' || s.status === 'pending').length
+    const readyToShip = recentOrders.filter(o => (o.shipping_status || 'preparing') === 'preparing').length
+
+    // ── 처리가 필요한 항목 ──
+    const todos = []
+    if (pendingReports > 0) {
+      todos.push({ icon: '🚨', text: `미처리 신고 ${pendingReports}건`, sub: '전자상거래법상 3영업일 이내 처리 필요', page: 'reports', urgent: true })
+    }
+    if (pendingSamples > 0) {
+      todos.push({ icon: '🎁', text: `샘플 신청 ${pendingSamples}건 대기`, sub: '승인 또는 거절 처리가 필요합니다', page: 'sample' })
+    }
+    if (readyToShip > 0) {
+      todos.push({ icon: '📦', text: `배송 준비중 주문 ${readyToShip}건`, sub: '운송장번호를 등록해주세요', page: 'orders' })
+    }
+
+    const todoCard = document.getElementById('home-todo-card')
+    const todoList = document.getElementById('home-todo-list')
+    if (todoCard && todoList) {
+      todoCard.style.display = todos.length ? 'block' : 'none'
+      todoList.innerHTML = todos.map(t => `
+        <div onclick="goPage('${t.page}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;background:${t.urgent ? 'var(--red-bg)' : 'var(--ink-06)'};cursor:pointer">
+          <span style="font-size:18px">${t.icon}</span>
+          <div style="flex:1">
+            <div style="font:700 13.5px/1.3 'Pretendard',sans-serif;color:${t.urgent ? 'var(--red)' : 'var(--ink)'}">${t.text}</div>
+            <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${t.sub}</div>
+          </div>
+          <span style="color:var(--ink-40);font-size:14px">→</span>
+        </div>`).join('')
+    }
+
+    // ── 최근 활동 (최근 주문 5건) ──
+    const actEmpty = document.getElementById('home-activity-empty')
+    const actList = document.getElementById('home-activity-list')
+    if (!actEmpty || !actList) return
+
+    if (recentOrders.length === 0) {
+      actEmpty.style.display = 'block'
+      actList.style.display = 'none'
+      return
+    }
+
+    const pids = [...new Set(recentOrders.map(o => o.product).filter(Boolean))]
+    let pmap = {}
+    if (pids.length) {
+      const { data: ps } = await supabase.from('products').select('id,name').in('id', pids)
+      ;(ps || []).forEach(p => { pmap[p.id] = p.name })
+    }
+
+    const SHIP_LABEL = { preparing: '배송 준비중', shipping: '배송중', delivered: '배송완료' }
+    const timeAgo = (d) => {
+      const diff = Date.now() - new Date(d).getTime()
+      const h = Math.floor(diff / 3600000)
+      if (h < 1) return '방금 전'
+      if (h < 24) return `${h}시간 전`
+      return `${Math.floor(h / 24)}일 전`
+    }
+
+    actEmpty.style.display = 'none'
+    actList.style.display = 'flex'
+    actList.innerHTML = recentOrders.map(o => `
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--ink-06)">
+        <span style="font-size:16px">🛒</span>
+        <div style="flex:1;min-width:0">
+          <div style="font:600 13.5px/1.3 'Pretendard',sans-serif">${pmap[o.product] || '제품'} · ₩${Number(o.amount || 0).toLocaleString()}</div>
+          <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:2px">${o.buyer_name || '구매자'} · ${SHIP_LABEL[o.shipping_status || 'preparing']}</div>
+        </div>
+        <span style="font:400 11.5px/1 'Pretendard',sans-serif;color:var(--ink-40);white-space:nowrap">${timeAgo(o.created_at)}</span>
+      </div>`).join('')
   }
 
   const ORDER_PAGE_SIZE = 30
