@@ -962,7 +962,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     loadDashStats(totalClicks)
 
-    document.getElementById('dash-links-list').innerHTML = activeLinks.slice(0, 3).map(l => {
+    // 성과가 좋은 링크를 먼저 보여준다 (생성 순보다 클릭 순이 유용)
+    document.getElementById('dash-links-list').innerHTML = activeLinks
+      .slice()
+      .sort((a, b) => (b.click_count || 0) - (a.click_count || 0))
+      .slice(0, 5)
+      .map(l => {
       const imgs = l.products?.images || []
       const thumb = imgs[0] || l.products?.image_url
       return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
