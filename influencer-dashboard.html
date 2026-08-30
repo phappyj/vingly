@@ -132,7 +132,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .td-b{font-weight:700}
 .badge{display:inline-flex;align-items:center;font:700 11px/1 'Pretendard',sans-serif;padding:3px 8px;border-radius:4px}
 .bg{background:var(--green-bg);color:var(--green)}
+.bam{background:var(--amber-bg,#FFFBEB);color:var(--amber,#D97706)}
+.br{background:var(--red-bg,#FEF2F2);color:var(--red,#991B1B)}
 .btn-primary{padding:10px 20px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer;min-height:40px;transition:all .2s}
+/* 표 안에서 쓰는 작은 액션 버튼 — 브랜드 대시보드와 동일한 규격, 색만 크리에이터 테마(초록) */
+.act-btn{padding:5px 10px;border-radius:6px;font:600 11px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit;border:1px solid var(--ink-14);background:transparent;color:var(--ink);transition:all .15s;margin-right:4px}
+.act-btn:hover{border-color:var(--green);color:var(--green)}
+.act-btn.green{border-color:var(--green);color:var(--green)}
+.act-btn.green:hover{background:var(--green);color:#fff}
+.act-btn.r{border-color:var(--ink-14)}
+.act-btn.r:hover{border-color:var(--red);color:var(--red)}
+.act-btn:disabled{opacity:.5;cursor:not-allowed}
 .mob-top{display:none;background:var(--white);border-bottom:1px solid var(--ink-14);padding:0 20px;height:56px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .hb{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px}
 .hb span{display:block;width:19px;height:2px;background:var(--ink);border-radius:2px}
@@ -1098,7 +1108,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           ${isActive
             ? `<button class="act-btn" onclick="toggleLinkStatus('${l.id}','inactive')" title="공유를 중단합니다. 기존 링크로 접속하면 이동되지 않습니다">중지</button>`
             : `<button class="act-btn green" onclick="toggleLinkStatus('${l.id}','active')">재개</button>`}
-          <button class="act-btn" style="background:var(--red-bg);color:var(--red)" onclick="deleteLink('${l.id}')">삭제</button>
+          <button class="act-btn r" onclick="deleteLink('${l.id}')">삭제</button>
         </td>
       </tr>`
     }).join('')
@@ -1123,12 +1133,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
     const original = btn.textContent
     btn.textContent = '✓ 복사됨'
-    btn.style.background = 'var(--green)'
-    btn.style.color = '#fff'
+    btn.classList.add('green')
     setTimeout(() => {
       btn.textContent = original
-      btn.style.background = ''
-      btn.style.color = ''
+      btn.classList.remove('green')
     }, 1500)
   }
 
