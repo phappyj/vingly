@@ -1177,6 +1177,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         cat: p.category || '기타', price: p.price,
         comm: Number(p.commission_rate) + (myTier.commissionBonus || 0),
         emoji: emoMap[p.category] || '📦',
+        // 정렬에 필요한 값 — 매핑에서 빠져 있어 "최신 등록순"이 동작하지 않았음
+        created_at: p.created_at,
+        planWeight: planWeights[p.users?.plan] || 0,
         desc: p.description || '',
         image_url: p.image_url || null,
         images: p.images || [],
@@ -1201,6 +1204,18 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         const catOk = expCat === '전체' || p.cat === expCat
         const srchOk = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search)
         return catOk && srchOk
+      })
+
+      // 정렬 — 드롭다운은 있었지만 값을 읽는 코드가 없어 어떤 걸 골라도 순서가 바뀌지 않던 문제 수정.
+      // 브랜드 플랜의 탐색 노출 가중치(Basic/Pro 혜택)는 유지하되, 그 안에서 사용자가 고른 기준으로 정렬한다.
+      const sortBy = document.getElementById('exp-sort')?.value || '수수료 높은 순'
+      filtered.sort((a, b) => {
+        const wDiff = (b.planWeight || 0) - (a.planWeight || 0)
+        if (wDiff !== 0) return wDiff
+        if (sortBy === '가격 낮은 순') return Number(a.price || 0) - Number(b.price || 0)
+        if (sortBy === '최신 등록순') return new Date(b.created_at || 0) - new Date(a.created_at || 0)
+        const diff = Number(b.comm || 0) - Number(a.comm || 0)
+        return diff !== 0 ? diff : new Date(b.created_at || 0) - new Date(a.created_at || 0)
       })
       document.getElementById('exp-count').textContent = filtered.length + '개'
       if (!filtered.length) {
