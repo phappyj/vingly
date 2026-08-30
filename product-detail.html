@@ -316,9 +316,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   }
 
   async function loadProduct(id) {
+    // users 테이블을 조인하면 비로그인(anon) 상태에서 RLS에 막혀 쿼리 전체가 실패한다.
+    // (users는 "본인만 조회" 정책이라 조인이 불가) → 제품만 조회하고,
+    // 브랜드명은 개인정보를 노출하지 않는 전용 함수(get_brand_name)로 따로 가져온다.
     const { data, error } = await supabase
       .from('products')
-      .select('*, users!brand_user(company_name)')
+      .select('*')
       .eq('id', id)
       .eq('status', 'active')
       .single()
@@ -327,22 +330,34 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 
     if (error || !data) { showNotFound(); return }
 
+    // 브랜드 상호는 전자상거래법상 공개 의무 사항이라 노출해도 무방
+    let brandName = '브랜드'
+    try {
+      const { data: bn } = await supabase.rpc('get_brand_name', { p_brand_user: data.brand_user })
+      if (bn) brandName = bn
+    } catch (e) { console.error('브랜드명 조회 실패:', e) }
+
     product = data
     const images = data.images && data.images.length > 0 ? data.images : (data.image_url ? [data.image_url] : [])
-    const brand = data.users?.company_name || '브랜드'
+    const brand = brandName
     const kps = data.key_points || []
 
     // 크리에이터 정보 (ref로 조회)
+    // 여기도 users 조인은 비로그인 상태에서 RLS에 막히므로 링크만 조회하고 활동명은 따로 가져온다
     let creatorName = null
     if (creatorRef) {
       const { data: ld } = await supabase
         .from('links')
-        .select('*, users!creator(company_name)')
+        .select('*')
         .eq('id', creatorRef)
         .single()
       if (ld) {
         linkData = ld
-        creatorName = ld.users?.company_name || '크리에이터'
+        creatorName = '크리에이터'
+        try {
+          const { data: cn } = await supabase.rpc('get_creator_name', { p_creator: ld.creator })
+          if (cn) creatorName = cn
+        } catch (e) { console.error('크리에이터명 조회 실패:', e) }
       }
     }
 
