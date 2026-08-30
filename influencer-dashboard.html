@@ -430,7 +430,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="links-table-wrap" style="display:none">
         <table>
-          <thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>상태</th></tr></thead>
+          <thead><tr><th>제품</th><th>링크</th><th>클릭</th><th>구매</th><th>전환율</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="links-tbody"></tbody>
         </table>
       </div>
@@ -936,7 +936,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const { data: links } = await supabase
       .from('links')
       .select('*, products(name, image_url, images, price, commission_rate)')
-      .eq('creator', user.id).eq('status', 'active')
+      .eq('creator', user.id)
       .order('created_at', { ascending: false })
 
     const dashLoadingEl = document.getElementById('dash-links-loading')
@@ -954,12 +954,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
 
     document.getElementById('dash-links-empty').style.display = 'none'
-    const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
+    // 홈 화면(내 링크 현황)은 지금 공유 중인 활성 링크만 보여준다.
+    // 링크 관리 탭에서는 중지된 것도 보여야 재개할 수 있으므로 목록을 분리한다.
+    const activeLinks = links.filter(l => (l.status || 'active') === 'active')
+    const totalClicks = activeLinks.reduce((s, l) => s + (l.click_count || 0), 0)
     document.getElementById('dash-clicks').textContent = totalClicks.toLocaleString()
 
     loadDashStats(totalClicks)
 
-    document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => {
+    document.getElementById('dash-links-list').innerHTML = activeLinks.slice(0, 3).map(l => {
       const imgs = l.products?.images || []
       const thumb = imgs[0] || l.products?.image_url
       return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--ink-07)">
@@ -976,15 +979,113 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     document.getElementById('links-empty').style.display = 'none'
     document.getElementById('links-table-wrap').style.display = 'block'
-    document.getElementById('links-tbody').innerHTML = links.map(l => `
-      <tr>
-        <td class="td-b">${l.products?.name || '제품'}</td>
-        <td style="font-size:11px;color:var(--ink-40)">vingly.kr/j/${l.slug}</td>
-        <td>${l.click_count || 0}</td>
-        <td><span class="badge bg">활성</span></td>
-      </tr>`).join('')
+
+    // 링크별 실제 구매 전환 수 — 클릭만 보여주면 성과 판단이 안 됨
+    const convMap = {}
+    try {
+      const { data: convOrders } = await supabase
+        .from('orders')
+        .select('link')
+        .eq('creator', user.id)
+        .in('status', ['confirmed', 'settled'])
+      ;(convOrders || []).forEach(o => {
+        if (o.link) convMap[o.link] = (convMap[o.link] || 0) + 1
+      })
+    } catch (e) { console.error('전환 수 조회 실패:', e) }
+
+    document.getElementById('links-tbody').innerHTML = links.map(l => {
+      const clicks = l.click_count || 0
+      const conv = convMap[l.id] || 0
+      const rate = clicks > 0 ? ((conv / clicks) * 100).toFixed(1) + '%' : '—'
+      const isActive = (l.status || 'active') === 'active'
+      const fullUrl = `https://vingly.kr/j/${l.slug}`
+      return `
+      <tr${isActive ? '' : ' style="background:var(--ink-07)"'}>
+        <td class="td-b"${isActive ? '' : ' style="color:var(--ink-40)"'}>${l.products?.name || '제품'}</td>
+        <td style="font-size:11px;color:var(--ink-40);word-break:break-all">vingly.kr/j/${l.slug}</td>
+        <td>${clicks}</td>
+        <td style="font-weight:700;color:${conv > 0 ? 'var(--green)' : 'var(--ink-40)'}">${conv}</td>
+        <td>${rate}</td>
+        <td><span class="badge ${isActive ? 'bg' : 'bam'}">${isActive ? '활성' : '중지'}</span></td>
+        <td style="white-space:nowrap">
+          <button class="act-btn" onclick="copyLink('${fullUrl}', this)">복사</button>
+          ${isActive
+            ? `<button class="act-btn" onclick="toggleLinkStatus('${l.id}','inactive')" title="공유를 중단합니다. 기존 링크로 접속하면 이동되지 않습니다">중지</button>`
+            : `<button class="act-btn green" onclick="toggleLinkStatus('${l.id}','active')">재개</button>`}
+          <button class="act-btn" style="background:var(--red-bg);color:var(--red)" onclick="deleteLink('${l.id}')">삭제</button>
+        </td>
+      </tr>`
+    }).join('')
 
     window._myLinks = links
+  }
+
+  // 링크 복사 — 크리에이터가 SNS에 공유해야 수익이 나므로 가장 핵심적인 동작
+  window.copyLink = async function(url, btn) {
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch (e) {
+      // 클립보드 API가 막힌 환경(구형 브라우저·비HTTPS) 폴백
+      const ta = document.createElement('textarea')
+      ta.value = url
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    const original = btn.textContent
+    btn.textContent = '✓ 복사됨'
+    btn.style.background = 'var(--green)'
+    btn.style.color = '#fff'
+    setTimeout(() => {
+      btn.textContent = original
+      btn.style.background = ''
+      btn.style.color = ''
+    }, 1500)
+  }
+
+  // 링크 중지/재개 — 삭제와 달리 클릭·전환 기록이 보존됨
+  window.toggleLinkStatus = async function(linkId, newStatus) {
+    const label = newStatus === 'inactive' ? '중지' : '재개'
+    const { data, error } = await supabase
+      .from('links')
+      .update({ status: newStatus })
+      .eq('id', linkId)
+      .select()
+
+    if (error) {
+      alert(`링크 ${label} 처리에 실패했습니다: ` + error.message)
+      return
+    }
+    if (!data || data.length === 0) {
+      alert(`링크 ${label} 처리가 저장되지 않았습니다.\n\n잠시 후 다시 시도해주시고, 문제가 반복되면 고객지원으로 문의해주세요.`)
+      console.error('[Vingly] links UPDATE 0건 — RLS 정책 확인 필요')
+      return
+    }
+    showToast(`링크를 ${label}했습니다 ✓`)
+    await loadMyLinks()
+  }
+
+  window.deleteLink = async function(linkId) {
+    if (!confirm('이 링크를 삭제하시겠습니까?\n\n※ 이미 판매가 발생한 링크는 정산 기록 보존을 위해 삭제할 수 없습니다.\n   이 경우 "중지"를 이용해주세요.\n\n삭제하면 이 링크로 접속하는 사람은 제품을 볼 수 없게 됩니다.')) return
+
+    const { error } = await supabase.from('links').delete().eq('id', linkId)
+
+    if (error) {
+      const isFK = /foreign key|violates|23503/i.test(error.message || '')
+      if (isFK) {
+        if (confirm('이 링크는 판매 이력이 있어 삭제할 수 없습니다.\n(정산 기록 보존 대상)\n\n대신 "중지" 처리할까요?')) {
+          await toggleLinkStatus(linkId, 'inactive')
+        }
+      } else {
+        alert('삭제에 실패했습니다: ' + error.message)
+      }
+      return
+    }
+    showToast('링크가 삭제됐습니다 ✓')
+    await loadMyLinks()
   }
 
   async function loadMySamples() {
