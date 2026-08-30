@@ -239,6 +239,14 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
           <div class="r-status-text">${order.orderStatusLabel}</div>
         </div>
         ${buildRows(order)}
+        <div class="track-box">
+          <div class="tt">💳 환불 안내</div>
+          <div style="font-size:12.5px;line-height:1.6;color:rgba(10,12,16,.6)">
+            결제하신 금액은 전액 환불 처리됐습니다.<br>
+            결제 수단에 따라 실제 환급까지 <strong>영업일 기준 3~5일</strong>이 소요될 수 있습니다.<br>
+            기간이 지나도 환급되지 않으면 아래로 문의해주세요.
+          </div>
+        </div>
         ${REPORT_FORM_HTML}`
       resultEl.style.display = 'block'
       return
@@ -266,6 +274,28 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
           : `<div class="empty">아직 운송장번호가 등록되지 않았습니다.</div>`}
       </div>`
 
+    // 배송 시작 전에는 구매자가 직접 취소할 수 있어야 한다 (전자상거래법 제17조 청약철회권).
+    // 배송 후에는 상품 회수가 선행돼야 하므로 신고 절차로 유도한다.
+    const canCancel = order.shippingStatus === 'preparing'
+    const cancelHtml = canCancel ? `
+      <div class="track-box" style="border-color:#FEE2E2;background:#FEF2F2">
+        <div class="tt" style="color:#991B1B">주문 취소</div>
+        <div style="font-size:12.5px;line-height:1.6;color:#991B1B;margin-bottom:12px">
+          아직 상품이 발송되지 않아 <strong>바로 취소</strong>하실 수 있어요.<br>
+          취소 시 결제하신 금액이 전액 환불되며, 카드사에 따라 환급까지 영업일 기준 3~5일이 걸릴 수 있어요.
+        </div>
+        <select id="cancel_reason" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid #FECACA;background:#fff;font-size:13.5px;font-family:inherit;outline:none;margin-bottom:10px">
+          <option value="">취소 사유를 선택해주세요 (선택)</option>
+          <option value="단순변심">단순 변심</option>
+          <option value="다른 상품 구매">다른 상품을 구매하려고요</option>
+          <option value="배송이 늦어서">배송이 너무 늦어요</option>
+          <option value="실수로 주문">실수로 주문했어요</option>
+          <option value="기타">기타</option>
+        </select>
+        <button id="cancelBtn" onclick="cancelOrder()" style="width:100%;padding:13px;border-radius:10px;background:#991B1B;color:#fff;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">주문 취소하기</button>
+        <div id="cancelErr" class="err" style="display:none;margin-top:10px;margin-bottom:0"></div>
+      </div>` : ''
+
     resultEl.innerHTML = `
       <div class="r-status">
         <div class="r-status-dot"></div>
@@ -274,9 +304,58 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
       <div class="steps">${stepsHtml}</div>
       ${buildRows(order)}
       ${trackHtml}
+      ${cancelHtml}
       ${REPORT_FORM_HTML}
     `
     resultEl.style.display = 'block'
+  }
+
+  window.cancelOrder = async function() {
+    const btn = document.getElementById('cancelBtn')
+    const errEl = document.getElementById('cancelErr')
+    const reason = document.getElementById('cancel_reason')?.value || '단순변심'
+
+    if (!confirm('정말 주문을 취소하시겠어요?\n\n취소하면 결제 금액이 전액 환불되며, 되돌릴 수 없습니다.')) return
+
+    errEl.style.display = 'none'
+    btn.disabled = true
+    btn.textContent = '취소 처리 중...'
+
+    try {
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/cancel-order-by-buyer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({
+          orderId: document.getElementById('order_id').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          reason,
+        }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        errEl.textContent = data.message || '취소 처리에 실패했습니다.'
+        errEl.style.display = 'block'
+        btn.disabled = false
+        btn.textContent = '주문 취소하기'
+        return
+      }
+
+      alert(data.warning
+        ? '⚠️ ' + data.warning
+        : '주문이 취소됐습니다.\n\n결제하신 금액은 전액 환불되며, 카드사에 따라 영업일 기준 3~5일이 소요될 수 있습니다.')
+      // 취소 후 최신 상태로 다시 조회
+      lookupOrder()
+    } catch (e) {
+      errEl.textContent = '네트워크 오류가 발생했습니다. 다시 시도해주세요.'
+      errEl.style.display = 'block'
+      btn.disabled = false
+      btn.textContent = '주문 취소하기'
+    }
   }
 
   function buildRows(order) {
