@@ -245,10 +245,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <button class="ob-btn" onclick="showPage('products',document.querySelector('.ni:nth-child(2)'))">제품 탐색하기 →</button>
     </div>
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt">링크 생성 후 시작됩니다</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div><div class="sc-val">0건</div><div class="sc-ch nt">아직 판매 없음</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div><div class="sc-val" id="dash-clicks">0</div><div class="sc-ch nt">전환율 —</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label" id="dash-settle-label">정산 예정 (월말)</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-settle-sub">14일 보류 후 정산</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="dash-month-earn" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-month-earn-sub">링크 생성 후 시작됩니다</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--blue-bg)">🛒</div></div><div class="sc-val" id="dash-total-sales">0건</div><div class="sc-ch nt" id="dash-total-sales-sub">아직 판매 없음</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">링크 클릭 수</div><div class="sc-ico" style="background:var(--amber-bg)">🔗</div></div><div class="sc-val" id="dash-clicks">0</div><div class="sc-ch nt" id="dash-conv-rate">전환율 —</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label" id="dash-settle-label">정산 예정</div><div class="sc-ico" style="background:var(--green-bg)">📅</div></div><div class="sc-val" id="dash-settle-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="dash-settle-sub">14일 보류 후 정산</div></div>
     </div>
     <div class="g3">
       <div class="card">
@@ -888,6 +888,48 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     })
   }
 
+  // 홈 통계 — 링크가 0개여도 과거 판매 실적은 보여야 하므로 별도 함수로 분리
+  async function loadDashStats(totalClicks = 0) {
+    const user = window._vinglyUser
+    if (!user) return
+    try {
+      const { data: myOrders } = await supabase
+        .from('orders')
+        .select('id,creator_fee,created_at,status')
+        .eq('creator', user.id)
+        .in('status', ['confirmed', 'settled'])
+
+      const orders = myOrders || []
+      const now = new Date()
+      const monthOrders = orders.filter(o => {
+        const d = new Date(o.created_at)
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+      })
+      const monthEarn = monthOrders.reduce((s, o) => s + Number(o.creator_fee || 0), 0)
+
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
+      setTxt('dash-month-earn', '₩' + monthEarn.toLocaleString())
+      setTxt('dash-month-earn-sub', monthOrders.length > 0 ? `이번 달 ${monthOrders.length}건 판매` : '링크 생성 후 시작됩니다')
+      setTxt('dash-total-sales', orders.length + '건')
+      setTxt('dash-total-sales-sub', orders.length > 0
+        ? `누적 ₩${orders.reduce((s, o) => s + Number(o.creator_fee || 0), 0).toLocaleString()}`
+        : '아직 판매 없음')
+      setTxt('dash-conv-rate', totalClicks > 0
+        ? `전환율 ${((orders.length / totalClicks) * 100).toFixed(1)}%`
+        : '전환율 —')
+
+      const { data: pendingSettles } = await supabase
+        .from('settlements')
+        .select('amount')
+        .eq('recipient', user.id)
+        .eq('status', 'pending')
+      const settlePending = (pendingSettles || []).reduce((s, r) => s + Number(r.amount || 0), 0)
+      setTxt('dash-settle-val', '₩' + settlePending.toLocaleString())
+    } catch (e) {
+      console.error('홈 통계 계산 실패:', e)
+    }
+  }
+
   async function loadMyLinks() {
     const user = window._vinglyUser
     if (!user) return
@@ -907,12 +949,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       if (dashEmptyEl) dashEmptyEl.style.display = 'block'
       const linksEmptyEl = document.getElementById('links-empty')
       if (linksEmptyEl) linksEmptyEl.style.display = 'block'
+      loadDashStats(0)  // 링크가 없어도 과거 판매 실적은 표시
       return
     }
 
     document.getElementById('dash-links-empty').style.display = 'none'
     const totalClicks = links.reduce((s, l) => s + (l.click_count || 0), 0)
     document.getElementById('dash-clicks').textContent = totalClicks.toLocaleString()
+
+    loadDashStats(totalClicks)
 
     document.getElementById('dash-links-list').innerHTML = links.slice(0, 3).map(l => {
       const imgs = l.products?.images || []
