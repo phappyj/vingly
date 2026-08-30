@@ -289,9 +289,19 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- 수익 현황 -->
   <div class="page content" id="pg-earn">
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label style="font:700 13px/1 'Pretendard',sans-serif">조회 기간</label>
+        <input type="month" id="earn-month" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--ink-14);font:600 13px/1 'Pretendard',sans-serif;font-family:inherit">
+        <button class="act-btn green" id="earn-search-btn" onclick="loadEarnings()">조회</button>
+        <button class="act-btn" onclick="earnSetThisMonth()">이번 달</button>
+        <span style="font:400 12px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">환불된 주문의 수수료는 지급되지 않습니다</span>
+      </div>
+    </div>
+
     <div class="stat-grid">
-      <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="earn-month-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="earn-month-sub">링크 생성 후 시작</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">₩0</div><div class="sc-ch" style="color:var(--green)">파일럿 무료</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label" id="earn-month-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="earn-month-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="earn-month-sub">링크 생성 후 시작</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">0%</div><div class="sc-ch" style="color:var(--green)">크리에이터 영구 무료</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">실 수령액</div><div class="sc-ico" style="background:var(--green-bg)">✅</div></div><div class="sc-val" id="earn-net-val">₩0</div><div class="sc-ch nt">14일 보류 후 정산</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">누적 수익</div><div class="sc-ico" style="background:var(--amber-bg)">🏆</div></div><div class="sc-val" id="earn-total-val">₩0</div><div class="sc-ch nt" id="earn-total-sub">첫 판매를 기다리는 중</div></div>
     </div>
@@ -529,11 +539,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const sbAv = document.getElementById('sb-av')
       if (sbName) sbName.textContent = name
       if (sbAv) sbAv.textContent = name[0]
-      loadMyLinks()
-      loadMySamples()
-      loadEarnings()
-      loadNotifications()
-      loadChannels()
+      // 아래 로딩 함수·캐시 변수가 이 지점보다 뒤에 정의돼 있어, 곧바로 호출하면
+      // "is not defined / before initialization" 오류가 난다. 스크립트 실행이 끝난 뒤 시작한다.
+      setTimeout(() => {
+        loadMyLinks()
+        loadMySamples()
+        loadEarnings()
+        loadNotifications()
+        loadChannels()
+      }, 0)
     }
   }
 
@@ -748,26 +762,57 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     })
   }
 
-  async function loadEarnings() {
+  window.earnSetThisMonth = function() {
+    const el = document.getElementById('earn-month')
+    if (el) {
+      const n = new Date()
+      el.value = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`
+      loadEarnings()
+    }
+  }
+
+  window.loadEarnings = async function() {
+    const earnBtn = document.getElementById('earn-search-btn')
+    if (earnBtn) { earnBtn.textContent = '조회 중...'; earnBtn.disabled = true }
+    const finishEarn = () => { if (earnBtn) { earnBtn.textContent = '조회'; earnBtn.disabled = false } }
     const supabase = window._supabase
     const user = window._vinglyUser
     if (!supabase || !user) return
 
+    // 환불된 주문(cancelled)도 함께 조회 — 수수료가 왜 안 들어오는지 확인할 수 있어야 함
     const { data: orders } = await supabase
       .from('orders')
-      .select('amount,creator_fee,status,created_at,product')
+      .select('id,amount,creator_fee,status,created_at,product,cancelled_at,cancel_type')
       .eq('creator', user.id)
-      .in('status', ['confirmed', 'settled'])
+      .in('status', ['confirmed', 'settled', 'cancelled'])
       .order('created_at', { ascending: false })
 
-    const allOrders = orders || []
+    const rows = orders || []
+    const allOrders = rows.filter(o => o.status !== 'cancelled')
+    const refundedOrders = rows.filter(o => o.status === 'cancelled')
+
+    // 조회 기간 (기본: 이번 달)
+    const earnMonthEl = document.getElementById('earn-month')
     const now = new Date()
-    const thisMonthOrders = allOrders.filter(o => {
-      const d = new Date(o.created_at)
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
-    })
+    if (earnMonthEl && !earnMonthEl.value) {
+      earnMonthEl.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    }
+    const [selY, selM] = (earnMonthEl?.value || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`)
+      .split('-').map(Number)
+    const isThisMonth = selY === now.getFullYear() && selM === now.getMonth() + 1
+    const periodLabel = isThisMonth ? '이번 달' : `${selY}년 ${selM}월`
+    const inPeriod = (dateStr) => {
+      if (!dateStr) return false
+      const d = new Date(dateStr)
+      return d.getFullYear() === selY && d.getMonth() === selM - 1
+    }
+
+    const thisMonthOrders = allOrders.filter(o => inPeriod(o.created_at))
     const monthTotal = thisMonthOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
     const grandTotal = allOrders.reduce((sum, o) => sum + Number(o.creator_fee || 0), 0)
+
+    const monthLabelEl = document.getElementById('earn-month-label')
+    if (monthLabelEl) monthLabelEl.textContent = periodLabel + ' 수익'
 
     // 등급별 정산 주기 표시 (Elite는 월 2회, 나머지는 월 1회) — 테스트 강제등급 있으면 그걸 반영
     const myTier = await getMyTier()
@@ -800,21 +845,55 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (emptyEl) emptyEl.style.display = hasOrders ? 'none' : 'block'
     if (wrapEl) wrapEl.style.display = hasOrders ? 'block' : 'none'
     if (hasOrders) {
-      const productIds = [...new Set(allOrders.map(o => o.product).filter(Boolean))]
+      // 명세에는 환불 건도 함께 보여준다 (수수료가 왜 빠졌는지 알 수 있어야 함)
+      const periodRows = rows.filter(o => inPeriod(o.status === 'cancelled' ? (o.cancelled_at || o.created_at) : o.created_at))
+      const productIds = [...new Set(periodRows.map(o => o.product).filter(Boolean))]
       let productMap = {}
       if (productIds.length) {
         const { data: prods } = await supabase.from('products').select('id,name').in('id', productIds)
         ;(prods || []).forEach(p => { productMap[p.id] = p.name })
       }
-      const statusLabel = { confirmed: '정산 대기', settled: '정산 완료' }
-      document.getElementById('earn-tbody').innerHTML = allOrders.map(o => `
-        <tr>
-          <td>${new Date(o.created_at).toLocaleDateString('ko-KR')}</td>
-          <td class="td-b">${productMap[o.product] || '-'}</td>
-          <td>₩${Number(o.amount).toLocaleString()}</td>
-          <td style="color:var(--green);font-weight:700">+₩${Number(o.creator_fee).toLocaleString()}</td>
-          <td>${statusLabel[o.status] || o.status}</td>
-        </tr>`).join('')
+
+      // 정산 상태를 settlements 기준으로 정확히 표시 (주문 상태만으로는 보류중/지급가능 구분이 안 됨)
+      const settleMap = {}
+      try {
+        const { data: mySettles } = await supabase
+          .from('settlements')
+          .select('order_id,status,payable_after')
+          .eq('recipient', user.id)
+        ;(mySettles || []).forEach(s => { if (s.order_id) settleMap[s.order_id] = s })
+      } catch (e) { console.error('정산 상태 조회 실패:', e) }
+
+      const CT = { change_of_mind:'단순변심', defect:'상품하자', not_delivered:'미배송', wrong_item:'오배송', seller_cancel:'판매자취소', other:'기타' }
+      const nowMs = Date.now()
+
+      const statusHtml = (o) => {
+        if (o.status === 'cancelled') {
+          return `<span class="badge bam">환불됨${o.cancel_type ? ' · ' + (CT[o.cancel_type] || '기타') : ''}</span>`
+        }
+        const s = settleMap[o.id]
+        if (!s) return '<span class="badge bam">정산 대기</span>'
+        if (s.status === 'voided') return '<span class="badge bam">환불로 무효</span>'
+        if (s.status === 'completed' || s.status === 'paid') return '<span class="badge bg">지급 완료</span>'
+        if (s.payable_after && new Date(s.payable_after).getTime() > nowMs) {
+          const d = new Date(s.payable_after)
+          return `<span class="badge bam">보류중 (~${d.getMonth() + 1}/${d.getDate()})</span>`
+        }
+        return '<span class="badge bg">지급 예정</span>'
+      }
+
+      document.getElementById('earn-tbody').innerHTML = periodRows.map(o => {
+        const isRefund = o.status === 'cancelled'
+        const dateStr = new Date(isRefund ? (o.cancelled_at || o.created_at) : o.created_at).toLocaleDateString('ko-KR')
+        return `
+        <tr${isRefund ? ' style="background:rgba(153,27,27,.04)"' : ''}>
+          <td>${dateStr}</td>
+          <td class="td-b"${isRefund ? ' style="text-decoration:line-through;color:var(--ink-40)"' : ''}>${productMap[o.product] || '(삭제된 제품)'}</td>
+          <td${isRefund ? ' style="text-decoration:line-through;color:var(--ink-40)"' : ''}>₩${Number(o.amount).toLocaleString()}</td>
+          <td style="font-weight:700;color:${isRefund ? 'var(--ink-40)' : 'var(--green)'}">${isRefund ? '₩0' : '+₩' + Number(o.creator_fee).toLocaleString()}</td>
+          <td>${statusHtml(o)}</td>
+        </tr>`
+      }).join('')
     }
 
     // 등급 계산 — 테스트 강제등급(myTier)이 있으면 그걸 우선 사용
@@ -886,6 +965,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         el.style.boxShadow = 'none'
       }
     })
+
+    finishEarn()
   }
 
   // 홈 통계 — 링크가 0개여도 과거 판매 실적은 보여야 하므로 별도 함수로 분리
