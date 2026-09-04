@@ -75,6 +75,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 
 /* STATS */
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+/* 대시보드 구역 라벨 — 규모/추세/건전성/액션을 시각적으로 구분 */
+.sec-label{font:800 12px/1 'Pretendard',sans-serif;color:var(--t3);letter-spacing:.04em;margin:4px 0 10px;text-transform:none}
+.delta-up{color:var(--g);font-weight:700}
+.delta-down{color:var(--r2);font-weight:700}
 .sc2{background:var(--sf);border:1px solid var(--br);border-radius:var(--rad);padding:16px 18px}
 .sc-l{font-size:11px;color:var(--tm);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:5px}
 .sc-v{font-size:24px;font-weight:700;margin-bottom:5px;line-height:1}
@@ -100,7 +104,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 .td-m{color:var(--tm)}
 
 /* BADGE */
-.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--sf);color:var(--ts)}
+.badge.bg{background:var(--bg-g,#E6FBF4);color:var(--g)}
+.badge.bam{background:var(--bg-a,#FFFBEB);color:#92400E}
+.badge.br{background:var(--bg-r);color:var(--r2)}
 .bg2{background:var(--bg-g);color:var(--g)}
 .bb2{background:var(--bg-b);color:var(--b)}
 .ba2{background:var(--bg-a);color:var(--a)}
@@ -243,20 +250,97 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
   <!-- DASHBOARD -->
   <div class="page act" id="pg-dashboard">
+
+    <!-- ① 사업 규모 — 이 플랫폼이 얼마나 크게 돌아가는가 -->
+    <div class="sec-label">사업 규모</div>
     <div class="sg">
-      <div class="sc2"><div class="sc-l">👥 총 회원수</div><div class="sc-v">0명</div><div class="sc-ch nt">가입자 없음</div></div>
-      <div class="sc2"><div class="sc-l">📦 등록 제품</div><div class="sc-v">0개</div><div class="sc-ch nt">등록 제품 없음</div></div>
-      <div class="sc2"><div class="sc-l">💰 이번 달 거래액</div><div class="sc-v">₩0</div><div class="sc-ch nt">거래 없음</div></div>
-      <div class="sc2"><div class="sc-l">🚨 처리 대기</div><div class="sc-v" style="color:var(--r2)">0건</div><div class="sc-ch nt">처리 대기 없음</div></div>
+      <div class="sc2">
+        <div class="sc-l">🛒 총 거래액 (GMV)</div>
+        <div class="sc-v" id="kpi-gmv-total">₩0</div>
+        <div class="sc-ch nt" id="kpi-gmv-total-sub">누적 0건</div>
+      </div>
+      <div class="sc2" style="border-color:var(--g);background:linear-gradient(180deg,rgba(0,179,126,.04),transparent)">
+        <div class="sc-l">💎 Vingly 순매출</div>
+        <div class="sc-v" id="kpi-revenue-total" style="color:var(--g)">₩0</div>
+        <div class="sc-ch nt" id="kpi-revenue-total-sub">거래 수수료 누적</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">👥 총 회원수</div>
+        <div class="sc-v" id="kpi-members">0명</div>
+        <div class="sc-ch nt" id="kpi-members-sub">브랜드 0 · 크리에이터 0</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">📦 판매중 제품</div>
+        <div class="sc-v" id="kpi-products">0개</div>
+        <div class="sc-ch nt" id="kpi-products-sub">등록 브랜드 0곳</div>
+      </div>
+    </div>
+
+    <!-- ② 성장 추세 — 지난달 대비 -->
+    <div class="sec-label">이번 달 실적 <span style="font-weight:400;color:var(--t3)">(괄호는 지난달 대비)</span></div>
+    <div class="sg">
+      <div class="sc2">
+        <div class="sc-l">이번 달 거래액</div>
+        <div class="sc-v" id="kpi-gmv-month">₩0</div>
+        <div class="sc-ch nt" id="kpi-gmv-month-sub">-</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">이번 달 순매출</div>
+        <div class="sc-v" id="kpi-revenue-month" style="color:var(--g)">₩0</div>
+        <div class="sc-ch nt" id="kpi-revenue-month-sub">-</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">이번 달 주문</div>
+        <div class="sc-v" id="kpi-orders-month">0건</div>
+        <div class="sc-ch nt" id="kpi-orders-month-sub">-</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">신규 가입</div>
+        <div class="sc-v" id="kpi-signup-month">0명</div>
+        <div class="sc-ch nt" id="kpi-signup-month-sub">-</div>
+      </div>
+    </div>
+
+    <!-- ③ 운영 건전성 — 리스크 지표 -->
+    <div class="sec-label">운영 건전성</div>
+    <div class="sg">
+      <div class="sc2">
+        <div class="sc-l">↩️ 환불률</div>
+        <div class="sc-v" id="kpi-refund-rate">0%</div>
+        <div class="sc-ch nt" id="kpi-refund-rate-sub">환불 0건 · ₩0</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">🏦 정산 예정 부채</div>
+        <div class="sc-v" id="kpi-liability">₩0</div>
+        <div class="sc-ch nt" id="kpi-liability-sub">지급해야 할 금액</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">💳 지급 가능 (보류 해제)</div>
+        <div class="sc-v" id="kpi-payable">₩0</div>
+        <div class="sc-ch nt" id="kpi-payable-sub">지금 이체 가능</div>
+      </div>
+      <div class="sc2">
+        <div class="sc-l">🚨 미처리 항목</div>
+        <div class="sc-v" id="kpi-pending" style="color:var(--r2)">0건</div>
+        <div class="sc-ch nt" id="kpi-pending-sub">처리 대기 없음</div>
+      </div>
+    </div>
+
+    <!-- ④ 월별 추이 -->
+    <div class="card">
+      <div class="card-h">
+        <div class="card-t">📈 최근 6개월 추이</div>
+        <button class="act-btn green" onclick="downloadMonthlyCSV()">엑셀 다운로드</button>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>월</th><th>거래액(GMV)</th><th>Vingly 순매출</th><th>주문</th><th>환불</th><th>환불률</th><th>신규가입</th></tr></thead>
+          <tbody id="monthly-tbody"><tr><td colspan="7" style="text-align:center;padding:28px;color:var(--t3);font-size:13px">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="g2">
-      <div class="card">
-        <div class="card-h"><div class="card-t">📈 얼리버드 현황</div><div class="card-a">상세 보기</div></div>
-        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">브랜드/셀러</span><span>0개사</span></div><div class="pr-bar"><div class="pr-fill" style="width:0%"></div></div></div>
-        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">인플루언서</span><span>0명</span></div><div class="pr-bar"><div class="pr-fill" style="width:0%;background:var(--g)"></div></div></div>
-        <div style="margin-top:14px;font-size:13px;color:var(--ts)">목표 1,000명까지 <strong style="color:var(--b)">1,000명</strong> 남음</div>
-      </div>
       <div class="card">
         <div class="card-h"><div class="card-t">⚡ 오늘 실시간</div></div>
         <div style="display:flex;flex-direction:column;gap:8px">
@@ -265,14 +349,22 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0"><span>오늘 거래액</span><span style="font-weight:600" id="today-gmv">₩0</span></div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">📊 얼리버드 모집 현황</div></div>
+        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">브랜드/셀러</span><span id="eb-brand-count">0개사</span></div><div class="pr-bar"><div class="pr-fill" id="eb-brand-bar" style="width:0%"></div></div></div>
+        <div class="pr-wrap"><div class="pr-top"><span style="font-weight:600">크리에이터</span><span id="eb-creator-count">0명</span></div><div class="pr-bar"><div class="pr-fill" id="eb-creator-bar" style="width:0%;background:var(--g)"></div></div></div>
+        <div style="margin-top:14px;font-size:13px;color:var(--ts)">목표 1,000명까지 <strong style="color:var(--b)" id="eb-remain">1,000명</strong> 남음</div>
+      </div>
     </div>
 
+    <!-- ⑤ 액션 -->
     <div class="card">
-      <div class="card-h"><div class="card-t">🚨 처리 필요 알림</div></div>
+      <div class="card-h"><div class="card-t">🚨 처리 필요 항목</div></div>
       <div id="dash-alerts-empty" style="text-align:center;padding:24px;color:rgba(10,12,16,.35)">
         <div style="font-size:24px;margin-bottom:8px">✅</div>
         <div style="font-size:13px;font-weight:500">처리 대기 항목이 없습니다</div>
       </div>
+      <div id="dash-alerts-list" style="display:none;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 
@@ -350,7 +442,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
 
     <div class="card">
-      <div class="card-h"><div class="card-t">정산 내역 (전체)</div></div>
+      <div class="card-h"><div class="card-t">정산 내역 (전체)</div><button class="act-btn green" onclick="downloadSettlementCSV()">엑셀 다운로드</button></div>
       <div id="admin-settle-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">💸</div>
         <div style="font-size:14px;font-weight:600">아직 정산 내역이 없습니다</div>
@@ -387,7 +479,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
 
     <div class="card">
-      <div class="card-h"><div class="card-t">환불 처리 이력</div><div style="font-size:12px;color:var(--t3)" id="refund-history-count"></div></div>
+      <div class="card-h"><div class="card-t">환불 처리 이력</div><div style="display:flex;align-items:center;gap:10px"><div style="font-size:12px;color:var(--t3)" id="refund-history-count"></div><button class="act-btn green" onclick="downloadRefundCSV()">엑셀 다운로드</button></div></div>
       <div id="refund-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📋</div>
         <div style="font-size:14px;font-weight:600">환불 이력이 없습니다</div>
@@ -510,31 +602,63 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         </div>
       </div>
       <div class="card">
-        <div class="card-h"><div class="card-t">💰 수수료 정책 설정</div></div>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div>
-            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">일반 수수료율 (%)</div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input type="number" id="fee_normal" min="0" max="20" step="0.1" value="3" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
-              <span style="font-size:13px;color:var(--tm)">% (정식 전환 후 적용)</span>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">얼리버드 영구 수수료율 (%)</div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input type="number" id="fee_early" min="0" max="20" step="0.1" value="1.5" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
-              <span style="font-size:13px;color:var(--tm)">%</span>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">얼리버드 목표 인원</div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input type="number" id="fee_target" min="100" max="10000" step="100" value="1000" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
-              <span style="font-size:13px;color:var(--tm)">명</span>
-            </div>
-          </div>
-          <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%;margin-top:4px" onclick="saveFeePolicy()">수수료 정책 저장</button>
+        <div class="card-h"><div class="card-t">💰 정책 설정</div><div style="font-size:11.5px;color:var(--tm)">저장 즉시 전체 시스템에 반영</div></div>
+        <div style="background:var(--bg-r);border-radius:9px;padding:9px 12px;margin-bottom:12px;font:600 11.5px/1.5 'Pretendard',sans-serif;color:var(--r2)">
+          ⚠️ 실제 정산 금액에 직접 영향을 줍니다. 변경 전 반드시 확인해주세요.
         </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="setting-row" style="padding:8px 0">
+            <div><div class="sr-title">거래 수수료 부과</div><div class="sr-sub">OFF 시 모든 거래 수수료 0원</div></div>
+            <div class="toggle" id="tog_fee_active" onclick="toggleFeeActive(this)"><div class="tog-dot"></div></div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">브랜드 거래 수수료 — 일반 (%)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="fee_standard" min="0" max="20" step="0.1" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">% · 신규 가입 브랜드</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">브랜드 거래 수수료 — 얼리버드 (%)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="fee_earlybird" min="0" max="20" step="0.1" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">% · 영구 고정</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">정산 보류 기간 (일)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="hold_days" min="0" max="60" step="1" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">일 · 청약철회(7일) 이상 권장</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--tm);margin-bottom:6px">크리에이터 최소 수수료율 (%)</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="min_commission" min="0" max="50" step="1" style="width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-weight:700;text-align:center;font-family:inherit">
+              <span style="font-size:13px;color:var(--tm)">% · 브랜드가 이보다 낮게 설정 불가</span>
+            </div>
+          </div>
+          <button class="act-btn green" style="padding:10px 16px;font-size:13px;width:100%;margin-top:4px" onclick="savePolicySettings()">정책 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 공지 배너 관리 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-h">
+        <div class="card-t">📢 공지 배너</div>
+        <button class="act-btn green" onclick="openAnnounceModal()">+ 새 공지 작성</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--tm);margin-bottom:12px;line-height:1.6">
+        장애·정산 지연·이벤트 등을 사이트 상단에 즉시 띄울 수 있습니다. 노출 기간을 지정하면 자동으로 사라집니다.
+      </div>
+      <div id="announce-empty" style="text-align:center;padding:28px;color:var(--t3);font-size:13px">등록된 공지가 없습니다</div>
+      <div class="tw" id="announce-wrap" style="display:none">
+        <table>
+          <thead><tr><th>유형</th><th>제목</th><th>대상</th><th>노출기간</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="announce-tbody"></tbody>
+        </table>
       </div>
     </div>
 
@@ -726,7 +850,7 @@ async function loadAdminData() {
   const supabase = window._supabase
   const { data: members }  = await supabase.from('users').select('*').order('created_at', { ascending: false })
   const { data: products } = await supabase.from('products').select('*').order('created_at', { ascending: false })
-  const { data: orders }   = await supabase.from('orders').select('amount,status,created_at,vingly_fee_amount,creator_fee').in('status', ['confirmed','settled'])
+  const { data: orders }   = await supabase.from('orders').select('id,amount,status,created_at,vingly_fee_amount,creator_fee,cancelled_at,cancel_type,brand').in('status', ['confirmed','settled','cancelled'])
   const { data: settlements } = await supabase.from('settlements').select('*').order('created_at', { ascending: false })
   const { data: reports } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
 
@@ -748,42 +872,178 @@ async function loadAdminData() {
   const brands   = allMembers.filter(m => m.role === 'brand')
   const creators = allMembers.filter(m => m.role === 'creator')
 
+  // 환불(cancelled)은 매출에서 제외하되 환불률 계산에는 필요하므로 분리해서 보관
+  const validOrders = allOrders.filter(o => o.status !== 'cancelled')
+  const refundOrders = allOrders.filter(o => o.status === 'cancelled')
+
   const now = new Date()
-  const thisMonthRevenue = allOrders
-    .filter(o => { const d = new Date(o.created_at); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() })
-    .reduce((s, o) => s + Number(o.amount || 0), 0)
+  const inMonth = (dateStr, y, m) => {
+    if (!dateStr) return false
+    const d = new Date(dateStr)
+    return d.getFullYear() === y && d.getMonth() === m
+  }
+  const curY = now.getFullYear(), curM = now.getMonth()
+  const prev = new Date(curY, curM - 1, 1)
+  const prevY = prev.getFullYear(), prevM = prev.getMonth()
 
-  const pendingSettleCount = allSettlements.filter(s => s.status === 'pending').length
+  const sum = (arr, key) => arr.reduce((s, o) => s + Number(o[key] || 0), 0)
+  const won = (n) => '\u20a9' + Math.round(n).toLocaleString()
 
-  // stat 카드
-  const sv = document.querySelectorAll('.sg .sc2 .sc-v')
-  if (sv[0]) sv[0].textContent = allMembers.length + '명'
-  if (sv[1]) sv[1].textContent = allProducts.length + '개'
-  if (sv[2]) sv[2].textContent = '₩' + thisMonthRevenue.toLocaleString()
-  if (sv[3]) sv[3].textContent = pendingSettleCount + '건'
+  // ── ① 사업 규모 (누적) ──
+  const gmvTotal = sum(validOrders, 'amount')
+  const revenueTotal = sum(validOrders, 'vingly_fee_amount')
+  const activeProducts = allProducts.filter(p => p.status === 'active')
+  const brandsWithProduct = new Set(allProducts.map(p => p.brand_user).filter(Boolean)).size
 
-  // 얼리버드 바
-  const bBar = document.querySelector('.pr-fill')
-  const iBar = document.querySelectorAll('.pr-fill')[1]
-  const bTop = document.querySelectorAll('.pr-top span:last-child')[0]
-  const iTop = document.querySelectorAll('.pr-top span:last-child')[1]
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
+  const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v }
+
+  setTxt('kpi-gmv-total', won(gmvTotal))
+  setTxt('kpi-gmv-total-sub', `누적 ${validOrders.length}건`)
+  setTxt('kpi-revenue-total', won(revenueTotal))
+  setTxt('kpi-revenue-total-sub', revenueTotal > 0
+    ? `GMV 대비 ${(revenueTotal / Math.max(gmvTotal, 1) * 100).toFixed(2)}%`
+    : '거래 수수료 누적')
+  setTxt('kpi-members', allMembers.length + '명')
+  setTxt('kpi-members-sub', `브랜드 ${brands.length} \u00b7 크리에이터 ${creators.length}`)
+  setTxt('kpi-products', activeProducts.length + '개')
+  setTxt('kpi-products-sub', `등록 브랜드 ${brandsWithProduct}곳`)
+
+  // ── ② 이번 달 실적 (지난달 대비) ──
+  const curOrders = validOrders.filter(o => inMonth(o.created_at, curY, curM))
+  const preOrders = validOrders.filter(o => inMonth(o.created_at, prevY, prevM))
+  const curGmv = sum(curOrders, 'amount'), preGmv = sum(preOrders, 'amount')
+  const curRev = sum(curOrders, 'vingly_fee_amount'), preRev = sum(preOrders, 'vingly_fee_amount')
+  const curSignup = allMembers.filter(m => inMonth(m.created_at, curY, curM)).length
+  const preSignup = allMembers.filter(m => inMonth(m.created_at, prevY, prevM)).length
+
+  // 증감 표시 — 지난달이 0이면 비율이 무의미하므로 '신규'로 표기
+  const delta = (cur, pre, unit = '') => {
+    if (pre === 0) return cur > 0 ? '<span class="delta-up">신규 발생</span>' : '지난달 실적 없음'
+    const rate = ((cur - pre) / pre * 100)
+    const cls = rate >= 0 ? 'delta-up' : 'delta-down'
+    const sign = rate >= 0 ? '+' : ''
+    return `지난달 ${pre.toLocaleString()}${unit} <span class="${cls}">(${sign}${rate.toFixed(0)}%)</span>`
+  }
+
+  setTxt('kpi-gmv-month', won(curGmv))
+  setHtml('kpi-gmv-month-sub', delta(curGmv, preGmv, '원'))
+  setTxt('kpi-revenue-month', won(curRev))
+  setHtml('kpi-revenue-month-sub', delta(curRev, preRev, '원'))
+  setTxt('kpi-orders-month', curOrders.length + '건')
+  setHtml('kpi-orders-month-sub', delta(curOrders.length, preOrders.length, '건'))
+  setTxt('kpi-signup-month', curSignup + '명')
+  setHtml('kpi-signup-month-sub', delta(curSignup, preSignup, '명'))
+
+  // ── ③ 운영 건전성 ──
+  const refundAmt = sum(refundOrders, 'amount')
+  const totalAttempted = validOrders.length + refundOrders.length
+  const refundRate = totalAttempted > 0 ? (refundOrders.length / totalAttempted * 100) : 0
+  setTxt('kpi-refund-rate', refundRate.toFixed(1) + '%')
+  setTxt('kpi-refund-rate-sub', `환불 ${refundOrders.length}건 \u00b7 ${won(refundAmt)}`)
+  const rrEl = document.getElementById('kpi-refund-rate')
+  // 업계 통상 환불률 5~10%. 10% 넘으면 상품 품질·배송 문제를 의심해야 함
+  if (rrEl) rrEl.style.color = refundRate > 10 ? 'var(--r2)' : ''
+
+  const nowMs = Date.now()
+  const pendingSettles = allSettlements.filter(s => s.status === 'pending')
+  const liability = pendingSettles.reduce((s, r) => s + Number(r.amount || 0), 0)
+  const payableNow = pendingSettles
+    .filter(s => s.payable_after && new Date(s.payable_after).getTime() <= nowMs)
+    .reduce((s, r) => s + Number(r.amount || 0), 0)
+  setTxt('kpi-liability', won(liability))
+  setTxt('kpi-liability-sub', `보류중 포함 ${pendingSettles.length}건`)
+  setTxt('kpi-payable', won(payableNow))
+  setTxt('kpi-payable-sub', payableNow > 0 ? '지금 이체 가능' : '지급 대상 없음')
+
+  const pendingReports = allReports.filter(r => r.status === 'pending' || r.status === 'reviewing')
+  const failedRefunds = allOrders.filter(o => o.refund_status === 'failed' || o.refund_status === 'processing')
+  const pendingTotal = pendingReports.length + failedRefunds.length
+  setTxt('kpi-pending', pendingTotal + '건')
+  setTxt('kpi-pending-sub', pendingTotal > 0
+    ? `신고 ${pendingReports.length} \u00b7 환불실패 ${failedRefunds.length}`
+    : '처리 대기 없음')
+
+  // ── ④ 월별 추이 (최근 6개월) ──
+  const monthly = []
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(curY, curM - i, 1)
+    const y = d.getFullYear(), m = d.getMonth()
+    const mo = validOrders.filter(o => inMonth(o.created_at, y, m))
+    const mr = refundOrders.filter(o => inMonth(o.cancelled_at || o.created_at, y, m))
+    const attempted = mo.length + mr.length
+    monthly.push({
+      label: `${y}.${String(m + 1).padStart(2, '0')}`,
+      gmv: sum(mo, 'amount'),
+      revenue: sum(mo, 'vingly_fee_amount'),
+      orders: mo.length,
+      refunds: mr.length,
+      refundAmt: sum(mr, 'amount'),
+      refundRate: attempted > 0 ? (mr.length / attempted * 100) : 0,
+      signups: allMembers.filter(x => inMonth(x.created_at, y, m)).length,
+    })
+  }
+  window._monthlyStats = monthly
+  const mtb = document.getElementById('monthly-tbody')
+  if (mtb) {
+    mtb.innerHTML = monthly.slice().reverse().map(r => `
+      <tr>
+        <td class="td-m" style="font-weight:700">${r.label}</td>
+        <td>${won(r.gmv)}</td>
+        <td style="color:var(--g);font-weight:700">${won(r.revenue)}</td>
+        <td>${r.orders}건</td>
+        <td style="color:${r.refunds > 0 ? 'var(--r2)' : 'inherit'}">${r.refunds}건 (${won(r.refundAmt)})</td>
+        <td style="color:${r.refundRate > 10 ? 'var(--r2)' : 'inherit'}">${r.refundRate.toFixed(1)}%</td>
+        <td>${r.signups}명</td>
+      </tr>`).join('')
+  }
+
+  // ── 얼리버드 현황 ──
+  const bBar = document.getElementById('eb-brand-bar')
+  const iBar = document.getElementById('eb-creator-bar')
   if (bBar) bBar.style.width = Math.min(brands.length / 100 * 100, 100) + '%'
   if (iBar) iBar.style.width = Math.min(creators.length / 1000 * 100, 100) + '%'
-  if (bTop) bTop.textContent = brands.length + '개사'
-  if (iTop) iTop.textContent = creators.length + '명'
-  const remain = document.querySelector('.pr-wrap + .pr-wrap + div strong')
-  if (remain) remain.textContent = Math.max(1000 - allMembers.length, 0) + '명'
+  setTxt('eb-brand-count', brands.length + '개사')
+  setTxt('eb-creator-count', creators.length + '명')
+  setTxt('eb-remain', Math.max(1000 - allMembers.length, 0) + '명')
 
-  // 오늘 실시간 통계 (가짜 하드코딩값 제거하고 실제 계산)
+  // ── 오늘 실시간 ──
   const todayStr = now.toISOString().slice(0, 10)
-  const todaySignups = allMembers.filter(m => (m.created_at || '').slice(0, 10) === todayStr).length
-  const todayOrders = allOrders.filter(o => (o.created_at || '').slice(0, 10) === todayStr)
-  const todaySignupsEl = document.getElementById('today-signups')
-  const todayOrdersEl = document.getElementById('today-orders')
-  const todayGmvEl = document.getElementById('today-gmv')
-  if (todaySignupsEl) todaySignupsEl.textContent = '+' + todaySignups + '명'
-  if (todayOrdersEl) todayOrdersEl.textContent = todayOrders.length + '건'
-  if (todayGmvEl) todayGmvEl.textContent = '₩' + todayOrders.reduce((s, o) => s + Number(o.amount || 0), 0).toLocaleString()
+  setTxt('today-signups', '+' + allMembers.filter(m => (m.created_at || '').slice(0, 10) === todayStr).length + '명')
+  const todayOrders = validOrders.filter(o => (o.created_at || '').slice(0, 10) === todayStr)
+  setTxt('today-orders', todayOrders.length + '건')
+  setTxt('today-gmv', won(sum(todayOrders, 'amount')))
+
+  // ── ⑤ 처리 필요 항목 ──
+  const alerts = []
+  if (failedRefunds.length > 0) {
+    alerts.push({ icon: '🔴', text: `환불 실패 ${failedRefunds.length}건`, sub: '구매자에게 돈이 돌아가지 않은 상태입니다. 즉시 확인이 필요합니다.', page: 'refunds', urgent: true })
+  }
+  const overdueReports = pendingReports.filter(r => r.created_at && (nowMs - new Date(r.created_at).getTime()) / 86400000 >= 3)
+  if (overdueReports.length > 0) {
+    alerts.push({ icon: '🚨', text: `3일 경과 미처리 신고 ${overdueReports.length}건`, sub: '전자상거래법상 3영업일 이내 처리해야 합니다.', page: 'alerts', urgent: true })
+  } else if (pendingReports.length > 0) {
+    alerts.push({ icon: '📮', text: `미처리 신고 ${pendingReports.length}건`, sub: '구매자 문의를 확인해주세요.', page: 'alerts' })
+  }
+  if (payableNow > 0) {
+    alerts.push({ icon: '🏦', text: `지급 가능 정산 ${won(payableNow)}`, sub: '보류기간이 끝나 지금 이체할 수 있습니다.', page: 'settle' })
+  }
+
+  const alertsEmpty = document.getElementById('dash-alerts-empty')
+  const alertsList = document.getElementById('dash-alerts-list')
+  if (alertsEmpty && alertsList) {
+    alertsEmpty.style.display = alerts.length ? 'none' : 'block'
+    alertsList.style.display = alerts.length ? 'flex' : 'none'
+    alertsList.innerHTML = alerts.map(a => `
+      <div onclick="goAdminPage('${a.page}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;background:${a.urgent ? 'var(--bg-r)' : 'var(--sf)'};cursor:pointer">
+        <span style="font-size:18px">${a.icon}</span>
+        <div style="flex:1">
+          <div style="font:700 13.5px/1.3 'Pretendard',sans-serif;color:${a.urgent ? 'var(--r2)' : 'var(--t1)'}">${a.text}</div>
+          <div style="font:400 12px/1.4 'Pretendard',sans-serif;color:var(--t3);margin-top:2px">${a.sub}</div>
+        </div>
+        <span style="color:var(--t3);font-size:14px">\u2192</span>
+      </div>`).join('')
+  }
 
   renderMembers(allMembers)
   renderProducts(allProducts, allMembers)
@@ -823,6 +1083,7 @@ async function renderRefunds(members) {
   }
 
   const all = refunds || []
+  window._refundsCache = all
   const nameMap = {}
   ;(members || []).forEach(m => { nameMap[m.id] = m.company_name || '-' })
 
@@ -1096,6 +1357,7 @@ window.setProductStatus = async function(productId, status) {
 let _payoutGroups = [] // CSV 다운로드에서 재사용
 
 function renderSettlements(settlements, members) {
+  window._settlementsCache = settlements || []
   const emptyEl = document.getElementById('admin-settle-empty')
   const wrap = document.getElementById('admin-settle-wrap')
   const hasSettlements = settlements.length > 0
@@ -1313,6 +1575,225 @@ function closeSidebar() {
   document.getElementById('sb').classList.remove('open')
   document.getElementById('sbBackdrop').classList.remove('show')
 }
+// 메뉴 버튼을 onclick 내용으로 찾아 이동 (nth-child는 메뉴 변경 시 쉽게 어긋남)
+window.goAdminPage = function(pageId) {
+  const btn = [...document.querySelectorAll('.ni')].find(b => (b.getAttribute('onclick') || '').includes(`'${pageId}'`))
+  showPage(pageId, btn || null)
+}
+
+// CSV 다운로드 공통 함수 — 엑셀에서 한글이 깨지지 않도록 BOM 포함
+window.downloadCSV = function(filename, rows) {
+  if (!rows || rows.length <= 1) { alert('다운로드할 데이터가 없습니다.'); return }
+  const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// 월별 추이 엑셀 다운로드
+window.downloadMonthlyCSV = function() {
+  const m = window._monthlyStats || []
+  const rows = [['월', '거래액(GMV)', 'Vingly 순매출', '주문건수', '환불건수', '환불금액', '환불률(%)', '신규가입']]
+  m.slice().reverse().forEach(r => {
+    rows.push([r.label, r.gmv, r.revenue, r.orders, r.refunds, r.refundAmt, r.refundRate.toFixed(1), r.signups])
+  })
+  downloadCSV('vingly_월별추이', rows)
+}
+
+
+// 환불 이력 엑셀 다운로드
+window.downloadRefundCSV = function() {
+  const all = window._refundsCache || []
+  const nameMap = window._adminNameMap || {}
+  const CT = { change_of_mind:'단순변심', defect:'상품하자', not_delivered:'미배송', wrong_item:'오배송', seller_cancel:'판매자취소', other:'기타' }
+  const ST = { completed:'환불완료', failed:'실패', processing:'처리중', requested:'요청됨' }
+  const rows = [['환불일', '주문번호', '브랜드', '환불금액', '환불유형', '사유', '상태']]
+  all.forEach(r => {
+    rows.push([
+      r.refund_completed_at ? new Date(r.refund_completed_at).toLocaleDateString('ko-KR')
+        : (r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'),
+      r.toss_order_id || '-',
+      nameMap[r.brand] || '-',
+      Number(r.amount || 0),
+      CT[r.cancel_type] || '기타',
+      r.cancel_reason || '',
+      ST[r.refund_status] || r.refund_status || '',
+    ])
+  })
+  downloadCSV('vingly_환불이력', rows)
+}
+
+// 정산 내역 엑셀 다운로드 — 실제 이체 작업과 회계 정리에 그대로 쓸 수 있도록 계좌까지 포함
+window.downloadSettlementCSV = function() {
+  const all = window._settlementsCache || []
+  const nameMap = window._adminNameMap || {}
+  const bankMap = window._adminBankMap || {}
+  const roleLabel = { creator: '크리에이터', brand: '브랜드' }
+  const now = Date.now()
+  const rows = [['생성일', '대상', '구분', '금액', '보류해제일', '상태', '은행', '계좌번호', '예금주']]
+  all.forEach(s => {
+    const bank = bankMap[s.recipient] || {}
+    let statusTxt = s.status
+    if (s.status === 'pending') {
+      statusTxt = (s.payable_after && new Date(s.payable_after).getTime() > now) ? '보류중' : '지급가능'
+    } else if (s.status === 'completed' || s.status === 'paid') statusTxt = '지급완료'
+    else if (s.status === 'voided') statusTxt = '환불로무효'
+    rows.push([
+      s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-',
+      nameMap[s.recipient] || nameMap[s.brand] || nameMap[s.creator] || '-',
+      roleLabel[s.recipient_role] || '-',
+      Number(s.amount || 0),
+      s.payable_after ? new Date(s.payable_after).toLocaleDateString('ko-KR') : '-',
+      statusTxt,
+      bank.bank || '-',
+      bank.account || '-',
+      bank.holder || '-',
+    ])
+  })
+  downloadCSV('vingly_정산내역', rows)
+}
+
+
+/* ===== 공지 배너 관리 =====
+   장애·정산지연 같은 상황을 즉시 알릴 수단이 없으면 문의가 폭주한다.
+   노출기간을 지정하면 자동으로 사라지므로 내리는 것을 잊어도 안전하다. */
+const ANN_TYPE = { info:{label:'안내', cls:'bg'}, warning:{label:'주의', cls:'bam'}, urgent:{label:'긴급', cls:'br'} }
+const ANN_TARGET = { all:'전체', brand:'브랜드', creator:'크리에이터', buyer:'구매자' }
+
+window.openAnnounceModal = function() {
+  document.getElementById('ann_type').value = 'info'
+  document.getElementById('ann_target').value = 'all'
+  document.getElementById('ann_title').value = ''
+  document.getElementById('ann_content').value = ''
+  document.getElementById('ann_start').value = ''
+  document.getElementById('ann_end').value = ''
+  document.getElementById('ann_err').style.display = 'none'
+  document.getElementById('announceModal').style.display = 'flex'
+}
+
+window.closeAnnounceModal = function() {
+  document.getElementById('announceModal').style.display = 'none'
+}
+
+window.saveAnnouncement = async function() {
+  const errEl = document.getElementById('ann_err')
+  const title = document.getElementById('ann_title').value.trim()
+  if (!title) {
+    errEl.textContent = '제목을 입력해주세요.'
+    errEl.style.display = 'block'
+    return
+  }
+  const startVal = document.getElementById('ann_start').value
+  const endVal = document.getElementById('ann_end').value
+  if (startVal && endVal && new Date(startVal) >= new Date(endVal)) {
+    errEl.textContent = '종료일시가 시작일시보다 빠릅니다.'
+    errEl.style.display = 'block'
+    return
+  }
+
+  const btn = document.getElementById('ann_submit')
+  btn.textContent = '등록 중...'
+  btn.disabled = true
+
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('announcements').insert({
+    title,
+    content: document.getElementById('ann_content').value.trim() || null,
+    type: document.getElementById('ann_type').value,
+    target: document.getElementById('ann_target').value,
+    starts_at: startVal ? new Date(startVal).toISOString() : null,
+    ends_at: endVal ? new Date(endVal).toISOString() : null,
+    is_active: true,
+  }).select()
+
+  btn.textContent = '공지 등록'
+  btn.disabled = false
+
+  if (error) {
+    errEl.textContent = '등록 실패: ' + error.message
+    errEl.style.display = 'block'
+    return
+  }
+  if (!data || data.length === 0) {
+    errEl.textContent = '등록되지 않았습니다. 관리자 권한을 확인해주세요.'
+    errEl.style.display = 'block'
+    return
+  }
+  closeAnnounceModal()
+  showToast('✅ 공지가 등록됐습니다')
+  loadAnnouncements()
+}
+
+window.loadAnnouncements = async function() {
+  const supabase = window._supabase
+  const emptyEl = document.getElementById('announce-empty')
+  const wrapEl = document.getElementById('announce-wrap')
+  if (!emptyEl || !wrapEl) return
+
+  // 관리자는 종료된 공지도 봐야 하므로 전체 조회
+  const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false })
+  if (error) { console.error('공지 조회 실패:', error); return }
+
+  const all = data || []
+  emptyEl.style.display = all.length ? 'none' : 'block'
+  wrapEl.style.display = all.length ? 'block' : 'none'
+  if (!all.length) return
+
+  const now = Date.now()
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('ko-KR') + ' ' + new Date(d).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' }) : ''
+
+  document.getElementById('announce-tbody').innerHTML = all.map(a => {
+    const t = ANN_TYPE[a.type] || ANN_TYPE.info
+    const started = !a.starts_at || new Date(a.starts_at).getTime() <= now
+    const ended = a.ends_at && new Date(a.ends_at).getTime() < now
+    let statusHtml
+    if (!a.is_active) statusHtml = '<span class="badge">중지됨</span>'
+    else if (ended) statusHtml = '<span class="badge">기간 종료</span>'
+    else if (!started) statusHtml = '<span class="badge bam">예약됨</span>'
+    else statusHtml = '<span class="badge bg">노출중</span>'
+
+    const period = (a.starts_at || a.ends_at)
+      ? `${fmt(a.starts_at) || '즉시'} ~ ${fmt(a.ends_at) || '무기한'}`
+      : '상시'
+
+    return `
+    <tr${(!a.is_active || ended) ? ' style="opacity:.55"' : ''}>
+      <td><span class="badge ${t.cls}">${t.label}</span></td>
+      <td class="td-b" style="max-width:220px;white-space:normal">${a.title}</td>
+      <td>${ANN_TARGET[a.target] || '전체'}</td>
+      <td style="font-size:11.5px;color:var(--t3);white-space:nowrap">${period}</td>
+      <td>${statusHtml}</td>
+      <td style="white-space:nowrap">
+        ${a.is_active
+          ? `<button class="act-btn" onclick="toggleAnnouncement('${a.id}', false)">내리기</button>`
+          : `<button class="act-btn green" onclick="toggleAnnouncement('${a.id}', true)">다시 게시</button>`}
+        <button class="act-btn" style="color:var(--r2)" onclick="deleteAnnouncement('${a.id}')">삭제</button>
+      </td>
+    </tr>`
+  }).join('')
+}
+
+window.toggleAnnouncement = async function(id, active) {
+  const supabase = window._supabase
+  const { error } = await supabase.from('announcements').update({ is_active: active }).eq('id', id)
+  if (error) { alert('처리 실패: ' + error.message); return }
+  showToast(active ? '✅ 공지를 다시 게시했습니다' : '⭕ 공지를 내렸습니다')
+  loadAnnouncements()
+}
+
+window.deleteAnnouncement = async function(id) {
+  if (!confirm('이 공지를 완전히 삭제할까요?\n\n기록이 남지 않습니다. 잠시 숨기려면 "내리기"를 사용해주세요.')) return
+  const supabase = window._supabase
+  const { error } = await supabase.from('announcements').delete().eq('id', id)
+  if (error) { alert('삭제 실패: ' + error.message); return }
+  showToast('공지가 삭제됐습니다')
+  loadAnnouncements()
+}
+
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
   document.getElementById('pg-' + id).classList.add('act');
@@ -1378,10 +1859,23 @@ async function loadSettings() {
     if (val) el.classList.add('on')
     else el.classList.remove('on')
   })
-  // 수수료 정책 불러오기
-  if (settings.fee_normal !== undefined) document.getElementById('fee_normal').value = settings.fee_normal
-  if (settings.fee_early !== undefined)  document.getElementById('fee_early').value  = settings.fee_early
-  if (settings.fee_target !== undefined) document.getElementById('fee_target').value = settings.fee_target
+  // 정책 값 불러오기 (실제 시스템이 사용하는 키)
+  const setIf = (id, v, fallback) => {
+    const el = document.getElementById(id)
+    if (el) el.value = (v !== undefined && v !== null) ? v : fallback
+  }
+  setIf('fee_standard', settings.vingly_fee_standard_rate, '1.8')
+  setIf('fee_earlybird', settings.vingly_fee_early_bird_rate, '1.5')
+  setIf('hold_days', settings.settlement_hold_days, '14')
+  setIf('min_commission', settings.min_commission_rate, '10')
+
+  const feeToggle = document.getElementById('tog_fee_active')
+  if (feeToggle) {
+    if (String(settings.vingly_fee_active) === 'true') feeToggle.classList.add('on')
+    else feeToggle.classList.remove('on')
+  }
+
+  await loadAnnouncements()
   // 콘텐츠 불러오기
   ['banner_text','badge_text','maintenance_text','creator_fee_text','brand_fee_text','contact_email'].forEach(id => {
     const el = document.getElementById(id)
@@ -1392,18 +1886,45 @@ async function loadSettings() {
   renderFaq()
 }
 
-// 수수료 정책 저장
-window.saveFeePolicy = async function() {
-  const normal = document.getElementById('fee_normal').value
-  const early  = document.getElementById('fee_early').value
-  const target = document.getElementById('fee_target').value
+// 정책 저장 — 실제 시스템이 읽는 키(app_settings)와 동일한 이름으로 저장해야 반영된다.
+// (이전에는 fee_normal 같은 다른 키에 저장돼서, 바꿔도 실제 정산에 반영되지 않았음)
+window.savePolicySettings = async function() {
+  const std = document.getElementById('fee_standard').value
+  const eb  = document.getElementById('fee_earlybird').value
+  const hold = document.getElementById('hold_days').value
+  const minC = document.getElementById('min_commission').value
+
+  if (Number(eb) > Number(std)) {
+    if (!confirm('얼리버드 수수료가 일반 수수료보다 높습니다.\n\n의도한 설정이 맞나요?')) return
+  }
+  if (Number(hold) < 7) {
+    if (!confirm('정산 보류 기간이 7일 미만입니다.\n\n전자상거래법상 청약철회 기간이 7일이라, 그 전에 정산하면 환불 시 회수가 어려울 수 있습니다.\n\n계속하시겠습니까?')) return
+  }
+
   const errors = await Promise.all([
-    setSetting('fee_normal', normal),
-    setSetting('fee_early', early),
-    setSetting('fee_target', target),
+    setSetting('vingly_fee_standard_rate', std),
+    setSetting('vingly_fee_early_bird_rate', eb),
+    setSetting('settlement_hold_days', hold),
+    setSetting('min_commission_rate', minC),
   ])
   if (errors.some(Boolean)) { alert(settingsPermissionHint()); return }
-  showToast('✅ 수수료 정책이 저장됐습니다')
+  showToast('✅ 정책이 저장됐습니다')
+}
+
+// 거래 수수료 부과 on/off
+window.toggleFeeActive = async function(el) {
+  const turningOn = !el.classList.contains('on')
+  if (!turningOn) {
+    if (!confirm('거래 수수료 부과를 끄시겠습니까?\n\n앞으로 발생하는 모든 거래의 Vingly 수수료가 0원이 됩니다.')) return
+  }
+  el.classList.toggle('on')
+  const error = await setSetting('vingly_fee_active', el.classList.contains('on'))
+  if (error) {
+    el.classList.toggle('on')
+    alert(settingsPermissionHint())
+    return
+  }
+  showToast(el.classList.contains('on') ? '✅ 거래 수수료 부과 ON' : '⭕ 거래 수수료 부과 OFF')
 }
 
 // 콘텐츠 저장
@@ -1553,6 +2074,52 @@ function showToast(msg) {
 
 
 </script>
+
+<div id="announceModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:520px;padding:26px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeAnnounceModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--sf);border:none;cursor:pointer;font-size:14px">✕</button>
+    <div style="font:800 18px/1 'Pretendard',sans-serif;margin-bottom:20px">📢 공지 배너 작성</div>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">유형 *</label>
+    <select id="ann_type" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;margin-bottom:14px">
+      <option value="info">안내 (파란색) — 일반 소식·이벤트</option>
+      <option value="warning">주의 (노란색) — 정산 지연·일정 변경</option>
+      <option value="urgent">긴급 (빨간색) — 장애·점검</option>
+    </select>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">노출 대상 *</label>
+    <select id="ann_target" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;margin-bottom:14px">
+      <option value="all">전체</option>
+      <option value="brand">브랜드에게만</option>
+      <option value="creator">크리에이터에게만</option>
+      <option value="buyer">구매자 페이지에만</option>
+    </select>
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">제목 *</label>
+    <input type="text" id="ann_title" maxlength="80" placeholder="예: 9/1(월) 정산 지연 안내" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;margin-bottom:14px">
+
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">상세 내용 <span style="font-weight:400;color:var(--tm)">(선택)</span></label>
+    <textarea id="ann_content" placeholder="배너를 클릭했을 때 보여줄 자세한 안내" style="width:100%;min-height:80px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;resize:vertical;margin-bottom:14px"></textarea>
+
+    <div class="g2" style="gap:10px;margin-bottom:14px">
+      <div>
+        <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">시작일시 <span style="font-weight:400;color:var(--tm)">(비우면 즉시)</span></label>
+        <input type="datetime-local" id="ann_start" style="width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--br);font-size:13px;font-family:inherit">
+      </div>
+      <div>
+        <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">종료일시 <span style="font-weight:400;color:var(--tm)">(비우면 무기한)</span></label>
+        <input type="datetime-local" id="ann_end" style="width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--br);font-size:13px;font-family:inherit">
+      </div>
+    </div>
+
+    <div id="ann_err" style="display:none;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--r2);margin-bottom:12px"></div>
+
+    <div style="display:flex;gap:8px">
+      <button onclick="closeAnnounceModal()" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--br);background:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+      <button id="ann_submit" onclick="saveAnnouncement()" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--g);color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">공지 등록</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
