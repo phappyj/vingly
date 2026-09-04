@@ -64,6 +64,61 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 </style>
 </head>
 <body>
+<!-- 공지 배너 (관리자 시스템설정에서 등록·노출기간 관리) -->
+<div id="vingly-notice-bar" style="display:none"></div>
+<script>
+(function () {
+  // 노출 대상: all / brand / creator / buyer
+  const NOTICE_TARGET = 'buyer'
+  const SB_URL = 'https://hzrhpdqrrzhnhnaelaie.supabase.co'
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+
+  const STYLE = {
+    info:    { bg: '#EEF3FD', fg: '#1D4ED8', icon: 'ℹ️' },
+    warning: { bg: '#FFFBEB', fg: '#92400E', icon: '⚠️' },
+    urgent:  { bg: '#FEF2F2', fg: '#991B1B', icon: '🚨' },
+  }
+
+  async function load() {
+    try {
+      // RLS가 노출기간·활성여부를 이미 걸러주므로 대상 필터만 추가로 적용
+      const res = await fetch(
+        `${SB_URL}/rest/v1/announcements?select=id,title,content,type,target&order=created_at.desc`,
+        { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }
+      )
+      if (!res.ok) return
+      const rows = await res.json()
+      const list = (rows || []).filter(a => a.target === 'all' || a.target === NOTICE_TARGET)
+      if (!list.length) return
+
+      const bar = document.getElementById('vingly-notice-bar')
+      if (!bar) return
+
+      bar.innerHTML = list.map(a => {
+        const s = STYLE[a.type] || STYLE.info
+        const dismissed = localStorage.getItem('vingly_notice_' + a.id) === '1'
+        if (dismissed) return ''
+        return `
+        <div style="background:${s.bg};color:${s.fg};padding:11px 16px;font:600 13px/1.5 'Pretendard',sans-serif;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(0,0,0,.05)">
+          <span style="flex-shrink:0">${s.icon}</span>
+          <div style="flex:1;min-width:0">
+            <span>${a.title}</span>
+            ${a.content ? `<div style="font-weight:400;font-size:12px;margin-top:3px;opacity:.85">${a.content}</div>` : ''}
+          </div>
+          <button onclick="this.parentElement.remove();localStorage.setItem('vingly_notice_${a.id}','1');if(!document.getElementById('vingly-notice-bar').children.length)document.getElementById('vingly-notice-bar').style.display='none'"
+            style="flex-shrink:0;background:transparent;border:none;color:inherit;cursor:pointer;font-size:15px;opacity:.5;padding:0 2px" title="이 공지 닫기">✕</button>
+        </div>`
+      }).join('')
+
+      if (bar.children.length) bar.style.display = 'block'
+    } catch (e) { /* 공지는 부가 기능이므로 실패해도 페이지에 영향 없음 */ }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load)
+  else load()
+})()
+</script>
+
 
 <div class="nav">
   <a class="logo" href="index.html"><div class="logo-badge">✓</div>Vingly</a>
