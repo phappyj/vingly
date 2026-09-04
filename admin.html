@@ -386,7 +386,8 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <option value="suspended">정지</option>
         <option value="withdrawn">탈퇴</option>
       </select>
-      <button class="act-btn green" onclick="downloadMemberCSV()">엑셀 다운로드</button>
+      <button class="act-btn green" onclick="downloadMemberCSV(false)">엑셀 (마스킹)</button>
+      <button class="act-btn" style="color:var(--r2)" onclick="downloadMemberCSV(true)" title="개인정보 원본 포함 — 취급 주의">엑셀 (원본)</button>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="card-h"><div class="card-t">전체 회원</div><div style="font-size:12px;color:var(--tm)" id="admin-member-count">가입자 없음</div></div>
@@ -413,7 +414,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <option value="inactive">판매중지</option>
       </select>
       <button class="act-btn green" onclick="downloadProductCSV()">엑셀 다운로드</button>
-      <select class="filter-sel"><option>전체 카테고리</option><option>헬스·운동</option><option>식품·건강</option><option>뷰티</option></select>
+      <select class="filter-sel" id="prod-cat" onchange="applyProductFilter()"><option value="">전체 카테고리</option></select>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="card-h"><div class="card-t">전체 제품</div></div>
@@ -441,6 +442,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="card">
       <div class="card-h">
         <div class="card-t">💰 지급 대상 리스트 (계좌이체용)</div>
+        <div style="font:800 15px/1 'Pretendard',sans-serif;color:var(--r2)" id="payout-total">총 ₩0</div>
         <button class="act-btn green" onclick="downloadPayoutCSV()">CSV 다운로드</button>
       </div>
       <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.45);padding:0 4px 12px">
@@ -467,7 +469,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="admin-settle-wrap" style="display:none">
         <table>
-          <thead><tr><th>대상</th><th>구분</th><th>금액</th><th>보류상태</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
+          <thead><tr><th>대상</th><th>구분</th><th>금액</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
           <tbody id="admin-settle-tbody"></tbody>
         </table>
       </div>
@@ -497,7 +499,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
 
     <div class="card">
-      <div class="card-h"><div class="card-t">환불 처리 이력</div><div style="display:flex;align-items:center;gap:10px"><div style="font-size:12px;color:var(--t3)" id="refund-history-count"></div><button class="act-btn green" onclick="downloadRefundCSV()">엑셀 다운로드</button></div></div>
+      <div class="card-h"><div class="card-t">환불 처리 이력</div><div style="display:flex;align-items:center;gap:10px"><div style="font-size:12px;color:var(--t3)" id="refund-history-count"></div><button class="act-btn green" onclick="downloadRefundCSV(false)">엑셀 (마스킹)</button><button class="act-btn" style="color:var(--r2)" onclick="downloadRefundCSV(true)" title="개인정보 원본 포함 — 취급 주의">엑셀 (원본)</button></div></div>
       <div id="refund-empty" style="text-align:center;padding:40px;color:rgba(10,12,16,.35)">
         <div style="font-size:36px;margin-bottom:10px">📋</div>
         <div style="font-size:14px;font-weight:600">환불 이력이 없습니다</div>
@@ -539,12 +541,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     <div class="card">
       <div class="card-h">
-        <div class="card-t">🏦 자금 흐름 명세</div>
+        <div class="card-t">🏦 자금 흐름 명세 <span style="font-weight:400;font-size:12px;color:var(--t3)">· 서비스 시작 이후 전체 누적</span></div>
         <button class="act-btn green" onclick="downloadCashflowCSV()">엑셀 다운로드</button>
       </div>
       <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--tm);padding:0 2px 14px">
-        구매자 결제금이 어디로 흘러갔는지 전체 흐름입니다. 맨 아래 <strong>「계좌에 남아있어야 할 금액」</strong>과
-        실제 정산계좌 잔액이 크게 다르면 정산 누락·중복 지급을 의심해야 합니다.
+        <strong>전체 기간 누적</strong> 기준입니다. 구매자 결제금이 어디로 흘러갔는지 보여주며,
+        맨 아래 <strong>「계좌에 남아있어야 할 금액」</strong>과 실제 정산계좌 잔액이 크게 다르면
+        정산 누락·중복 지급을 의심해야 합니다. (월별 흐름은 대시보드의 「최근 6개월 추이」를 참고하세요)
       </div>
       <div style="display:flex;flex-direction:column">
         <div class="flow-line"><span>구매자 결제 총액 (환불 제외)</span><strong id="cf-in">₩0</strong></div>
@@ -1133,7 +1136,7 @@ async function renderRefunds(members) {
         <tr style="background:rgba(153,27,27,.05)">
           <td class="td-m" style="white-space:nowrap">${r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'}</td>
           <td class="td-m" title="${r.toss_order_id || ''}" style="white-space:nowrap">${shortRef(r.toss_order_id)}</td>
-          <td style="white-space:nowrap"><div class="td-b">${r.buyer_name || '-'}</div><div style="font-size:11.5px;color:var(--t3)">${r.buyer_phone || ''}</div></td>
+          <td style="white-space:nowrap"><div class="td-b">${maskName(r.buyer_name)}</div><div style="font-size:11.5px;color:var(--t3)">${maskPhone(r.buyer_phone)}</div><button class="act-btn" style="margin-top:3px;padding:2px 7px;font-size:10.5px" onclick="revealBuyerInfo(this, '${(r.buyer_name||'').replace(/'/g,"\\'")}', '${r.buyer_phone||''}', '${r.buyer_email||''}')">보기</button></td>
           <td>${nameMap[r.brand] || '-'}</td>
           <td style="font-weight:700">₩${Number(r.amount || 0).toLocaleString()}</td>
           <td><span class="badge bam">${CANCEL_TYPE_LABEL_ADMIN[r.cancel_type] || '기타'}</span></td>
@@ -1162,8 +1165,9 @@ async function renderRefunds(members) {
       <td class="td-m" style="white-space:nowrap">${r.refund_completed_at ? new Date(r.refund_completed_at).toLocaleDateString('ko-KR') : (r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-')}</td>
       <td class="td-m" title="${r.toss_order_id || ''}" style="white-space:nowrap">${shortRef(r.toss_order_id)}</td>
       <td style="white-space:nowrap">
-        <div class="td-b">${r.buyer_name || '-'}</div>
-        <div style="font-size:11.5px;color:var(--t3)">${r.buyer_phone || ''}</div>
+        <div class="td-b">${maskName(r.buyer_name)}</div>
+        <div style="font-size:11.5px;color:var(--t3)">${maskPhone(r.buyer_phone)}</div>
+        <button class="act-btn" style="margin-top:3px;padding:2px 7px;font-size:10.5px" onclick="revealBuyerInfo(this, '${(r.buyer_name||'').replace(/'/g,"\\'")}', '${r.buyer_phone||''}', '${r.buyer_email||''}')" title="응대에 필요한 경우에만 열람해주세요">보기</button>
       </td>
       <td>${nameMap[r.brand] || '-'}</td>
       <td style="font-weight:700">₩${Number(r.amount || 0).toLocaleString()}</td>
@@ -1358,8 +1362,8 @@ function drawMembers(members) {
     <tr${isWithdrawn ? ' style="opacity:.55"' : ''}>
       <td class="td-b">${m.company_name || '-'}</td>
       <td><span class="badge ${m.role === 'brand' ? 'bam' : 'bg'}">${roleLabel[m.role] || m.role || '-'}</span></td>
-      <td class="td-m">${m.email || '-'}</td>
-      <td class="td-m">${m.phone || '-'}</td>
+      <td class="td-m">${maskEmail(m.email)}</td>
+      <td class="td-m">${maskPhone(m.phone)}</td>
       <td>${bizHtml}</td>
       <td class="td-m">${m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-'}</td>
       <td><span class="badge ${statusBadge[st] || 'bg'}">${statusLabel[st] || '정상'}</span></td>
@@ -1375,21 +1379,23 @@ function drawMembers(members) {
 }
 
 // 회원 목록 엑셀 다운로드
-window.downloadMemberCSV = function() {
+window.downloadMemberCSV = function(includePII) {
+  if (includePII && !confirm('회원 개인정보(이메일·연락처) 원본이 포함된 파일을 다운로드합니다.\n\n· 개인정보보호법상 목적 외 이용·유출 시 법적 책임이 발생합니다\n· 사용 후에는 반드시 파일을 삭제해주세요\n\n계속하시겠습니까?')) return
   const roleLabel = { brand: '브랜드·셀러', creator: '크리에이터' }
   const statusLabel = { active: '정상', suspended: '정지', withdrawn: '탈퇴', deleted: '탈퇴' }
   const rows = [['이름', '역할', '이메일', '연락처', '사업자번호', '사업자인증', '가입일', '상태']]
   _allMembers.forEach(m => {
     rows.push([
       m.company_name || '-', roleLabel[m.role] || m.role || '-',
-      m.email || '-', m.phone || '-',
+      includePII ? (m.email || '-') : maskEmail(m.email),
+      includePII ? (m.phone || '-') : maskPhone(m.phone),
       m.business_number || '-',
       m.role === 'brand' ? (m.business_verified ? '인증' : '미인증') : '-',
       m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-',
       statusLabel[m.status || 'active'] || '정상',
     ])
   })
-  downloadCSV('vingly_회원목록', rows)
+  downloadCSV(includePII ? 'vingly_회원목록_개인정보포함' : 'vingly_회원목록', rows)
 }
 
 let _allProducts = [], _productBrandMap = {}
@@ -1397,10 +1403,12 @@ let _allProducts = [], _productBrandMap = {}
 window.applyProductFilter = function() {
   const q = (document.getElementById('prod-search')?.value || '').trim().toLowerCase()
   const status = document.getElementById('prod-status')?.value || ''
+  const cat = document.getElementById('prod-cat')?.value || ''
   const filtered = _allProducts.filter(p => {
     if (status && (p.status || 'active') !== status) return false
+    if (cat && (p.category || '') !== cat) return false
     if (q) {
-      const hay = `${p.name || ''} ${_productBrandMap[p.brand_user] || ''}`.toLowerCase()
+      const hay = `${p.name || ''} ${_productBrandMap[p.brand_user] || ''} ${p.category || ''}`.toLowerCase()
       if (!hay.includes(q)) return false
     }
     return true
@@ -1408,10 +1416,22 @@ window.applyProductFilter = function() {
   drawProducts(filtered)
 }
 
+// 카테고리 옵션은 하드코딩하면 실제 등록된 값과 어긋나므로 DB 값으로 채운다
+function fillCategoryOptions() {
+  const sel = document.getElementById('prod-cat')
+  if (!sel) return
+  const cur = sel.value
+  const cats = [...new Set(_allProducts.map(p => p.category).filter(Boolean))].sort()
+  sel.innerHTML = '<option value="">전체 카테고리</option>' +
+    cats.map(x => `<option value="${x}">${x}</option>`).join('')
+  if (cats.includes(cur)) sel.value = cur
+}
+
 function renderProducts(products, members) {
   _allProducts = products || []
   _productBrandMap = {}
   ;(members || []).forEach(m => { _productBrandMap[m.id] = m.company_name })
+  fillCategoryOptions()
   applyProductFilter()
 }
 
@@ -1544,6 +1564,16 @@ function renderSettlements(settlements, members) {
   })
   _payoutGroups = Object.values(groups)
 
+  // 오늘 이체해야 할 총액 — 이 금액만큼 계좌에 있어야 지급이 가능하므로 반드시 보여야 함
+  const payoutTotal = _payoutGroups.reduce((s, g) => s + g.amount, 0)
+  const payoutTotalEl = document.getElementById('payout-total')
+  if (payoutTotalEl) {
+    payoutTotalEl.textContent = _payoutGroups.length
+      ? `총 \u20a9${payoutTotal.toLocaleString()} (${_payoutGroups.length}명)`
+      : '지급 대상 없음'
+    payoutTotalEl.style.color = _payoutGroups.length ? 'var(--r2)' : 'var(--t3)'
+  }
+
   const payoutEmptyEl = document.getElementById('payout-empty')
   const payoutWrapEl = document.getElementById('payout-wrap')
   const hasPayouts = _payoutGroups.length > 0
@@ -1556,7 +1586,7 @@ function renderSettlements(settlements, members) {
       return `
       <tr>
         <td class="td-m">${nameMap[g.recipient] || '-'}</td>
-        <td><span class="badge ${g.role === 'brand' ? 'bg2' : 'ba2'}">${roleLabel[g.role] || g.role}</span></td>
+        <td><span class="badge ${g.role === 'brand' ? 'bb2' : 'bg2'}">${roleLabel[g.role] || g.role}</span></td>
         <td>${bank.bank}</td>
         <td>${bank.account}</td>
         <td>${bank.holder}</td>
@@ -1564,29 +1594,43 @@ function renderSettlements(settlements, members) {
         <td>${g.count}건</td>
         <td><button class="act-btn green" onclick='batchMarkPaid(${JSON.stringify(g.ids)})'>일괄 지급완료 처리</button></td>
       </tr>`
-    }).join('')
+    }).join('') + `
+      <tr style="background:var(--sf);font-weight:800">
+        <td colspan="5" style="text-align:right;padding-right:12px">이체해야 할 총액</td>
+        <td style="color:var(--r2);font-size:15px">\u20a9${payoutTotal.toLocaleString()}</td>
+        <td>${_payoutGroups.reduce((s, g) => s + g.count, 0)}건</td>
+        <td>-</td>
+      </tr>`
   }
 
   // ── 정산 내역 전체 (상세) ──
+  // 기존에는 '보류상태'와 '상태' 두 컬럼이 중복되고 색상도 의미와 반대(보류중=초록, 지급가능=주황)라
+  // 헷갈렸음 → 하나로 합치고 색을 의미에 맞게 정리(줄 수 있으면 초록, 기다려야 하면 주황)
   if (!hasSettlements) return
   document.getElementById('admin-settle-tbody').innerHTML = settlements.map(s => {
-    const holdStatusHtml = s.status !== 'pending'
-      ? '-'
-      : isPayable(s)
-        ? '<span class="badge ba2">지급가능</span>'
-        : `<span class="badge bg2">보류중 (~${s.payable_after ? new Date(s.payable_after).toLocaleDateString('ko-KR') : '-'})</span>`
+    let statusHtml
+    if (s.status === 'voided') {
+      statusHtml = '<span class="badge br2">환불로 무효</span>'
+    } else if (s.status === 'completed' || s.status === 'paid') {
+      statusHtml = '<span class="badge bg2">✓ 지급완료</span>'
+    } else if (isPayable(s)) {
+      statusHtml = '<span class="badge bg2">지급가능</span>'
+    } else {
+      const until = s.payable_after ? new Date(s.payable_after) : null
+      statusHtml = `<span class="badge ba2">보류중</span>${until ? `<div style="font-size:11px;color:var(--t3);margin-top:3px">${until.getMonth() + 1}/${until.getDate()} 해제</div>` : ''}`
+    }
+    const canPay = s.status === 'pending' && isPayable(s)
     return `
-    <tr>
+    <tr${s.status === 'voided' ? ' style="opacity:.55"' : ''}>
       <td class="td-m">${nameMap[s.recipient] || nameMap[s.brand] || nameMap[s.creator] || '-'}</td>
       <td>${roleLabel[s.recipient_role] || '-'}</td>
-      <td>₩${Number(s.amount).toLocaleString()}</td>
-      <td>${holdStatusHtml}</td>
-      <td><span class="badge ${s.status === 'pending' ? 'ba2' : 'bg2'}">${statusLabel[s.status] || s.status}</span></td>
+      <td${s.status === 'voided' ? ' style="text-decoration:line-through;color:var(--t3)"' : ''}>₩${Number(s.amount).toLocaleString()}</td>
+      <td>${statusHtml}</td>
       <td class="td-m">${s.created_at ? new Date(s.created_at).toLocaleDateString('ko-KR') : '-'}</td>
       <td>
-        ${s.status === 'pending' && isPayable(s)
+        ${canPay
           ? `<button class="act-btn green" onclick="setSettleStatus('${s.id}','completed')">지급 완료 처리</button>`
-          : '-'}
+          : '<span style="font-size:11.5px;color:var(--t3)">-</span>'}
       </td>
     </tr>`
   }).join('')
@@ -1744,7 +1788,9 @@ window.downloadMonthlyCSV = function() {
 
 
 // 환불 이력 엑셀 다운로드
-window.downloadRefundCSV = function() {
+window.downloadRefundCSV = function(includePII) {
+  // 파일은 유출 시 통제가 불가능하므로 기본은 마스킹, 원본은 명시적 확인을 거친다
+  if (includePII && !confirm('구매자 개인정보(이름·연락처·이메일) 원본이 포함된 파일을 다운로드합니다.\n\n· 개인정보보호법상 목적 외 이용·유출 시 법적 책임이 발생합니다\n· 사용 후에는 반드시 파일을 삭제해주세요\n\n계속하시겠습니까?')) return
   const all = window._refundsCache || []
   const nameMap = window._adminNameMap || {}
   const CT = { change_of_mind:'단순변심', defect:'상품하자', not_delivered:'미배송', wrong_item:'오배송', seller_cancel:'판매자취소', other:'기타' }
@@ -1755,9 +1801,9 @@ window.downloadRefundCSV = function() {
       r.refund_completed_at ? new Date(r.refund_completed_at).toLocaleDateString('ko-KR')
         : (r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'),
       r.toss_order_id || '-',
-      r.buyer_name || '-',
-      r.buyer_phone || '-',
-      r.buyer_email || '-',
+      includePII ? (r.buyer_name || '-') : maskName(r.buyer_name),
+      includePII ? (r.buyer_phone || '-') : maskPhone(r.buyer_phone),
+      includePII ? (r.buyer_email || '-') : maskEmail(r.buyer_email),
       nameMap[r.brand] || '-',
       Number(r.amount || 0),
       CT[r.cancel_type] || '기타',
@@ -1765,7 +1811,7 @@ window.downloadRefundCSV = function() {
       ST[r.refund_status] || r.refund_status || '',
     ])
   })
-  downloadCSV('vingly_환불이력', rows)
+  downloadCSV(includePII ? 'vingly_환불이력_개인정보포함' : 'vingly_환불이력', rows)
 }
 
 // 정산 내역 엑셀 다운로드 — 실제 이체 작업과 회계 정리에 그대로 쓸 수 있도록 계좌까지 포함
@@ -1933,6 +1979,47 @@ window.deleteAnnouncement = async function(id) {
   if (error) { alert('삭제 실패: ' + error.message); return }
   showToast('공지가 삭제됐습니다')
   loadAnnouncements()
+}
+
+
+/* ===== 개인정보 마스킹 =====
+   개인정보의 안전성 확보조치 기준 제12조: 화면표시·파일생성 시 용도를 특정하고 출력 항목을 최소화.
+   목록에서는 마스킹하고, 실제 응대가 필요한 건만 "보기"로 원본을 확인하는 방식으로 노출을 최소화한다. */
+window.maskName = function(name) {
+  if (!name) return '-'
+  const s = String(name).trim()
+  if (s.length <= 1) return s
+  if (s.length === 2) return s[0] + '*'
+  return s[0] + '*'.repeat(s.length - 2) + s[s.length - 1]
+}
+
+window.maskPhone = function(phone) {
+  if (!phone) return '-'
+  const d = String(phone).replace(/[^0-9]/g, '')
+  if (d.length < 7) return '***'
+  // 가운데 자리만 가림 (뒷자리는 본인 확인용으로 남김)
+  if (d.length === 11) return `${d.slice(0,3)}-****-${d.slice(7)}`
+  if (d.length === 10) return `${d.slice(0,3)}-***-${d.slice(6)}`
+  return d.slice(0, 3) + '-****-' + d.slice(-4)
+}
+
+window.maskEmail = function(email) {
+  if (!email) return '-'
+  const [id, domain] = String(email).split('@')
+  if (!domain) return '***'
+  const visible = id.length <= 2 ? id[0] : id.slice(0, 2)
+  return `${visible}${'*'.repeat(Math.max(id.length - visible.length, 1))}@${domain}`
+}
+
+// 특정 건의 원본 정보만 열람 (열람 사실을 콘솔에 남겨 추적 가능하게)
+window.revealBuyerInfo = function(btn, name, phone, email) {
+  const cell = btn.closest('td')
+  if (!cell) return
+  cell.innerHTML = `
+    <div class="td-b">${name || '-'}</div>
+    <div style="font-size:11.5px;color:var(--ts)">${phone || '-'}</div>
+    ${email ? `<div style="font-size:11px;color:var(--t3)">${email}</div>` : ''}`
+  console.info('[Vingly] 구매자 개인정보 열람:', new Date().toISOString())
 }
 
 function showPage(id, btn) {
