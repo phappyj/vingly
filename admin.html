@@ -78,6 +78,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 /* 대시보드 구역 라벨 — 규모/추세/건전성/액션을 시각적으로 구분 */
 .sec-label{font:800 12px/1 'Pretendard',sans-serif;color:var(--t3);letter-spacing:.04em;margin:4px 0 10px;text-transform:none}
 .flow-line{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;font-size:13.5px;border-bottom:1px solid var(--br)}
+/* 날짜 입력 — 기본 캘린더 아이콘이 흰 배경에 묻혀 안 보이던 문제 */
+input[type="date"],input[type="datetime-local"],input[type="month"]{color-scheme:light}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator{
+  opacity:.75;cursor:pointer;padding:3px;border-radius:4px;background:var(--br)
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+input[type="month"]::-webkit-calendar-picker-indicator:hover{opacity:1;background:var(--bg-b)}
 .flow-line.sub{padding-left:14px;font-size:13px;color:var(--ts);border-bottom:none;padding-top:6px;padding-bottom:6px}
 .flow-line:last-child{border-bottom:none}
 .delta-up{color:var(--g);font-weight:700}
@@ -2015,10 +2025,29 @@ window.maskEmail = function(email) {
 window.revealBuyerInfo = function(btn, name, phone, email) {
   const cell = btn.closest('td')
   if (!cell) return
-  cell.innerHTML = `
-    <div class="td-b">${name || '-'}</div>
-    <div style="font-size:11.5px;color:var(--ts)">${phone || '-'}</div>
-    ${email ? `<div style="font-size:11px;color:var(--t3)">${email}</div>` : ''}`
+  const original = cell.innerHTML   // 마스킹 상태를 보관했다가 되돌린다
+
+  let remain = 30
+  const render = () => {
+    cell.innerHTML = `
+      <div class="td-b">${name || '-'}</div>
+      <div style="font-size:11.5px;color:var(--ts)">${phone || '-'}</div>
+      ${email ? `<div style="font-size:11px;color:var(--t3)">${email}</div>` : ''}
+      <div style="font-size:10.5px;color:var(--r2);margin-top:3px;font-weight:700">🔓 ${remain}초 후 자동 숨김</div>`
+  }
+  render()
+
+  // 화면을 켜둔 채 자리를 비워도 개인정보가 계속 노출되지 않도록 자동 복귀
+  const timer = setInterval(() => {
+    remain -= 1
+    if (remain <= 0) {
+      clearInterval(timer)
+      cell.innerHTML = original
+      return
+    }
+    render()
+  }, 1000)
+
   console.info('[Vingly] 구매자 개인정보 열람:', new Date().toISOString())
 }
 
@@ -2314,6 +2343,10 @@ function showToast(msg) {
       <option value="warning">주의 (노란색) — 정산 지연·일정 변경</option>
       <option value="urgent">긴급 (빨간색) — 장애·점검</option>
     </select>
+    <div style="font:400 11.5px/1.6 'Pretendard',sans-serif;color:var(--tm);margin:-8px 0 14px;padding-left:2px">
+      💡 <strong>긴급</strong>은 진한 빨강 배경으로 강조되며, 사용자가 닫아도 <strong>새로고침 시 다시 표시</strong>됩니다.
+      안내·주의는 한 번 닫으면 다시 뜨지 않습니다.
+    </div>
 
     <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">노출 대상 *</label>
     <select id="ann_target" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;margin-bottom:14px">
@@ -2332,11 +2365,11 @@ function showToast(msg) {
     <div class="g2" style="gap:10px;margin-bottom:14px">
       <div>
         <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">시작일시 <span style="font-weight:400;color:var(--tm)">(비우면 즉시)</span></label>
-        <input type="datetime-local" id="ann_start" style="width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--br);font-size:13px;font-family:inherit">
+        <input type="datetime-local" id="ann_start" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
       </div>
       <div>
         <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">종료일시 <span style="font-weight:400;color:var(--tm)">(비우면 무기한)</span></label>
-        <input type="datetime-local" id="ann_end" style="width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--br);font-size:13px;font-family:inherit">
+        <input type="datetime-local" id="ann_end" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
       </div>
     </div>
 
