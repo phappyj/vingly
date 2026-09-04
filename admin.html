@@ -77,6 +77,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 /* 대시보드 구역 라벨 — 규모/추세/건전성/액션을 시각적으로 구분 */
 .sec-label{font:800 12px/1 'Pretendard',sans-serif;color:var(--t3);letter-spacing:.04em;margin:4px 0 10px;text-transform:none}
+.flow-line{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;font-size:13.5px;border-bottom:1px solid var(--br)}
+.flow-line.sub{padding-left:14px;font-size:13px;color:var(--ts);border-bottom:none;padding-top:6px;padding-bottom:6px}
+.flow-line:last-child{border-bottom:none}
 .delta-up{color:var(--g);font-weight:700}
 .delta-down{color:var(--r2);font-weight:700}
 .sc2{background:var(--sf);border:1px solid var(--br);border-radius:var(--rad);padding:16px 18px}
@@ -371,9 +374,19 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- MEMBERS -->
   <div class="page" id="pg-members">
     <div class="filter-row">
-      <input class="search-inp" type="text" placeholder="이름, 이메일, 연락처 검색...">
-      <select class="filter-sel"><option>전체</option><option>브랜드/셀러</option><option>인플루언서</option></select>
-      <select class="filter-sel"><option>전체 상태</option><option>정상</option><option>경고</option><option>정지</option></select>
+      <input class="search-inp" id="mem-search" type="text" placeholder="이름, 이메일, 연락처 검색..." oninput="applyMemberFilter()">
+      <select class="filter-sel" id="mem-role" onchange="applyMemberFilter()">
+        <option value="">전체 역할</option>
+        <option value="brand">브랜드/셀러</option>
+        <option value="creator">크리에이터</option>
+      </select>
+      <select class="filter-sel" id="mem-status" onchange="applyMemberFilter()">
+        <option value="">전체 상태</option>
+        <option value="active">정상</option>
+        <option value="suspended">정지</option>
+        <option value="withdrawn">탈퇴</option>
+      </select>
+      <button class="act-btn green" onclick="downloadMemberCSV()">엑셀 다운로드</button>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="card-h"><div class="card-t">전체 회원</div><div style="font-size:12px;color:var(--tm)" id="admin-member-count">가입자 없음</div></div>
@@ -383,7 +396,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="admin-member-wrap" style="display:none">
         <table>
-          <thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>연락처</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead>
+          <thead><tr><th>이름</th><th>역할</th><th>이메일</th><th>연락처</th><th>사업자인증</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="admin-member-tbody"></tbody>
         </table>
       </div>
@@ -393,8 +406,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <!-- PRODUCTS -->
   <div class="page" id="pg-products">
     <div class="filter-row">
-      <input class="search-inp" type="text" placeholder="제품명, 브랜드 검색...">
-      <select class="filter-sel"><option>전체 상태</option><option>승인 대기</option><option>승인</option><option>반려</option></select>
+      <input class="search-inp" id="prod-search" type="text" placeholder="제품명, 브랜드 검색..." oninput="applyProductFilter()">
+      <select class="filter-sel" id="prod-status" onchange="applyProductFilter()">
+        <option value="">전체 상태</option>
+        <option value="active">판매중</option>
+        <option value="inactive">판매중지</option>
+      </select>
+      <button class="act-btn green" onclick="downloadProductCSV()">엑셀 다운로드</button>
       <select class="filter-sel"><option>전체 카테고리</option><option>헬스·운동</option><option>식품·건강</option><option>뷰티</option></select>
     </div>
     <div class="card" style="margin-bottom:0">
@@ -472,7 +490,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw">
         <table>
-          <thead><tr><th>요청일</th><th>주문번호</th><th>브랜드</th><th>금액</th><th>유형</th><th>실패 사유</th><th>재시도</th></tr></thead>
+          <thead><tr><th>요청일</th><th>주문번호</th><th>구매자</th><th>브랜드</th><th>금액</th><th>유형</th><th>실패 사유</th><th>재시도</th></tr></thead>
           <tbody id="refund-failed-tbody"></tbody>
         </table>
       </div>
@@ -486,7 +504,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="refund-wrap" style="display:none">
         <table>
-          <thead><tr><th>환불일</th><th>주문번호</th><th>브랜드</th><th>금액</th><th>유형</th><th>사유</th><th>상태</th></tr></thead>
+          <thead><tr><th>환불일</th><th>주문번호</th><th>구매자</th><th>브랜드</th><th>금액</th><th>유형</th><th>사유</th><th>상태</th></tr></thead>
           <tbody id="refund-tbody"></tbody>
         </table>
       </div>
@@ -520,27 +538,28 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
 
     <div class="card">
-      <div class="card-h"><div class="card-t">🏦 계좌 잔액 대조 (사고 방지용)</div></div>
-      <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.5);padding:0 4px 16px">
-        시스템이 계산한 "지금 계좌에 있어야 할 예상 잔액"과 실제 Toss 정산 계좌 잔액을 대조합니다.
-        차이가 크게 나면 정산 누락, 중복 지급, 시스템 오류 등을 의심해봐야 합니다.
+      <div class="card-h">
+        <div class="card-t">🏦 자금 흐름 명세</div>
+        <button class="act-btn green" onclick="downloadCashflowCSV()">엑셀 다운로드</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end" class="g3">
-        <div>
-          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">시스템 예상 잔액</div>
-          <div style="font:800 20px/1 'Pretendard',sans-serif" id="rev-expected-balance">₩0</div>
-          <div style="font:400 11px/1.5 'Pretendard',sans-serif;color:rgba(10,12,16,.35);margin-top:4px">총 입금액 − 누적 지급완료액</div>
+      <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--tm);padding:0 2px 14px">
+        구매자 결제금이 어디로 흘러갔는지 전체 흐름입니다. 맨 아래 <strong>「계좌에 남아있어야 할 금액」</strong>과
+        실제 정산계좌 잔액이 크게 다르면 정산 누락·중복 지급을 의심해야 합니다.
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div class="flow-line"><span>구매자 결제 총액 (환불 제외)</span><strong id="cf-in">₩0</strong></div>
+        <div class="flow-line sub"><span>└ PG 수수료 (2.2% 추정)</span><span id="cf-pg" style="color:var(--r2)">-₩0</span></div>
+        <div class="flow-line sub"><span>└ 브랜드 지급 완료</span><span id="cf-brand-paid" style="color:var(--r2)">-₩0</span></div>
+        <div class="flow-line sub"><span>└ 크리에이터 지급 완료</span><span id="cf-creator-paid" style="color:var(--r2)">-₩0</span></div>
+        <div class="flow-line" style="border-top:2px solid var(--br);margin-top:6px;padding-top:12px">
+          <span style="font-weight:700">계좌에 남아있어야 할 금액</span>
+          <strong id="cf-balance" style="font-size:19px">₩0</strong>
         </div>
-        <div>
-          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">실제 계좌 잔액 (직접 입력)</div>
-          <input type="number" id="rev-actual-balance" placeholder="Toss 정산계좌 실제 잔액 입력" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;font-family:inherit" oninput="compareBalance()">
-        </div>
-        <div>
-          <div style="font:600 12px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.4);margin-bottom:6px">차이</div>
-          <div style="font:800 20px/1 'Pretendard',sans-serif" id="rev-diff">-</div>
+        <div style="font:400 11.5px/1.6 'Pretendard',sans-serif;color:var(--t3);margin-top:8px;padding-left:2px">
+          이 중 <span id="cf-liability" style="font-weight:700">₩0</span>은 앞으로 지급해야 할 돈이고,
+          <span id="cf-profit" style="font-weight:700;color:var(--g)">₩0</span>이 Vingly 몫입니다.
         </div>
       </div>
-      <div id="rev-diff-warning" style="display:none;margin-top:14px;padding:12px 14px;background:#FEF2F2;border-radius:8px;font:600 13px/1.5 'Pretendard',sans-serif;color:var(--r2)"></div>
     </div>
 
     <div class="card">
@@ -1070,7 +1089,7 @@ async function renderRefunds(members) {
 
   const { data: refunds, error } = await supabase
     .from('orders')
-    .select('id,toss_order_id,brand,amount,cancelled_at,cancel_type,cancel_reason,refund_status,refund_error,refund_completed_at')
+    .select('id,toss_order_id,brand,amount,cancelled_at,cancel_type,cancel_reason,refund_status,refund_error,refund_completed_at,buyer_name,buyer_phone,buyer_email')
     .in('refund_status', ['requested', 'processing', 'completed', 'failed'])
     .order('created_at', { ascending: false })
 
@@ -1114,6 +1133,7 @@ async function renderRefunds(members) {
         <tr style="background:rgba(153,27,27,.05)">
           <td class="td-m" style="white-space:nowrap">${r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'}</td>
           <td class="td-m" title="${r.toss_order_id || ''}" style="white-space:nowrap">${shortRef(r.toss_order_id)}</td>
+          <td style="white-space:nowrap"><div class="td-b">${r.buyer_name || '-'}</div><div style="font-size:11.5px;color:var(--t3)">${r.buyer_phone || ''}</div></td>
           <td>${nameMap[r.brand] || '-'}</td>
           <td style="font-weight:700">₩${Number(r.amount || 0).toLocaleString()}</td>
           <td><span class="badge bam">${CANCEL_TYPE_LABEL_ADMIN[r.cancel_type] || '기타'}</span></td>
@@ -1141,6 +1161,10 @@ async function renderRefunds(members) {
     <tr>
       <td class="td-m" style="white-space:nowrap">${r.refund_completed_at ? new Date(r.refund_completed_at).toLocaleDateString('ko-KR') : (r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-')}</td>
       <td class="td-m" title="${r.toss_order_id || ''}" style="white-space:nowrap">${shortRef(r.toss_order_id)}</td>
+      <td style="white-space:nowrap">
+        <div class="td-b">${r.buyer_name || '-'}</div>
+        <div style="font-size:11.5px;color:var(--t3)">${r.buyer_phone || ''}</div>
+      </td>
       <td>${nameMap[r.brand] || '-'}</td>
       <td style="font-weight:700">₩${Number(r.amount || 0).toLocaleString()}</td>
       <td><span class="badge bam">${CANCEL_TYPE_LABEL_ADMIN[r.cancel_type] || '기타'}</span></td>
@@ -1178,7 +1202,6 @@ window.retryRefund = async function(orderId, cancelType) {
   }
 }
 
-let _expectedBalance = 0
 
 function renderRevenue(orders, settlements) {
   // 총 거래액(GMV) — 실제 결제완료된 주문 전체 합
@@ -1214,11 +1237,6 @@ function renderRevenue(orders, settlements) {
   if (brandOwedEl) brandOwedEl.textContent = '₩' + (brandHolding + brandPayable).toLocaleString()
   if (creatorOwedEl) creatorOwedEl.textContent = '₩' + (creatorHolding + creatorPayable).toLocaleString()
 
-  const totalPaidOut = brandPaid + creatorPaid
-  _expectedBalance = gmv - totalPaidOut
-  const expectedEl = document.getElementById('rev-expected-balance')
-  if (expectedEl) expectedEl.textContent = '₩' + _expectedBalance.toLocaleString()
-
   const tbody = document.getElementById('rev-breakdown-tbody')
   if (tbody) {
     tbody.innerHTML = `
@@ -1238,83 +1256,166 @@ function renderRevenue(orders, settlements) {
       </tr>`
   }
 
-  compareBalance()
+  // ── 자금 흐름 명세 ──
+  // 구매자가 낸 돈이 어디로 갔는지 추적. 계좌 잔액과 대조해 정산 사고를 조기에 발견하기 위함.
+  const pgFee = Math.round(gmv * 0.022)
+  const paidOut = brandPaid + creatorPaid
+  const expectedBalance = gmv - pgFee - paidOut
+  const stillOwed = brandHolding + brandPayable + creatorHolding + creatorPayable
+  const vinglyShare = expectedBalance - stillOwed
+
+  const w = (n) => '\u20a9' + Math.round(n).toLocaleString()
+  const put = (id, v, prefix = '') => { const el = document.getElementById(id); if (el) el.textContent = prefix + w(v) }
+  put('cf-in', gmv)
+  put('cf-pg', pgFee, '-')
+  put('cf-brand-paid', brandPaid, '-')
+  put('cf-creator-paid', creatorPaid, '-')
+  put('cf-balance', expectedBalance)
+  put('cf-liability', stillOwed)
+  put('cf-profit', vinglyShare)
+
+  window._cashflow = { gmv, pgFee, brandPaid, creatorPaid, expectedBalance, stillOwed, vinglyShare }
 }
 
-window.compareBalance = function() {
-  const input = document.getElementById('rev-actual-balance')
-  const diffEl = document.getElementById('rev-diff')
-  const warnEl = document.getElementById('rev-diff-warning')
-  if (!input || !diffEl) return
+// 자금 흐름 엑셀 다운로드 — 회계 정리·세무 신고 시 그대로 사용
+window.downloadCashflowCSV = function() {
+  const cf = window._cashflow
+  if (!cf) { alert('데이터가 아직 준비되지 않았습니다.'); return }
+  const rows = [
+    ['항목', '금액', '설명'],
+    ['구매자 결제 총액', cf.gmv, '환불 건 제외'],
+    ['PG 수수료(추정)', -cf.pgFee, '토스 2.2% 기준'],
+    ['브랜드 지급 완료', -cf.brandPaid, '이미 이체 완료'],
+    ['크리에이터 지급 완료', -cf.creatorPaid, '이미 이체 완료'],
+    ['계좌 예상 잔액', cf.expectedBalance, '정산계좌에 남아있어야 할 금액'],
+    ['- 지급 예정 부채', cf.stillOwed, '앞으로 지급해야 할 돈'],
+    ['- Vingly 몫', cf.vinglyShare, '실제 회사 수익'],
+  ]
+  downloadCSV('vingly_자금흐름', rows)
+}
 
-  const actual = Number(input.value)
-  if (!input.value) {
-    diffEl.textContent = '-'
-    diffEl.style.color = ''
-    if (warnEl) warnEl.style.display = 'none'
-    return
-  }
+let _allMembers = []
 
-  const diff = actual - _expectedBalance
-  const absDiff = Math.abs(diff)
-  diffEl.textContent = (diff >= 0 ? '+' : '') + '₩' + diff.toLocaleString()
-  diffEl.style.color = absDiff <= 1000 ? 'var(--g)' : 'var(--r2)'
+// 필터 조건에 맞는 회원만 추려서 렌더 — 검색/필터가 UI만 있고 동작하지 않던 문제 수정
+window.applyMemberFilter = function() {
+  const q = (document.getElementById('mem-search')?.value || '').trim().toLowerCase()
+  const role = document.getElementById('mem-role')?.value || ''
+  const status = document.getElementById('mem-status')?.value || ''
 
-  if (warnEl) {
-    if (absDiff > 1000) {
-      warnEl.style.display = 'block'
-      warnEl.textContent = `⚠️ 예상 잔액과 ₩${absDiff.toLocaleString()} 차이가 있습니다. 정산 기록 누락, 중복 지급, 미반영된 환불 등이 없는지 확인해주세요.`
-    } else {
-      warnEl.style.display = 'none'
+  const filtered = _allMembers.filter(m => {
+    if (role && m.role !== role) return false
+    if (status) {
+      const cur = m.status || 'active'
+      if (cur !== status) return false
     }
-  }
+    if (q) {
+      const hay = `${m.company_name || ''} ${m.email || ''} ${m.phone || ''}`.toLowerCase()
+      if (!hay.includes(q)) return false
+    }
+    return true
+  })
+  drawMembers(filtered)
 }
 
 function renderMembers(members) {
+  _allMembers = members || []
+  applyMemberFilter()
+}
+
+function drawMembers(members) {
   const emptyEl = document.getElementById('admin-member-empty')
   const wrap = document.getElementById('admin-member-wrap')
   const countEl = document.getElementById('admin-member-count')
   const hasMembers = members.length > 0
 
-  if (countEl) countEl.textContent = hasMembers ? `총 ${members.length}명` : '가입자 없음'
+  if (countEl) countEl.textContent = hasMembers
+    ? `${members.length}명 표시 (전체 ${_allMembers.length}명)`
+    : (_allMembers.length ? '조건에 맞는 회원이 없습니다' : '가입자 없음')
   if (emptyEl) emptyEl.style.display = hasMembers ? 'none' : 'block'
   if (wrap) wrap.style.display = hasMembers ? 'block' : 'none'
   if (!hasMembers) return
 
-  const roleLabel = { brand: '브랜드·셀러', creator: '인플루언서' }
-  const statusLabel = { active: '정상', suspended: '정지', deleted: '탈퇴' }
-  const statusBadge = { active: 'bg2', suspended: 'ba2', deleted: 'br' }
+  const roleLabel = { brand: '브랜드·셀러', creator: '크리에이터' }
+  const statusLabel = { active: '정상', suspended: '정지', withdrawn: '탈퇴', deleted: '탈퇴' }
+  const statusBadge = { active: 'bg', suspended: 'bam', withdrawn: 'br', deleted: 'br' }
 
-  document.getElementById('admin-member-tbody').innerHTML = members.map(m => `
-    <tr>
+  document.getElementById('admin-member-tbody').innerHTML = members.map(m => {
+    const st = m.status || 'active'
+    const isWithdrawn = st === 'withdrawn' || st === 'deleted'
+
+    // 사업자 인증은 브랜드에게만 의미가 있음 (크리에이터는 대상 아님)
+    let bizHtml = '<span style="color:var(--t3)">-</span>'
+    if (m.role === 'brand') {
+      bizHtml = m.business_verified
+        ? `<span class="badge bg">✓ 인증</span>`
+        : `<span class="badge bam">미인증</span>`
+      if (m.business_number) {
+        bizHtml += `<div style="font-size:11px;color:var(--t3);margin-top:3px">${m.business_number}</div>`
+      }
+    }
+
+    return `
+    <tr${isWithdrawn ? ' style="opacity:.55"' : ''}>
       <td class="td-b">${m.company_name || '-'}</td>
-      <td><span class="badge ${m.role === 'brand' ? 'bb2' : 'bg2'}">${roleLabel[m.role] || m.role || '-'}</span></td>
+      <td><span class="badge ${m.role === 'brand' ? 'bam' : 'bg'}">${roleLabel[m.role] || m.role || '-'}</span></td>
       <td class="td-m">${m.email || '-'}</td>
       <td class="td-m">${m.phone || '-'}</td>
+      <td>${bizHtml}</td>
       <td class="td-m">${m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-'}</td>
-      <td><span class="badge ${statusBadge[m.status] || 'bg2'}">${statusLabel[m.status] || '정상'}</span></td>
-      <td>
-        ${m.status === 'suspended'
-          ? `<button class="act-btn green" onclick="setMemberStatus('${m.id}','active')">정지 해제</button>`
-          : `<button class="act-btn red" onclick="setMemberStatus('${m.id}','suspended')">정지</button>`}
+      <td><span class="badge ${statusBadge[st] || 'bg'}">${statusLabel[st] || '정상'}</span></td>
+      <td style="white-space:nowrap">
+        ${isWithdrawn
+          ? '<span style="font-size:11.5px;color:var(--t3)">탈퇴 회원</span>'
+          : (st === 'suspended'
+            ? `<button class="act-btn green" onclick="setMemberStatus('${m.id}','active')">정지 해제</button>`
+            : `<button class="act-btn" style="color:var(--r2)" onclick="setMemberStatus('${m.id}','suspended')">정지</button>`)}
       </td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
 }
 
-window.setMemberStatus = async function(userId, status) {
-  const supabase = window._supabase
-  const { data, error } = await supabase.from('users').update({ status }).eq('id', userId).select()
-  if (error) {
-    alert('처리 실패: ' + error.message)
-  } else if (!data || data.length === 0) {
-    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_users" ON public.users\n  FOR UPDATE\n  USING (true);')
-  } else {
-    showToast('회원 상태가 변경됐습니다 ✓')
-    loadAdminData()
-  }
+// 회원 목록 엑셀 다운로드
+window.downloadMemberCSV = function() {
+  const roleLabel = { brand: '브랜드·셀러', creator: '크리에이터' }
+  const statusLabel = { active: '정상', suspended: '정지', withdrawn: '탈퇴', deleted: '탈퇴' }
+  const rows = [['이름', '역할', '이메일', '연락처', '사업자번호', '사업자인증', '가입일', '상태']]
+  _allMembers.forEach(m => {
+    rows.push([
+      m.company_name || '-', roleLabel[m.role] || m.role || '-',
+      m.email || '-', m.phone || '-',
+      m.business_number || '-',
+      m.role === 'brand' ? (m.business_verified ? '인증' : '미인증') : '-',
+      m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-',
+      statusLabel[m.status || 'active'] || '정상',
+    ])
+  })
+  downloadCSV('vingly_회원목록', rows)
+}
+
+let _allProducts = [], _productBrandMap = {}
+
+window.applyProductFilter = function() {
+  const q = (document.getElementById('prod-search')?.value || '').trim().toLowerCase()
+  const status = document.getElementById('prod-status')?.value || ''
+  const filtered = _allProducts.filter(p => {
+    if (status && (p.status || 'active') !== status) return false
+    if (q) {
+      const hay = `${p.name || ''} ${_productBrandMap[p.brand_user] || ''}`.toLowerCase()
+      if (!hay.includes(q)) return false
+    }
+    return true
+  })
+  drawProducts(filtered)
 }
 
 function renderProducts(products, members) {
+  _allProducts = products || []
+  _productBrandMap = {}
+  ;(members || []).forEach(m => { _productBrandMap[m.id] = m.company_name })
+  applyProductFilter()
+}
+
+function drawProducts(products) {
   const emptyEl = document.getElementById('admin-product-empty')
   const wrap = document.getElementById('admin-product-wrap')
   const hasProducts = products.length > 0
@@ -1322,23 +1423,59 @@ function renderProducts(products, members) {
   if (wrap) wrap.style.display = hasProducts ? 'block' : 'none'
   if (!hasProducts) return
 
-  const brandMap = {}
-  ;(members || []).forEach(m => { brandMap[m.id] = m.company_name })
-
-  document.getElementById('admin-product-tbody').innerHTML = products.map(p => `
-    <tr>
+  document.getElementById('admin-product-tbody').innerHTML = products.map(p => {
+    const isActive = (p.status || 'active') === 'active'
+    return `
+    <tr${isActive ? '' : ' style="opacity:.6"'}>
       <td class="td-b">${p.name}</td>
-      <td class="td-m">${brandMap[p.brand_user] || '-'}</td>
+      <td class="td-m">${_productBrandMap[p.brand_user] || '-'}</td>
       <td>₩${Number(p.price).toLocaleString()}</td>
       <td>${p.commission_rate}%</td>
       <td>${p.stock ?? '-'}</td>
-      <td><span class="badge ${p.status === 'active' ? 'bg2' : 'br'}">${p.status === 'active' ? '판매중' : '비활성'}</span></td>
-      <td>
-        ${p.status === 'active'
-          ? `<button class="act-btn red" onclick="setProductStatus('${p.id}','inactive')">비활성화</button>`
-          : `<button class="act-btn green" onclick="setProductStatus('${p.id}','active')">활성화</button>`}
+      <td><span class="badge ${isActive ? 'bg' : 'br'}">${isActive ? '판매중' : '판매중지'}</span></td>
+      <td style="white-space:nowrap">
+        ${isActive
+          ? `<button class="act-btn" style="color:var(--r2)" onclick="setProductStatus('${p.id}','inactive')">판매중지</button>`
+          : `<button class="act-btn green" onclick="setProductStatus('${p.id}','active')">판매재개</button>`}
       </td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
+}
+
+// 제품 목록 엑셀 다운로드
+window.downloadProductCSV = function() {
+  const rows = [['제품명', '브랜드', '가격', '수수료율(%)', '재고', '상태', '등록일']]
+  _allProducts.forEach(p => {
+    rows.push([
+      p.name || '-', _productBrandMap[p.brand_user] || '-',
+      Number(p.price || 0), p.commission_rate ?? '-', p.stock ?? '-',
+      (p.status || 'active') === 'active' ? '판매중' : '판매중지',
+      p.created_at ? new Date(p.created_at).toLocaleDateString('ko-KR') : '-',
+    ])
+  })
+  downloadCSV('vingly_제품목록', rows)
+}
+
+window.setMemberStatus = async function(userId, status) {
+  const label = status === 'suspended' ? '정지' : '정지 해제'
+  const msg = status === 'suspended'
+    ? '이 회원을 정지하시겠습니까?\n\n정지된 회원은 로그인은 가능하지만 판매·링크생성 등 주요 기능을 사용할 수 없습니다.'
+    : '이 회원의 정지를 해제하시겠습니까?'
+  if (!confirm(msg)) return
+
+  const supabase = window._supabase
+  const { data, error } = await supabase.from('users').update({ status }).eq('id', userId).select()
+  if (error) {
+    alert(label + ' 처리 실패: ' + error.message)
+    return
+  }
+  if (!data || data.length === 0) {
+    alert(label + ' 처리가 저장되지 않았습니다.\n\n관리자 권한 정책을 확인해주세요.')
+    console.error('[Vingly] users UPDATE 0건 — admin_can_update_users RLS 정책 확인 필요')
+    return
+  }
+  showToast(`회원을 ${label} 처리했습니다 ✓`)
+  loadAdminData()
 }
 
 window.setProductStatus = async function(productId, status) {
@@ -1347,7 +1484,8 @@ window.setProductStatus = async function(productId, status) {
   if (error) {
     alert('처리 실패: ' + error.message)
   } else if (!data || data.length === 0) {
-    alert('처리가 안 됐습니다 (권한 문제로 보입니다).\n\nSupabase SQL Editor에서 아래 SQL을 실행한 뒤 다시 시도해주세요:\n\nCREATE POLICY "admin_can_update_products" ON public.products\n  FOR UPDATE\n  USING (true);')
+    alert('제품 상태가 변경되지 않았습니다.\n\n잠시 후 다시 시도해주시고, 문제가 반복되면 개발팀에 문의해주세요.')
+    console.error('[Vingly] products UPDATE 0건 — admin_can_update_products RLS 정책 확인 필요')
   } else {
     showToast('제품 상태가 변경됐습니다 ✓')
     loadAdminData()
@@ -1611,12 +1749,15 @@ window.downloadRefundCSV = function() {
   const nameMap = window._adminNameMap || {}
   const CT = { change_of_mind:'단순변심', defect:'상품하자', not_delivered:'미배송', wrong_item:'오배송', seller_cancel:'판매자취소', other:'기타' }
   const ST = { completed:'환불완료', failed:'실패', processing:'처리중', requested:'요청됨' }
-  const rows = [['환불일', '주문번호', '브랜드', '환불금액', '환불유형', '사유', '상태']]
+  const rows = [['환불일', '주문번호', '구매자명', '구매자연락처', '구매자이메일', '브랜드', '환불금액', '환불유형', '사유', '상태']]
   all.forEach(r => {
     rows.push([
       r.refund_completed_at ? new Date(r.refund_completed_at).toLocaleDateString('ko-KR')
         : (r.cancelled_at ? new Date(r.cancelled_at).toLocaleDateString('ko-KR') : '-'),
       r.toss_order_id || '-',
+      r.buyer_name || '-',
+      r.buyer_phone || '-',
+      r.buyer_email || '-',
       nameMap[r.brand] || '-',
       Number(r.amount || 0),
       CT[r.cancel_type] || '기타',
