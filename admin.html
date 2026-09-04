@@ -77,6 +77,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 /* 대시보드 구역 라벨 — 규모/추세/건전성/액션을 시각적으로 구분 */
 .sec-label{font:800 12px/1 'Pretendard',sans-serif;color:var(--t3);letter-spacing:.04em;margin:4px 0 10px;text-transform:none}
+.pk-sel{padding:9px 10px;border-radius:8px;border:1.5px solid var(--br);background:#fff;font-size:13px;font-family:inherit;cursor:pointer;min-height:38px}
 .flow-line{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;font-size:13.5px;border-bottom:1px solid var(--br)}
 /* 날짜 입력 — 기본 캘린더 아이콘이 흰 배경에 묻혀 안 보이던 문제 */
 input[type="date"],input[type="datetime-local"],input[type="month"]{color-scheme:light}
@@ -1861,26 +1862,109 @@ window.downloadSettlementCSV = function() {
 const ANN_TYPE = { info:{label:'안내', cls:'bg'}, warning:{label:'주의', cls:'bam'}, urgent:{label:'긴급', cls:'br'} }
 const ANN_TARGET = { all:'전체', brand:'브랜드', creator:'크리에이터', buyer:'구매자' }
 
-// 날짜 입력은 브라우저 기본 UI라 확인 버튼이 없어 "제대로 들어갔는지" 알기 어렵다.
-// → 자주 쓰는 기간은 버튼으로 제공하고, 선택 결과를 사람이 읽는 문장으로 즉시 보여준다.
+/* ===== 노출 기간 선택 =====
+   브라우저 기본 datetime-local은 확인 버튼이 없어 "반영됐는지" 알 수 없다는 문제가 있어,
+   드롭다운 + 「기간 확정」 버튼 방식으로 직접 구성했다. */
 function toLocalInputValue(d) {
   const p = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`
+}
+
+// 오늘부터 60일치 날짜 옵션 생성 (공지 노출 기간으로 충분한 범위)
+function buildDateOptions(sel, baseDate) {
+  const opts = []
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  for (let i = 0; i < 60; i++) {
+    const d = new Date(today.getTime() + i * 86400000)
+    const w = ['일','월','화','수','목','금','토'][d.getDay()]
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+    const label = i === 0 ? `오늘 (${d.getMonth()+1}/${d.getDate()} ${w})`
+      : i === 1 ? `내일 (${d.getMonth()+1}/${d.getDate()} ${w})`
+      : `${d.getMonth()+1}월 ${d.getDate()}일 (${w})`
+    opts.push(`<option value="${val}">${label}</option>`)
+  }
+  sel.innerHTML = opts.join('')
+  if (baseDate) {
+    const v = `${baseDate.getFullYear()}-${String(baseDate.getMonth()+1).padStart(2,'0')}-${String(baseDate.getDate()).padStart(2,'0')}`
+    if ([...sel.options].some(o => o.value === v)) sel.value = v
+  }
+}
+
+function buildTimeOptions(hourSel, minSel, baseDate) {
+  hourSel.innerHTML = Array.from({length:24}, (_,h) => `<option value="${h}">${String(h).padStart(2,'0')}시</option>`).join('')
+  minSel.innerHTML = [0,10,20,30,40,50].map(m => `<option value="${m}">${String(m).padStart(2,'0')}분</option>`).join('')
+  if (baseDate) {
+    hourSel.value = String(baseDate.getHours())
+    minSel.value = String(Math.floor(baseDate.getMinutes() / 10) * 10)
+  }
+}
+
+window.openPeriodPicker = function() {
+  const box = document.getElementById('period_picker')
+  if (!box) return
+  const now = new Date()
+  const end = new Date(now.getTime() + 3 * 86400000)
+
+  buildDateOptions(document.getElementById('ps_date'), now)
+  buildTimeOptions(document.getElementById('ps_hour'), document.getElementById('ps_min'), now)
+  buildDateOptions(document.getElementById('pe_date'), end)
+  buildTimeOptions(document.getElementById('pe_hour'), document.getElementById('pe_min'), end)
+
+  document.getElementById('pe_none').checked = false
+  document.getElementById('pe_wrap').style.display = 'flex'
+  document.getElementById('pk_err').style.display = 'none'
+  box.style.display = 'block'
+}
+
+window.closePeriodPicker = function() {
+  document.getElementById('period_picker').style.display = 'none'
+}
+
+window.togglePeriodEnd = function() {
+  const none = document.getElementById('pe_none').checked
+  document.getElementById('pe_wrap').style.display = none ? 'none' : 'flex'
+}
+
+window.confirmPeriodPicker = function() {
+  const errEl = document.getElementById('pk_err')
+  const sd = document.getElementById('ps_date').value
+  const sh = document.getElementById('ps_hour').value
+  const sm = document.getElementById('ps_min').value
+  const start = new Date(`${sd}T${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`)
+
+  let end = null
+  if (!document.getElementById('pe_none').checked) {
+    const ed = document.getElementById('pe_date').value
+    const eh = document.getElementById('pe_hour').value
+    const em = document.getElementById('pe_min').value
+    end = new Date(`${ed}T${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`)
+    if (end <= start) {
+      errEl.textContent = '⚠️ 종료 시각이 시작 시각보다 빠르거나 같습니다.'
+      errEl.style.display = 'block'
+      return
+    }
+  }
+
+  document.getElementById('ann_start').value = toLocalInputValue(start)
+  document.getElementById('ann_end').value = end ? toLocalInputValue(end) : ''
+  closePeriodPicker()
+  updateAnnPeriodPreview()
 }
 
 window.setAnnPeriod = function(preset) {
   const startEl = document.getElementById('ann_start')
   const endEl = document.getElementById('ann_end')
   const now = new Date()
+  closePeriodPicker()
 
   if (preset === 'now') {
     startEl.value = ''
     endEl.value = ''
   } else {
     const days = { '1d': 1, '3d': 3, '7d': 7 }[preset] || 1
-    const end = new Date(now.getTime() + days * 86400000)
     startEl.value = toLocalInputValue(now)
-    endEl.value = toLocalInputValue(end)
+    endEl.value = toLocalInputValue(new Date(now.getTime() + days * 86400000))
   }
   updateAnnPeriodPreview()
 }
@@ -1895,14 +1979,6 @@ window.updateAnnPeriodPreview = function() {
     const d = new Date(v)
     const w = ['일','월','화','수','목','금','토'][d.getDay()]
     return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일(${w}) ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
-  }
-
-  // 잘못된 기간은 저장 전에 바로 알려준다
-  if (s && e && new Date(s) >= new Date(e)) {
-    el.style.background = 'var(--bg-r)'
-    el.style.color = 'var(--r2)'
-    el.textContent = '⚠️ 종료일시가 시작일시보다 빠릅니다. 다시 확인해주세요.'
-    return
   }
 
   el.style.background = 'var(--bg-b)'
@@ -1921,6 +1997,7 @@ window.openAnnounceModal = function() {
   document.getElementById('ann_start').value = ''
   document.getElementById('ann_end').value = ''
   document.getElementById('ann_err').style.display = 'none'
+  closePeriodPicker()
   updateAnnPeriodPreview()
   document.getElementById('announceModal').style.display = 'flex'
 }
@@ -2416,25 +2493,47 @@ function showToast(msg) {
     <textarea id="ann_content" placeholder="배너를 클릭했을 때 보여줄 자세한 안내" style="width:100%;min-height:80px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;resize:vertical;margin-bottom:14px"></textarea>
 
     <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">노출 기간</label>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
       <button type="button" class="act-btn" onclick="setAnnPeriod('now')">지금부터 무기한</button>
       <button type="button" class="act-btn" onclick="setAnnPeriod('1d')">오늘 하루</button>
       <button type="button" class="act-btn" onclick="setAnnPeriod('3d')">3일간</button>
       <button type="button" class="act-btn" onclick="setAnnPeriod('7d')">일주일</button>
+      <button type="button" class="act-btn" onclick="openPeriodPicker()">직접 지정</button>
     </div>
-    <div class="g2" style="gap:10px;margin-bottom:8px">
-      <div>
-        <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--tm);display:block;margin-bottom:5px">시작일시</label>
-        <input type="datetime-local" id="ann_start" onchange="updateAnnPeriodPreview()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
-      </div>
-      <div>
-        <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--tm);display:block;margin-bottom:5px">종료일시</label>
-        <input type="datetime-local" id="ann_end" onchange="updateAnnPeriodPreview()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
-      </div>
-    </div>
+
     <div id="ann_period_preview" style="background:var(--bg-b);border-radius:8px;padding:10px 12px;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--b);margin-bottom:14px">
       📅 지금부터 무기한 노출됩니다
     </div>
+
+    <!-- 직접 지정 — 브라우저 기본 캘린더는 확인 버튼이 없어 반영 여부를 알 수 없으므로
+         드롭다운 + 확인 버튼 방식으로 직접 구성 -->
+    <div id="period_picker" style="display:none;background:var(--sf);border:1.5px solid var(--br);border-radius:12px;padding:16px;margin-bottom:14px">
+      <div style="font:700 12.5px/1 'Pretendard',sans-serif;margin-bottom:10px">시작</div>
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <select id="ps_date" class="pk-sel"></select>
+        <select id="ps_hour" class="pk-sel"></select>
+        <select id="ps_min" class="pk-sel"></select>
+      </div>
+      <div style="font:700 12.5px/1 'Pretendard',sans-serif;margin-bottom:10px">종료</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+        <label style="display:flex;align-items:center;gap:6px;font:500 12.5px/1 'Pretendard',sans-serif;cursor:pointer;margin-right:4px">
+          <input type="checkbox" id="pe_none" onchange="togglePeriodEnd()"> 무기한
+        </label>
+      </div>
+      <div id="pe_wrap" style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <select id="pe_date" class="pk-sel"></select>
+        <select id="pe_hour" class="pk-sel"></select>
+        <select id="pe_min" class="pk-sel"></select>
+      </div>
+      <div id="pk_err" style="display:none;font:600 12px/1.5 'Pretendard',sans-serif;color:var(--r2);margin-bottom:10px"></div>
+      <div style="display:flex;gap:8px">
+        <button type="button" onclick="closePeriodPicker()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid var(--br);background:#fff;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">취소</button>
+        <button type="button" onclick="confirmPeriodPicker()" style="flex:1;padding:10px;border-radius:9px;border:none;background:var(--g);color:#fff;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">✓ 기간 확정</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="ann_start">
+    <input type="hidden" id="ann_end">
 
     <div id="ann_err" style="display:none;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--r2);margin-bottom:12px"></div>
 
