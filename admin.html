@@ -1861,6 +1861,58 @@ window.downloadSettlementCSV = function() {
 const ANN_TYPE = { info:{label:'안내', cls:'bg'}, warning:{label:'주의', cls:'bam'}, urgent:{label:'긴급', cls:'br'} }
 const ANN_TARGET = { all:'전체', brand:'브랜드', creator:'크리에이터', buyer:'구매자' }
 
+// 날짜 입력은 브라우저 기본 UI라 확인 버튼이 없어 "제대로 들어갔는지" 알기 어렵다.
+// → 자주 쓰는 기간은 버튼으로 제공하고, 선택 결과를 사람이 읽는 문장으로 즉시 보여준다.
+function toLocalInputValue(d) {
+  const p = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`
+}
+
+window.setAnnPeriod = function(preset) {
+  const startEl = document.getElementById('ann_start')
+  const endEl = document.getElementById('ann_end')
+  const now = new Date()
+
+  if (preset === 'now') {
+    startEl.value = ''
+    endEl.value = ''
+  } else {
+    const days = { '1d': 1, '3d': 3, '7d': 7 }[preset] || 1
+    const end = new Date(now.getTime() + days * 86400000)
+    startEl.value = toLocalInputValue(now)
+    endEl.value = toLocalInputValue(end)
+  }
+  updateAnnPeriodPreview()
+}
+
+window.updateAnnPeriodPreview = function() {
+  const el = document.getElementById('ann_period_preview')
+  if (!el) return
+  const s = document.getElementById('ann_start')?.value
+  const e = document.getElementById('ann_end')?.value
+
+  const fmt = (v) => {
+    const d = new Date(v)
+    const w = ['일','월','화','수','목','금','토'][d.getDay()]
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일(${w}) ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+  }
+
+  // 잘못된 기간은 저장 전에 바로 알려준다
+  if (s && e && new Date(s) >= new Date(e)) {
+    el.style.background = 'var(--bg-r)'
+    el.style.color = 'var(--r2)'
+    el.textContent = '⚠️ 종료일시가 시작일시보다 빠릅니다. 다시 확인해주세요.'
+    return
+  }
+
+  el.style.background = 'var(--bg-b)'
+  el.style.color = 'var(--b)'
+  if (!s && !e) el.textContent = '📅 지금부터 무기한 노출됩니다'
+  else if (s && !e) el.textContent = `📅 ${fmt(s)}부터 무기한 노출됩니다`
+  else if (!s && e) el.textContent = `📅 지금부터 ${fmt(e)}까지 노출됩니다`
+  else el.textContent = `📅 ${fmt(s)} ~ ${fmt(e)}`
+}
+
 window.openAnnounceModal = function() {
   document.getElementById('ann_type').value = 'info'
   document.getElementById('ann_target').value = 'all'
@@ -1869,6 +1921,7 @@ window.openAnnounceModal = function() {
   document.getElementById('ann_start').value = ''
   document.getElementById('ann_end').value = ''
   document.getElementById('ann_err').style.display = 'none'
+  updateAnnPeriodPreview()
   document.getElementById('announceModal').style.display = 'flex'
 }
 
@@ -2362,15 +2415,25 @@ function showToast(msg) {
     <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">상세 내용 <span style="font-weight:400;color:var(--tm)">(선택)</span></label>
     <textarea id="ann_content" placeholder="배너를 클릭했을 때 보여줄 자세한 안내" style="width:100%;min-height:80px;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);font-size:14px;font-family:inherit;resize:vertical;margin-bottom:14px"></textarea>
 
-    <div class="g2" style="gap:10px;margin-bottom:14px">
+    <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">노출 기간</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <button type="button" class="act-btn" onclick="setAnnPeriod('now')">지금부터 무기한</button>
+      <button type="button" class="act-btn" onclick="setAnnPeriod('1d')">오늘 하루</button>
+      <button type="button" class="act-btn" onclick="setAnnPeriod('3d')">3일간</button>
+      <button type="button" class="act-btn" onclick="setAnnPeriod('7d')">일주일</button>
+    </div>
+    <div class="g2" style="gap:10px;margin-bottom:8px">
       <div>
-        <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">시작일시 <span style="font-weight:400;color:var(--tm)">(비우면 즉시)</span></label>
-        <input type="datetime-local" id="ann_start" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
+        <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--tm);display:block;margin-bottom:5px">시작일시</label>
+        <input type="datetime-local" id="ann_start" onchange="updateAnnPeriodPreview()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
       </div>
       <div>
-        <label style="font:700 12px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">종료일시 <span style="font-weight:400;color:var(--tm)">(비우면 무기한)</span></label>
-        <input type="datetime-local" id="ann_end" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
+        <label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--tm);display:block;margin-bottom:5px">종료일시</label>
+        <input type="datetime-local" id="ann_end" onchange="updateAnnPeriodPreview()" style="width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--br);background:var(--sf);font-size:13.5px;font-family:inherit;color:var(--t1);color-scheme:light">
       </div>
+    </div>
+    <div id="ann_period_preview" style="background:var(--bg-b);border-radius:8px;padding:10px 12px;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--b);margin-bottom:14px">
+      📅 지금부터 무기한 노출됩니다
     </div>
 
     <div id="ann_err" style="display:none;font:600 12.5px/1.5 'Pretendard',sans-serif;color:var(--r2);margin-bottom:12px"></div>
