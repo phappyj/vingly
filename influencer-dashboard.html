@@ -171,6 +171,13 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   .content{padding:14px 16px}
   .onboard{flex-direction:column;align-items:flex-start}
 
+  /* 모달·표가 화면을 넘치지 않게 */
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{font-size:12.5px}
+  th,td{padding:9px 8px}
+  .act-btn{padding:6px 10px;font-size:11.5px}
+  .badge{font-size:10.5px;padding:2px 6px}
+
   /* 가독성 상향 */
   .sc-label{font-size:12.5px}
   .sc-val{font-size:22px}
@@ -295,7 +302,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   <div class="mob-top">
     <button class="hb" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
     <div style="font:800 17px/1 'Pretendard',sans-serif" id="mob-title">대시보드</div>
-    <div style="width:30px"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="icon-btn" onclick="toggleNotif()" style="cursor:pointer;position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:17px">🔔<div class="ndot"></div></div>
+      <button class="logout-btn" onclick="doLogout()" style="padding:6px 11px;font-size:11.5px">로그아웃</button>
+    </div>
   </div>
   <div class="topbar">
     <div class="tb-title" id="page-title">대시보드</div>
@@ -1689,11 +1699,28 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   /* ===== 자동 로그아웃 (개인정보보호법 제29조 안전조치의무 / 접근통제) =====
-     일정 시간 조작이 없으면 자동으로 접속을 차단해야 함. 업계 표준 2시간 적용. */
+     일정 시간 조작이 없으면 자동으로 접속을 차단해야 함. 업계 표준 2시간 적용.
+
+     ⚠️ setTimeout만 쓰면 탭을 닫는 순간 타이머가 사라져서,
+     며칠 뒤 다시 열어도 세션이 그대로 살아있는 문제가 있었다.
+     → 마지막 활동 시각을 저장해두고 "페이지를 열 때마다" 경과 시간을 검사한다.
+     (실제 위험은 오히려 이쪽 — 폰에서 로그인해두고 잊어버리는 경우) */
   ;(function initIdleLogout() {
     const IDLE_LIMIT_MS = 2 * 60 * 60 * 1000  // 2시간
-    const WARN_BEFORE_MS = 2 * 60 * 1000      // 만료 2분 전 경고
+    const WARN_BEFORE_MS = 2 * 60 * 1000  // 만료 2분 전 경고
+    const LAST_ACTIVE_KEY = 'vingly_creator_last_active'
     let idleTimer = null, warnTimer = null, warnEl = null
+
+    function markActive() {
+      try { localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now())) } catch (e) {}
+    }
+
+    function getIdleElapsed() {
+      try {
+        const last = Number(localStorage.getItem(LAST_ACTIVE_KEY) || 0)
+        return last ? Date.now() - last : 0
+      } catch (e) { return 0 }
+    }
 
     function removeWarning() {
       if (warnEl) { warnEl.remove(); warnEl = null }
@@ -1702,33 +1729,69 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     function showWarning() {
       removeWarning()
       warnEl = document.createElement('div')
-      warnEl.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:9999;background:#0A0C10;color:#fff;padding:14px 20px;border-radius:12px;font:600 13.5px/1.5 Pretendard,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:14px'
+      warnEl.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:9999;background:#0A0C10;color:#fff;padding:14px 20px;border-radius:12px;font:600 13.5px/1.5 Pretendard,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:14px;max-width:calc(100vw - 32px)'
       warnEl.innerHTML = '<span>보안을 위해 곧 자동 로그아웃됩니다.</span>'
       const btn = document.createElement('button')
       btn.textContent = '계속 사용하기'
-      btn.style.cssText = 'padding:7px 13px;border-radius:8px;border:none;background:#00B37E;color:#fff;font:700 12.5px/1 Pretendard,sans-serif;cursor:pointer'
-      btn.onclick = () => { removeWarning(); resetTimers() }
+      btn.style.cssText = 'padding:7px 13px;border-radius:8px;border:none;background:#00B37E;color:#fff;font:700 12.5px/1 Pretendard,sans-serif;cursor:pointer;flex-shrink:0'
+      btn.onclick = () => { removeWarning(); markActive(); resetTimers() }
       warnEl.appendChild(btn)
       document.body.appendChild(warnEl)
     }
 
-    async function forceLogout() {
+    async function forceLogout(silent) {
       removeWarning()
-      try { if (window._supabase) await window._supabase.auth.signOut() } catch (e) {}
-      alert('장시간 사용하지 않아 보안을 위해 로그아웃되었습니다.\n다시 로그인해주세요.')
+      try { localStorage.removeItem(LAST_ACTIVE_KEY) } catch (e) {}
+      try {
+        const sb = window._supabase
+        if (sb) await sb.auth.signOut()
+      } catch (e) {}
+      if (!silent) alert('장시간 사용하지 않아 보안을 위해 로그아웃되었습니다.\n다시 로그인해주세요.')
       location.replace('login.html')
     }
 
     function resetTimers() {
       clearTimeout(idleTimer); clearTimeout(warnTimer)
-      warnTimer = setTimeout(showWarning, IDLE_LIMIT_MS - WARN_BEFORE_MS)
-      idleTimer = setTimeout(forceLogout, IDLE_LIMIT_MS)
+      const warnAt = Math.max(IDLE_LIMIT_MS - WARN_BEFORE_MS, Math.floor(IDLE_LIMIT_MS * 0.5))
+      warnTimer = setTimeout(showWarning, warnAt)
+      idleTimer = setTimeout(() => forceLogout(false), IDLE_LIMIT_MS)
     }
 
     ;['click', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
-      document.addEventListener(evt, () => { if (!warnEl) resetTimers() }, { passive: true })
+      document.addEventListener(evt, () => {
+        if (warnEl) return
+        markActive()
+        resetTimers()
+      }, { passive: true })
     })
 
+    // 탭을 다시 열거나 화면에 돌아왔을 때도 경과 시간을 재검사
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return
+      if (getIdleElapsed() >= IDLE_LIMIT_MS) forceLogout(false)
+      else { markActive(); resetTimers() }
+    })
+
+    // 페이지 진입 시점 검사 — 탭을 닫아둔 사이 시간이 지났으면 즉시 로그아웃.
+    // 단, 기록이 아예 없으면(방금 로그인했거나 첫 방문) 통과시킨다.
+    let last = 0
+    try { last = Number(localStorage.getItem(LAST_ACTIVE_KEY) || 0) } catch (e) {}
+    if (last && (Date.now() - last) >= IDLE_LIMIT_MS) {
+      forceLogout(true)
+      return
+    }
+
+    // 테스트용: 콘솔에서 vinglySetIdleTimeout(2) 실행 시 2분으로 단축
+    window.vinglySetIdleTimeout = function(minutes) {
+      window.__vinglyIdleOverride = minutes * 60 * 1000
+      console.log(`[Vingly] 자동 로그아웃 시간이 ${minutes}분으로 변경됐습니다.`)
+      markActive()
+      clearTimeout(idleTimer); clearTimeout(warnTimer)
+      warnTimer = setTimeout(showWarning, Math.floor(window.__vinglyIdleOverride * 0.5))
+      idleTimer = setTimeout(() => forceLogout(false), window.__vinglyIdleOverride)
+    }
+
+    markActive()
     resetTimers()
   })()
 

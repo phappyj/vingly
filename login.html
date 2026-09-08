@@ -83,10 +83,32 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .form-footer a{color:var(--blue);text-decoration:none;font-weight:600}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:768px){
-  body{grid-template-columns:1fr}
-  .left{padding:24px;min-height:auto}
+  /* 모바일에서는 좌측 소개 영역을 상단 얇은 헤더로만 남기고,
+     로그인 폼이 화면 대부분을 차지하도록 한다.
+     (기존에는 검은 영역이 화면 절반을 먹으면서 폼이 아래로 밀려 비율이 어색했음) */
+  body{grid-template-columns:1fr;grid-template-rows:auto 1fr;min-height:100dvh}
+  .left{padding:16px 20px;min-height:auto;flex-direction:row;align-items:center;justify-content:center}
   .left-main,.left-stats{display:none}
-  .right{padding:32px 20px}
+  .left-orb{display:none}
+  .logo-gem{width:28px;height:28px}
+  .logo-gem svg{width:28px;height:28px}
+  .logo-name{font-size:17px}
+  .right{padding:28px 20px 40px;align-items:flex-start}
+  .form-box{max-width:100%}
+  .form-header{margin-bottom:24px}
+  .form-title{font-size:24px}
+  .form-eyebrow{font-size:11px}
+
+  /* iOS에서 입력 시 화면이 확대되는 것 방지 (16px 미만이면 자동 줌) */
+  .fi{font-size:16px;min-height:48px}
+  .submit-btn{min-height:52px;font-size:16px}
+}
+
+/* 가로 폭이 아주 좁은 기기 대응 */
+@media(max-width:380px){
+  .right{padding:22px 16px 32px}
+  .form-title{font-size:22px}
+  .form-options{flex-wrap:wrap;gap:10px}
 }
 </style>
 </head>
@@ -112,17 +134,17 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     <div class="stat-card">
       <div class="sc-ico">🚀</div>
       <div>
-        <div class="sc-val">파일럿 오픈</div>
-        <div class="sc-lbl">지금 얼리버드 모집 중</div>
-        <div class="sc-badge badge-green">수수료 0% 영구 혜택</div>
+        <div class="sc-val">얼리버드 모집 중</div>
+        <div class="sc-lbl">지금 가입하면 요율 영구 고정</div>
+        <div class="sc-badge badge-green">브랜드 1.5% 영구 (정상가 1.8%)</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="sc-ico">🎁</div>
       <div>
-        <div class="sc-val">크리에이터 무료</div>
-        <div class="sc-lbl">플랫폼 수수료 없음</div>
-        <div class="sc-badge badge-blue">브랜드 1.5% 얼리버드</div>
+        <div class="sc-val">크리에이터 0%</div>
+        <div class="sc-lbl">플랫폼 수수료 영구 없음</div>
+        <div class="sc-badge badge-blue">수익 전액 내 몫</div>
       </div>
     </div>
   </div>
@@ -177,6 +199,15 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
   function redirect(user) {
+    // 자동 로그아웃 기준 시각을 새로 찍어준다.
+    // (이전 세션의 오래된 기록이 남아있으면 로그인 직후 바로 튕길 수 있음)
+    try {
+      const now = String(Date.now())
+      localStorage.setItem('vingly_admin_last_active', now)
+      localStorage.setItem('vingly_brand_last_active', now)
+      localStorage.setItem('vingly_creator_last_active', now)
+    } catch (e) {}
+
     const role = user.user_metadata?.role
     if (role === 'brand') location.replace('brand-dashboard.html')
     else if (role === 'creator') location.replace('influencer-dashboard.html')
