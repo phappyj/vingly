@@ -329,7 +329,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="product-table-wrap" style="display:none">
         <table>
-          <thead><tr><th>이미지</th><th>제품명</th><th>가격</th><th>수수료율</th><th>상태</th><th>관리</th></tr></thead>
+          <thead><tr><th>이미지</th><th>제품명</th><th>가격</th><th>수수료율</th><th>재고</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="product-tbody"></tbody>
         </table>
       </div>
@@ -995,6 +995,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         : `<div style="width:48px;height:48px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>`
     }
 
+    // 재고는 품절 직전을 미리 알아야 배송 사고를 막을 수 있으므로 색으로 구분한다
+    const stockHtml = (p) => {
+      const s = Number(p.stock)
+      if (p.stock === null || p.stock === undefined || Number.isNaN(s)) {
+        return '<span style="color:var(--ink-40)">-</span>'
+      }
+      if (s === 0) return '<span style="color:var(--red);font-weight:800">품절</span>'
+      if (s <= 5) return `<span style="color:var(--amber);font-weight:700">${s}개 ⚠️</span>`
+      return `<span style="font-weight:600">${s}개</span>`
+    }
+
     document.getElementById('product-tbody').innerHTML = products.map(p => {
       const isActive = p.status === 'active'
       return `
@@ -1003,6 +1014,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <td class="td-b"${isActive ? '' : ' style="color:var(--ink-40)"'}>${p.name}</td>
         <td>₩${Number(p.price).toLocaleString()}</td>
         <td>${p.commission_rate}%</td>
+        <td>${stockHtml(p)}</td>
         <td><span class="badge ${isActive ? 'bg' : 'bam'}">${isActive ? '판매중' : '판매중지'}</span></td>
         <td style="white-space:nowrap">
           <a class="act-btn" href="product-detail.html?id=${p.id}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">미리보기</a>
@@ -1060,10 +1072,24 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const myReports = (reports || []).filter(r => myOrderIds.has(r.order_id) && (r.status === 'pending' || r.status === 'reviewing'))
 
+    // 서버(Edge Function)에서 만든 알림도 함께 보여준다 — 품절 안내 등은 여기에만 들어온다.
+    // 신규 주문 알림은 위에서 orders로 이미 만들고 있으므로 중복을 피해 제외한다.
+    let serverNotis = []
+    try {
+      const { data: nd } = await supabase
+        .from('notifications')
+        .select('id,title,body,created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      serverNotis = (nd || []).filter(n => !String(n.title || '').includes('새 주문'))
+    } catch (e) { console.error('알림 조회 실패:', e) }
+
     const items = [
       ...(samples || []).map(s => ({ type: 'sample', id: 's_' + s.id, refId: s.id, created_at: s.created_at, product: s.product, creator: s.creator })),
       ...myReports.map(r => ({ type: 'report', id: 'r_' + r.id, refId: r.id, created_at: r.created_at, reason: r.reason })),
       ...(myOrders || []).map(o => ({ type: 'order', id: 'o_' + o.id, refId: o.id, created_at: o.created_at, product: o.product, amount: o.amount })),
+      ...serverNotis.map(n => ({ type: 'system', id: 'n_' + n.id, created_at: n.created_at, title: n.title, body: n.body })),
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
     const dot = document.querySelector('.ndot')
@@ -1101,6 +1127,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       } else if (i.type === 'order') {
         title = `💰 새 판매가 발생했어요! ₩${Number(i.amount || 0).toLocaleString()}`
         detail = productMap[i.product] || ''
+      } else if (i.type === 'system') {
+        title = '📢 ' + (i.title || '알림')
+        detail = i.body || ''
       } else {
         title = '🚨 새 신고가 접수됐어요'
         detail = i.reason || ''
@@ -1114,7 +1143,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
   }
 
   window.goToNotifTarget = function(type) {
-    const pageId = type === 'sample' ? 'sample' : type === 'order' ? 'orders' : 'reports'
+    const pageId = type === 'sample' ? 'sample' : type === 'order' ? 'orders' : type === 'system' ? 'products' : 'reports'
     const btn = document.querySelector(`.ni[onclick*="showPage('${pageId}'"]`)
     showPage(pageId, btn)
     toggleNotif()
@@ -2924,8 +2953,14 @@ function toggleNotif() {
   if (opening && typeof markNotifsSeen === 'function') markNotifsSeen()
 }
 document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel'); const btn = document.querySelector('.icon-btn')
-  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) panel.style.display = 'none'
+  const panel = document.getElementById('notifPanel')
+  if (!panel || panel.style.display !== 'block') return
+  // 벨 아이콘이 데스크탑·모바일 두 곳에 있어서, 첫 번째 하나만 검사하면
+  // 모바일에서 열자마자 바로 닫히는 문제가 있었다 → 모든 벨을 확인한다
+  const bells = [...document.querySelectorAll('.icon-btn')]
+  if (bells.some(b => b.contains(e.target))) return
+  if (panel.contains(e.target)) return
+  panel.style.display = 'none'
 })
 </script>
 </body>

@@ -334,7 +334,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
     <div class="g3">
       <div class="card">
-        <div class="card-h"><div class="card-t">🔥 내 링크 현황</div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
+        <div class="card-h"><div class="card-t">🔥 내 링크 현황 <span style="font-weight:400;font-size:11.5px;color:var(--ink-40)">· 클릭 많은 순</span></div><a class="card-a" onclick="showPage('links',null)">전체 보기</a></div>
         <div id="dash-links-loading" style="text-align:center;padding:28px 0;color:rgba(10,12,16,.35);font-size:13px;font-weight:500">불러오는 중...</div>
         <div id="dash-links-empty" style="display:none;text-align:center;padding:28px 0;color:rgba(10,12,16,.35)">
           <div style="font-size:28px;margin-bottom:8px">🔗</div>
@@ -1970,8 +1970,14 @@ function toggleNotif() {
 }
 
 document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel'); const btn = document.querySelector('.icon-btn')
-  if (panel && btn && !btn.contains(e.target) && !panel.contains(e.target)) panel.style.display = 'none'
+  const panel = document.getElementById('notifPanel')
+  if (!panel || panel.style.display !== 'block') return
+  // 벨 아이콘이 데스크탑·모바일 두 곳에 있어서, 첫 번째 하나만 검사하면
+  // 모바일에서 열자마자 바로 닫히는 문제가 있었다 → 모든 벨을 확인한다
+  const bells = [...document.querySelectorAll('.icon-btn')]
+  if (bells.some(b => b.contains(e.target))) return
+  if (panel.contains(e.target)) return
+  panel.style.display = 'none'
 })
 </script>
 </body>
