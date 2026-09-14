@@ -1092,12 +1092,15 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       ...serverNotis.map(n => ({ type: 'system', id: 'n_' + n.id, created_at: n.created_at, title: n.title, body: n.body })),
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
-    const dot = document.querySelector('.ndot')
+    // 벨이 데스크탑·모바일 두 곳이라 빨간 점(.ndot)도 2개다.
+    // querySelector로 첫 번째만 잡으면 한쪽 점이 영영 안 꺼지거나 안 켜진다 → 전부 갱신한다.
+    const dots = [...document.querySelectorAll('.ndot')]
+    const setDots = (show) => dots.forEach(d => { d.style.display = show ? 'block' : 'none' })
     const body = document.getElementById('notif-body')
     if (!body) return
 
     if (items.length === 0) {
-      if (dot) dot.style.display = 'none'
+      setDots(false)
       return
     }
 
@@ -1116,7 +1119,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const seenKey = 'vingly_notif_seen_' + user.id
     const seenIds = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'))
     const hasUnseen = items.some(i => !seenIds.has(i.id))
-    if (dot) dot.style.display = hasUnseen ? 'block' : 'none'
+    setDots(hasUnseen)
 
     body.innerHTML = items.map(i => {
       const isNew = !seenIds.has(i.id)
@@ -1158,14 +1161,29 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const myOrderIds = new Set((myOrders || []).map(o => o.id))
     const { data: reports } = await supabase.from('reports').select('id,order_id,status')
     const myReportIds = (reports || []).filter(r => myOrderIds.has(r.order_id) && (r.status === 'pending' || r.status === 'reviewing')).map(r => r.id)
+    // 서버(Edge Function) 알림도 읽음 목록에 포함해야 한다.
+    // 빠져 있으면 품절 알림 같은 게 계속 "신규"로 남아 파란 배경과 빨간 점이 안 꺼진다.
+    let serverIds = []
+    try {
+      const { data: nd } = await supabase
+        .from('notifications')
+        .select('id,title')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      serverIds = (nd || [])
+        .filter(n => !String(n.title || '').includes('새 주문'))
+        .map(n => 'n_' + n.id)
+    } catch (e) { console.error('알림 읽음 처리 조회 실패:', e) }
+
     const ids = [
       ...(samples || []).map(s => 's_' + s.id),
       ...myReportIds.map(id => 'r_' + id),
       ...(recentOrders || []).map(o => 'o_' + o.id),
+      ...serverIds,
     ]
     localStorage.setItem('vingly_notif_seen_' + user.id, JSON.stringify(ids))
-    const dot = document.querySelector('.ndot')
-    if (dot) dot.style.display = 'none'
+    document.querySelectorAll('.ndot').forEach(d => { d.style.display = 'none' })
   }
 
   window.revSetThisMonth = function() {
