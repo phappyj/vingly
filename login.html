@@ -161,6 +161,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     <div class="alert alert-err" id="alertErr"><span>⚠️</span><span id="alertErrMsg"></span></div>
     <div class="alert alert-ok" id="alertOk"><span>✅</span><span id="alertOkMsg"></span></div>
 
+    <div id="resendWrap" style="display:none;margin-bottom:16px;padding:12px 14px;border-radius:10px;background:var(--blue-bg);border:1px solid rgba(29,78,216,.2)">
+      <p style="font-size:12.5px;color:var(--ink-60);line-height:1.6;margin-bottom:8px">메일이 오지 않았거나 인증 링크가 만료됐나요?</p>
+      <button onclick="resendConfirm()" style="background:var(--blue);color:#fff;border:none;padding:9px 14px;border-radius:8px;font:700 12.5px/1 'Pretendard',sans-serif;cursor:pointer">인증 메일 다시 받기</button>
+    </div>
+
     <div class="fg">
       <label class="fl">이메일</label>
       <input class="fi" id="email" type="email" placeholder="이메일 입력" oninput="clearErr()">
@@ -230,12 +235,41 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     btn.classList.remove('loading')
 
     if (error) {
+      // 모든 실패를 "비밀번호가 틀렸다"로 뭉뚱그리면,
+      // 실제로는 이메일 인증만 안 끝난 사용자가 비밀번호를 계속 다시 치다가 이탈한다.
+      const code = error.code || ''
+      const msg = (error.message || '').toLowerCase()
+
+      if (code === 'email_not_confirmed' || msg.includes('not confirmed')) {
+        showAlert('err', '이메일 인증이 아직 완료되지 않았어요. 메일함에서 인증 버튼을 눌러주세요.')
+        document.getElementById('resendWrap').style.display = 'block'
+        return
+      }
+      if (msg.includes('rate limit') || msg.includes('too many')) {
+        showAlert('err', '잠시 후 다시 시도해주세요. 요청이 너무 잦습니다.')
+        return
+      }
       showAlert('err', '이메일 또는 비밀번호가 올바르지 않습니다.')
       return
     }
 
     showAlert('ok', '로그인 성공! 이동 중...')
     setTimeout(() => redirect(data.user), 500)
+  }
+
+  window.resendConfirm = async function() {
+    const email = document.getElementById('email').value.trim().toLowerCase()
+    if (!email) { showAlert('err', '이메일을 먼저 입력해주세요.'); return }
+    const { error } = await supabase.auth.resend({ type: 'signup', email })
+    if (error) {
+      const m = (error.message || '').toLowerCase()
+      showAlert('err', m.includes('rate') || m.includes('too many')
+        ? '잠시 후 다시 시도해주세요. 요청이 너무 잦습니다.'
+        : '메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      return
+    }
+    document.getElementById('resendWrap').style.display = 'none'
+    showAlert('ok', '인증 메일을 다시 보냈어요. 메일함을 확인해주세요.')
   }
 
   window.togglePw = function() {
@@ -254,7 +288,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: 'https://vingly.kr/reset-password.html'
     })
-    if (error) showAlert('err', '오류가 발생했습니다.')
+    if (error) {
+      const m = (error.message || '').toLowerCase()
+      showAlert('err', m.includes('rate') || m.includes('too many') || m.includes('security')
+        ? '잠시 후 다시 시도해주세요. 요청이 너무 잦습니다.'
+        : '메일 발송에 실패했습니다. 이메일 주소를 확인해주세요.')
+    }
     else showAlert('ok', '비밀번호 재설정 이메일을 보냈습니다.')
   }
 
