@@ -776,17 +776,34 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       .order('created_at', { ascending: false })
       .limit(20)
 
+    // 서버(Edge Function)에서 만든 알림도 함께 보여준다 — 정산·품절 등은 여기에만 들어온다.
+    // 판매 알림은 위 orders로 이미 만들고 있으므로 중복을 피해 제외한다.
+    let serverNotis = []
+    try {
+      const { data: nd } = await supabase
+        .from('notifications')
+        .select('id,title,body,created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      serverNotis = (nd || []).filter(n => !String(n.title || '').includes('판매가 발생'))
+    } catch (e) { console.error('알림 조회 실패:', e) }
+
     const items = [
       ...(samples || []).map(s => ({ ...s, ntype: 'sample', nid: 's_' + s.id })),
       ...(orders || []).map(o => ({ ...o, ntype: 'order', nid: 'o_' + o.id })),
+      ...serverNotis.map(n => ({ ntype: 'system', nid: 'n_' + n.id, created_at: n.created_at, ntitle: n.title, nbody: n.body })),
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
-    const dot = document.querySelector('.ndot')
+    // 벨이 데스크탑·모바일 두 곳이라 빨간 점(.ndot)도 2개다.
+    // querySelector로 첫 번째만 잡으면 한쪽 점이 영영 안 꺼지거나 안 켜진다 → 전부 갱신한다.
+    const dots = [...document.querySelectorAll('.ndot')]
+    const setDots = (show) => dots.forEach(d => { d.style.display = show ? 'block' : 'none' })
     const body = document.getElementById('notif-body')
     if (!body) return
 
     if (items.length === 0) {
-      if (dot) dot.style.display = 'none'
+      setDots(false)
       return
     }
 
@@ -800,7 +817,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const seenKey = 'vingly_notif_seen_' + user.id
     const seenIds = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'))
     const hasUnseen = items.some(i => !seenIds.has(i.nid))
-    if (dot) dot.style.display = hasUnseen ? 'block' : 'none'
+    setDots(hasUnseen)
 
     const statusMeta = {
       approved: { icon: '✅', text: '샘플 신청이 승인됐어요' },
@@ -814,6 +831,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       if (i.ntype === 'order') {
         title = `🎉 판매가 발생했어요! +₩${Number(i.creator_fee || 0).toLocaleString()}`
         detail = productMap[i.product] || ''
+      } else if (i.ntype === 'system') {
+        title = '📢 ' + (i.ntitle || '알림')
+        detail = i.nbody || ''
       } else {
         const meta = statusMeta[i.status] || { icon: '🔔', text: i.status }
         title = `${meta.icon} ${meta.text}`
@@ -824,11 +844,23 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             : (productMap[i.product] || '')
       }
       return `
-        <div style="padding:12px 18px;border-bottom:1px solid rgba(10,12,16,.06);${isNew ? 'background:#F5F3FF' : ''}">
+        <div style="padding:12px 18px;border-bottom:1px solid rgba(10,12,16,.06);cursor:pointer;${isNew ? 'background:#F5F3FF' : ''}" onclick="goToNotifTarget('${i.ntype}')">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif">${title}</div>
           <div style="font:500 12px/1.4 'Pretendard',sans-serif;color:var(--ink-40);margin-top:3px">${detail}</div>
         </div>`
     }).join('')
+  }
+
+  // 알림을 누르면 관련 화면으로 이동한다.
+  // 크리에이터에겐 샘플 전용 페이지가 없어 샘플 알림은 제품 탐색으로 보낸다.
+  window.goToNotifTarget = function(ntype) {
+    const pageId = ntype === 'order' ? 'earn'
+      : ntype === 'sample' ? 'products'
+      : ntype === 'system' ? 'earn'
+      : 'dashboard'
+    const btn = document.querySelector(`.ni[onclick*="showPage('${pageId}'"]`)
+    showPage(pageId, btn)
+    toggleNotif()
   }
 
   window.markNotifsSeen = function() {
@@ -838,11 +870,16 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     Promise.all([
       supabase.from('samples').select('id').eq('creator', user.id).in('status', ['approved','rejected','sent']),
       supabase.from('orders').select('id').eq('creator', user.id).in('status', ['confirmed','settled']).order('created_at', { ascending: false }).limit(20),
-    ]).then(([sRes, oRes]) => {
-      const ids = [...(sRes.data || []).map(s => 's_' + s.id), ...(oRes.data || []).map(o => 'o_' + o.id)]
+      supabase.from('notifications').select('id,title').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20),
+    ]).then(([sRes, oRes, nRes]) => {
+      // 서버 알림 id까지 읽음 목록에 넣어야 한다.
+      // 빠지면 정산·품절 알림이 계속 "신규"로 남아 빨간 점이 안 꺼진다.
+      const serverIds = (nRes.data || [])
+        .filter(n => !String(n.title || '').includes('판매가 발생'))
+        .map(n => 'n_' + n.id)
+      const ids = [...(sRes.data || []).map(s => 's_' + s.id), ...(oRes.data || []).map(o => 'o_' + o.id), ...serverIds]
       localStorage.setItem('vingly_notif_seen_' + user.id, JSON.stringify(ids))
-      const dot = document.querySelector('.ndot')
-      if (dot) dot.style.display = 'none'
+      document.querySelectorAll('.ndot').forEach(d => { d.style.display = 'none' })
     })
   }
 
