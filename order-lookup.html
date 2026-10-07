@@ -428,6 +428,9 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
         </span>`])
     }
     if (order.productName) rows.push(['상품명', order.productName])
+    // 수량은 항상 보여준다. "내가 몇 개 샀더라"를 확인할 수 없으면
+    // 배송 수량이 다를 때 구매자가 따질 근거가 없어진다.
+    rows.push(['수량', `${Number(order.quantity || 1)}개`])
     if (order.amount) rows.push(['결제금액', '₩' + Number(order.amount).toLocaleString(), 'amt'])
     if (order.shippingAddress) rows.push(['배송지', order.shippingAddress])
     if (order.createdAt) rows.push(['주문일시', new Date(order.createdAt).toLocaleString('ko-KR')])
