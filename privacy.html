@@ -78,7 +78,7 @@ table tr:last-child td{border:none}
   <div class="doc-header">
     <div class="doc-tag">법적 문서</div>
     <h1 class="doc-title">개인정보처리방침</h1>
-    <div class="doc-meta"><strong>시행일:</strong> 2026년 6월 11일 &nbsp;·&nbsp; <strong>버전:</strong> v1.0</div>
+    <div class="doc-meta"><strong>시행일:</strong> 2026년 10월 7일 &nbsp;·&nbsp; <strong>버전:</strong> v1.1</div>
   </div>
 
   <!-- 핵심 요약 -->
@@ -88,14 +88,15 @@ table tr:last-child td{border:none}
       <div class="sb-item"><strong>수집 항목</strong>이름, 이메일, 연락처, 채널 정보 (필수) / 사업자번호 (브랜드·셀러)</div>
       <div class="sb-item"><strong>수집 목적</strong>서비스 제공, 정산 처리, 가입 확인 메일 발송</div>
       <div class="sb-item"><strong>보관 기간</strong>회원 탈퇴 후 30일 이내 삭제 (법령 보관 의무 항목 제외)</div>
-      <div class="sb-item"><strong>제3자 제공</strong>Supabase (DB 저장), Toss Payments (결제), 이메일 발송 서비스 — 외 제3자 미제공</div>
+      <div class="sb-item"><strong>제3자 제공</strong>Supabase (DB 저장), Toss Payments (결제), Resend·EmailJS (메일 발송) — 외 제3자 미제공</div>
+      <div class="sb-item"><strong>국외 이전</strong>Supabase·Resend·EmailJS (미국) — 거부 가능하나 서비스 이용 제한</div>
       <div class="sb-item"><strong>문의</strong>vingly.official@gmail.com</div>
     </div>
   </div>
 
   <div class="toc">
     <div class="toc-title">목차</div>
-    <ol><li><a href="#p1">수집하는 개인정보 항목</a></li><li><a href="#p2">개인정보 수집 및 이용 목적</a></li><li><a href="#p3">개인정보 보유 및 이용 기간</a></li><li><a href="#p4">개인정보 제3자 제공</a></li><li><a href="#p5">개인정보 처리 위탁</a></li><li><a href="#p6">이용자의 권리</a></li><li><a href="#p7">쿠키 사용</a></li><li><a href="#p8">개인정보 보호 조치</a></li><li><a href="#p9">개인정보 보호책임자</a></li></ol>
+    <ol><li><a href="#p1">수집하는 개인정보 항목</a></li><li><a href="#p2">개인정보 수집 및 이용 목적</a></li><li><a href="#p3">개인정보 보유 및 이용 기간</a></li><li><a href="#p4">개인정보 제3자 제공</a></li><li><a href="#p4b">개인정보 국외 이전</a></li><li><a href="#p5">개인정보 처리 위탁</a></li><li><a href="#p6">이용자의 권리</a></li><li><a href="#p7">쿠키 사용</a></li><li><a href="#p8">개인정보 보호 조치</a></li><li><a href="#p9">개인정보 보호책임자</a></li></ol>
   </div>
 
   <div class="sec" id="p1">
@@ -153,10 +154,25 @@ table tr:last-child td{border:none}
       <tbody>
         <tr><td>Supabase (해외 서버 운영)</td><td>회원 데이터베이스 저장·관리</td><td>이름, 이메일, 연락처, 계좌정보 등 전체 회원정보</td></tr>
         <tr><td>Toss Payments</td><td>결제 처리</td><td>결제 정보 (PG사 자체 관리)</td></tr>
-        <tr><td>EmailJS</td><td>가입 확인·알림 메일 발송</td><td>이름, 이메일</td></tr>
+        <tr><td>Resend</td><td>인증·알림 메일 발송</td><td>이름, 이메일</td></tr>
+        <tr><td>EmailJS</td><td>주문 확인·문의 응답 메일 발송</td><td>이름, 이메일, 주문 정보</td></tr>
       </tbody>
     </table>
-    <div class="hl"><p>Supabase는 해외에 서버를 두고 있어 개인정보가 국외로 이전되어 처리될 수 있습니다.</p></div>
+  </div>
+
+  <div class="sec" id="p4b">
+    <div class="sec-t">4-1. 개인정보 국외 이전</div>
+    <p>회사는 서비스 운영을 위해 아래와 같이 개인정보를 국외로 이전하고 있습니다.</p>
+    <table>
+      <thead><tr><th>이전받는 자</th><th>이전 국가</th><th>이전 항목</th><th>이용 목적 및 보유 기간</th></tr></thead>
+      <tbody>
+        <tr><td>Supabase Inc.<br><span style="font-size:12px;color:rgba(10,12,16,.4)">support@supabase.io</span></td><td>미국</td><td>이름, 이메일, 연락처, 계좌정보 등 회원정보 및 거래기록</td><td>데이터베이스 저장·관리 / 회원 탈퇴 또는 위탁계약 종료 시까지</td></tr>
+        <tr><td>Resend, Inc.<br><span style="font-size:12px;color:rgba(10,12,16,.4)">support@resend.com</span></td><td>미국</td><td>이름, 이메일</td><td>인증·알림 메일 발송 / 발송 목적 달성 시까지</td></tr>
+        <tr><td>EmailJS<br><span style="font-size:12px;color:rgba(10,12,16,.4)">support@emailjs.com</span></td><td>미국</td><td>이름, 이메일, 주문 정보</td><td>주문 확인·문의 응답 메일 발송 / 발송 목적 달성 시까지</td></tr>
+      </tbody>
+    </table>
+    <p><strong>이전 시기 및 방법:</strong> 회원가입·주문·메일 발송 등 서비스 이용 시점에 정보통신망을 통해 전송됩니다.</p>
+    <div class="hl"><p><strong>거부 권리:</strong> 이용자는 개인정보의 국외 이전을 거부할 수 있습니다. 다만 위 업체들은 회원 인증·데이터 저장·주문 처리에 필수적으로 사용되므로, 거부하시는 경우 서비스 이용이 제한될 수 있습니다. 거부를 원하시면 vingly.official@gmail.com으로 요청해주세요.</p></div>
   </div>
 
   <div class="sec" id="p5">
@@ -167,7 +183,8 @@ table tr:last-child td{border:none}
       <tbody>
         <tr><td>Supabase Inc.</td><td>데이터베이스 저장·관리 (해외 서버)</td></tr>
         <tr><td>Toss Payments</td><td>결제 대행</td></tr>
-        <tr><td>EmailJS</td><td>서비스 알림 및 가입 확인 메일 발송</td></tr>
+        <tr><td>Resend, Inc.</td><td>회원 인증·비밀번호 재설정 등 인증 메일 발송 (해외 서버)</td></tr>
+        <tr><td>EmailJS</td><td>주문 확인·문의 응답 메일 발송 (해외 서버)</td></tr>
       </tbody>
     </table>
   </div>
@@ -204,8 +221,9 @@ table tr:last-child td{border:none}
     <table>
       <thead><tr><th>항목</th><th>내용</th></tr></thead>
       <tbody>
-        <tr><td>책임자</td><td>Vingly 운영팀</td></tr>
+        <tr><td>개인정보 보호책임자</td><td>박희경 (대표)</td></tr>
         <tr><td>이메일</td><td>vingly.official@gmail.com</td></tr>
+        <tr><td>연락처</td><td>010-7788-4476</td></tr>
         <tr><td>처리 기간</td><td>접수 후 10일 이내</td></tr>
       </tbody>
     </table>

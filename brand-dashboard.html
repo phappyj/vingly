@@ -509,6 +509,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업자번호</label><input type="text" id="set_bizno" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="000-00-00000"></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">대표자명</label><input type="text" id="set_biz_rep" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="사업자등록증상 대표자명"></div>
+          <div style="grid-column:1/-1"><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">사업장 주소 <span style="color:#DC2626">*</span></label><input type="text" id="set_biz_addr" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="사업자등록증상 사업장 소재지"><div style="font:400 11.5px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-top:5px">전자상거래법상 구매자에게 공개해야 하는 정보로, 제품 상세 페이지의 판매자 정보에 표시됩니다.</div></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">개업일자</label><input type="date" id="set_biz_start" min="1950-01-01" max="2026-07-16" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none"></div>
         </div>
         <button onclick="verifyBusinessNumber()" id="biz-verify-btn" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--ink);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">🔍 사업자 인증하기</button>
@@ -722,6 +723,33 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     </div>
     <div>
       <textarea id="p_return_policy" placeholder="예: 화장품 특성상 개봉/사용 후에는 반품이 제한될 수 있습니다. 반품 시 왕복 배송비는 구매자 부담입니다." rows="2" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1.5 'Pretendard',sans-serif;font-family:inherit;outline:none;resize:vertical;margin-bottom:20px"></textarea>
+    </div>
+
+    <div class="sec-title">상품정보제공고시</div>
+    <div style="background:var(--blue-bg);border-radius:9px;padding:12px 14px;margin-bottom:12px;font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">
+      📋 전자상거래법상 <strong>판매자가 제공해야 하는 법정 정보</strong>입니다. 입력하신 내용은 제품 상세 페이지에 그대로 표시되며, 입력하지 않은 항목은 표시되지 않습니다. 소비자 분쟁 시 판매자 책임 범위를 정하는 근거가 되니 정확히 적어주세요.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">제조사 / 수입자</label>
+        <input id="p_manufacturer" type="text" placeholder="예: (주)○○코스메틱" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">원산지</label>
+        <input id="p_origin" type="text" placeholder="예: 대한민국 / 중국" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">제조연월 / 유통기한</label>
+        <input id="p_manufacture_info" type="text" placeholder="예: 2026.05 제조 / 제조일로부터 2년" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">A/S 책임자 및 연락처</label>
+        <input id="p_as_contact" type="text" placeholder="예: 고객센터 02-000-0000" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+      </div>
+    </div>
+    <div>
+      <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">품질보증기준</label>
+      <input id="p_warranty" type="text" placeholder="예: 소비자분쟁해결기준에 따름" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;margin-bottom:20px">
     </div>
 
     <div class="sec-title">샘플 제공 설정 <span style="text-transform:none;font-weight:400;color:var(--ink-40)">(선택)</span></div>
@@ -2183,6 +2211,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     document.getElementById('p_target').value = p.target_audience || ''
     document.getElementById('p_creator_msg').value = p.creator_message || ''
     document.getElementById('p_return_policy').value = p.return_policy || ''
+    document.getElementById('p_manufacturer').value = p.manufacturer || ''
+    document.getElementById('p_origin').value = p.origin || ''
+    document.getElementById('p_manufacture_info').value = p.manufacture_info || ''
+    document.getElementById('p_as_contact').value = p.as_contact || ''
+    document.getElementById('p_warranty').value = p.warranty || ''
     document.getElementById('p_sample_available').checked = !!p.sample_available
     document.getElementById('p_sample_qty').value = p.sample_qty || ''
     document.getElementById('p_sample_min_followers').value = p.sample_min_followers || ''
@@ -2227,6 +2260,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const target = document.getElementById('p_target').value.trim()
     const creatorMsg = document.getElementById('p_creator_msg').value.trim()
     const returnPolicy = document.getElementById('p_return_policy').value.trim()
+    const manufacturer = document.getElementById('p_manufacturer').value.trim()
+    const origin = document.getElementById('p_origin').value.trim()
+    const manufactureInfo = document.getElementById('p_manufacture_info').value.trim()
+    const asContact = document.getElementById('p_as_contact').value.trim()
+    const warranty = document.getElementById('p_warranty').value.trim()
     const kps = [...document.querySelectorAll('.kp-input')].map(i => i.value.trim()).filter(Boolean)
     const sampleAvailable = document.getElementById('p_sample_available').checked
     const sampleQty = parseInt(document.getElementById('p_sample_qty').value) || null
@@ -2285,7 +2323,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const images = uploadedImages.filter(Boolean)
     const image_url = images[0] || null
-    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, return_policy: returnPolicy, key_points: kps, images, image_url, status: 'active', sample_available: sampleAvailable, sample_qty: sampleQty, sample_min_followers: sampleMinFollowers, sample_deadline: sampleDeadline }
+    const productData = { name, price, stock, category, commission_rate: commission, description: desc, target_audience: target, creator_message: creatorMsg, return_policy: returnPolicy, manufacturer, origin, manufacture_info: manufactureInfo, as_contact: asContact, warranty, key_points: kps, images, image_url, status: 'active', sample_available: sampleAvailable, sample_qty: sampleQty, sample_min_followers: sampleMinFollowers, sample_deadline: sampleDeadline }
 
     let error
     let savedRows = null
@@ -2730,7 +2768,7 @@ window.loadBrandSettingsData = async function() {
   const supabase = window._supabase
   const user = window._vinglyUser
   if (!supabase || !user) return
-  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
+  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_address, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
   if (error) { console.error('설정 정보 불러오기 실패:', error); return }
   if (!data) return
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
@@ -2738,6 +2776,7 @@ window.loadBrandSettingsData = async function() {
   setVal('set_phone', data.phone)
   setVal('set_bizno', data.business_number)
   setVal('set_biz_rep', data.representative_name)
+  setVal('set_biz_addr', data.business_address)
   setVal('set_bank', data.bank_name)
   setVal('set_account', data.account_number)
   setVal('set_holder', data.account_holder)
@@ -2869,8 +2908,9 @@ async function saveProfile() {
   const name = document.getElementById('set_name')?.value.trim()
   const phone = document.getElementById('set_phone')?.value.trim() || null
   const business_number = document.getElementById('set_bizno')?.value.trim() || null
+  const business_address = document.getElementById('set_biz_addr')?.value.trim() || null
 
-  const { data: savedProfile, error } = await supabase.from('users').update({ company_name: name, phone, business_number }).eq('id', user.id).select()
+  const { data: savedProfile, error } = await supabase.from('users').update({ company_name: name, phone, business_number, business_address }).eq('id', user.id).select()
   if (error) {
     alert('저장 실패: ' + error.message)
     return
@@ -2934,7 +2974,9 @@ function openProductModal() {
   document.getElementById('modal-title').textContent = '📦 제품 등록'
   document.getElementById('saveBtn').textContent = '등록하기'
   document.getElementById('product_err').style.display = 'none'
-  ;['p_name','p_price','p_stock','p_category','p_commission','p_desc','p_target','p_creator_msg'].forEach(id => { const el = document.getElementById(id); if (el) el.value = '' })
+  ;['p_name','p_price','p_stock','p_category','p_commission','p_desc','p_target','p_creator_msg',
+    'p_return_policy','p_manufacturer','p_origin','p_manufacture_info','p_as_contact','p_warranty'
+   ].forEach(id => { const el = document.getElementById(id); if (el) el.value = '' })
   updateGradeBonusHint()
   document.getElementById('p_sample_available').checked = false
   document.getElementById('p_sample_qty').value = ''

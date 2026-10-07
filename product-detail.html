@@ -331,7 +331,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   <div style="margin-bottom:6px">
     <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="support.html">고객지원</a>
   </div>
-  <div>Vingly · 통신판매중개업자 · 사업자등록 진행 중</div>
+  <div style="margin-bottom:6px;font-weight:600;color:var(--ink-70)">
+    Vingly는 통신판매중개자로서 통신판매의 당사자가 아니며,<br>
+    상품의 주문·배송·환불에 대한 책임은 판매자에게 있습니다.
+  </div>
+  <div style="font-size:11px;line-height:1.8">
+    상호: Vingly · 대표자: 박희경 · 사업자등록번호: 416-75-00580 · 통신판매업신고번호: 신고 진행 중 (완료 후 게시 예정)<br>
+    사업장 주소: 서울특별시 강남구 봉은사로57길 57 · 대표전화: 010-7788-4476 · 이메일: vingly.official@gmail.com
+  </div>
   <div style="margin-top:4px">© 2026 Vingly. All rights reserved.</div>
 </footer>
 
@@ -397,10 +404,67 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       if (bn) brandName = bn
     } catch (e) { console.error('브랜드명 조회 실패:', e) }
 
+    // 판매자 신원정보 (전자상거래법 제20조 제2항)
+    // 통신판매중개자는 중개의뢰자의 상호·대표자·사업자등록번호·주소·연락처를
+    // "청약이 이루어지기 전까지" 소비자에게 제공해야 한다.
+    // users는 "본인만 조회" RLS라 비로그인 구매자가 직접 못 읽으므로
+    // 공개 의무 항목만 돌려주는 전용 함수로 가져온다.
+    let brandInfo = null
+    try {
+      const { data: bi } = await supabase.rpc('get_brand_info', { p_brand_user: data.brand_user })
+      if (bi && bi.length > 0) {
+        brandInfo = bi[0]
+        if (brandInfo.company_name) brandName = brandInfo.company_name
+      }
+    } catch (e) { console.error('판매자 정보 조회 실패:', e) }
+
     product = data
     const images = data.images && data.images.length > 0 ? data.images : (data.image_url ? [data.image_url] : [])
     const brand = brandName
     const kps = data.key_points || []
+
+    // 상품정보제공고시 (전자상거래 등에서의 상품 등의 정보제공에 관한 고시)
+    // 입력된 항목만 노출한다. 하나도 없으면 블록 자체를 숨겨 빈 표가 보이지 않게 한다.
+    const noticeRows = [
+      ['제조사 / 수입자', data.manufacturer],
+      ['원산지', data.origin],
+      ['제조연월 / 유통기한', data.manufacture_info],
+      ['품질보증기준', data.warranty],
+      ['A/S 책임자 및 연락처', data.as_contact],
+    ].filter(([, v]) => v && String(v).trim())
+
+    const noticeHtml = noticeRows.length ? `
+      <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+        <div style="font:700 12.5px/1 'Pretendard',sans-serif;margin-bottom:10px">📋 상품정보제공고시</div>
+        ${noticeRows.map(([k, v]) => `
+          <div style="display:flex;gap:10px;padding:5px 0;font:400 12.5px/1.6 'Pretendard',sans-serif">
+            <span style="color:var(--ink-40);flex:0 0 118px">${k}</span>
+            <span style="color:var(--ink-70);flex:1;word-break:break-word">${v}</span>
+          </div>`).join('')}
+      </div>` : ''
+
+    // 판매자 정보 — 실제 계약 당사자가 누구인지 구매 전에 알 수 있어야 한다.
+    const sellerRows = brandInfo ? [
+      ['상호', brandInfo.company_name],
+      ['대표자', brandInfo.representative_name],
+      ['사업자등록번호', brandInfo.business_number],
+      ['사업장 주소', brandInfo.business_address],
+      ['연락처', brandInfo.phone],
+      ['이메일', brandInfo.email],
+    ].filter(([, v]) => v && String(v).trim()) : []
+
+    const sellerHtml = sellerRows.length ? `
+      <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+        <div style="font:700 12.5px/1 'Pretendard',sans-serif;margin-bottom:4px">🏢 판매자 정보</div>
+        <div style="font:400 11.5px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:10px">
+          이 상품의 판매 당사자입니다. Vingly는 통신판매중개자로서 거래 당사자가 아닙니다.
+        </div>
+        ${sellerRows.map(([k, v]) => `
+          <div style="display:flex;gap:10px;padding:5px 0;font:400 12.5px/1.6 'Pretendard',sans-serif">
+            <span style="color:var(--ink-40);flex:0 0 118px">${k}</span>
+            <span style="color:var(--ink-70);flex:1;word-break:break-word">${v}</span>
+          </div>`).join('')}
+      </div>` : ''
 
     // 크리에이터 정보 (ref로 조회)
     // 여기도 users 조인은 비로그인 상태에서 RLS에 막히므로 링크만 조회하고 활동명은 따로 가져온다
@@ -516,6 +580,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
                 ${data.return_policy ? `<br><br><strong>판매자 추가 안내:</strong> ${data.return_policy}` : ''}
               </div>
             </div>
+
+            ${noticeHtml}
+            ${sellerHtml}
           </div>
         </div>
       </div>`
