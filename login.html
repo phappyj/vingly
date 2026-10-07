@@ -263,9 +263,26 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const { error } = await supabase.auth.resend({ type: 'signup', email })
     if (error) {
       const m = (error.message || '').toLowerCase()
-      showAlert('err', m.includes('rate') || m.includes('too many')
-        ? '잠시 후 다시 시도해주세요. 요청이 너무 잦습니다.'
-        : '메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      // Supabase는 발송 제한일 때 "For security purposes, you can only request this
+      // after N seconds" 형태로 응답한다. rate/too many만 검사하면 이 문구를 놓쳐서
+      // 메일이 정상 발송됐는데도 "발송 실패"로 보이게 된다.
+      const limited = error.status === 429 ||
+        m.includes('rate') || m.includes('too many') ||
+        m.includes('security purposes') || m.includes('seconds')
+      if (limited) {
+        const wait = (error.message || '').match(/(\d+)\s*seconds?/)
+        showAlert('err', wait
+          ? `조금 전에 보냈어요. ${wait[1]}초 후에 다시 시도해주세요.`
+          : '조금 전에 보냈어요. 잠시 후 다시 시도해주세요.')
+        return
+      }
+      if (m.includes('already') || m.includes('confirmed')) {
+        showAlert('ok', '이미 인증이 완료된 계정이에요. 바로 로그인하실 수 있습니다.')
+        document.getElementById('resendWrap').style.display = 'none'
+        return
+      }
+      showAlert('err', '메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      return
       return
     }
     document.getElementById('resendWrap').style.display = 'none'
