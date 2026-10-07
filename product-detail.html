@@ -301,8 +301,9 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       <input type="tel" id="buyer_phone" placeholder="010-0000-0000">
     </div>
     <div class="buyer-field">
-      <label>이메일 (주문 확인용)</label>
+      <label>이메일 *</label>
       <input type="email" id="buyer_email" placeholder="example@email.com">
+      <div style="font:400 11.5px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-top:5px">주문번호를 이 주소로 보내드려요. 배송 조회·주문 취소에 꼭 필요합니다.</div>
     </div>
     <div class="buyer-field">
       <label>배송지 주소 *</label>
@@ -519,7 +520,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
               <span class="badge badge-blue">${data.category || '기타'}</span>
             </div>
             <div class="info-price">₩${Number(data.price).toLocaleString()}</div>
-            <div class="info-price-sub">부가세 포함 · 배송비 별도</div>
+            <div class="info-price-sub">부가세·배송비 포함 가격이에요</div>
 
             ${data.description ? `<div class="info-desc">${data.description}</div>` : ''}
 
@@ -557,6 +558,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
                   <button class="qty-btn" onclick="changeQty(1)">+</button>
                 </div>
               </div>
+              <div id="qty-notice" style="display:none;font:600 12px/1.5 'Pretendard',sans-serif;color:#92400E;background:var(--amber-bg);border-radius:8px;padding:8px 10px;margin-bottom:10px"></div>
               <div class="buy-total">
                 <span class="buy-total-label">총 결제금액</span>
                 <span class="buy-total-price" id="total-price">₩${Number(data.price).toLocaleString()}</span>
@@ -616,7 +618,20 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   }
 
   window.changeQty = function(dir) {
-    qty = Math.max(1, Math.min(99, qty + dir))
+    // 재고보다 많이 담을 수 없게 막는다.
+    // 결제까지 통과시킨 뒤 "재고가 없다"고 알리는 건 가장 나쁜 경험이다.
+    const stockLimit = (product && Number.isFinite(Number(product.stock)))
+      ? Math.max(1, Number(product.stock)) : 99
+    const maxQty = Math.min(99, stockLimit)
+    const next = Math.max(1, Math.min(maxQty, qty + dir))
+    if (dir > 0 && next === qty && qty >= maxQty) {
+      const notice = document.getElementById('qty-notice')
+      if (notice) {
+        notice.textContent = `남은 재고가 ${maxQty}개예요.`
+        notice.style.display = 'block'
+      }
+    }
+    qty = next
     document.getElementById('qty-num').textContent = qty
     const mobileQtyEl = document.getElementById('qty-num-mobile')
     if (mobileQtyEl) mobileQtyEl.textContent = qty
@@ -679,8 +694,13 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     const memo = document.getElementById('buyer_memo').value.trim()
     const errEl = document.getElementById('buyer_err')
 
-    if (!name || !phone || !roadAddress) {
-      errEl.textContent = '이름, 연락처, 배송지 주소(검색)는 필수입니다.'
+    if (!name || !phone || !roadAddress || !email) {
+      errEl.textContent = '이름, 연락처, 이메일, 배송지 주소(검색)는 필수입니다.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = '이메일 형식을 확인해주세요. 주문번호를 받을 주소입니다.'
       errEl.style.display = 'block'
       return
     }
@@ -737,13 +757,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       brand: product.brand_user,
       creator: linkData.creator,
       link: linkData.id,
+      quantity: qty,
       amount,
       creator_fee: commissionAmount,
       vingly_fee_amount: vinglyFeeAmount,
       status: 'pending',
       buyer_name: name,
       buyer_phone: phone,
-      buyer_email: email || null,
+      buyer_email: email,
       shipping_address: address,
       shipping_memo: memo || null
     })
