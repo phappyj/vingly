@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- Vingly 크리에이터 링크 리다이렉터 v2
+     주소 형태 (셋 다 받는다)
+       /j/<slug>          ← 404.html이 넘겨주는 짧은 주소 (대시보드가 복사해주는 형태)
+       /j/?slug=<slug>    ← 기존 형태
+       /j/?s=<slug>
+     하는 일: slug로 링크를 찾아 클릭 수를 올리고, ref 쿠키를 심고, 상품 페이지로 보낸다.
+
+     v1 대비 바뀐 점
+       1. 클릭 수를 DB 안에서 원자적으로 올린다(track_link_click).
+          기존의 "읽어서 +1 해서 쓰기"는 동시 클릭이 겹치면 숫자가 누락된다.
+          또 links 테이블을 브라우저에서 직접 UPDATE하지 않으므로
+          anon UPDATE 권한을 열어둘 필요가 없다.
+       2. 같은 세션의 새로고침은 중복 집계하지 않는다.
+       3. 메인으로 보낼 때 '/'(루트)로 간다. 기존 'index.html'은 /j/ 기준 상대경로라
+          /j/index.html(자기 자신)로 돌아가 무한 반복됐다.
+       4. 없는 링크와 중지된 링크를 구분해서 안내한다.
+       5. track_link_click 함수가 아직 없으면 예전 방식으로 자동 폴백한다.
+          (HTML을 SQL보다 먼저 올려도 링크가 죽지 않는다) -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Vingly — 링크 이동 중...</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%2300B37E'/><path d='M7 14L12 19L21 10' stroke='%230A0C10' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard',sans-serif;background:#F4F3EF;color:#0A0C10;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;-webkit-font-smoothing:antialiased}
+  .box{text-align:center;padding:40px 20px;max-width:400px;width:100%}
+  .logo{width:52px;height:52px;border-radius:13px;background:#00B37E;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+  .title{font-size:17px;font-weight:700;color:#0A0C10;margin-bottom:8px;line-height:1.5}
+  .sub{font-size:14px;line-height:1.7;color:rgba(10,12,16,.45)}
+  .spinner{width:32px;height:32px;border:3px solid rgba(0,179,126,.2);border-top-color:#00B37E;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto 0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .acts{display:none;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  .acts.on{display:flex}
+  .acts a{padding:11px 20px;border-radius:10px;font-size:13.5px;font-weight:700;text-decoration:none;transition:all .18s}
+  .pri{background:#0A0C10;color:#fff}
+  .pri:hover{background:#1a1d24}
+  .sec{background:transparent;color:#0A0C10;border:1.5px solid rgba(10,12,16,.14)}
+  .sec:hover{border-color:rgba(10,12,16,.40)}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">
+    <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
+      <rect width="28" height="28" rx="7" fill="#00B37E"/>
+      <path d="M7 14 L12 19 L21 10" stroke="#0A0C10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="title" id="t">제품 페이지로 이동 중...</div>
+  <div class="sub" id="s">잠시만 기다려주세요</div>
+  <div class="spinner" id="sp"></div>
+  <div class="acts" id="acts">
+    <a class="pri" href="/products.html">전체 상품 보기</a>
+    <a class="sec" href="/">빙글리 홈</a>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+const supabase = createClient(
+  'https://hzrhpdqrrzhnhnaelaie.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
+)
+
+function stop(title, sub){
+  document.getElementById('t').textContent = title
+  document.getElementById('s').textContent = sub
+  document.getElementById('sp').style.display = 'none'
+  document.getElementById('acts').classList.add('on')
+}
+
+/* ── slug 추출 ── */
+const params = new URLSearchParams(location.search)
+let rawSlug = params.get('slug') || params.get('s') || ''
+if (!rawSlug) {
+  // /j/<slug> 형태. 끝의 슬래시와 index.html은 slug가 아니다.
+  const m = location.pathname.match(/\/j\/([^/?#]+)/)
+  if (m && m[1] !== 'index.html') rawSlug = m[1]
+}
+let slug = ''
+try { slug = decodeURIComponent(rawSlug).trim() } catch (e) { slug = String(rawSlug).trim() }
+
+if (!slug) {
+  // ⚠️ 반드시 루트('/')로 보낸다. 'index.html'은 /j/index.html로 해석돼 자기 자신으로 돌아간다.
+  location.replace('/')
+} else {
+  go(slug)
+}
+
+async function go(s){
+  // 새로고침·뒤로가기로 클릭 수가 부풀지 않도록 같은 세션에선 한 번만 집계
+  let count = true
+  try {
+    const key = 'vingly_clicked_' + s
+    if (sessionStorage.getItem(key)) count = false
+    else sessionStorage.setItem(key, '1')
+  } catch (e) { /* 시크릿 모드 등 — 막지 않는다 */ }
+
+  let linkId = null, productId = null, status = 'active'
+
+  // ① 정식 경로 — 조회와 클릭 집계를 DB 함수 하나로 처리 (원자적, 권한 안전)
+  try {
+    const { data, error } = await supabase.rpc('track_link_click', { p_slug: s, p_count: count })
+    if (error) throw error
+    const row = Array.isArray(data) ? data[0] : data
+    if (row && row.product_id) {
+      linkId = row.link_id; productId = row.product_id; status = row.link_status || 'active'
+    } else {
+      stop('유효하지 않은 링크입니다', '주소가 잘못되었거나 삭제된 링크입니다.')
+      return
+    }
+  } catch (e) {
+    // ② 폴백 — 함수가 아직 배포되지 않았을 때 (HTML만 먼저 올린 경우)
+    console.warn('track_link_click 미배포 — 기존 방식으로 조회합니다:', e?.message || e)
+    const { data: link, error } = await supabase
+      .from('links')
+      .select('id, product, click_count, status')
+      .eq('slug', s)
+      .single()
+    if (error || !link) {
+      stop('유효하지 않은 링크입니다', '주소가 잘못되었거나 삭제된 링크입니다.')
+      return
+    }
+    linkId = link.id; productId = link.product; status = link.status || 'active'
+    if (count && status === 'active') {
+      try {
+        await supabase.from('links')
+          .update({ click_count: (link.click_count || 0) + 1 })
+          .eq('id', link.id)
+      } catch (e2) { /* 집계 실패가 이동을 막아선 안 된다 */ }
+    }
+  }
+
+  if (status !== 'active') {
+    stop('공유가 중단된 링크입니다', '크리에이터가 이 링크의 공유를 중단했습니다. 다른 상품을 둘러보세요.')
+    return
+  }
+
+  // ref 쿠키 저장 (30일) — 구매 시 크리에이터 추적용.
+  // product-detail.html이 ?ref= 가 없을 때 이 쿠키를 대신 읽는다.
+  const expires = new Date(Date.now() + 30 * 864e5).toUTCString()
+  document.cookie = `vingly_ref=${linkId};expires=${expires};path=/;SameSite=Lax`
+  document.cookie = `vingly_creator_link=${linkId};expires=${expires};path=/;SameSite=Lax`
+
+  location.replace(
+    '/product-detail.html?id=' + encodeURIComponent(productId) + '&ref=' + encodeURIComponent(linkId)
+  )
+}
+</script>
+</body>
+</html>
