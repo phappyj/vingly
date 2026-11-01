@@ -12,7 +12,24 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:60px;border-bottom:1px solid rgba(10,12,16,.08);background:#fff}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;text-decoration:none;color:var(--ink)}
 .logo-badge{width:26px;height:26px;border-radius:7px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+.nav-r{display:flex;align-items:center;gap:16px}
+.nav-r a{font:600 13px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.6);text-decoration:none}
+.nav-r a:hover{color:var(--ink)}
+.nav-r a.nav-cta{padding:8px 15px;border-radius:9px;border:1.5px solid rgba(10,12,16,.14);color:var(--ink)}
+.nav-r a.nav-cta:hover{border-color:rgba(10,12,16,.4)}
 .wrap{max-width:480px;margin:0 auto;padding:40px 20px}
+.ft{border-top:1px solid rgba(10,12,16,.1);padding:28px 20px;margin-top:40px}
+.ft-in{max-width:680px;margin:0 auto}
+.ft-links{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.ft-links a{font:500 12.5px/1 'Pretendard',sans-serif;color:rgba(10,12,16,.45);text-decoration:none}
+.ft-links a:hover{color:var(--ink)}
+.ft-note{font:500 11.5px/1.7 'Pretendard',sans-serif;color:rgba(10,12,16,.5);padding:11px 13px;background:rgba(10,12,16,.04);border-radius:9px}
+.ft-biz{font:400 10.5px/1.8 'Pretendard',sans-serif;color:rgba(10,12,16,.35);margin-top:11px}
+@media(max-width:480px){
+  .nav{padding:0 14px}
+  .nav-r{gap:11px}
+  .nav-r a{font-size:12.5px}
+}
 h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .sub{font-size:13.5px;color:rgba(10,12,16,.5);margin-bottom:28px;line-height:1.6}
 .field{margin-bottom:14px}
@@ -127,6 +144,11 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 
 <div class="nav">
   <a class="logo" href="index.html"><div class="logo-badge">✓</div>Vingly</a>
+  <div class="nav-r">
+    <a href="products.html">전체 상품</a>
+    <a href="support.html">고객지원</a>
+    <a href="login.html" class="nav-cta">로그인</a>
+  </div>
 </div>
 
 <div class="wrap">
@@ -441,5 +463,22 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
       </div>`).join('')
   }
 </script>
+<footer class="ft">
+  <div class="ft-in">
+    <div class="ft-links">
+      <a href="index.html">홈</a><a href="products.html">전체 상품</a><a href="support.html">고객지원</a>
+      <a href="terms.html">이용약관</a><a href="privacy.html">개인정보처리방침</a><a href="login.html">로그인</a>
+    </div>
+    <!-- 통신판매중개자 고지 (전자상거래법 제20조 제1항) -->
+    <div class="ft-note">
+      Vingly는 통신판매중개자로서 통신판매의 당사자가 아닙니다. 상품의 등록&middot;판매&middot;배송&middot;환불 및 상품 정보에 대한 책임은 각 판매자에게 있으며, Vingly는 이에 대해 책임을 지지 않습니다.
+    </div>
+    <div class="ft-biz">
+      상호: 빙글리(Vingly) &middot; 대표자: 박희경 &middot; 사업자등록번호: 416-75-00580 &middot; 통신판매업신고번호: 신고 진행 중 (완료 후 게시 예정)<br>
+      사업장 주소: 서울특별시 강남구 봉은사로57길 57 &middot; 대표전화: 010-7788-4476 &middot; 이메일: vingly.official@gmail.com &middot; 호스팅 서비스: GitHub Pages<br>
+      &copy; 2026 Vingly. All rights reserved.
+    </div>
+  </div>
+</footer>
 </body>
 </html>

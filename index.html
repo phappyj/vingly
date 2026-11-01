@@ -341,6 +341,14 @@ img{display:block;max-width:100%}
 .cta-img-fade{position:absolute;inset:0;background:linear-gradient(to right,var(--ink) 0%,transparent 50%)}
 
 /* ── FOOTER ── */
+/* 데이터 로딩 자리표시 — "불러오는 중..." 글자 대신 형태를 먼저 보여준다.
+   글자가 떴다 사라지면 화면이 덜컹거려 미완성처럼 보인다. */
+.shim{background:linear-gradient(90deg,rgba(10,12,16,.05) 25%,rgba(10,12,16,.09) 37%,rgba(10,12,16,.05) 63%);background-size:400% 100%;animation:shimmove 1.3s ease infinite;border-radius:10px}
+@keyframes shimmove{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.shim-row{height:44px;margin-bottom:9px}
+.shim-row:last-child{margin-bottom:0}
+.shim-card{height:150px}
+
 footer{border-top:1px solid var(--ink-14);padding:40px 48px}
 .foot-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
 .foot-links{display:flex;gap:22px}
@@ -1121,7 +1129,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
       <div style="background:var(--white);border:1px solid var(--ink-14);border-radius:var(--r-l);padding:26px 28px" class="reveal">
         <div style="font:700 11px/1 'Pretendard',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-40);margin-bottom:14px">공급자 월 구독 플랜</div>
         <div id="brand-plan-list" style="display:flex;flex-direction:column;gap:9px">
-          <div style="padding:12px 14px;background:var(--ink-06);border-radius:10px;border:1px solid var(--ink-14);color:var(--ink-40);font:500 12px/1.4 'Pretendard',sans-serif">불러오는 중...</div>
+          <div class="shim shim-row"></div><div class="shim shim-row"></div><div class="shim shim-row"></div>
         </div>
         <div style="margin-top:11px;padding:10px 12px;background:var(--green-bg);border-radius:8px">
           <p style="font:600 12px/1.4 'Pretendard',sans-serif;color:var(--green)">📌 크리에이터는 모든 플랜에서 ₩0 — 영구</p>
@@ -1163,7 +1171,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
     <h2 class="st">판매할수록<br>더 유리해지는 구조</h2>
     <p class="sb">실적이 쌓일수록 더 좋은 제품에 먼저 접근하고, 수수료도 낮아집니다.</p>
     <div class="grade-grid" id="creator-grade-grid">
-      <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--ink-40);font:500 13px/1 'Pretendard',sans-serif">불러오는 중...</div>
+      <div class="shim shim-card"></div><div class="shim shim-card"></div><div class="shim shim-card"></div><div class="shim shim-card"></div>
     </div>
   </div>
 </section>
