@@ -494,9 +494,19 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div style="max-width:680px">
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">👤 기본 정보</div></div>
+
+        <!-- 이 칸들은 상품 상세의 "판매자 정보"에 그대로 공개된다.
+             전자상거래법 제20조 제2항에 따라 중개자가 판매자 신원을 알려야 하기 때문.
+             개인 연락처를 무심코 넣는 일이 생기지 않도록 먼저 알린다. -->
+        <div style="margin-bottom:14px;padding:11px 14px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 9px 9px 0;font:500 12.5px/1.7 'Pretendard',sans-serif;color:#92400E">
+          👁️ <strong>여기 입력한 값은 상품 페이지에 그대로 공개됩니다.</strong><br>
+          전자상거래법상 구매자에게 판매자 정보를 알려야 하기 때문입니다.
+          개인 휴대폰·개인 이메일 대신 <strong>사업용 연락처</strong>를 입력해주세요.
+        </div>
+
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명"></div>
-          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">이메일</label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" readonly></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">브랜드명 (상호)</label><input type="text" id="set_name" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="브랜드명"></div>
+          <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">고객 문의 이메일 <span style="color:var(--amber);font-weight:700">(공개)</span></label><input type="email" id="set_email" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="help@yourbrand.com"><div id="login_email_hint" style="font:400 11px/1.5 'Pretendard',sans-serif;color:var(--ink-40);margin-top:5px"></div></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">연락처</label><input type="tel" id="set_phone" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="010-0000-0000"></div>
         </div>
         <button onclick="saveProfile()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">정보 저장</button>
@@ -2765,8 +2775,12 @@ function showPage(id, btn) {
   closeSidebar()
   if (id === 'settings') {
     const user = window._vinglyUser || {}
-    const el = document.getElementById('set_name'); const em = document.getElementById('set_email')
-    if (el) el.value = user.name || ''; if (em) em.value = user.email || ''
+    const el = document.getElementById('set_name')
+    if (el) el.value = user.name || ''
+    // 공개용 문의 이메일은 loadBrandSettingsData가 DB에서 읽어 채운다.
+    // 여기서 로그인 이메일을 넣으면 개인 메일이 그대로 공개될 수 있다.
+    const hint = document.getElementById('login_email_hint')
+    if (hint) hint.textContent = user.email ? `로그인 계정: ${user.email} (공개되지 않음)` : ''
     if (typeof window.loadBrandSettingsData === 'function') window.loadBrandSettingsData()
   }
   if (id === 'settle' && typeof window.loadSettlements === 'function') {
@@ -2777,11 +2791,12 @@ window.loadBrandSettingsData = async function() {
   const supabase = window._supabase
   const user = window._vinglyUser
   if (!supabase || !user) return
-  const { data, error } = await supabase.from('users').select('company_name, phone, business_number, representative_name, business_address, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
+  const { data, error } = await supabase.from('users').select('company_name, phone, email, business_number, representative_name, business_address, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
   if (error) { console.error('설정 정보 불러오기 실패:', error); return }
   if (!data) return
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
   setVal('set_name', data.company_name || user.name)
+  setVal('set_email', data.email)
   setVal('set_phone', data.phone)
   setVal('set_bizno', data.business_number)
   setVal('set_biz_rep', data.representative_name)
@@ -2919,7 +2934,15 @@ async function saveProfile() {
   const business_number = document.getElementById('set_bizno')?.value.trim() || null
   const business_address = document.getElementById('set_biz_addr')?.value.trim() || null
 
-  const { data: savedProfile, error } = await supabase.from('users').update({ company_name: name, phone, business_number, business_address }).eq('id', user.id).select()
+  // 고객 문의 이메일 — 상품 페이지에 공개되는 값이다.
+  // 로그인 이메일(Supabase Auth)과는 별개라 여기서 바꿔도 로그인에는 영향이 없다.
+  const email = document.getElementById('set_email')?.value.trim() || null
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    alert('고객 문의 이메일 형식이 올바르지 않습니다.\n이 주소는 상품 페이지에 공개되니 정확히 입력해주세요.')
+    return
+  }
+
+  const { data: savedProfile, error } = await supabase.from('users').update({ company_name: name, phone, business_number, business_address, email }).eq('id', user.id).select()
   if (error) {
     alert('저장 실패: ' + error.message)
     return
