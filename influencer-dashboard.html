@@ -381,6 +381,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
     </div>
 
+    <!-- 정산 패널 — 지금 얼마를 받을 수 있는지, 무엇이 남았는지 한 화면에 보여준다 -->
+    <div class="card" id="payout-card" style="margin-bottom:16px;display:none">
+      <div class="card-h"><div class="card-t">💰 내 정산</div></div>
+      <div id="payout-body"></div>
+    </div>
+
     <div class="stat-grid">
       <div class="sc"><div class="sc-top"><div class="sc-label" id="earn-month-label">이번 달 수익</div><div class="sc-ico" style="background:var(--green-bg)">💸</div></div><div class="sc-val" id="earn-month-val" style="color:var(--green)">₩0</div><div class="sc-ch nt" id="earn-month-sub">링크 생성 후 시작</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">플랫폼 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🎁</div></div><div class="sc-val" style="color:var(--green)">0%</div><div class="sc-ch" style="color:var(--green)">크리에이터 영구 무료</div></div>
@@ -483,6 +489,50 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div style="background:#fff;border-radius:20px;width:100%;max-width:520px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.2);max-height:92vh;overflow-y:auto">
         <button onclick="expCloseModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.08);border:none;cursor:pointer;font-size:14px;color:var(--ink-40);z-index:1">✕</button>
         <div id="exp-modal-content"></div>
+      </div>
+    </div>
+
+    <!-- 정산 정보 등록 모달 —
+         주민번호는 가입이 아니라 "받을 돈이 생긴 뒤" 이 자리에서만 받는다. -->
+    <div id="payout-ov" onclick="if(event.target===this)closePayoutModal()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:20px;width:100%;max-width:460px;position:relative;box-shadow:0 28px 70px rgba(0,0,0,.2);max-height:92vh;overflow-y:auto;padding:26px 24px">
+        <button onclick="closePayoutModal()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.08);border:none;cursor:pointer;font-size:14px;color:var(--ink-40)">✕</button>
+
+        <div style="font:800 18px/1.3 'Pretendard',sans-serif;margin-bottom:6px">정산 정보 등록</div>
+        <div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:18px">
+          한 번만 등록하면 이후에는 매월 자동으로 지급됩니다.
+        </div>
+
+        <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:8px">구분</label>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button type="button" id="ptab-ind" onclick="setPayoutType('individual')" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--green);background:var(--green-bg);font:700 13px/1 'Pretendard',sans-serif;color:var(--green);cursor:pointer;font-family:inherit">개인</button>
+          <button type="button" id="ptab-biz" onclick="setPayoutType('business')" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--ink-14);background:#fff;font:700 13px/1 'Pretendard',sans-serif;color:var(--ink-40);cursor:pointer;font-family:inherit">사업자</button>
+        </div>
+
+        <!-- 개인 -->
+        <div id="pform-ind">
+          <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">주민등록번호</label>
+          <input type="text" id="p_rrn" inputmode="numeric" maxlength="14" placeholder="000000-0000000" autocomplete="off"
+                 style="width:100%;padding:12px 13px;border-radius:10px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 15px/1 'Pretendard',sans-serif;font-family:inherit;outline:none;letter-spacing:.5px">
+          <div style="margin-top:10px;padding:11px 13px;background:var(--ink-07);border-radius:9px;font:400 11.5px/1.7 'Pretendard',sans-serif;color:var(--ink-40)">
+            🔒 소득세법상 원천징수 신고를 위해 필요합니다. 암호화해서 보관하며 세무 신고 외에는 사용하지 않습니다.
+            수익 지급 시 <strong id="p_wh_label">3.3%</strong>가 공제됩니다.
+          </div>
+        </div>
+
+        <!-- 사업자 -->
+        <div id="pform-biz" style="display:none">
+          <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:6px">사업자등록번호</label>
+          <input type="text" id="p_bizno" inputmode="numeric" maxlength="12" placeholder="000-00-00000" autocomplete="off"
+                 style="width:100%;padding:12px 13px;border-radius:10px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:500 15px/1 'Pretendard',sans-serif;font-family:inherit;outline:none">
+          <div style="margin-top:10px;padding:11px 13px;background:var(--green-bg);border-radius:9px;font:400 11.5px/1.7 'Pretendard',sans-serif;color:#046B4D">
+            사업자는 원천징수 없이 <strong>전액 지급</strong>됩니다. 대신 세금계산서를 발행해주셔야 합니다.
+          </div>
+        </div>
+
+        <div id="payout_err" style="display:none;margin-top:12px;padding:10px 13px;background:#FEF2F2;border-radius:9px;font:600 12.5px/1.5 'Pretendard',sans-serif;color:#991B1B"></div>
+
+        <button id="payout-submit" onclick="savePayoutInfo()" style="width:100%;margin-top:16px;padding:14px;border-radius:11px;border:none;background:var(--green);color:#fff;font:800 15px/1 'Pretendard',sans-serif;cursor:pointer;font-family:inherit">등록하고 정산받기</button>
       </div>
     </div>
 
@@ -656,6 +706,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         loadMyLinks()
         loadMySamples()
         loadEarnings()
+        loadPayoutSummary()
         loadNotifications()
         loadChannels()
       }, 0)
@@ -1938,6 +1989,181 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     msg.style.display = 'inline'
     setTimeout(() => msg.style.display = 'none', 2500)
+  }
+
+  /* ── 내 정산 ──
+     "지금 얼마를 받을 수 있는가"를 한눈에 보여주고, 받기 위해 남은 단계만 띄운다.
+     주민번호는 받을 돈이 생긴 뒤에만 요구한다. */
+  let _payout = null
+
+  window.loadPayoutSummary = async function() {
+    const supabase = window._supabase
+    const card = document.getElementById('payout-card')
+    const body = document.getElementById('payout-body')
+    if (!supabase || !card || !body) return
+
+    let s = null
+    try {
+      const { data, error } = await supabase.rpc('get_payout_summary')
+      if (error) throw error
+      s = Array.isArray(data) ? data[0] : data
+    } catch (e) {
+      console.error('정산 요약 조회 실패:', e)
+      card.style.display = 'none'
+      return
+    }
+    if (!s) { card.style.display = 'none'; return }
+
+    _payout = s
+    card.style.display = 'block'
+
+    const avail = Number(s.available) || 0
+    const hold  = Number(s.holding) || 0
+    const min   = Number(s.min_amount) || 10000
+    const rate  = Number(s.withholding) || 3.3
+    const isBiz = s.tax_type === 'business'
+
+    // 사업자는 원천징수 대상이 아니다 (세금계산서로 처리)
+    const tax = isBiz ? 0 : Math.floor(avail * rate / 100)
+    const net = avail - tax
+
+    const won = (n) => '₩' + Number(n).toLocaleString()
+
+    let main = ''
+
+    if (avail < min) {
+      // 아직 기준 미달 — 얼마가 남았는지 숫자로 보여준다
+      const left = min - avail
+      const pct = Math.min(100, Math.round(avail / min * 100))
+      main = `
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:10px">지급 가능 금액</div>
+        <div style="font:900 30px/1 'Pretendard',sans-serif;letter-spacing:-1px;margin-bottom:14px">${won(avail)}</div>
+        <div style="height:8px;background:var(--ink-07);border-radius:100px;overflow:hidden;margin-bottom:9px">
+          <div style="height:100%;width:${pct}%;background:var(--green);border-radius:100px;transition:width .4s"></div>
+        </div>
+        <div style="font:600 13px/1.6 'Pretendard',sans-serif;color:var(--ink-70)">
+          ${won(left)} 더 모으면 정산받을 수 있어요 <span style="color:var(--ink-40);font-weight:500">(최소 ${won(min)})</span>
+        </div>`
+    } else if (!s.info_done || !s.bank_done) {
+      // 받을 돈은 있는데 등록이 안 됐다 — 여기가 주민번호를 받을 자리다
+      const need = []
+      if (!s.bank_done) need.push('정산 계좌')
+      if (!s.info_done) need.push('정산 정보')
+      main = `
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:10px">지금 받을 수 있는 금액</div>
+        <div style="font:900 30px/1 'Pretendard',sans-serif;letter-spacing:-1px;color:var(--green);margin-bottom:14px">${won(avail)}</div>
+        <div style="padding:13px 15px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;font:600 13px/1.7 'Pretendard',sans-serif;color:#92400E;margin-bottom:14px">
+          ${need.join('와 ')}만 등록하면 바로 지급됩니다.
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${!s.info_done ? `<button class="btn-primary" onclick="openPayoutModal()">정산 정보 등록</button>` : ''}
+          ${!s.bank_done ? `<button class="act-btn" onclick="showPage('settings',null)">계좌 등록하러 가기</button>` : ''}
+        </div>`
+    } else {
+      // 전부 준비됨 — 공제 내역을 숨기지 않는다
+      main = `
+        <div style="font:400 13px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:10px">다음 지급 예정</div>
+        <div style="font:900 30px/1 'Pretendard',sans-serif;letter-spacing:-1px;color:var(--green);margin-bottom:14px">${won(net)}</div>
+        <div style="background:var(--ink-07);border-radius:10px;padding:13px 15px;font:400 12.5px/1.9 'Pretendard',sans-serif">
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-40)">판매 수익</span><span>${won(avail)}</span></div>
+          ${isBiz
+            ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-40)">원천징수</span><span style="color:var(--green)">없음 (사업자)</span></div>`
+            : `<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-40)">원천징수 ${rate}%</span><span>−${won(tax)}</span></div>`}
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--ink-14);margin-top:7px;padding-top:7px;font-weight:700"><span>실수령</span><span>${won(net)}</span></div>
+        </div>
+        <div style="font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px">매월 자동 지급됩니다. 따로 신청하지 않아도 됩니다.</div>`
+    }
+
+    body.innerHTML = main + (hold > 0 ? `
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--ink-14);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <span style="font:500 12.5px/1.5 'Pretendard',sans-serif;color:var(--ink-40)">보류 중 (결제 후 14일 경과 전)</span>
+        <span style="font:700 14px/1 'Pretendard',sans-serif;color:var(--ink-70)">${won(hold)}</span>
+      </div>` : '')
+  }
+
+  window.openPayoutModal = function() {
+    const rate = _payout ? (Number(_payout.withholding) || 3.3) : 3.3
+    const lbl = document.getElementById('p_wh_label')
+    if (lbl) lbl.textContent = rate + '%'
+    document.getElementById('payout_err').style.display = 'none'
+    document.getElementById('payout-ov').style.display = 'flex'
+    document.body.style.overflow = 'hidden'
+  }
+
+  window.closePayoutModal = function() {
+    document.getElementById('payout-ov').style.display = 'none'
+    document.body.style.overflow = ''
+  }
+
+  let _payoutType = 'individual'
+  window.setPayoutType = function(t) {
+    _payoutType = t
+    const ind = document.getElementById('ptab-ind'), biz = document.getElementById('ptab-biz')
+    const on = (el) => { el.style.borderColor = 'var(--green)'; el.style.background = 'var(--green-bg)'; el.style.color = 'var(--green)' }
+    const off = (el) => { el.style.borderColor = 'var(--ink-14)'; el.style.background = '#fff'; el.style.color = 'var(--ink-40)' }
+    if (t === 'individual') { on(ind); off(biz) } else { on(biz); off(ind) }
+    document.getElementById('pform-ind').style.display = t === 'individual' ? 'block' : 'none'
+    document.getElementById('pform-biz').style.display = t === 'business' ? 'block' : 'none'
+    document.getElementById('payout_err').style.display = 'none'
+  }
+
+  function payoutErr(msg) {
+    const el = document.getElementById('payout_err')
+    el.textContent = msg
+    el.style.display = 'block'
+  }
+
+  window.savePayoutInfo = async function() {
+    const supabase = window._supabase
+    const btn = document.getElementById('payout-submit')
+    if (!supabase) return
+
+    btn.disabled = true
+    btn.textContent = '저장 중...'
+    btn.style.opacity = '.7'
+
+    const done = (ok) => {
+      btn.disabled = false
+      btn.textContent = '등록하고 정산받기'
+      btn.style.opacity = '1'
+      if (ok) { closePayoutModal(); loadPayoutSummary() }
+    }
+
+    try {
+      if (_payoutType === 'business') {
+        const num = (document.getElementById('p_bizno')?.value || '').replace(/[^0-9]/g, '')
+        if (num.length !== 10) { payoutErr('사업자등록번호는 숫자 10자리입니다.'); done(false); return }
+        const { error } = await supabase.rpc('set_payout_business', { p_business_number: num })
+        if (error) { payoutErr(error.message || '저장에 실패했습니다.'); done(false); return }
+        done(true)
+        return
+      }
+
+      // 개인 — 주민번호는 Edge Function이 암호화해서 저장한다.
+      // 브라우저는 키를 모르고, DB에도 평문이 남지 않는다.
+      const rrn = (document.getElementById('p_rrn')?.value || '').replace(/[^0-9]/g, '')
+      if (rrn.length !== 13) { payoutErr('주민등록번호 13자리를 입력해주세요.'); done(false); return }
+
+      const { data: sess } = await supabase.auth.getSession()
+      const token = sess?.session?.access_token
+      if (!token) { payoutErr('로그인이 만료됐습니다. 다시 로그인해주세요.'); done(false); return }
+
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/save-payout-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ residentId: rrn }),
+      })
+      const out = await res.json().catch(() => ({}))
+      if (!res.ok) { payoutErr(out?.message || '저장에 실패했습니다.'); done(false); return }
+
+      // 화면에서도 즉시 지운다
+      const el = document.getElementById('p_rrn'); if (el) el.value = ''
+      done(true)
+    } catch (e) {
+      console.error('정산 정보 저장 실패:', e)
+      payoutErr('일시적인 오류입니다. 잠시 후 다시 시도해주세요.')
+      done(false)
+    }
   }
 
   /* ── 내 쇼룸 ──
