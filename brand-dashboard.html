@@ -1603,6 +1603,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }
     window._cancelTypeLabel = CANCEL_TYPE_LABEL
 
+    // 저장 시 "운송장이 새로 들어왔는지" 비교할 기준값. 이게 없으면 전체 저장을 누를 때마다
+    // 이미 발송한 건에도 배송 메일이 다시 나간다.
+    window._shipSnapshot = {}
+    orders.forEach(o => { window._shipSnapshot[o.id] = { tracking_number: o.tracking_number || '' } })
+
     document.getElementById('order-tbody').innerHTML = orders.map(o => {
       const shipStatus = o.shipping_status || 'preparing'
       const dateStr = o.created_at ? new Date(o.created_at).toLocaleDateString('ko-KR') : '-'
@@ -1662,16 +1667,45 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     }).join('')
   }
 
+  /* 배송 시작 메일 — 운송장을 넣어도 구매자가 모르면 "언제 와요?" 문의가 전부 운영자에게 온다.
+     메일 실패가 저장을 되돌리면 안 되므로 조용히 로그만 남긴다. */
+  async function notifyShipped(orderId) {
+    try {
+      const { data: sess } = await supabase.auth.getSession()
+      const token = sess?.session?.access_token
+      if (!token) return
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/notify-shipped', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId }),
+      })
+      if (!res.ok) console.error('배송 메일 발송 실패:', orderId, await res.text())
+    } catch (e) {
+      console.error('배송 메일 호출 실패:', orderId, e)
+    }
+  }
+
   window.saveShipping = async function(orderId, silent) {
     const shipping_status = document.getElementById(`ship-status-${orderId}`).value
     const courier = document.getElementById(`courier-${orderId}`).value
     const tracking_number = document.getElementById(`tracking-${orderId}`).value.trim()
+
+    // 저장 전 값과 비교해, 운송장이 "새로" 입력된 건에만 메일을 보낸다.
+    // 안 그러면 전체 저장을 누를 때마다 구매자에게 같은 메일이 반복해서 간다.
+    const prev = (window._shipSnapshot || {})[orderId] || {}
+    const isNewTracking = !!tracking_number && tracking_number !== (prev.tracking_number || '')
 
     const { data, error } = await supabase
       .from('orders')
       .update({ shipping_status, courier: courier || null, tracking_number: tracking_number || null })
       .eq('id', orderId)
       .select()
+
+    if (!error && data && data.length > 0 && isNewTracking) {
+      if (!window._shipSnapshot) window._shipSnapshot = {}
+      window._shipSnapshot[orderId] = { tracking_number }
+      notifyShipped(orderId)
+    }
 
     if (silent) {
       if (error) return { ok: false, msg: error.message }
