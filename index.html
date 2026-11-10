@@ -881,9 +881,24 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
             style="width:100%;accent-color:#00B37E;cursor:pointer">
         </div>
         <div style="background:rgba(0,179,126,.15);border-radius:12px;padding:16px">
-          <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px">예상 월 수익 (수수료 0%)</div>
+          <div style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5);margin-bottom:6px">예상 월 수익 (Vingly 수수료 0%)</div>
           <div style="font:900 32px/1 'Pretendard',sans-serif;color:#00E5A0;letter-spacing:-1px" id="v-result">₩225,000</div>
           <div style="font:400 11px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.6);margin-top:6px" id="v-basis">월 50건 판매 · 수수료율 15% 기준</div>
+          <!-- 원천징수를 숨기면 입금액이 달라서 신뢰를 잃는다. 처음부터 같이 보여준다. -->
+          <div style="margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.14)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+              <span style="font:500 12px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.5)">원천징수 8.8%</span>
+              <span style="font:600 13px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.62)" id="v-tax">− ₩19,800</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font:700 12.5px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.82)">실제 입금액</span>
+              <span style="font:800 18px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.3px" id="v-net">₩205,200</span>
+            </div>
+            <div style="font:400 10.5px/1.6 'Pretendard',sans-serif;color:rgba(255,255,255,.45);margin-top:8px">
+              Vingly가 가져가는 금액은 ₩0입니다. 위 8.8%는 소득세법에 따라 국세청에 납부되는 세금(기타소득)입니다.<br>
+              연 750만원까지는 5월 종합소득세 신고 없이 끝나며, 원하시면 신고해서 환급받으실 수도 있습니다.
+            </div>
+          </div>
         </div>
       </div>
       <!-- 흐름 -->
@@ -1263,7 +1278,11 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
     <div class="faq-inner" id="faq-inner">
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">Vingly 수수료 구조가 어떻게 되나요?</span><div class="fq-ic">+</div></div>
-        <div class="faq-a">크리에이터는 Vingly에 수수료를 내지 않습니다. 브랜드가 설정한 수수료 전액이 그대로 크리에이터 통장으로 들어옵니다. 브랜드에게는 거래 수수료 1.8%(부가세 별도)가 적용되며, 선착순 30곳 얼리버드는 1.5%가 영구 고정됩니다. 브랜드는 사업자이므로 부가세는 매입세액으로 공제받습니다. 크리에이터는 언제나 ₩0입니다.</div>
+        <div class="faq-a">크리에이터는 Vingly에 수수료를 내지 않습니다. 브랜드가 설정한 수수료에서 Vingly가 떼어가는 금액은 ₩0입니다. 브랜드에게는 거래 수수료 1.8%(부가세 별도)가 적용되며, 선착순 30곳 얼리버드는 1.5%가 영구 고정됩니다. 브랜드는 사업자이므로 부가세는 매입세액으로 공제받습니다.<br><br>다만 실제 입금액은 소득세법에 따른 원천징수세액(기타소득 8.8%)을 뺀 금액입니다. 이는 플랫폼 수수료가 아니라 국세청에 납부되는 세금이며, 아래 "세금은 어떻게 되나요?" 항목에서 자세히 설명합니다.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span class="fq-t">세금은 어떻게 되나요? 5월에 신고해야 하나요?</span><div class="fq-ic">+</div></div>
+        <div class="faq-a">수수료는 소득세법에 따라 <strong>기타소득 8.8%</strong>(소득세 8% + 지방소득세 0.8%)를 원천징수한 뒤 입금됩니다. Vingly가 가져가는 돈이 아니라 국세청에 대신 납부하는 세금입니다.<br><br><strong>· 연 750만원까지는 5월 종합소득세 신고를 하지 않아도 됩니다.</strong> 원천징수만으로 납세가 끝납니다.<br><strong>· 급여가 있으셔도 합산되지 않습니다.</strong> 회사 연말정산과 별개로 처리됩니다.<br><strong>· 떼인 세금이 많다고 느껴지면 5월에 종합소득세로 신고해 환급받으실 수 있습니다.</strong> 분리과세와 종합과세 중 유리한 쪽을 고르실 수 있습니다.<br><br>실제 유불리는 개인의 다른 소득에 따라 달라집니다. 사업자등록을 하셨거나 연간 누적 지급액이 750만원을 넘는 경우에는 사업소득 3.3%로 전환되며, 전환 시 미리 이메일로 안내드립니다. 자세한 내용은 <a href="terms.html#s6" style="color:var(--green);text-decoration:underline">이용약관 제6조</a>를 확인해주세요.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="fq-t">브랜드로 등록하려면 무엇이 필요한가요?</span><div class="fq-ic">+</div></div>
@@ -1460,6 +1479,13 @@ function calcCreator() {
   var result = Math.floor(sales * price * (commRate / 100));
   document.getElementById('v-result').textContent = '₩' + result.toLocaleString();
   document.getElementById('v-basis').textContent = '월 ' + sales + '건 판매 · 수수료율 ' + commRate + '% 기준';
+  // 기타소득 원천징수 8.8% (소득세 8% + 지방소득세 0.8%)
+  var tax = Math.floor(result * 0.088);
+  var net = result - tax;
+  var taxEl = document.getElementById('v-tax');
+  var netEl = document.getElementById('v-net');
+  if (taxEl) taxEl.textContent = '− ₩' + tax.toLocaleString();
+  if (netEl) netEl.textContent = '₩' + net.toLocaleString();
 }
 
 /* ── 브랜드 계산기 ── */
