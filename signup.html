@@ -88,6 +88,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
 .agree-item input{width:16px;height:16px;border-radius:4px;accent-color:var(--blue);flex-shrink:0;margin-top:2px}
 .agree-text{font-size:13px;color:var(--ink-60);line-height:1.5;font-weight:400}
 .agree-text.bold{color:var(--ink);font-weight:600}
+.agree-text a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+.taxbox{display:none;background:#FEF9EC;border:1px solid rgba(217,119,6,.28);border-radius:11px;padding:14px 16px;margin-bottom:18px}
+.taxbox.on{display:block}
+.taxbox-t{font:700 12.5px/1.4 'Pretendard',sans-serif;color:#92400E;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.taxbox p{font:400 12px/1.7 'Pretendard',sans-serif;color:#92400E;margin:0 0 7px}
+.taxbox p:last-child{margin-bottom:0}
+.taxbox strong{font-weight:700}
+.taxbox a{color:#92400E;text-decoration:underline;text-underline-offset:2px}
 .btn-row{display:flex;gap:10px;margin-top:4px}
 .btn-back{flex:1;padding:13px;border-radius:10px;background:transparent;border:1.5px solid var(--ink-14);font:700 14px/1 'Pretendard',sans-serif;color:var(--ink-60);cursor:pointer;min-height:48px;transition:all .2s}
 .btn-back:hover{border-color:var(--ink-35);color:var(--ink)}
@@ -311,6 +319,15 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         <p class="step-sub">서비스 이용을 위해 동의가 필요합니다.</p>
       </div>
       <div class="alert alert-err" id="alertErr4"><span>⚠️</span><span id="alertErrMsg4"></span></div>
+
+      <!-- 크리에이터에게만 보이는 세금 안내. 나중에 원천징수 방식을 바꿀 때 분쟁을 막아준다. -->
+      <div class="taxbox" id="taxNotice">
+        <div class="taxbox-t"><span>💰</span><span>수수료 지급 시 세금 안내</span></div>
+        <p>수수료는 소득세법에 따라 <strong>원천징수 후</strong> 지급됩니다. 기본은 <strong>기타소득 8.8%</strong>(소득세 8% + 지방소득세 0.8%)입니다.</p>
+        <p>다만 <strong>사업자등록을 하셨거나</strong>, <strong>연간 누적 지급액이 750만원을 넘거나</strong>, 관계 법령·과세당국의 해석이 바뀌면 <strong>사업소득 3.3%</strong>로 전환될 수 있습니다. 전환 시 미리 이메일로 안내드립니다.</p>
+        <p>정산을 신청하실 때 원천징수를 위해 <strong>주민등록번호</strong>를 받습니다. 암호화해서 보관하고 원천징수 외의 용도로는 쓰지 않습니다. 자세한 내용은 <a href="terms.html#s6" target="_blank" rel="noopener">이용약관 제6조</a>를 확인해주세요.</p>
+      </div>
+
       <div class="agree-list">
         <label class="agree-item">
           <input type="checkbox" id="agreeAll" onchange="toggleAll(this)">
@@ -318,11 +335,11 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
         </label>
         <label class="agree-item">
           <input type="checkbox" id="agree1" onchange="checkAll()">
-          <span class="agree-text">[필수] 이용약관에 동의합니다</span>
+          <span class="agree-text">[필수] <a href="terms.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">이용약관</a>에 동의합니다</span>
         </label>
         <label class="agree-item">
           <input type="checkbox" id="agree2" onchange="checkAll()">
-          <span class="agree-text">[필수] 개인정보 처리방침에 동의합니다</span>
+          <span class="agree-text">[필수] <a href="privacy.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">개인정보 처리방침</a>에 동의합니다</span>
         </label>
         <label class="agree-item">
           <input type="checkbox" id="agree3" onchange="checkAll()">
@@ -446,6 +463,12 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       g('s3_sub').textContent   = role === 'brand' ? '제품 등록에 필요한 정보입니다.' : '링크 생성에 필요한 정보입니다.'
       g('s3_brand').className   = 'fsec' + (role === 'brand'   ? ' on' : '')
       g('s3_creator').className = 'fsec' + (role === 'creator' ? ' on' : '')
+    }
+
+    // 세금 안내는 크리에이터에게만 보여준다. 브랜드는 수수료를 "받는" 쪽이 아니라 "주는" 쪽이라 해당 없음.
+    if (n === 4) {
+      const tn = g('taxNotice')
+      if (tn) tn.className = 'taxbox' + (role === 'creator' ? ' on' : '')
     }
     g('s' + currentStep).classList.remove('on')
     g('s' + n)?.classList.add('on')
