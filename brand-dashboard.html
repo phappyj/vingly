@@ -544,7 +544,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">계좌번호</label><input type="text" id="set_account" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="- 없이 숫자만"></div>
           <div><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">예금주</label><input type="text" id="set_holder" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="사업자등록증상 명의"></div>
+          <div class="toss-only" style="display:none"><label style="font:600 12px/1 'Pretendard',sans-serif;color:var(--ink-40);display:block;margin-bottom:6px">본인인증용 휴대폰 <span style="font-weight:500;color:var(--ink-40)">(대표자 명의 · 공개 안 됨)</span></label><input type="tel" id="set_payout_phone" inputmode="numeric" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid var(--ink-14);background:var(--ink-07);font:400 14px/1 'Pretendard',sans-serif;font-family:inherit;outline:none" placeholder="01012345678"></div>
         </div>
+        <div class="toss-only" style="display:none;margin-top:10px;font:400 11.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40)">정산금은 결제대행사 토스페이먼츠가 직접 입금합니다. 계좌를 저장하면 토스페이먼츠가 위 휴대폰으로 <strong>본인인증 문자</strong>를 보내요. 인증을 마쳐야 정산금을 받을 수 있어요.</div>
+        <div id="toss-seller-box" style="display:none;margin-top:12px;padding:11px 14px;border-radius:10px;font:600 12.5px/1.6 'Pretendard',sans-serif"></div>
         <button onclick="saveBankAccount()" style="margin-top:14px;padding:10px 24px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 13px/1 'Pretendard',sans-serif;cursor:pointer">계좌 저장</button>
         <span id="bank_msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✅ 저장됐습니다</span>
       </div>
@@ -2827,7 +2830,7 @@ window.loadBrandSettingsData = async function() {
   const supabase = window._supabase
   const user = window._vinglyUser
   if (!supabase || !user) return
-  const { data, error } = await supabase.from('users').select('company_name, phone, email, business_number, representative_name, business_address, business_start_date, business_verified, business_status, bank_name, account_number, account_holder').eq('id', user.id).single()
+  const { data, error } = await supabase.from('users').select('company_name, phone, email, business_number, representative_name, business_address, business_start_date, business_verified, business_status, bank_name, account_number, account_holder, payout_phone, toss_seller_id, toss_seller_status, toss_seller_error, toss_seller_synced_at').eq('id', user.id).single()
   if (error) { console.error('설정 정보 불러오기 실패:', error); return }
   if (!data) return
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || '' }
@@ -2840,6 +2843,14 @@ window.loadBrandSettingsData = async function() {
   setVal('set_bank', data.bank_name)
   setVal('set_account', data.account_number)
   setVal('set_holder', data.account_holder)
+  setVal('set_payout_phone', data.payout_phone || data.phone)
+  // 지급 방식: toss(토스 지급대행)일 때만 본인인증 칸과 안내를 보여준다. 수동 기간엔 예전 화면 그대로.
+  try {
+    const { data: pm } = await supabase.from('app_settings').select('value').eq('key', 'payout_mode').maybeSingle()
+    window._payoutMode = String(pm?.value || 'manual').replace(/^"|"$/g, '')
+  } catch (e) { window._payoutMode = 'manual' }
+  document.querySelectorAll('.toss-only').forEach(el => { el.style.display = window._payoutMode === 'toss' ? '' : 'none' })
+  if (window._payoutMode === 'toss') renderTossSeller(data)
 
   // 계좌 미등록 시 경고 — 등록 안 하면 판매가 나도 정산을 받을 수 없음
   const bankWarn = document.getElementById('bank-warning')
@@ -2927,9 +2938,15 @@ window.saveBankAccount = async function() {
   const bank_name = document.getElementById('set_bank')?.value || ''
   const account_number = (document.getElementById('set_account')?.value || '').replace(/[^0-9]/g, '')
   const account_holder = (document.getElementById('set_holder')?.value || '').trim()
+  const payout_phone = (document.getElementById('set_payout_phone')?.value || '').replace(/[^0-9]/g, '')
 
   if (!bank_name || !account_number || !account_holder) {
     alert('은행, 계좌번호, 예금주를 모두 입력해주세요.\n\n하나라도 비어있으면 정산이 불가능합니다.')
+    return
+  }
+  const tossMode = window._payoutMode === 'toss'
+  if (tossMode && !/^01[016789][0-9]{7,8}$/.test(payout_phone)) {
+    alert('본인인증용 휴대폰 번호를 확인해주세요.\n\n토스페이먼츠가 이 번호로 본인인증 문자를 보내야 정산금을 받을 수 있어요. (대표자 명의 휴대폰)')
     return
   }
   if (account_number.length < 8) {
@@ -2939,7 +2956,7 @@ window.saveBankAccount = async function() {
 
   const { data, error } = await supabase
     .from('users')
-    .update({ bank_name, account_number, account_holder })
+    .update(tossMode ? { bank_name, account_number, account_holder, payout_phone } : { bank_name, account_number, account_holder })
     .eq('id', user.id)
     .select()
 
@@ -2958,6 +2975,56 @@ window.saveBankAccount = async function() {
   if (msg) { msg.style.display = 'inline'; setTimeout(() => { msg.style.display = 'none' }, 2500) }
   const bankWarn = document.getElementById('bank-warning')
   if (bankWarn) bankWarn.style.display = 'none'
+  if (tossMode) await syncTossSeller()
+}
+
+// ── 토스 지급대행 셀러 등록 ─────────────────────────────────
+// 계좌를 저장하면 토스페이먼츠에 "정산 받을 사람"으로 등록한다.
+// 토스 계약 전이면 서버가 조용히 넘기고, 계좌 저장 자체는 이미 끝난 상태다.
+const TOSS_SELLER_VIEW = {
+  APPROVAL_REQUIRED:  ['amber', '📱 토스페이먼츠가 본인인증 문자를 보냈어요. 휴대폰에서 인증을 마치면 정산금을 받을 수 있어요.'],
+  PARTIALLY_APPROVED: ['green', '✅ 정산 받을 준비 완료 — 판매 대금은 토스페이먼츠가 위 계좌로 직접 입금해요.'],
+  APPROVED:           ['green', '✅ 정산 받을 준비 완료 — 판매 대금은 토스페이먼츠가 위 계좌로 직접 입금해요.'],
+  KYC_REQUIRED:       ['amber', '📋 정산액이 커서 토스페이먼츠 추가 심사가 필요해요. 이메일로 온 안내를 확인해주세요.'],
+}
+function renderTossSeller(d) {
+  const box = document.getElementById('toss-seller-box')
+  if (!box || !d) return
+  let tone = '', text = ''
+  if (d.toss_seller_error) { tone = 'red'; text = '⚠️ ' + d.toss_seller_error }
+  else if (d.toss_seller_id && !d.toss_seller_synced_at) { tone = 'amber'; text = '🔄 계좌 정보가 바뀌었어요. [계좌 저장]을 한 번 더 눌러 토스에 반영해주세요.' }
+  else if (TOSS_SELLER_VIEW[d.toss_seller_status]) { [tone, text] = TOSS_SELLER_VIEW[d.toss_seller_status] }
+  if (!text) { box.style.display = 'none'; return }
+  const bg = { green: 'var(--green-bg)', amber: 'var(--amber-bg)', red: 'var(--red-bg)' }[tone]
+  const fg = { green: 'var(--green)', amber: 'var(--amber)', red: 'var(--red)' }[tone]
+  box.style.cssText += `;display:block;background:${bg};color:${fg}`
+  box.textContent = text
+}
+async function syncTossSeller() {
+  const supabase = window._supabase
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/toss-payout?forceFunctionRegion=ap-northeast-2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI',
+        'Authorization': 'Bearer ' + session.access_token
+      },
+      body: JSON.stringify({ action: 'sync-seller' })
+    })
+    if (res.status === 404) return // 함수 배포 전
+    const out = await res.json().catch(() => ({}))
+    if (out.pending) return        // 토스 계약 전 — 계좌는 저장됐으니 조용히 넘어간다
+    if (!out.ok && out.message) alert(out.message)
+  } catch (e) {
+    console.warn('토스 셀러 등록 호출 실패(계좌는 저장됨):', e)
+  }
+  // 서버가 기록한 최신 상태로 다시 그린다
+  const user = window._vinglyUser
+  const { data } = await supabase.from('users').select('toss_seller_id, toss_seller_status, toss_seller_error, toss_seller_synced_at').eq('id', user.id).single()
+  renderTossSeller(data)
 }
 
 async function saveProfile() {
