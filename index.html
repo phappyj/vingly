@@ -575,6 +575,18 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
 /* 게스트 모드 배너 */
 /* guest-banner removed — sticky-cta handles all CTA */
 
+
+/* ===== 모바일 보정 (2026-11-15) =====
+   1) iOS 사파리는 입력창 글씨가 16px보다 작으면 포커스할 때 화면을 확대한다.
+      확대되면 사용자가 손으로 다시 줄여야 해서 가입 도중에 이탈한다.
+   2) 손가락으로 누르는 버튼은 최소 40px은 돼야 안 빗나간다. */
+@media (max-width:640px){
+  input,select,textarea{font-size:16px !important}
+  #tab-creator,#tab-brand{min-height:42px}
+  .earn-panel button,.earn-cta{min-height:44px !important}
+  .hb{width:42px;height:42px;align-items:center;justify-content:center;padding:0}
+  .nav-cta,.nav-login,.hd-btn,.header button,.hd a.btn{min-height:38px}
+}
 </style>
 
 </head>
@@ -894,7 +906,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
               <span style="font:700 12.5px/1 'Pretendard',sans-serif;color:rgba(255,255,255,.82)">실제 입금액</span>
               <span style="font:800 18px/1 'Pretendard',sans-serif;color:#fff;letter-spacing:-.3px" id="v-net">₩205,200</span>
             </div>
-            <div style="font:400 10.5px/1.6 'Pretendard',sans-serif;color:rgba(255,255,255,.45);margin-top:8px">
+            <div style="font:400 11.5px/1.65 'Pretendard',sans-serif;color:rgba(255,255,255,.52);margin-top:8px">
               Vingly가 가져가는 금액은 ₩0입니다. 위 8.8%는 소득세법에 따라 국세청에 납부되는 세금(기타소득)입니다.<br>
               연 750만원까지는 5월 종합소득세 신고 없이 끝나며, 원하시면 신고해서 환급받으실 수도 있습니다.
             </div>
@@ -1242,7 +1254,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
         <div style="background:var(--green-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--green)">혜택: 얼리버드 수수료 영구 적용<br>+ 공식 베타테스터 배지</div>
         </div>
-        <button onclick="location.href='signup.html?role=creator'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 바로 가입 →</button>
+        <button class="earn-cta" onclick="location.href='signup.html?role=creator'" style="width:100%;padding:11px;border-radius:10px;background:var(--green);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">크리에이터로 바로 가입 →</button>
       </div>
 
       <!-- 브랜드 모집 -->
@@ -1253,7 +1265,7 @@ body.has-sticky-cta footer { padding-bottom: 90px; }
         <div style="background:var(--blue-bg);border-radius:9px;padding:10px 14px;margin-bottom:16px">
           <div style="font:700 13px/1.4 'Pretendard',sans-serif;color:var(--blue)">혜택: 얼리버드 거래 수수료<br>1.5% 영구 고정 (정상가 1.8%)<br>선착순 30곳 한정</div>
         </div>
-        <button onclick="location.href='signup.html?role=brand'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">브랜드로 바로 가입 →</button>
+        <button class="earn-cta" onclick="location.href='signup.html?role=brand'" style="width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;border:none;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer">브랜드로 바로 가입 →</button>
       </div>
 
       <!-- 문의 -->

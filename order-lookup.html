@@ -78,6 +78,14 @@ h1{font-size:20px;font-weight:800;margin-bottom:6px}
 .report-submit{width:100%;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font:700 14px/1 'Pretendard',sans-serif;cursor:pointer}
 .report-submit:disabled{opacity:.5;cursor:not-allowed}
 .report-done{text-align:center;padding:10px 0;font:600 13.5px/1.5 'Pretendard',sans-serif;color:var(--green)}
+
+/* ===== 모바일 보정 (2026-11-15) =====
+   1) iOS 사파리는 입력창 글씨가 16px보다 작으면 포커스할 때 화면을 확대한다.
+      확대되면 사용자가 손으로 다시 줄여야 해서 가입 도중에 이탈한다.
+   2) 손가락으로 누르는 버튼은 최소 40px은 돼야 안 빗나간다. */
+@media (max-width:640px){
+  input,select,textarea{font-size:16px !important}
+}
 </style>
 </head>
 <body>

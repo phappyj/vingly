@@ -132,6 +132,14 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
   .form-area{padding:24px 18px}
   .role-grid,.frow{grid-template-columns:1fr}
 }
+
+/* ===== 모바일 보정 (2026-11-15) =====
+   1) iOS 사파리는 입력창 글씨가 16px보다 작으면 포커스할 때 화면을 확대한다.
+      확대되면 사용자가 손으로 다시 줄여야 해서 가입 도중에 이탈한다.
+   2) 손가락으로 누르는 버튼은 최소 40px은 돼야 안 빗나간다. */
+@media (max-width:640px){
+  input,select,textarea{font-size:16px !important}
+}
 </style>
 </head>
 <body>

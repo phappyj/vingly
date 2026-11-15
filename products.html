@@ -173,6 +173,16 @@ footer{border-top:1px solid var(--ink-14);padding:40px 48px;background:var(--can
   .foot-top{flex-direction:column;align-items:flex-start;gap:16px}
   .foot-links{gap:12px}
 }
+
+/* ===== 모바일 보정 (2026-11-15) =====
+   1) iOS 사파리는 입력창 글씨가 16px보다 작으면 포커스할 때 화면을 확대한다.
+      확대되면 사용자가 손으로 다시 줄여야 해서 가입 도중에 이탈한다.
+   2) 손가락으로 누르는 버튼은 최소 40px은 돼야 안 빗나간다. */
+@media (max-width:640px){
+  input,select,textarea{font-size:16px !important}
+  .hb{width:42px;height:42px;align-items:center;justify-content:center;padding:0}
+  .nav-cta,.nav-login,.hd-btn,.header button,.hd a.btn{min-height:38px}
+}
 </style>
 </head>
 <body>
