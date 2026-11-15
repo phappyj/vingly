@@ -153,7 +153,9 @@ p{font-size:13.5px;color:rgba(10,12,16,.55);line-height:1.6;margin-bottom:20px}
       // 프론트엔드에는 절대 노출되지 않는다.
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmhwZHFycnpobmhuYWVsYWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4NjE5NTgsImV4cCI6MjA5ODQzNzk1OH0.iEhPtyWD09rEp6OIJf7eN5gC0yqtj-0xlGHvS3bZZHI'
 
-      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/confirm-payment', {
+      // 토스 IP 정책상 대한민국에서 온 요청만 통과한다. Supabase는 부르는 사람과 가까운 지역에서
+      // 함수를 실행하므로, 해외 접속자도 서울(ap-northeast-2)에서 돌도록 고정한다.
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/confirm-payment?forceFunctionRegion=ap-northeast-2', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

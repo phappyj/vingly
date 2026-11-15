@@ -1809,7 +1809,9 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     if (!session) { alert('로그인이 만료됐습니다. 다시 로그인해주세요.'); return }
 
     try {
-      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/refund-order', {
+      // 토스 IP 정책상 대한민국에서 온 요청만 통과한다. Supabase는 부르는 사람과 가까운 지역에서
+      // 함수를 실행하므로, 해외 접속자도 서울(ap-northeast-2)에서 돌도록 고정한다.
+      const res = await fetch('https://hzrhpdqrrzhnhnaelaie.supabase.co/functions/v1/refund-order?forceFunctionRegion=ap-northeast-2', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
