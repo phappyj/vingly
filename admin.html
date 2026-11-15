@@ -475,7 +475,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
         <div class="card-t">🤖 토스 지급대행</div>
         <div id="payout-mode-badge" style="font:800 12.5px/1 'Pretendard',sans-serif"></div>
       </div>
-      <div style="font:400 12.5px/1.7 'Pretendard',sans-serif;color:rgba(10,12,16,.55);padding:0 4px 12px">
+      <div style="font:400 12.5px/1.7 'Pretendard',sans-serif;color:var(--ts);padding:0 4px 12px">
         <strong>toss</strong> 모드에서는 평일 오전 10시에 자동으로 지급됩니다 (보류 14일 지난 건, 원천징수 차감 후).
         <strong>manual</strong> 모드에서는 아래 리스트를 보고 직접 이체합니다. 토스 지급대행 계약·보안 키 등록 전에는 manual 로 두세요.
       </div>
@@ -486,7 +486,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           <button class="act-btn" onclick="tossPayout('refresh')">🔄 결과 새로고침</button>
           <button class="act-btn" onclick="tossPayout('balance')">🏦 토스 잔액</button>
         </span>
-        <span id="manual-guide" style="font:600 12.5px/1.6 'Pretendard',sans-serif;color:rgba(10,12,16,.55)">수동 모드: 아래 지급 대상 리스트 → CSV 다운로드 → 은행 대량이체 → [일괄 지급완료 처리]</span>
+        <span id="manual-guide" style="font:600 12.5px/1.6 'Pretendard',sans-serif;color:var(--ts)">수동 모드: 아래 지급 대상 리스트 → CSV 다운로드 → 은행 대량이체 → [일괄 지급완료 처리]</span>
         <span style="flex:1"></span>
         <button class="act-btn" id="payout-mode-btn" onclick="togglePayoutMode()">모드 전환</button>
       </div>
@@ -509,7 +509,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="tw" id="payout-wrap" style="display:none">
         <table>
-          <thead><tr><th>대상</th><th>구분</th><th>은행</th><th>계좌번호</th><th>예금주</th><th>정산액</th><th>원천징수</th><th>실지급액</th><th>건수</th><th>토스 셀러</th><th>관리</th></tr></thead>
+          <thead><tr><th>대상</th><th>구분</th><th>은행</th><th>계좌번호</th><th>예금주</th><th>정산액</th><th>원천징수</th><th>실지급액</th><th>건수</th><th>확인</th><th>관리</th></tr></thead>
           <tbody id="payout-tbody"></tbody>
         </table>
       </div>
@@ -848,7 +848,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     location.replace('login.html')
   } else {
     const user = session.user
-    if (user.user_metadata?.role !== 'admin') {
+    if (user.app_metadata?.role !== 'admin') {  // user_metadata 는 사용자가 스스로 바꿀 수 있어 판별에 쓰면 안 된다
       location.replace('login.html')
     } else {
       const name = user.user_metadata?.name || user.email || '관리자'
@@ -1686,12 +1686,24 @@ function renderSettlements(settlements, members) {
   })
   _payoutGroups = Object.values(groups)
 
+  // 보내면 안 되는 경우 — 지급 함수(toss-payout)와 같은 기준
+  const minAmt = Number(cfg.payout_min_amount) || 10000
+  _payoutGroups.forEach(g => {
+    const m = memberMap[g.recipient] || {}
+    const isBizCreator = g.role === 'creator' && m.creator_tax_type === 'business'
+    g.hold = ''
+    if (!m.bank_name || !m.account_number || !m.account_holder) g.hold = '계좌 미등록'
+    else if (g.role === 'creator' && !isBizCreator && !m.payout_info_at) g.hold = '주민번호 미등록 (원천징수 불가)'
+    else if (g.role === 'creator' && g.amount < minAmt) g.hold = `${minAmt.toLocaleString()}원 미만 — 다음에 합쳐서`
+  })
+  _payoutGroups.sort((a, b) => (a.hold ? 1 : 0) - (b.hold ? 1 : 0) || (a.role === 'brand' ? 0 : 1) - (b.role === 'brand' ? 0 : 1))
+
   // 오늘 이체해야 할 총액 — 이 금액만큼 계좌에 있어야 지급이 가능하므로 반드시 보여야 함
-  const payoutTotal = _payoutGroups.reduce((s, g) => s + g.net, 0)
+  const payoutTotal = _payoutGroups.filter(g => !g.hold).reduce((s, g) => s + g.net, 0)
   const payoutTotalEl = document.getElementById('payout-total')
   if (payoutTotalEl) {
     payoutTotalEl.textContent = _payoutGroups.length
-      ? `총 \u20a9${payoutTotal.toLocaleString()} (${_payoutGroups.length}명)`
+      ? `총 \u20a9${payoutTotal.toLocaleString()} (${_payoutGroups.filter(g => !g.hold).length}명)`
       : '지급 대상 없음'
     payoutTotalEl.style.color = _payoutGroups.length ? 'var(--r2)' : 'var(--t3)'
   }
@@ -1707,13 +1719,16 @@ function renderSettlements(settlements, members) {
       const bank = bankMap[g.recipient] || {}
       const m = memberMap[g.recipient] || {}
       const sellerLabel = { APPROVAL_REQUIRED: '본인인증 대기', PARTIALLY_APPROVED: '지급 가능', APPROVED: '지급 가능', KYC_REQUIRED: 'KYC 심사 필요' }
-      const sellerHtml = m.toss_seller_error
-        ? `<span class="badge br2" title="${String(m.toss_seller_error).replace(/"/g, '&quot;')}">오류</span>`
+      let sellerHtml
+      if (g.hold) sellerHtml = `<span class="badge br2">보내지 마세요</span><div style="font-size:11px;color:var(--r2);margin-top:3px">${g.hold}</div>`
+      else if (payoutMode !== 'toss') sellerHtml = '<span class="badge bg2">✓ 보내기</span>'
+      else sellerHtml = m.toss_seller_error
+        ? `<span class="badge br2" title="${String(m.toss_seller_error).replace(/"/g, '&quot;')}">토스 오류</span>`
         : m.toss_seller_id
           ? `<span class="badge ${['PARTIALLY_APPROVED', 'APPROVED'].includes(m.toss_seller_status) ? 'bg2' : 'ba2'}">${sellerLabel[m.toss_seller_status] || m.toss_seller_status || '-'}</span>`
-          : '<span style="font-size:11.5px;color:var(--t3)">미등록</span>'
+          : '<span style="font-size:11.5px;color:var(--tm)">토스 미등록</span>'
       return `
-      <tr>
+      <tr${g.hold ? ' style="opacity:.6"' : ''}>
         <td class="td-m">${nameMap[g.recipient] || '-'}</td>
         <td><span class="badge ${g.role === 'brand' ? 'bb2' : 'bg2'}">${roleLabel[g.role] || g.role}</span></td>
         <td>${bank.bank}</td>
@@ -1724,16 +1739,17 @@ function renderSettlements(settlements, members) {
         <td style="font-weight:800">₩${g.net.toLocaleString()}</td>
         <td>${g.count}건</td>
         <td>${sellerHtml}</td>
-        <td>${payoutMode === 'toss'
-          ? '<span style="font-size:11.5px;color:var(--t3)">자동 지급</span>'
+        <td>${g.hold ? '<span style="font-size:11.5px;color:var(--tm)">-</span>'
+          : payoutMode === 'toss'
+          ? '<span style="font-size:11.5px;color:var(--tm)">자동 지급</span>'
           : `<button class="act-btn green" onclick='batchMarkPaid(${JSON.stringify(g.ids)})'>일괄 지급완료 처리</button>`}</td>
       </tr>`
     }).join('') + `
       <tr style="background:var(--sf);font-weight:800">
         <td colspan="7" style="text-align:right;padding-right:12px">보내야 할 총액 (실지급액)</td>
         <td style="color:var(--r2);font-size:15px">\u20a9${payoutTotal.toLocaleString()}</td>
-        <td>${_payoutGroups.reduce((s, g) => s + g.count, 0)}건</td>
-        <td colspan="2">원천징수 합계 −\u20a9${_payoutGroups.reduce((s, g) => s + g.tax, 0).toLocaleString()}</td>
+        <td>${_payoutGroups.filter(g => !g.hold).reduce((s, g) => s + g.count, 0)}건</td>
+        <td colspan="2">원천징수 합계 −\u20a9${_payoutGroups.filter(g => !g.hold).reduce((s, g) => s + g.tax, 0).toLocaleString()}</td>
       </tr>`
   }
 
@@ -1781,7 +1797,7 @@ function renderPayoutMode(mode) {
   const btn = document.getElementById('payout-mode-btn')
   if (b) {
     b.textContent = mode === 'toss' ? '● toss (자동 지급)' : '● manual (수동 이체)'
-    b.style.color = mode === 'toss' ? '#00B37E' : 'rgba(10,12,16,.45)'
+    b.style.color = mode === 'toss' ? 'var(--gl)' : 'var(--ts)'
   }
   if (btn) btn.textContent = mode === 'toss' ? 'manual 로 전환' : 'toss 로 전환'
   const acts = document.getElementById('toss-actions'), guide = document.getElementById('manual-guide')
@@ -1862,7 +1878,9 @@ window.downloadPayoutCSV = function() {
   const bankMap = window._adminBankMap || {}
   const roleLabel = { creator: '크리에이터', brand: '브랜드' }
   const rows = [['대상명', '구분', '은행', '계좌번호', '예금주', '실지급액', '정산액', '원천징수', '건수']]
-  _payoutGroups.forEach(g => {
+  const sendable = _payoutGroups.filter(g => !g.hold)
+  if (!sendable.length) { alert('지금 보낼 수 있는 대상이 없습니다. (보류 사유는 표의 "확인" 칸 참고)'); return }
+  sendable.forEach(g => {
     const bank = bankMap[g.recipient] || {}
     rows.push([
       nameMap[g.recipient] || '-',
