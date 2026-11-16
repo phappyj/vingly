@@ -333,7 +333,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     </div>
 
     <div class="buyer-err" id="buyer_err"></div>
-    <button class="buy-btn" id="buyer-submit-btn" onclick="submitBuyerInfoAndPay()">토스페이먼츠로 결제하기</button>
+    <button class="buy-btn" id="buyer-submit-btn" onclick="submitBuyerInfoAndPay()">결제하기</button>
   </div>
 </div>
 
@@ -607,7 +607,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
             `}
 
             <div class="safe-badges">
-              <span class="safe-badge">🔒 안전 결제 (토스페이먼츠)</span>
+              <span class="safe-badge">🔒 안전 결제</span>
               <span class="safe-badge">📦 판매자 직접 배송</span>
             </div>
 
@@ -816,7 +816,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
     if (insertErr) {
       errEl.textContent = '주문 생성 실패: ' + insertErr.message
       errEl.style.display = 'block'
-      btn.textContent = '토스페이먼츠로 결제하기'
+      btn.textContent = '결제하기'
       btn.style.opacity = '1'
       btn.style.pointerEvents = 'auto'
       return
@@ -837,7 +837,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--canvas);color:var(--in
       // 성공 시 Toss가 successUrl로 리다이렉트하므로 이 아래 코드는 실행되지 않음
     } catch (e) {
       // 사용자가 결제창을 닫거나 실패한 경우
-      btn.textContent = '토스페이먼츠로 결제하기'
+      btn.textContent = '결제하기'
       btn.style.opacity = '1'
       btn.style.pointerEvents = 'auto'
     }

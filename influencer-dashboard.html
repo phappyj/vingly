@@ -500,7 +500,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
         <div style="font:800 18px/1.3 'Pretendard',sans-serif;margin-bottom:6px">정산 정보 등록</div>
         <div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:18px">
-          한 번만 등록하면 이후에는 자동으로 지급됩니다. <strong class="payout-sched">매주 월요일 지급 · 첫 지급 2027년 1월 4일(월)</strong>
+          한 번만 등록하면 이후에는 자동으로 지급됩니다. <strong class="payout-sched">지급 일정은 2027년 1월 정식 오픈 때 안내드려요</strong>
         </div>
 
         <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:8px">구분</label>
@@ -1030,7 +1030,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const settleLabelEl = document.getElementById('dash-settle-label')
     const settleSubEl = document.getElementById('dash-settle-sub')
     if (settleLabelEl) settleLabelEl.textContent = '정산 예정'
-    if (settleSubEl) settleSubEl.textContent = '14일 보류 후 · ' + ((window._payoutSched || {}).short || '매주 월요일 지급')
+    if (settleSubEl) { const ps = window._payoutSched || {}; settleSubEl.textContent = '14일 보류 후 · ' + (ps.before ? '정식 오픈 후 지급' : (ps.short || '지급일에 입금')) }
 
     const monthValEl = document.getElementById('earn-month-val')
     const monthSubEl = document.getElementById('earn-month-sub')
@@ -2087,7 +2087,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             : `<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-40)">원천징수 ${rate}%</span><span>−${won(tax)}</span></div>`}
           <div style="display:flex;justify-content:space-between;border-top:1px solid var(--ink-14);margin-top:7px;padding-top:7px;font-weight:700"><span>실수령</span><span>${won(net)}</span></div>
         </div>
-        <div style="font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px">${(window._payoutSched || {}).short || '매주 월요일 지급'} · 자동으로 입금되며 따로 신청하지 않아도 됩니다.${(window._payoutSched || {}).before ? ' (첫 지급 ' + window._payoutSched.first + ')' : ''}</div>
+        <div style="font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px">${(window._payoutSched || {}).before ? '지급 일정은 2027년 1월 정식 오픈 때 안내드려요' : ((window._payoutSched || {}).short || '정해진 지급일')} · 자동으로 입금되며 따로 신청하지 않아도 됩니다.</div>
         ${isBiz ? '' : `
         <div style="margin-top:10px;padding:11px 13px;background:var(--green-bg);border-radius:9px;font:400 11.5px/1.8 'Pretendard',sans-serif;color:#046B4D">
           원천징수된 ${rate}%는 Vingly가 아니라 <strong>국세청에 납부</strong>됩니다.
@@ -2422,7 +2422,7 @@ document.addEventListener('click', function(e) {
 </script>
 <script>
 // 지급 일정 표시 — app_settings 의 payout_* 값을 읽어 .payout-sched 칸에 쓴다 (토스 지급대행 일정)
-window._payoutSched = { short: '매주 월요일 지급', first: '2027년 1월 4일(월)', firstIso: '2027-01-04', before: true }
+window._payoutSched = { short: '오픈 후 안내', first: '', firstIso: '2027-01-04', before: true, pre: '지급 일정은 2027년 1월 정식 오픈 때 안내드려요' }
 window.loadPayoutSchedule = async function (sb) {
   const days = '일월화수목금토'
   try {
@@ -2435,13 +2435,17 @@ window.loadPayoutSchedule = async function (sb) {
     const iso = /^\d{4}-\d{2}-\d{2}$/.test(c.payout_start_date || '') ? c.payout_start_date : '2027-01-04'
     const k = new Date(new Date(iso + 'T00:00:00+09:00').getTime() + 9 * 3600 * 1000)
     const first = `${k.getUTCFullYear()}년 ${k.getUTCMonth() + 1}월 ${k.getUTCDate()}일(${days[k.getUTCDay()]})`
-    window._payoutSched = { short, first, firstIso: iso, before: Date.now() < new Date(iso + 'T00:00:00+09:00').getTime() }
+    const before = Date.now() < new Date(iso + 'T00:00:00+09:00').getTime()
+    // 첫 지급일 전(정식 오픈 전)에는 결제대행사가 확정되지 않았으므로 날짜·요일을 약속하지 않는다
+    window._payoutSched = before
+      ? { short: '오픈 후 안내', first: '', firstIso: iso, before: true, pre: '지급 일정은 2027년 1월 정식 오픈 때 안내드려요' }
+      : { short, first, firstIso: iso, before: false }
   } catch (e) { /* 기본값 유지 */ }
   const s = window._payoutSched
   document.querySelectorAll('.payout-sched').forEach(el => {
-    el.textContent = s.short + (s.before ? ` · 첫 지급 ${s.first}` : '')
+    el.textContent = s.before ? s.pre : s.short
   })
-  document.querySelectorAll('.payout-sched-short').forEach(el => { el.textContent = s.short })
+  document.querySelectorAll('.payout-sched-short').forEach(el => { el.textContent = s.before ? '정식 오픈 후 지급' : s.short })
 }
 </script>
 </body>
