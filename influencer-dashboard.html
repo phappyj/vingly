@@ -2107,7 +2107,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const lbl = document.getElementById('p_wh_label')
     if (lbl) lbl.textContent = rate + '%'
     document.getElementById('payout_err').style.display = 'none'
-    document.getElementById('payout-ov').style.display = 'flex'
+    // 이 모달은 HTML상 '제품 탐색' 탭(#pg-products) 안에 있어서, 다른 탭에서 열면 부모가 숨겨져 안 보였다.
+    // 열 때 body 바로 아래로 옮겨서 어느 탭에서든 보이게 한다.
+    const ov = document.getElementById('payout-ov')
+    if (ov.parentElement !== document.body) document.body.appendChild(ov)
+    ov.style.display = 'flex'
     document.body.style.overflow = 'hidden'
   }
 
@@ -2147,7 +2151,10 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       btn.disabled = false
       btn.textContent = '등록하고 정산받기'
       btn.style.opacity = '1'
-      if (ok) { closePayoutModal(); loadPayoutSummary() }
+      if (ok) {
+        closePayoutModal(); loadPayoutSummary()
+        if (typeof showToast === 'function') showToast('✓ 정산 정보가 저장됐어요')
+      }
     }
 
     try {

@@ -4,6 +4,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
 <title>Vingly Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -15,9 +16,14 @@
   --r2:#A32D2D;--bg-r:#FCEBEB;
   --p:#534AB7;--bg-p:#EEEDFE;
   --bg:#F4F3EF;--sf:#FFFFFF;
-  --t:#0D0D0D;--ts:#4A4A4A;--tm:#9A9A9A;
-  --br:#E2E0DA;--rad:12px;--sw:230px;
+  --t:#0D0D0D;--t1:#0D0D0D;--ts:#3A3A3A;--tm:#5F5F5F;--t3:#6A6A6A;
+  --red-bg:#FCEBEB;--green-bg:#E0F5EC;--blue-bg:#E8F3FB;
+  --br:#D6D3CC;--rad:12px;--sw:230px;
+  color-scheme:only light;
 }
+html{color-scheme:only light}
+input,select,textarea{color:var(--t);background-color:#fff}
+input::placeholder,textarea::placeholder{color:#8A8A8A}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--t);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
 
