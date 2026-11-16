@@ -78,7 +78,7 @@ table tr:last-child td{border:none}
   <div class="doc-header">
     <div class="doc-tag">법적 문서</div>
     <h1 class="doc-title">개인정보처리방침</h1>
-    <div class="doc-meta"><strong>시행일:</strong> 2026년 11월 17일 &nbsp;·&nbsp; <strong>버전:</strong> v1.2 &nbsp;·&nbsp; <strong>이전 버전:</strong> v1.1 (2026년 10월 7일)</div>
+    <div class="doc-meta"><strong>시행일:</strong> 2026년 11월 24일 &nbsp;·&nbsp; <strong>버전:</strong> v1.3 &nbsp;·&nbsp; <strong>이전 버전:</strong> v1.2 (2026년 11월 17일)</div>
   </div>
 
   <!-- 핵심 요약 -->
@@ -88,7 +88,7 @@ table tr:last-child td{border:none}
       <div class="sb-item"><strong>수집 항목</strong>이름, 이메일, 연락처, 채널 정보 (필수) / 사업자번호 (브랜드·셀러)</div>
       <div class="sb-item"><strong>수집 목적</strong>서비스 제공, 정산 처리, 가입 확인 메일 발송</div>
       <div class="sb-item"><strong>보관 기간</strong>회원 탈퇴 후 30일 이내 삭제 (법령 보관 의무 항목 제외)</div>
-      <div class="sb-item"><strong>제3자 제공</strong>Supabase (DB 저장), Toss Payments (결제), Resend·EmailJS (메일 발송) — 외 제3자 미제공</div>
+      <div class="sb-item"><strong>제3자 제공</strong>Supabase (DB 저장), Toss Payments (결제·정산금 지급대행), Resend·EmailJS (메일 발송) — 외 제3자 미제공</div>
       <div class="sb-item"><strong>국외 이전</strong>Supabase·Resend·EmailJS (미국) — 거부 가능하나 서비스 이용 제한</div>
       <div class="sb-item"><strong>문의</strong>vingly.official@gmail.com</div>
     </div>
@@ -157,7 +157,7 @@ table tr:last-child td{border:none}
       <thead><tr><th>서비스</th><th>목적</th><th>처리 항목</th></tr></thead>
       <tbody>
         <tr><td>Supabase (해외 서버 운영)</td><td>회원 데이터베이스 저장·관리</td><td>이름, 이메일, 연락처, 계좌정보 등 전체 회원정보</td></tr>
-        <tr><td>Toss Payments</td><td>결제 처리</td><td>결제 정보 (PG사 자체 관리)</td></tr>
+        <tr><td>Toss Payments</td><td>결제 처리 및 정산금 지급대행(지급 대상 본인확인 포함)</td><td>결제 정보 (PG사 자체 관리) / 정산 대상 회원의 이름·이메일·휴대폰 번호·정산 계좌·사업자등록번호(사업자인 경우)</td></tr>
         <tr><td>Resend</td><td>인증·알림 메일 발송</td><td>이름, 이메일</td></tr>
         <tr><td>EmailJS</td><td>주문 확인·문의 응답 메일 발송</td><td>이름, 이메일, 주문 정보</td></tr>
       </tbody>
@@ -186,7 +186,7 @@ table tr:last-child td{border:none}
       <thead><tr><th>수탁사</th><th>위탁 업무</th></tr></thead>
       <tbody>
         <tr><td>Supabase Inc.</td><td>데이터베이스 저장·관리 (해외 서버)</td></tr>
-        <tr><td>Toss Payments</td><td>결제 대행</td></tr>
+        <tr><td>Toss Payments</td><td>결제 대행, 정산금 지급대행 및 지급 대상 본인확인</td></tr>
         <tr><td>Resend, Inc.</td><td>회원 인증·비밀번호 재설정 등 인증 메일 발송 (해외 서버)</td></tr>
         <tr><td>EmailJS</td><td>주문 확인·문의 응답 메일 발송 (해외 서버)</td></tr>
       </tbody>

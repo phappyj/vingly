@@ -500,7 +500,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
         <div style="font:800 18px/1.3 'Pretendard',sans-serif;margin-bottom:6px">정산 정보 등록</div>
         <div style="font:400 13px/1.7 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:18px">
-          한 번만 등록하면 이후에는 매월 자동으로 지급됩니다.
+          한 번만 등록하면 이후에는 자동으로 지급됩니다. <strong class="payout-sched">매주 월요일 지급 · 첫 지급 2027년 1월 4일(월)</strong>
         </div>
 
         <label style="font:700 13px/1 'Pretendard',sans-serif;display:block;margin-bottom:8px">구분</label>
@@ -520,11 +520,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
           </div>
           <!-- 세금을 떼는 화면에서 "그래서 나한테 뭐가 좋은지"를 같이 말해줘야 이탈이 줄어든다 -->
           <div style="margin-top:9px;padding:12px 13px;background:var(--green-bg);border-radius:9px;font:400 11.5px/1.8 'Pretendard',sans-serif;color:#046B4D">
-            <strong style="display:block;margin-bottom:5px;font-size:12px">기타소득 8.8%의 장점</strong>
-            · 연 <strong>750만원</strong>까지는 5월 종합소득세 신고를 <strong>안 하셔도 됩니다</strong><br>
-            · 급여가 있으셔도 <strong>합산되지 않습니다</strong><br>
-            · 많이 뗐다고 느껴지면 5월에 신고해 <strong>환급받으실 수 있습니다</strong><br>
-            <span style="display:block;margin-top:6px;color:rgba(4,107,77,.7);font-size:10.5px">실제 유불리는 다른 소득에 따라 달라집니다. 사업자등록을 하시거나 연 750만원을 넘으면 사업소득 3.3%로 전환되며, 미리 안내드립니다.</span>
+            <strong style="display:block;margin-bottom:5px;font-size:12px">세금은 이렇게 처리돼요</strong>
+            · 세금 신고·납부는 <strong>Vingly가 대신</strong> 합니다<br>
+            · 회사 연말정산과는 <strong>별개로</strong> 처리됩니다<br>
+            · 많이 떼였다고 느껴지면 5월에 신고해 <strong>환급받으실 수 있습니다</strong><br>
+            <span style="display:block;margin-top:6px;color:rgba(4,107,77,.7);font-size:10.5px">5월 종합소득세 신고가 필요한지는 개인 소득 상황에 따라 다릅니다(국세청 126 상담). 사업자등록을 하시거나 활동이 계속·반복적이면 사업소득 3.3%로 전환될 수 있으며, 미리 안내드립니다.</span>
           </div>
         </div>
 
@@ -702,6 +702,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const name = user.user_metadata?.name || user.email || '크리에이터'
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'creator' }
+      await window.loadPayoutSchedule(supabase)
       await loadTiers()
       renderGradeRoadmap()
 
@@ -1024,16 +1025,12 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     const monthLabelEl = document.getElementById('earn-month-label')
     if (monthLabelEl) monthLabelEl.textContent = periodLabel + ' 수익'
 
-    // 등급별 정산 주기 표시 (Elite는 월 2회, 나머지는 월 1회) — 테스트 강제등급 있으면 그걸 반영
+    // 정산 주기 표시 — 토스 지급대행으로 모두 같은 지급일에 받는다 (app_settings 의 지급 일정)
     const myTier = await getMyTier()
     const settleLabelEl = document.getElementById('dash-settle-label')
     const settleSubEl = document.getElementById('dash-settle-sub')
-    if (settleLabelEl && myTier) {
-      settleLabelEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? '정산 예정 (월 2회)' : '정산 예정 (월말)'
-    }
-    if (settleSubEl && myTier) {
-      settleSubEl.textContent = (myTier.settlementsPerMonth || 1) >= 2 ? `${myTier.name} 등급 · 월 2회 입금` : '14일 보류 후 정산 예정'
-    }
+    if (settleLabelEl) settleLabelEl.textContent = '정산 예정'
+    if (settleSubEl) settleSubEl.textContent = '14일 보류 후 · ' + ((window._payoutSched || {}).short || '매주 월요일 지급')
 
     const monthValEl = document.getElementById('earn-month-val')
     const monthSubEl = document.getElementById('earn-month-sub')
@@ -2090,11 +2087,11 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
             : `<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-40)">원천징수 ${rate}%</span><span>−${won(tax)}</span></div>`}
           <div style="display:flex;justify-content:space-between;border-top:1px solid var(--ink-14);margin-top:7px;padding-top:7px;font-weight:700"><span>실수령</span><span>${won(net)}</span></div>
         </div>
-        <div style="font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px">매월 자동 지급됩니다. 따로 신청하지 않아도 됩니다.</div>
+        <div style="font:500 12px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-top:10px">${(window._payoutSched || {}).short || '매주 월요일 지급'} · 자동으로 입금되며 따로 신청하지 않아도 됩니다.${(window._payoutSched || {}).before ? ' (첫 지급 ' + window._payoutSched.first + ')' : ''}</div>
         ${isBiz ? '' : `
         <div style="margin-top:10px;padding:11px 13px;background:var(--green-bg);border-radius:9px;font:400 11.5px/1.8 'Pretendard',sans-serif;color:#046B4D">
           원천징수된 ${rate}%는 Vingly가 아니라 <strong>국세청에 납부</strong>됩니다.
-          연 750만원까지는 <strong>5월 종합소득세 신고 없이</strong> 끝나며, 원하시면 신고해서 <strong>환급</strong>받으실 수도 있습니다.
+          신고·납부는 Vingly가 대신 하며, 많이 떼였다면 5월에 신고해서 <strong>환급</strong>받으실 수 있습니다.
         </div>`}`
     }
 
@@ -2415,6 +2412,30 @@ document.addEventListener('click', function(e) {
   if (panel.contains(e.target)) return
   panel.style.display = 'none'
 })
+</script>
+<script>
+// 지급 일정 표시 — app_settings 의 payout_* 값을 읽어 .payout-sched 칸에 쓴다 (토스 지급대행 일정)
+window._payoutSched = { short: '매주 월요일 지급', first: '2027년 1월 4일(월)', firstIso: '2027-01-04', before: true }
+window.loadPayoutSchedule = async function (sb) {
+  const days = '일월화수목금토'
+  try {
+    const { data } = await sb.from('app_settings').select('key,value')
+      .in('key', ['payout_start_date', 'payout_cycle', 'payout_weekday', 'payout_monthdays'])
+    const c = Object.fromEntries((data || []).map(r => [r.key, String(r.value).replace(/^"|"$/g, '')]))
+    const short = c.payout_cycle === 'monthly'
+      ? `매월 ${String(c.payout_monthdays || '1').split(',').map(s => s.trim()).join('·')}일 지급`
+      : `매주 ${days[Number(c.payout_weekday || 1)] || '월'}요일 지급`
+    const iso = /^\d{4}-\d{2}-\d{2}$/.test(c.payout_start_date || '') ? c.payout_start_date : '2027-01-04'
+    const k = new Date(new Date(iso + 'T00:00:00+09:00').getTime() + 9 * 3600 * 1000)
+    const first = `${k.getUTCFullYear()}년 ${k.getUTCMonth() + 1}월 ${k.getUTCDate()}일(${days[k.getUTCDay()]})`
+    window._payoutSched = { short, first, firstIso: iso, before: Date.now() < new Date(iso + 'T00:00:00+09:00').getTime() }
+  } catch (e) { /* 기본값 유지 */ }
+  const s = window._payoutSched
+  document.querySelectorAll('.payout-sched').forEach(el => {
+    el.textContent = s.short + (s.before ? ` · 첫 지급 ${s.first}` : '')
+  })
+  document.querySelectorAll('.payout-sched-short').forEach(el => { el.textContent = s.short })
+}
 </script>
 </body>
 </html>

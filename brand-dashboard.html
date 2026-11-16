@@ -291,7 +291,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="sc"><div class="sc-top"><div class="sc-label">이번 달 매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="home-month-sales">₩0</div><div class="sc-ch" id="home-month-sales-sub">제품 등록 후 시작됩니다</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">활동 크리에이터</div><div class="sc-ico" style="background:var(--green-bg)">📱</div></div><div class="sc-val" id="home-active-creators">0명</div><div class="sc-ch">제품 등록 시 매칭 시작</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">총 판매 건수</div><div class="sc-ico" style="background:var(--amber-bg)">🛒</div></div><div class="sc-val" id="home-total-orders">0건</div><div class="sc-ch" id="home-total-orders-sub">아직 판매 없음</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val" id="home-settle-pending">₩0</div><div class="sc-ch">결제 완료 후 14일 보류</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">정산 예정</div><div class="sc-ico" style="background:var(--red-bg)">📋</div></div><div class="sc-val" id="home-settle-pending">₩0</div><div class="sc-ch">14일 보류 후 · <span class="payout-sched-short">매주 월요일 지급</span></div></div>
     </div>
 
     <!-- 처리해야 할 일 — 각 탭을 일일이 열어보지 않아도 홈에서 바로 확인 -->
@@ -428,7 +428,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     <div class="stat-grid" style="grid-template-columns:repeat(5,1fr)">
       <div class="sc"><div class="sc-top"><div class="sc-label" id="rev-total-label">매출</div><div class="sc-ico" style="background:var(--blue-bg)">💰</div></div><div class="sc-val" id="rev-total-val">₩0</div><div class="sc-ch" id="rev-total-sub">첫 판매를 기다리는 중</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">크리에이터 수수료</div><div class="sc-ico" style="background:var(--red-bg)">📤</div></div><div class="sc-val" id="rev-creator-fee-val">₩0</div><div class="sc-ch" id="rev-creator-count">판매 발생 크리에이터 0명</div></div>
-      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val" id="rev-pg-fee-val">₩0</div><div class="sc-ch">2.2% 토스</div></div>
+      <div class="sc"><div class="sc-top"><div class="sc-label">PG 수수료</div><div class="sc-ico" style="background:var(--amber-bg)">💳</div></div><div class="sc-val" id="rev-pg-fee-val">₩0</div><div class="sc-ch" id="rev-pg-fee-sub">토스 3.4% + 부가세</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">Vingly 수수료</div><div class="sc-ico" style="background:var(--green-bg)">🏷️</div></div><div class="sc-val" id="rev-vingly-fee-val">₩0</div><div class="sc-ch" id="rev-vingly-fee-sub">확인 중</div></div>
       <div class="sc"><div class="sc-top"><div class="sc-label">환불</div><div class="sc-ico" style="background:var(--red-bg)">↩️</div></div><div class="sc-val" id="rev-refund-val" style="color:var(--red)">₩0</div><div class="sc-ch" id="rev-refund-sub">환불 0건</div></div>
     </div>
@@ -437,7 +437,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       <div class="card-h"><div class="card-t" id="rev-flow-title">수익 명세</div></div>
       <div class="flow-row"><div class="fl-l">총 매출<small>환불 제외</small></div><div class="fl-r" id="rev-flow-total">₩0</div></div>
       <div class="flow-row"><div class="fl-l">크리에이터 수수료</div><div class="fl-r r" id="rev-flow-creator">-₩0</div></div>
-      <div class="flow-row"><div class="fl-l">PG 수수료 (2.2%)</div><div class="fl-r r" id="rev-flow-pg">-₩0</div></div>
+      <div class="flow-row"><div class="fl-l" id="rev-flow-pg-label">PG 수수료 (3.4% + 부가세)</div><div class="fl-r r" id="rev-flow-pg">-₩0</div></div>
       <div class="flow-row"><div class="fl-l">Vingly 거래 수수료<small id="rev-flow-vingly-sub">파일럿 무료 → 정식 후 1.5% 얼리버드</small></div><div class="fl-r g" id="rev-flow-vingly">₩0</div></div>
       <div class="flow-row"><div class="fl-l" style="font-weight:700">정산 예정액</div><div class="fl-r" id="rev-flow-net" style="font-size:18px;font-weight:800">₩0</div></div>
     </div>
@@ -527,7 +527,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       </div>
       <div class="card" style="margin-bottom:14px">
         <div class="card-h"><div class="card-t">🏦 정산 계좌</div></div>
-        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">판매 대금이 입금될 계좌입니다. <strong>정확히 입력하지 않으면 정산이 지연될 수 있습니다.</strong> 예금주는 사업자등록증상 명의와 일치해야 합니다.</div>
+        <div style="font:400 12.5px/1.6 'Pretendard',sans-serif;color:var(--ink-40);margin-bottom:14px">판매 대금이 입금될 계좌입니다. <strong>정확히 입력하지 않으면 정산이 지연될 수 있습니다.</strong> 예금주는 사업자등록증상 명의와 일치해야 합니다.<br>정산금은 토스페이먼츠 지급대행으로 입금됩니다: <strong class="payout-sched">매주 월요일 지급 · 첫 지급 2027년 1월 4일(월)</strong></div>
         <div id="bank-warning" style="display:none;margin-bottom:12px;padding:10px 14px;background:var(--amber-bg);border-radius:10px;color:var(--amber);font:700 12.5px/1.5 'Pretendard',sans-serif">⚠️ 정산 계좌가 등록되지 않았습니다. 판매가 발생해도 정산을 받을 수 없으니 지금 등록해주세요.</div>
         <div class="g3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
@@ -929,6 +929,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
       const plan = userRow?.plan || 'pilot'
       window._supabase = supabase
       window._vinglyUser = { id: user.id, email: user.email, name, role: 'brand', plan, early_bird: !!userRow?.early_bird }
+      await window.loadPayoutSchedule(supabase)
 
       // 모듈 스크립트는 이미 DOM이 완성된 뒤에 실행되므로 DOMContentLoaded를 기다릴 필요가 없음
       ;(() => {
@@ -1282,8 +1283,17 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
 
     const totalSales = monthOrders.reduce((s, o) => s + Number(o.amount || 0), 0)
     const creatorFeeSum = monthOrders.reduce((s, o) => s + Number(o.creator_fee || 0), 0)
-    const pgFee = Math.round(totalSales * 0.022)
-    const vinglyFeeSum = monthOrders.reduce((s, o) => s + Number(o.vingly_fee_amount || 0), 0)
+    // 실제 정산(confirm-payment)과 같은 계산: PG = 주문별 round(금액 × 요율 × 1.1), 빙글리 수수료 = 주문별 round(공급가 × 1.1)
+    let pgRate = 3.4
+    try {
+      const { data: pr } = await supabase.from('app_settings').select('value').eq('key', 'pg_fee_rate').maybeSingle()
+      const v = Number(String(pr?.value ?? '').replace(/"/g, ''))
+      if (Number.isFinite(v) && v > 0 && v < 20) pgRate = v
+    } catch (e) { /* 기본값 */ }
+    const pgFee = monthOrders.reduce((s, o) => s + Math.round(Number(o.amount || 0) * pgRate / 100 * 1.1), 0)
+    const vinglyFeeSum = monthOrders.reduce((s, o) => s + Math.round(Number(o.vingly_fee_amount || 0) * 1.1), 0)
+    { const a = document.getElementById('rev-pg-fee-sub'); if (a) a.textContent = `토스 ${pgRate}% + 부가세` }
+    { const b = document.getElementById('rev-flow-pg-label'); if (b) b.textContent = `PG 수수료 (${pgRate}% + 부가세)` }
     const netAmount = totalSales - creatorFeeSum - pgFee - vinglyFeeSum
     const distinctCreators = new Set(monthOrders.map(o => o.creator).filter(Boolean))
     const refundTotal = monthRefunds.reduce((s, o) => s + Number(o.amount || 0), 0)
@@ -1359,7 +1369,7 @@ tbody tr:hover td{background:rgba(0,0,0,.015)}
     } catch (e) { /* 설정 조회 실패 시 안내만 생략 */ }
 
     const rateText = feeActive && feeRate
-      ? `${feeRate}% 적용 중${user.early_bird ? ' (얼리버드 영구 혜택)' : ''}`
+      ? `${feeRate}% + 부가세 적용 중${user.early_bird ? ' (얼리버드 영구 혜택)' : ''}`
       : '파일럿 기간 무료'
 
     const vinglyEl = document.getElementById('rev-flow-vingly')
@@ -3157,6 +3167,30 @@ document.addEventListener('click', function(e) {
   if (panel.contains(e.target)) return
   panel.style.display = 'none'
 })
+</script>
+<script>
+// 지급 일정 표시 — app_settings 의 payout_* 값을 읽어 .payout-sched 칸에 쓴다 (토스 지급대행 일정)
+window._payoutSched = { short: '매주 월요일 지급', first: '2027년 1월 4일(월)', firstIso: '2027-01-04', before: true }
+window.loadPayoutSchedule = async function (sb) {
+  const days = '일월화수목금토'
+  try {
+    const { data } = await sb.from('app_settings').select('key,value')
+      .in('key', ['payout_start_date', 'payout_cycle', 'payout_weekday', 'payout_monthdays'])
+    const c = Object.fromEntries((data || []).map(r => [r.key, String(r.value).replace(/^"|"$/g, '')]))
+    const short = c.payout_cycle === 'monthly'
+      ? `매월 ${String(c.payout_monthdays || '1').split(',').map(s => s.trim()).join('·')}일 지급`
+      : `매주 ${days[Number(c.payout_weekday || 1)] || '월'}요일 지급`
+    const iso = /^\d{4}-\d{2}-\d{2}$/.test(c.payout_start_date || '') ? c.payout_start_date : '2027-01-04'
+    const k = new Date(new Date(iso + 'T00:00:00+09:00').getTime() + 9 * 3600 * 1000)
+    const first = `${k.getUTCFullYear()}년 ${k.getUTCMonth() + 1}월 ${k.getUTCDate()}일(${days[k.getUTCDay()]})`
+    window._payoutSched = { short, first, firstIso: iso, before: Date.now() < new Date(iso + 'T00:00:00+09:00').getTime() }
+  } catch (e) { /* 기본값 유지 */ }
+  const s = window._payoutSched
+  document.querySelectorAll('.payout-sched').forEach(el => {
+    el.textContent = s.short + (s.before ? ` · 첫 지급 ${s.first}` : '')
+  })
+  document.querySelectorAll('.payout-sched-short').forEach(el => { el.textContent = s.short })
+}
 </script>
 </body>
 </html>
